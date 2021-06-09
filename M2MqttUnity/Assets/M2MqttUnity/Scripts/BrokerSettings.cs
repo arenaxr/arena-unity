@@ -12,13 +12,13 @@ namespace M2MqttUnity
     public class BrokerSettings
     {
         [Tooltip("Address of the host running the broker")]
-        public string host = "localhost";
+        public string host = "arenaxr.org";
 
         [Tooltip("Port used to access the broker")]
-        public int port = 1883;
+        public int port = 8883;
 
         [Tooltip("Encrypted access to the broker")]
-        public bool encrypted = false;
+        public bool encrypted = true;
 
         [Tooltip("Optional alternate addresses, used if the previous host is not accessible")]
         public string[] alternateAddress;
