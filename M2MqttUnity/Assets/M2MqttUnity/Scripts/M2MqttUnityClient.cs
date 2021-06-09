@@ -36,17 +36,17 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 namespace M2MqttUnity
 {
     /// <summary>
-    /// Generic MonoBehavior wrapping a MQTT client, using a double buffer to postpone message processing in the main thread. 
+    /// Generic MonoBehavior wrapping a MQTT client, using a double buffer to postpone message processing in the main thread.
     /// </summary>
     public class M2MqttUnityClient : MonoBehaviour
     {
         [Header("MQTT broker configuration")]
         [Tooltip("IP address or URL of the host running the broker")]
-        public string brokerAddress = "localhost";
+        public string brokerAddress = "arenaxr.org";
         [Tooltip("Port where the broker accepts connections")]
-        public int brokerPort = 1883;
+        public int brokerPort = 8883;
         [Tooltip("Use encrypted connection")]
-        public bool isEncrypted = false;
+        public bool isEncrypted = true;
         [Header("Connection parameters")]
         [Tooltip("Connection to the broker is delayed by the the given milliseconds")]
         public int connectionDelay = 500;
@@ -58,7 +58,7 @@ namespace M2MqttUnity
         public string mqttUserName = null;
         [Tooltip("Password for the MQTT broker. Keep blank if no password is required.")]
         public string mqttPassword = null;
-        
+
         /// <summary>
         /// Wrapped MQTT client
         /// </summary>
@@ -270,17 +270,17 @@ namespace M2MqttUnity
             // leave some time to Unity to refresh the UI
             yield return new WaitForEndOfFrame();
 
-            // create client instance 
+            // create client instance
             if (client == null)
             {
                 try
                 {
 #if (!UNITY_EDITOR && UNITY_WSA_10_0 && !ENABLE_IL2CPP)
-                    client = new MqttClient(brokerAddress,brokerPort,isEncrypted, isEncrypted ? MqttSslProtocols.SSLv3 : MqttSslProtocols.None);
+                    client = new MqttClient(brokerAddress,brokerPort,isEncrypted, isEncrypted ? MqttSslProtocols.TLSv1_2 : MqttSslProtocols.None);
 #else
-                    client = new MqttClient(brokerAddress, brokerPort, isEncrypted, null, null, isEncrypted ? MqttSslProtocols.SSLv3 : MqttSslProtocols.None);
+                    client = new MqttClient(brokerAddress, brokerPort, isEncrypted, null, null, isEncrypted ? MqttSslProtocols.TLSv1_2 : MqttSslProtocols.None);
                     //System.Security.Cryptography.X509Certificates.X509Certificate cert = new System.Security.Cryptography.X509Certificates.X509Certificate();
-                    //client = new MqttClient(brokerAddress, brokerPort, isEncrypted, cert, null, MqttSslProtocols.TLSv1_0, MyRemoteCertificateValidationCallback);
+                    //client = new MqttClient(brokerAddress, brokerPort, isEncrypted, cert, null, MqttSslProtocols.TLSv1_2, MyRemoteCertificateValidationCallback);
 #endif
                 }
                 catch (Exception e)
@@ -302,7 +302,7 @@ namespace M2MqttUnity
             yield return new WaitForEndOfFrame();
 
             client.Settings.TimeoutOnConnection = timeoutOnConnection;
-            string clientId = Guid.NewGuid().ToString();
+            string clientId = "unity-" + Guid.NewGuid().ToString();
             try
             {
                 client.Connect(clientId, mqttUserName, mqttPassword);
@@ -317,7 +317,7 @@ namespace M2MqttUnity
             if (client.IsConnected)
             {
                 client.ConnectionClosed += OnMqttConnectionClosed;
-                // register to message received 
+                // register to message received
                 client.MqttMsgPublishReceived += OnMqttMessageReceived;
                 mqttClientConnected = true;
                 OnConnected();
