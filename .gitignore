@@ -1,0 +1,13 @@
+.arena*
+token.json
+credentials.json
+
+# Editors
+.vscode/
+.idea/
+
+# Mac/OSX
+.DS_Store
+
+# Windows
+Thumbs.db
