@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 282121966}
   - component: {fileID: 282121965}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: ARENA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -150,6 +150,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab85a5933c23e4f10b6bb8a372fa1ffd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  host: arenaxr.org
+  sceneName: example
+  authCode: 
+  sceneUrl: 
+  namespaceName: 
+  mqttUserName: 
+  mqttPassword: 
+  gAuthId: 
+  gAuthEmail: 
 --- !u!4 &282121966
 Transform:
   m_ObjectHideFlags: 0
