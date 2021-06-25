@@ -150,13 +150,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab85a5933c23e4f10b6bb8a372fa1ffd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  brokerAddress: arenaxr.org
+  brokerPort: 8883
+  isEncrypted: 1
+  connectionDelay: 500
+  timeoutOnConnection: 30000
+  autoConnect: 0
+  mqttUserName: 
+  mqttPassword: 
   host: arenaxr.org
   sceneName: example
   authCode: 
   sceneUrl: 
   namespaceName: 
-  mqttUserName: 
-  mqttPassword: 
   gAuthId: 
   gAuthEmail: 
 --- !u!4 &282121966
@@ -274,7 +280,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 502867975}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.8, y: 0.052397728, z: 4.24}
+  m_LocalPosition: {x: 3.8, y: 1.64, z: 5.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

@@ -1,42 +1,40 @@
-﻿using System;
-//using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Oauth2.v2;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
-using UnityEngine;
-//using UnityEngine.UI;
-//using uPLibrary.Networking.M2Mqtt;
-using uPLibrary.Networking.M2Mqtt.Messages;
 using M2MqttUnity;
+using Newtonsoft.Json;
+using UnityEngine;
+using UnityEngine.Networking;
+using uPLibrary.Networking.M2Mqtt.Messages;
 
 [HelpURL("https://arena.conix.io")]
 public class ArenaClient : M2MqttUnityClient
 {
     [Header("ARENA Configuration")]
-    [Tooltip("IP address or URL of the host running the broker")]
-    public string host = "arenaxr.org";
+    [Tooltip("Name of the topic realm for the scene.")]
+    private string realm = "realm";
     [Tooltip("Name of the scene, without namespace ('example', not 'username/example'")]
     public string sceneName = "example";
-    [Tooltip("Authorization code from web authentication.")]
-    public string authCode = null;
     [Tooltip("Browser URL for the scene.")]
     [TextArea(minLines: 1, maxLines: 2)]
     public string sceneUrl = null;
-
 
     [Header("Optional Parameters")]
     [Tooltip("Namespace (automated with username), but can be overridden")]
     public string namespaceName = null;
 
 
-    public string gAuthId = null;
-    public string gAuthEmail = null;
-    private List<string> eventMessages = new List<string>();
+    public string idToken = null;
+    public string email = null;
+    public string csrfToken = null;
 
+    private List<string> eventMessages = new List<string>();
 
     static string[] Scopes = {
         Oauth2Service.Scope.UserinfoProfile,
@@ -44,43 +42,25 @@ public class ArenaClient : M2MqttUnityClient
         Oauth2Service.Scope.Openid
     };
 
+    public class UserState
+    {
+        public bool authenticated { get; set; }
+        public string username { get; set; }
+        public string fullname { get; set; }
+        public string email { get; set; }
+        public string type { get; set; }
+    }
+
+    public class MqttAuth
+    {
+        public string username { get; set; }
+        public string token { get; set; }
+    }
+
     // Start is called before the first frame update
     protected override void Start()
     {
-        Debug.Log("Ready.");
-        base.Start();
-
-        UserCredential credential;
-        using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
-        {
-            // string credPath = System.Environment.GetFolderPath(
-            //      System.Environment.SpecialFolder.Personal);
-            // credPath = Path.Combine(credPath, ".arena_google_auth");
-            string credPath = "token.json";
-            string applicationName = "ArenaClientCSharp";
-
-            credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.FromStream(stream).Secrets,
-                    Scopes,
-                    "user",
-                    CancellationToken.None,
-                    new FileDataStore(credPath, true)).Result;
-            Console.WriteLine("Credential file saved to: " + credPath);
-
-            var oauthService = new Oauth2Service(new BaseClientService.Initializer()
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = applicationName,
-            });
-
-            var userInfo = oauthService.Userinfo.Get().Execute();
-            Console.WriteLine("userInfo: " + userInfo);
-
-            gAuthEmail = userInfo.Email;
-            gAuthId = userInfo.Id;
-            sceneUrl = "https://arena-dev1.conix.io/mwfarb/test";
-        }
-
+        StartCoroutine(SceneLogin());
     }
 
     // Update is called once per frame
@@ -98,6 +78,130 @@ public class ArenaClient : M2MqttUnityClient
         }
     }
 
+    private IEnumerator SceneLogin()
+    {
+        // get app credentials
+        CoroutineWithData cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/conf/gauth.json"));
+        yield return cd.coroutine;
+        var gauthId = cd.result.ToString();
+
+        // request user auth
+        UserCredential credential;
+        using (var stream = ToStream(gauthId))
+        {
+            // string credPath = System.Environment.GetFolderPath(
+            //      System.Environment.SpecialFolder.Personal);
+            // credPath = Path.Combine(credPath, ".arena_google_auth");
+            string credPath = "token2.json";
+            string applicationName = "ArenaClientCSharp";
+
+            credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    GoogleClientSecrets.FromStream(stream).Secrets,
+                    Scopes,
+                    "user",
+                    CancellationToken.None,
+                    new FileDataStore(credPath, true)).Result;
+            Debug.Log("Credential file saved to: " + credPath);
+
+            var oauthService = new Oauth2Service(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = applicationName,
+            });
+
+            var userInfo = oauthService.Userinfo.Get().Execute();
+            Debug.Log("userInfo: " + userInfo);
+
+            this.email = userInfo.Email;
+            this.idToken = credential.Token.IdToken;
+        }
+
+        // get arena web login token
+        yield return HttpRequest($"https://{this.brokerAddress}/user/login");
+
+        // get arena user account state
+        WWWForm form = new WWWForm();
+        form.AddField("id_token", idToken);
+        cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/user/user_state", csrfToken, form));
+        yield return cd.coroutine;
+        var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
+        if (user.authenticated && this.namespaceName != null)
+            this.namespaceName = user.username;
+
+        // get arena user mqtt token
+        form.AddField("id_auth", "google-installed");
+        form.AddField("username", user.username);
+        form.AddField("realm", realm);
+        form.AddField("scene", $"{namespaceName}/{sceneName}");
+        cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/user/mqtt_auth", csrfToken, form));
+        yield return cd.coroutine;
+        var auth = JsonConvert.DeserializeObject<MqttAuth>(cd.result.ToString());
+        this.mqttUserName = auth.username;
+        this.mqttPassword = auth.token;
+
+        sceneUrl = $"https://{this.brokerAddress}/{namespaceName}/{sceneName}";
+
+        base.Start();
+    }
+
+    public static Stream ToStream(string str)
+    {
+        MemoryStream stream = new MemoryStream();
+        StreamWriter writer = new StreamWriter(stream);
+        writer.Write(str);
+        writer.Flush();
+        stream.Position = 0;
+        return stream;
+    }
+
+    IEnumerator HttpRequest(string uri, string csrf = null, WWWForm form = null)
+    {
+        UnityWebRequest uwr = null;
+        if (form == null)
+            uwr = UnityWebRequest.Get(uri);
+        else
+            uwr = UnityWebRequest.Post(uri, form);
+        if (csrf != null)
+        {
+            uwr.SetRequestHeader("Cookie", $"csrftoken={csrf}");
+            uwr.SetRequestHeader("X-CSRFToken", csrf);
+        }
+
+        yield return uwr.SendWebRequest();
+
+        if (uwr.isNetworkError)
+        {
+            Debug.Log("Error While Sending: " + uwr.error);
+            yield break;
+        }
+        else
+        {
+            // get the csrf cookie
+            string SetCookie = uwr.GetResponseHeader("Set-Cookie");
+            if (SetCookie != null)
+            {
+                Debug.Log(SetCookie);
+                if (SetCookie.Contains("csrftoken="))
+                    csrfToken = GetCookie(SetCookie, "csrftoken");
+                else if (SetCookie.Contains("csrf="))
+                    csrfToken = GetCookie(SetCookie, "csrf");
+            }
+
+            Debug.Log("Received: " + uwr.downloadHandler.text);
+            yield return uwr.downloadHandler.text;
+        }
+    }
+
+    private string GetCookie(string SetCookie, string csrftag)
+    {
+        string csrfCookie = null;
+        Regex rxCookie = new Regex(csrftag + "=(?<csrf_token>.{64});");
+        MatchCollection cookieMatches = rxCookie.Matches(SetCookie);
+        if (cookieMatches.Count > 0)
+            csrfCookie = cookieMatches[0].Groups["csrf_token"].Value;
+        Debug.Log(csrftag + ":" + csrfCookie);
+        return csrfCookie;
+    }
 
     public void TestPublish()
     {
@@ -109,7 +213,7 @@ public class ArenaClient : M2MqttUnityClient
     {
         //if (addressInputField)
         //{
-            this.brokerAddress = brokerAddress;
+        this.brokerAddress = brokerAddress;
         //}
     }
 
@@ -117,7 +221,7 @@ public class ArenaClient : M2MqttUnityClient
     {
         //if (portInputField)
         //{
-            int.TryParse(brokerPort, out this.brokerPort);
+        int.TryParse(brokerPort, out this.brokerPort);
         //}
     }
 
@@ -155,7 +259,7 @@ public class ArenaClient : M2MqttUnityClient
 
     protected override void OnConnectionFailed(string errorMessage)
     {
-        Debug.Log("CONNECTION FAILED! " + errorMessage);
+        Debug.LogError("CONNECTION FAILED! " + errorMessage);
     }
 
     protected override void OnDisconnected()
