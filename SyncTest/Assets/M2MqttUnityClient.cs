@@ -46,14 +46,14 @@ namespace M2MqttUnity
         [Tooltip("Port where the broker accepts connections")]
         protected int brokerPort = 8883;
         [Tooltip("Use encrypted connection")]
-        protected bool isEncrypted = true;
+        private bool isEncrypted = true;
         [Header("Connection parameters")]
         [Tooltip("Connection to the broker is delayed by the the given milliseconds")]
         private int connectionDelay = 500;
         [Tooltip("Connection timeout in milliseconds")]
         private int timeoutOnConnection = MqttSettings.MQTT_CONNECT_TIMEOUT;
         [Tooltip("Connect on startup")]
-        private bool autoConnect = false;
+        private bool autoConnect = true;
         [Tooltip("UserName for the MQTT broker. Keep blank if no user name is required.")]
         public string mqttUserName = null;
         [Tooltip("Password for the MQTT broker. Keep blank if no password is required.")]
@@ -69,7 +69,7 @@ namespace M2MqttUnity
         private List<MqttMsgPublishEventArgs> frontMessageQueue = null;
         private List<MqttMsgPublishEventArgs> backMessageQueue = null;
         private bool mqttClientConnectionClosed = false;
-        private bool mqttClientConnected = false;
+        public bool mqttClientConnected { get; private set; } = false;
 
         /// <summary>
         /// Event fired when a connection is successfully established

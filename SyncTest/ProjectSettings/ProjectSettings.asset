@@ -605,7 +605,10 @@ PlayerSettings:
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0
   webGLWasmStreaming: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    1: SSL
+    7: SSL
+    14: SSL
   platformArchitecture: {}
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}

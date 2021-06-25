@@ -151,20 +151,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brokerAddress: arenaxr.org
-  brokerPort: 8883
-  isEncrypted: 1
-  connectionDelay: 500
-  timeoutOnConnection: 30000
-  autoConnect: 0
   mqttUserName: 
   mqttPassword: 
-  host: arenaxr.org
   sceneName: example
-  authCode: 
   sceneUrl: 
   namespaceName: 
-  gAuthId: 
-  gAuthEmail: 
+  idToken: 
+  email: 
+  csrfToken: 
 --- !u!4 &282121966
 Transform:
   m_ObjectHideFlags: 0
@@ -191,7 +185,6 @@ GameObject:
   - component: {fileID: 502867979}
   - component: {fileID: 502867978}
   - component: {fileID: 502867977}
-  - component: {fileID: 502867976}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -199,19 +192,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &502867976
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 502867975}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 847bdaf077611463087f3f6d798e8f49, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scene: {fileID: 282121965}
 --- !u!65 &502867977
 BoxCollider:
   m_ObjectHideFlags: 0

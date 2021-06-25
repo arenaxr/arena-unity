@@ -16,6 +16,14 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 [HelpURL("https://arena.conix.io")]
 public class ArenaClient : M2MqttUnityClient
 {
+    // Singleton instance of this connection object
+    public static ArenaClient Instance { get; private set; }
+
+    protected override void Awake()
+    {
+        Instance = this;
+    }
+
     [Header("ARENA Configuration")]
     [Tooltip("Name of the topic realm for the scene.")]
     private string realm = "realm";
@@ -35,6 +43,7 @@ public class ArenaClient : M2MqttUnityClient
     public string csrfToken = null;
 
     private List<string> eventMessages = new List<string>();
+    private string sceneTopic = null;
 
     static string[] Scopes = {
         Oauth2Service.Scope.UserinfoProfile,
@@ -89,10 +98,9 @@ public class ArenaClient : M2MqttUnityClient
         UserCredential credential;
         using (var stream = ToStream(gauthId))
         {
-            // string credPath = System.Environment.GetFolderPath(
-            //      System.Environment.SpecialFolder.Personal);
-            // credPath = Path.Combine(credPath, ".arena_google_auth");
-            string credPath = "token2.json";
+            string credPath = System.Environment.GetFolderPath(
+                 System.Environment.SpecialFolder.Personal);
+            credPath = Path.Combine(credPath, ".arena_google_auth_unity");
             string applicationName = "ArenaClientCSharp";
 
             credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
@@ -139,6 +147,7 @@ public class ArenaClient : M2MqttUnityClient
         this.mqttUserName = auth.username;
         this.mqttPassword = auth.token;
 
+        sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
         sceneUrl = $"https://{this.brokerAddress}/{namespaceName}/{sceneName}";
 
         base.Start();
@@ -203,31 +212,11 @@ public class ArenaClient : M2MqttUnityClient
         return csrfCookie;
     }
 
-    public void TestPublish()
+    public void Publish(string object_id, string payload)
     {
-        client.Publish("M2MQTT_Unity/test", System.Text.Encoding.UTF8.GetBytes("Test message"), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
-        Debug.Log("Test message published.");
-    }
-
-    public void SetBrokerAddress(string brokerAddress)
-    {
-        //if (addressInputField)
-        //{
-        this.brokerAddress = brokerAddress;
-        //}
-    }
-
-    public void SetBrokerPort(string brokerPort)
-    {
-        //if (portInputField)
-        //{
-        int.TryParse(brokerPort, out this.brokerPort);
-        //}
-    }
-
-    public void SetEncrypted(bool isEncrypted)
-    {
-        this.isEncrypted = isEncrypted;
+        client.Publish($"{sceneTopic}/{client.ClientId}/{object_id}",
+            System.Text.Encoding.UTF8.GetBytes(payload), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
+        Debug.Log("Message published.");
     }
 
     protected override void OnConnecting()
@@ -240,21 +229,16 @@ public class ArenaClient : M2MqttUnityClient
     {
         base.OnConnected();
         Debug.Log("Connected to broker on " + brokerAddress + "\n");
-
-        //if (autoTest)
-        //{
-        //    TestPublish();
-        //}
     }
 
     protected override void SubscribeTopics()
     {
-        client.Subscribe(new string[] { "M2MQTT_Unity/test" }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
+        client.Subscribe(new string[] { $"{sceneTopic}/#" }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
     }
 
     protected override void UnsubscribeTopics()
     {
-        client.Unsubscribe(new string[] { "M2MQTT_Unity/test" });
+        client.Unsubscribe(new string[] { $"{sceneTopic}/#" });
     }
 
     protected override void OnConnectionFailed(string errorMessage)
@@ -271,8 +255,6 @@ public class ArenaClient : M2MqttUnityClient
     {
         Debug.Log("CONNECTION LOST!");
     }
-
-
 
     protected override void DecodeMessage(string topic, byte[] message)
     {
