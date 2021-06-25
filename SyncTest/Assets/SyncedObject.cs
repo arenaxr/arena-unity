@@ -5,6 +5,8 @@ using UnityEngine;
 [HelpURL("https://arena.conix.io/content/messaging/definitions.html")]
 public class SyncedObject : MonoBehaviour
 {
+    private int updateInterval = 10; // in frames
+
     private class ObjectMessage
     {
         public string object_id { get; set; }
@@ -37,8 +39,22 @@ public class SyncedObject : MonoBehaviour
 
     void Start()
     {
-        InvokeRepeating("SendPosition", 1.0f, 0.1f);
+        transform.hasChanged = true;
+        //InvokeRepeating("SendPosition", 0.1f, 0.01f);
         // Every 0.01 seconds is 100fps -- that we're sending at, that is
+    }
+
+    void Update()
+    {
+        // send only when changed, each 10 frames or so
+        if (Time.frameCount % this.updateInterval != 0)
+          return;
+
+        if (transform.hasChanged)
+        {
+            SendPosition();
+            transform.hasChanged = false;
+        }
     }
 
     void SendPosition()
@@ -48,6 +64,7 @@ public class SyncedObject : MonoBehaviour
 
         // For now we just send:
         // {"x": "1", "y": "1", "z": "1"}
+        MeshFilter mesh = GetComponent<MeshFilter>();
         ObjectMessage msg = new ObjectMessage
         {
             object_id = ToGuid(GetInstanceID()).ToString(),
@@ -55,7 +72,7 @@ public class SyncedObject : MonoBehaviour
             type = "object",
             data = new ObjectData
             {
-                object_type = "box",
+                object_type = mesh.sharedMesh.name.ToLower(),
                 position = new Object3D
                 {
                     x = transform.position.x.ToString(),

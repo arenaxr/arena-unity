@@ -29,19 +29,19 @@ public class ArenaClient : M2MqttUnityClient
     private string realm = "realm";
     [Tooltip("Name of the scene, without namespace ('example', not 'username/example'")]
     public string sceneName = "example";
+    [Tooltip("Authenticated user email account.")]
+    public string email = null; // TODO: make read-only
     [Tooltip("Browser URL for the scene.")]
     [TextArea(minLines: 1, maxLines: 2)]
-    public string sceneUrl = null;
+    public string sceneUrl = null; // TODO: make read-only
 
     [Header("Optional Parameters")]
     [Tooltip("Namespace (automated with username), but can be overridden")]
     public string namespaceName = null;
 
 
-    public string idToken = null;
-    public string email = null;
-    public string csrfToken = null;
-
+    private string idToken = null;
+    private string csrfToken = null;
     private List<string> eventMessages = new List<string>();
     private string sceneTopic = null;
 
@@ -118,7 +118,6 @@ public class ArenaClient : M2MqttUnityClient
             });
 
             var userInfo = oauthService.Userinfo.Get().Execute();
-            Debug.Log("userInfo: " + userInfo);
 
             this.email = userInfo.Email;
             this.idToken = credential.Token.IdToken;
@@ -189,7 +188,6 @@ public class ArenaClient : M2MqttUnityClient
             string SetCookie = uwr.GetResponseHeader("Set-Cookie");
             if (SetCookie != null)
             {
-                Debug.Log(SetCookie);
                 if (SetCookie.Contains("csrftoken="))
                     csrfToken = GetCookie(SetCookie, "csrftoken");
                 else if (SetCookie.Contains("csrf="))
@@ -208,15 +206,14 @@ public class ArenaClient : M2MqttUnityClient
         MatchCollection cookieMatches = rxCookie.Matches(SetCookie);
         if (cookieMatches.Count > 0)
             csrfCookie = cookieMatches[0].Groups["csrf_token"].Value;
-        Debug.Log(csrftag + ":" + csrfCookie);
         return csrfCookie;
     }
 
-    public void Publish(string object_id, string payload)
+    public void Publish(string object_id, string msg)
     {
-        client.Publish($"{sceneTopic}/{client.ClientId}/{object_id}",
-            System.Text.Encoding.UTF8.GetBytes(payload), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
-        Debug.Log("Message published.");
+        byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
+        client.Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
+        Debug.Log("Sending: " + msg);
     }
 
     protected override void OnConnecting()
@@ -259,16 +256,8 @@ public class ArenaClient : M2MqttUnityClient
     protected override void DecodeMessage(string topic, byte[] message)
     {
         string msg = System.Text.Encoding.UTF8.GetString(message);
-        Debug.Log("Received: " + msg);
+        //Debug.Log("Received: " + msg);
         StoreMessage(msg);
-        //if (topic == "M2MQTT_Unity/test")
-        //{
-        //    if (autoTest)
-        //    {
-        //        autoTest = false;
-        //        Disconnect();
-        //    }
-        //}
     }
 
     private void StoreMessage(string eventMsg)
@@ -288,9 +277,6 @@ public class ArenaClient : M2MqttUnityClient
 
     private void OnValidate()
     {
-        //if (autoTest)
-        //{
-        //    autoConnect = true;
-        //}
+        // TODO
     }
 }

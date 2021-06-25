@@ -55,9 +55,9 @@ namespace M2MqttUnity
         [Tooltip("Connect on startup")]
         private bool autoConnect = true;
         [Tooltip("UserName for the MQTT broker. Keep blank if no user name is required.")]
-        public string mqttUserName = null;
+        protected string mqttUserName = null;
         [Tooltip("Password for the MQTT broker. Keep blank if no password is required.")]
-        public string mqttPassword = null;
+        protected string mqttPassword = null;
 
         /// <summary>
         /// Wrapped MQTT client
