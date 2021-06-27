@@ -46,6 +46,41 @@ public class ArenaObject : MonoBehaviour
         return new Guid(bytes);
     }
 
+    Object3D ToArenaScale(string object_type, Vector3 scale)
+    {
+        // Scale Conversions
+        // cube: unity (side) 1, arena (side)  1
+        // sphere: unity (diameter) 1, arena (radius)  0.5
+        // cylinder: unity (y height) 1, arena (y height) 2
+        // cylinder: unity (x,z diameter) 1, arena (x,z radius) 0.5
+
+        switch (object_type)
+        {
+            case "sphere":
+                return new Object3D
+                {
+                    x = (scale.x * 0.5).ToString(),
+                    y = (scale.y * 0.5).ToString(),
+                    z = (scale.z * 0.5).ToString()
+                };
+            case "cylinder":
+                return new Object3D
+                {
+                    x = (scale.x * 0.5).ToString(),
+                    y = (scale.y * 2).ToString(),
+                    z = (scale.z * 0.5).ToString()
+                };
+            case "cube":
+            default:
+                return new Object3D
+                {
+                    x = scale.x.ToString(),
+                    y = scale.y.ToString(),
+                    z = scale.z.ToString()
+                };
+        }
+    }
+
     void Start()
     {
         transform.hasChanged = true;
@@ -68,21 +103,12 @@ public class ArenaObject : MonoBehaviour
         }
     }
 
-    // Scale Conversions
-    // cube: unity (side) 1, arena (side)  1
-    // sphere: unity (diameter) 1, arena (radius)  0.5
-    // cylinder: unity (y height) 1, arena (y height) 2
-    // cylinder: unity (x,z diameter) 1, arena (x,z radius) 0.5
-
-    // Position Conversions:
-    // all: z is inverted in the arena
-
     bool SendUpdateSuccess()
     {
         if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
             return false;
 
-        MeshFilter mesh = GetComponent<MeshFilter>();
+        String objectType = GetComponent<MeshFilter>().sharedMesh.name;
         Color color = GetComponent<Renderer>().material.GetColor("_Color");
 
         ObjectMessage msg = new ObjectMessage
@@ -92,9 +118,12 @@ public class ArenaObject : MonoBehaviour
             type = "object",
             data = new ObjectData
             {
-                object_type = mesh.sharedMesh.name.ToLower(),
+                object_type = objectType.ToLower(),
                 position = new Object3D
                 {
+                    // Position Conversions:
+                    // all: z is inverted in the arena
+
                     x = transform.position.x.ToString(),
                     y = transform.position.y.ToString(),
                     z = (-transform.position.z).ToString()
@@ -106,12 +135,7 @@ public class ArenaObject : MonoBehaviour
                     y = transform.rotation.y.ToString(),
                     z = transform.rotation.z.ToString()
                 },
-                scale = new Object3D
-                {
-                    x = transform.localScale.x.ToString(),
-                    y = transform.localScale.y.ToString(),
-                    z = transform.localScale.z.ToString()
-                },
+                scale = ToArenaScale(objectType.ToLower(), transform.localScale),
                 color = $"#{ColorUtility.ToHtmlStringRGB(color)}"
             }
         };
