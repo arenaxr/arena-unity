@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 [HelpURL("https://arena.conix.io/content/messaging/definitions.html")]
-public class SyncedObject : MonoBehaviour
+public class ArenaObject : MonoBehaviour
 {
     private int updateInterval = 10; // in frames
 
@@ -19,12 +19,21 @@ public class SyncedObject : MonoBehaviour
     {
         public string object_type { get; set; }
         public Object3D position { get; set; }
-        // public Object3D rotation { get; set; }
-        // public Object3D scale { get; set; }
+        public ObjectQuat rotation { get; set; }
+        public Object3D scale { get; set; }
+        public string color { get; set; }
     }
 
     private class Object3D
     {
+        public string x { get; set; }
+        public string y { get; set; }
+        public string z { get; set; }
+    }
+
+    private class ObjectQuat
+    {
+        public string w { get; set; }
         public string x { get; set; }
         public string y { get; set; }
         public string z { get; set; }
@@ -52,19 +61,30 @@ public class SyncedObject : MonoBehaviour
 
         if (transform.hasChanged)
         {
-            SendPosition();
-            transform.hasChanged = false;
+            if (SendUpdateSuccess())
+            {
+                transform.hasChanged = false;
+            }
         }
     }
 
-    void SendPosition()
+    // Scale Conversions
+    // cube: unity (side) 1, arena (side)  1
+    // sphere: unity (diameter) 1, arena (radius)  0.5
+    // cylinder: unity (y height) 1, arena (y height) 2
+    // cylinder: unity (x,z diameter) 1, arena (x,z radius) 0.5
+
+    // Position Conversions:
+    // all: z is inverted in the arena
+
+    bool SendUpdateSuccess()
     {
         if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
-            return;
+            return false;
 
-        // For now we just send:
-        // {"x": "1", "y": "1", "z": "1"}
         MeshFilter mesh = GetComponent<MeshFilter>();
+        Color color = GetComponent<Renderer>().material.GetColor("_Color");
+
         ObjectMessage msg = new ObjectMessage
         {
             object_id = ToGuid(GetInstanceID()).ToString(),
@@ -77,12 +97,27 @@ public class SyncedObject : MonoBehaviour
                 {
                     x = transform.position.x.ToString(),
                     y = transform.position.y.ToString(),
-                    z = transform.position.z.ToString()
-                }
+                    z = (-transform.position.z).ToString()
+                },
+                rotation = new ObjectQuat
+                {
+                    w = transform.rotation.w.ToString(),
+                    x = transform.rotation.x.ToString(),
+                    y = transform.rotation.y.ToString(),
+                    z = transform.rotation.z.ToString()
+                },
+                scale = new Object3D
+                {
+                    x = transform.localScale.x.ToString(),
+                    y = transform.localScale.y.ToString(),
+                    z = transform.localScale.z.ToString()
+                },
+                color = $"#{ColorUtility.ToHtmlStringRGB(color)}"
             }
         };
         string payload = JsonConvert.SerializeObject(msg);
         Debug.Log(payload);
         ArenaClient.Instance.Publish(msg.object_id, payload);
+        return true;
     }
 }
