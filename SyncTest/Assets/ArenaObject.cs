@@ -19,7 +19,7 @@ public class ArenaObject : MonoBehaviour
     {
         public string object_type { get; set; }
         public Object3D position { get; set; }
-        public ObjectQuat rotation { get; set; }
+        public Object3D rotation { get; set; }
         public Object3D scale { get; set; }
         public string color { get; set; }
     }
@@ -31,7 +31,7 @@ public class ArenaObject : MonoBehaviour
         public string z { get; set; }
     }
 
-    private class ObjectQuat
+    private class ObjectQuaternion
     {
         public string w { get; set; }
         public string x { get; set; }
@@ -49,10 +49,10 @@ public class ArenaObject : MonoBehaviour
     Object3D ToArenaScale(string object_type, Vector3 scale)
     {
         // Scale Conversions
-        // cube: unity (side) 1, arena (side)  1
-        // sphere: unity (diameter) 1, arena (radius)  0.5
-        // cylinder: unity (y height) 1, arena (y height) 2
-        // cylinder: unity (x,z diameter) 1, arena (x,z radius) 0.5
+        // cube: unity (side) 1, a-frame (side)  1
+        // sphere: unity (diameter) 1, a-frame (radius)  0.5
+        // cylinder: unity (y height) 1, a-frame (y height) 2
+        // cylinder: unity (x,z diameter) 1, a-frame (x,z radius) 0.5
 
         switch (object_type)
         {
@@ -122,18 +122,18 @@ public class ArenaObject : MonoBehaviour
                 position = new Object3D
                 {
                     // Position Conversions:
-                    // all: z is inverted in the arena
+                    // all: z is inverted in a-frame
 
                     x = transform.position.x.ToString(),
                     y = transform.position.y.ToString(),
                     z = (-transform.position.z).ToString()
                 },
-                rotation = new ObjectQuat
+                rotation = new Object3D
                 {
-                    w = transform.rotation.w.ToString(),
-                    x = transform.rotation.x.ToString(),
-                    y = transform.rotation.y.ToString(),
-                    z = transform.rotation.z.ToString()
+                    // TODO: quaternions are more direct, but a-frame doesn't like them somehow
+                    x = (-transform.rotation.eulerAngles.x).ToString(),
+                    y = (-transform.rotation.eulerAngles.y).ToString(),
+                    z = (transform.rotation.eulerAngles.z).ToString()
                 },
                 scale = ToArenaScale(objectType.ToLower(), transform.localScale),
                 color = $"#{ColorUtility.ToHtmlStringRGB(color)}"
