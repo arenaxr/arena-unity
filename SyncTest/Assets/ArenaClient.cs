@@ -132,7 +132,7 @@ public class ArenaClient : M2MqttUnityClient
         cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/user/user_state", csrfToken, form));
         yield return cd.coroutine;
         var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
-        if (user.authenticated && this.namespaceName == null)
+        if (user.authenticated && (this.namespaceName == null || this.namespaceName.Trim() == ""))
             this.namespaceName = user.username;
 
         // get arena user mqtt token
