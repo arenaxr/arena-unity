@@ -116,6 +116,7 @@ public class ArenaObject : MonoBehaviour
             object_id = ToGuid(GetInstanceID()).ToString(),
             action = "update",
             type = "object",
+            persist = true,
             data = new ObjectData
             {
                 object_type = objectType.ToLower(),
