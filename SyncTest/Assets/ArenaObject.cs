@@ -5,6 +5,12 @@ using UnityEngine;
 [HelpURL("https://arena.conix.io/content/messaging/definitions.html")]
 public class ArenaObject : MonoBehaviour
 {
+    // [Header("ARENA Configuration")]
+    [Tooltip("A uuid or otherwise unique identifier for this object")]
+    public string objectId = Guid.NewGuid().ToString();
+    [Tooltip("Persist this object in the ARENA server database (default false = do not persist)")]
+    public Boolean persist = false;
+
     private int updateInterval = 10; // in frames
 
     private class ObjectMessage
@@ -12,6 +18,7 @@ public class ArenaObject : MonoBehaviour
         public string object_id { get; set; }
         public string action { get; set; }
         public string type { get; set; }
+        public Boolean persist { get; set; }
         public ObjectData data { get; set; }
     }
 
@@ -37,13 +44,6 @@ public class ArenaObject : MonoBehaviour
         public string x { get; set; }
         public string y { get; set; }
         public string z { get; set; }
-    }
-
-    public static Guid ToGuid(int value)
-    {
-        byte[] bytes = new byte[16];
-        BitConverter.GetBytes(value).CopyTo(bytes, 0);
-        return new Guid(bytes);
     }
 
     Object3D ToArenaScale(string object_type, Vector3 scale)
@@ -113,10 +113,10 @@ public class ArenaObject : MonoBehaviour
 
         ObjectMessage msg = new ObjectMessage
         {
-            object_id = ToGuid(GetInstanceID()).ToString(),
+            object_id = this.objectId,
             action = "update",
             type = "object",
-            persist = true,
+            persist = this.persist,
             data = new ObjectData
             {
                 object_type = objectType.ToLower(),
