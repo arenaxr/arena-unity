@@ -39,11 +39,20 @@ public class ArenaClient : M2MqttUnityClient
     [Tooltip("Namespace (automated with username), but can be overridden")]
     public string namespaceName = null;
 
-
+    // internal variables
     private string idToken = null;
     private string csrfToken = null;
     private List<string> eventMessages = new List<string>();
     private string sceneTopic = null;
+
+    // local paths
+    const string gAuthFile = ".arena_google_auth";
+    const string mqttTokenFile = ".arena_mqtt_auth";
+    const string userDirArena = ".arena";
+    const string userSubDirUnity = "unity";
+    static string userHomePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+    private string gAuthPath = Path.Combine(userHomePath, userDirArena, userSubDirUnity, gAuthFile);
+    private string mqttTokenPath = Path.Combine(userHomePath, userDirArena, userSubDirUnity, mqttTokenFile);
 
     static string[] Scopes = {
         Oauth2Service.Scope.UserinfoProfile,
@@ -98,9 +107,6 @@ public class ArenaClient : M2MqttUnityClient
         UserCredential credential;
         using (var stream = ToStream(gauthId))
         {
-            string credPath = System.Environment.GetFolderPath(
-                 System.Environment.SpecialFolder.Personal);
-            credPath = Path.Combine(credPath, ".arena_google_auth_unity");
             string applicationName = "ArenaClientCSharp";
 
             credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
@@ -108,8 +114,8 @@ public class ArenaClient : M2MqttUnityClient
                     Scopes,
                     "user",
                     CancellationToken.None,
-                    new FileDataStore(credPath, true)).Result;
-            Debug.Log("Credential file saved to: " + credPath);
+                    new FileDataStore(this.gAuthPath, true)).Result;
+            Debug.Log("Credential file saved to: " + this.gAuthPath);
 
             var oauthService = new Oauth2Service(new BaseClientService.Initializer()
             {
