@@ -51,7 +51,7 @@ public class ArenaClient : M2MqttUnityClient
     const string userDirArena = ".arena";
     const string userSubDirUnity = "unity";
     static string userHomePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-    private string gAuthPath = Path.Combine(userHomePath, userDirArena, userSubDirUnity, gAuthFile);
+    private string gAuthPath = Path.Combine(userHomePath, userDirArena, userSubDirUnity);
     private string mqttTokenPath = Path.Combine(userHomePath, userDirArena, userSubDirUnity, mqttTokenFile);
 
     static string[] Scopes = {
