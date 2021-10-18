@@ -5,20 +5,22 @@ using UnityEngine;
 [HelpURL("https://arena.conix.io/content/messaging/definitions.html")]
 public class ArenaObject : MonoBehaviour
 {
-    // [Header("ARENA Configuration")]
     [Tooltip("A uuid or otherwise unique identifier for this object")]
     public string objectId = Guid.NewGuid().ToString();
     [Tooltip("Persist this object in the ARENA server database (default false = do not persist)")]
-    public Boolean persist = false;
+    public bool persist = false;
+    //[Tooltip("Time-to-live seconds to create the object and automatically delete (default: 0)")]
+    //public Int16 ttl = 0;
 
     private int updateInterval = 10; // in frames
+    private bool created = false;
 
     private class ObjectMessage
     {
         public string object_id { get; set; }
         public string action { get; set; }
         public string type { get; set; }
-        public Boolean persist { get; set; }
+        public bool persist { get; set; }
         public ObjectData data { get; set; }
     }
 
@@ -84,15 +86,13 @@ public class ArenaObject : MonoBehaviour
     void Start()
     {
         transform.hasChanged = true;
-        //InvokeRepeating("SendPosition", 0.1f, 0.01f);
-        // Every 0.01 seconds is 100fps -- that we're sending at, that is
     }
 
     void Update()
     {
         // send only when changed, each 10 frames or so
         if (Time.frameCount % this.updateInterval != 0)
-          return;
+            return;
 
         if (transform.hasChanged)
         {
@@ -114,7 +114,7 @@ public class ArenaObject : MonoBehaviour
         ObjectMessage msg = new ObjectMessage
         {
             object_id = this.objectId,
-            action = "update",
+            action = this.created ? "update" : "create",
             type = "object",
             persist = this.persist,
             data = new ObjectData
@@ -143,6 +143,9 @@ public class ArenaObject : MonoBehaviour
         string payload = JsonConvert.SerializeObject(msg);
         Debug.Log(payload);
         ArenaClient.Instance.Publish(msg.object_id, payload);
+        if (!this.created)
+            this.created = true;
+
         return true;
     }
 }
