@@ -148,4 +148,22 @@ public class ArenaObject : MonoBehaviour
 
         return true;
     }
+
+    public void OnDestroy()
+    {
+        if (Application.isEditor)
+        {
+            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+                return;
+
+            ObjectMessage msg = new ObjectMessage
+            {
+                object_id = this.objectId,
+                action = "delete",
+            };
+            string payload = JsonConvert.SerializeObject(msg);
+            Debug.Log(payload);
+            ArenaClient.Instance.Publish(msg.object_id, payload);
+        }
+    }
 }
