@@ -13,7 +13,16 @@ using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt.Messages;
 
+//[Serializable]
+//public struct Permissions
+//{
+//    [SerializeField] private string mqttPayload;
+
+//    public string MqttPayload => mqttPayload;
+//}
+
 [HelpURL("https://arena.conix.io")]
+[DisallowMultipleComponent()]
 public class ArenaClient : M2MqttUnityClient
 {
     // Singleton instance of this connection object
@@ -29,15 +38,20 @@ public class ArenaClient : M2MqttUnityClient
     private string realm = "realm";
     [Tooltip("Name of the scene, without namespace ('example', not 'username/example'")]
     public string sceneName = "example";
+    [ReadOnly]
     [Tooltip("Authenticated user email account.")]
-    public string email = null; // TODO: make read-only
+    public string email = null;
+    [ReadOnly]
     [Tooltip("Browser URL for the scene.")]
     [TextArea(minLines: 1, maxLines: 2)]
-    public string sceneUrl = null; // TODO: make read-only
+    public string sceneUrl = null;
 
     [Header("Optional Parameters")]
     [Tooltip("Namespace (automated with username), but can be overridden")]
     public string namespaceName = null;
+
+    //[Space()]
+    //[SerializeField] private Permissions permissions;
 
     // internal variables
     private string idToken = null;
@@ -218,7 +232,7 @@ public class ArenaClient : M2MqttUnityClient
     public void Publish(string object_id, string msg)
     {
         byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
-        client.Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
+        client.Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
         Debug.Log("Sending: " + msg);
     }
 
