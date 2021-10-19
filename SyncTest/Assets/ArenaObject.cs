@@ -8,7 +8,7 @@ public class ArenaObject : MonoBehaviour
     [Tooltip("A uuid or otherwise unique identifier for this object")]
     public string objectId = Guid.NewGuid().ToString();
     [Tooltip("Persist this object in the ARENA server database (default false = do not persist)")]
-    public bool persist = false;
+    public bool persist = true;
     //[Tooltip("Time-to-live seconds to create the object and automatically delete (default: 0)")]
     //public Int16 ttl = 0;
 
