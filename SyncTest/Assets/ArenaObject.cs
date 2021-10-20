@@ -15,6 +15,12 @@ public class ArenaObject : MonoBehaviour
     private int updateInterval = 10; // in frames
     private bool created = false;
 
+    //public ArenaObject(string objectId, bool persist)
+    //{
+    //    this.objectId = objectId;
+    //    this.persist = persist;
+    //}
+
     private class ObjectMessage
     {
         public string object_id { get; set; }

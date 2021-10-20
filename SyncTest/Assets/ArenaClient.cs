@@ -182,11 +182,13 @@ public class ArenaClient : M2MqttUnityClient
         sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
         sceneUrl = $"https://{this.brokerAddress}/{namespaceName}/{sceneName}";
 
-        // get persistenece objects
+        // get persistence objects
         Debug.Log("-------------------");
         cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
         yield return cd.coroutine;
 
+        GameObject cubeT = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        Transform arenaClientTransform = GameObject.FindObjectOfType<ArenaClient>().transform;
         string jsonString = cd.result.ToString();
         JArray jsonVal = JArray.Parse(jsonString) as JArray;
         dynamic objects = jsonVal;
@@ -194,6 +196,29 @@ public class ArenaClient : M2MqttUnityClient
         {
             Debug.Log("-------------------");
             Debug.Log($"{obj.object_id} ({obj.type})");
+            if (obj.type == "object"){
+                dynamic p = obj.position;
+                Vector3 vector3;
+                if (p.z)
+                    vector3  = new Vector3(x: p.x, y: p.y, z: p.z);
+                else
+                    vector3 = new Vector3(x: 0f, y: 0f, z: 0f);
+                dynamic r = obj.rotation;
+                Quaternion quaternion;
+                if (r.w) // quaternion
+                    quaternion = new Quaternion(x: r.x, y: r.y, z: r.z, w: r.w);
+                else if (r.z) // euler
+                    quaternion = Quaternion.Euler(x: r.x, y: r.y, z: r.z);
+                else // default
+                    quaternion = Quaternion.identity;
+
+                //scale
+                GameObject cube = Instantiate(cubeT, vector3 , quaternion);
+                cube.transform.parent = arenaClientTransform;
+                ArenaObject aobj = cube.AddComponent(typeof(ArenaObject)) as ArenaObject;
+                aobj.objectId = obj.object_id;
+                aobj.persist = true;
+            }
             foreach (dynamic attr in obj.attributes)
             {
                 Debug.Log("\t" + attr);
