@@ -89,6 +89,18 @@ public class ArenaClient : M2MqttUnityClient
         public string token { get; set; }
     }
 
+    private void generateArenaInternalTestObjs()
+    {
+        GameObject cubeT = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        Transform arenaClientTransform = GameObject.FindObjectOfType<ArenaClient>().transform;
+        for (int i = 0; i < 10; i++)
+        {
+            GameObject cube = Instantiate(cubeT, new Vector3(i * 2.0F, 0, 0), Quaternion.identity);
+            cube.transform.parent = arenaClientTransform;
+            ArenaObject obj = cube.AddComponent(typeof(ArenaObject)) as ArenaObject;
+        }
+    }
+
     // Start is called before the first frame update
     protected override void Start()
     {
