@@ -9,6 +9,7 @@ using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using M2MqttUnity;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt.Messages;
@@ -180,6 +181,24 @@ public class ArenaClient : M2MqttUnityClient
 
         sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
         sceneUrl = $"https://{this.brokerAddress}/{namespaceName}/{sceneName}";
+
+        // get persistenece objects
+        Debug.Log("-------------------");
+        cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
+        yield return cd.coroutine;
+
+        string jsonString = cd.result.ToString();
+        JArray jsonVal = JArray.Parse(jsonString) as JArray;
+        dynamic objects = jsonVal;
+        foreach (dynamic obj in objects)
+        {
+            Debug.Log("-------------------");
+            Debug.Log($"{obj.object_id} ({obj.type})");
+            foreach (dynamic attr in obj.attributes)
+            {
+                Debug.Log("\t" + attr);
+            }
+        }
 
         base.Start();
     }
