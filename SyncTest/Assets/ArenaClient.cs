@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Google.Apis.Auth.OAuth2;
@@ -196,36 +198,52 @@ public class ArenaClient : M2MqttUnityClient
         {
             Debug.Log("-------------------");
             Debug.Log($"{obj.object_id} ({obj.type})");
-            if (obj.type == "object"){
-                dynamic p = obj.position;
-                Vector3 vector3;
-                if (p.z)
-                    vector3  = new Vector3(x: p.x, y: p.y, z: p.z);
-                else
-                    vector3 = new Vector3(x: 0f, y: 0f, z: 0f);
-                dynamic r = obj.rotation;
-                Quaternion quaternion;
-                if (r.w) // quaternion
-                    quaternion = new Quaternion(x: r.x, y: r.y, z: r.z, w: r.w);
-                else if (r.z) // euler
-                    quaternion = Quaternion.Euler(x: r.x, y: r.y, z: r.z);
-                else // default
-                    quaternion = Quaternion.identity;
-
-                //scale
-                GameObject cube = Instantiate(cubeT, vector3 , quaternion);
-                cube.transform.parent = arenaClientTransform;
+            if (obj.type == "object")
+            {
+                // default
+                Vector3 position = new Vector3(0f, 0f, 0f);
+                Quaternion rotation = Quaternion.identity;
+                Vector3 scale = new Vector3(1f, 1f, 1f);
+                // actual
+                foreach (JProperty attribute in obj.attributes)
+                {
+                    Debug.Log("\t" + attribute);
+                    switch (attribute.Name)
+                    {
+                        case "position":
+                            dynamic p = obj.attributes.position;
+                            if (doesPropertyExist(p, "z"))
+                                position = new Vector3(float.Parse(p.x), float.Parse(p.y), float.Parse(p.z));
+                            break;
+                        case "rotation":
+                            dynamic r = obj.attributes.rotation;
+                            Debug.Log(r);
+                            if (doesPropertyExist(r, "w")) // quaternion
+                                rotation = new Quaternion(float.Parse(r.x), float.Parse(r.y), float.Parse(r.z), float.Parse(r.w));
+                            else if (doesPropertyExist(r, "z")) // euler
+                                rotation = Quaternion.Euler(float.Parse(r.x), float.Parse(r.y), float.Parse(r.z));
+                            break;
+                        case "scale":
+                            dynamic s = obj.attributes.scale;
+                            if (doesPropertyExist(s, "z"))
+                                scale = new Vector3(float.Parse(s.x), float.Parse(s.y), float.Parse(s.z));
+                            break;
+                    }
+                }
+                GameObject cube = Instantiate(cubeT, position, rotation, arenaClientTransform);
                 ArenaObject aobj = cube.AddComponent(typeof(ArenaObject)) as ArenaObject;
                 aobj.objectId = obj.object_id;
                 aobj.persist = true;
-            }
-            foreach (dynamic attr in obj.attributes)
-            {
-                Debug.Log("\t" + attr);
+                cube.name = $"{obj.object_id} ({obj.attributes.object_type})";
             }
         }
 
         base.Start();
+    }
+
+    public static bool doesPropertyExist(dynamic obj, string property)
+    {
+        return ((Type)obj.GetType()).GetProperties().Where(p => p.Name.Equals(property)).Any();
     }
 
     public static Stream ToStream(string str)
