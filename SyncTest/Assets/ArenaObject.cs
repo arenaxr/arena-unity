@@ -11,6 +11,9 @@ public class ArenaObject : MonoBehaviour
     public bool persist = true;
     //[Tooltip("Time-to-live seconds to create the object and automatically delete (default: 0)")]
     //public Int16 ttl = 0;
+    [TextArea(10, 20)]
+    [Tooltip("ARENA JSON-encoded message (debug only for now)")]
+    public string arenaJson = "";
 
     private int updateInterval = 10; // in frames
     private bool created = false;
@@ -148,7 +151,7 @@ public class ArenaObject : MonoBehaviour
         };
         string payload = JsonConvert.SerializeObject(msg);
         Debug.Log(payload);
-        ArenaClient.Instance.Publish(msg.object_id, payload);
+        // ArenaClient.Instance.Publish(msg.object_id, payload);
         if (!this.created)
             this.created = true;
 
@@ -169,7 +172,7 @@ public class ArenaObject : MonoBehaviour
             };
             string payload = JsonConvert.SerializeObject(msg);
             Debug.Log(payload);
-            ArenaClient.Instance.Publish(msg.object_id, payload);
+            // ArenaClient.Instance.Publish(msg.object_id, payload);
         }
     }
 }
