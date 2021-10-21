@@ -92,18 +92,6 @@ public class ArenaClient : M2MqttUnityClient
         public string token { get; set; }
     }
 
-    private void generateArenaInternalTestObjs()
-    {
-        GameObject cubeT = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        Transform arenaClientTransform = GameObject.FindObjectOfType<ArenaClient>().transform;
-        for (int i = 0; i < 10; i++)
-        {
-            GameObject cube = Instantiate(cubeT, new Vector3(i * 2.0F, 0, 0), Quaternion.identity);
-            cube.transform.parent = arenaClientTransform;
-            ArenaObject obj = cube.AddComponent(typeof(ArenaObject)) as ArenaObject;
-        }
-    }
-
     // Start is called before the first frame update
     protected override void Start()
     {
@@ -185,7 +173,6 @@ public class ArenaClient : M2MqttUnityClient
         sceneUrl = $"https://{this.brokerAddress}/{namespaceName}/{sceneName}";
 
         // get persistence objects
-        Debug.Log("-------------------");
         cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
         yield return cd.coroutine;
 
@@ -196,8 +183,6 @@ public class ArenaClient : M2MqttUnityClient
         dynamic objects = jsonVal;
         foreach (dynamic obj in objects)
         {
-            Debug.Log("-------------------");
-            Debug.Log($"{obj.object_id} ({obj.type})");
             if (obj.type == "object")
             {
                 // default
@@ -207,33 +192,33 @@ public class ArenaClient : M2MqttUnityClient
                 // actual
                 foreach (JProperty attribute in obj.attributes)
                 {
-                    Debug.Log("\t" + attribute);
                     switch (attribute.Name)
                     {
                         case "position":
                             dynamic p = obj.attributes.position;
-                            if (doesPropertyExist(p, "z"))
-                                position = new Vector3(float.Parse(p.x), float.Parse(p.y), float.Parse(p.z));
+                            if (p != null && p.z != null)
+                                position = new Vector3((float)p.x, (float)p.y, (float)p.z);
                             break;
                         case "rotation":
                             dynamic r = obj.attributes.rotation;
-                            Debug.Log(r);
-                            if (doesPropertyExist(r, "w")) // quaternion
-                                rotation = new Quaternion(float.Parse(r.x), float.Parse(r.y), float.Parse(r.z), float.Parse(r.w));
-                            else if (doesPropertyExist(r, "z")) // euler
-                                rotation = Quaternion.Euler(float.Parse(r.x), float.Parse(r.y), float.Parse(r.z));
+                            if (r != null && r.w != null) // quaternion
+                                rotation = new Quaternion((float)r.x, (float)r.y, (float)r.z, (float)r.w);
+                            else if (r != null && r.z != null) // euler
+                                rotation = Quaternion.Euler((float)r.x, (float)r.y, (float)r.z);
                             break;
                         case "scale":
                             dynamic s = obj.attributes.scale;
-                            if (doesPropertyExist(s, "z"))
-                                scale = new Vector3(float.Parse(s.x), float.Parse(s.y), float.Parse(s.z));
+                            if (s != null && s.z != null)
+                                scale = new Vector3((float)s.x, (float)s.y, (float)s.z);
                             break;
                     }
                 }
                 GameObject cube = Instantiate(cubeT, position, rotation, arenaClientTransform);
+                cube.transform.localScale = scale;
                 ArenaObject aobj = cube.AddComponent(typeof(ArenaObject)) as ArenaObject;
                 aobj.objectId = obj.object_id;
                 aobj.persist = true;
+                aobj.arenaJson = obj.ToString();
                 cube.name = $"{obj.object_id} ({obj.attributes.object_type})";
             }
         }
@@ -241,9 +226,16 @@ public class ArenaClient : M2MqttUnityClient
         base.Start();
     }
 
-    public static bool doesPropertyExist(dynamic obj, string property)
+    private void generateArenaInternalTestObjs()
     {
-        return ((Type)obj.GetType()).GetProperties().Where(p => p.Name.Equals(property)).Any();
+        GameObject cubeT = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        Transform arenaClientTransform = GameObject.FindObjectOfType<ArenaClient>().transform;
+        for (int i = 0; i < 10; i++)
+        {
+            GameObject cube = Instantiate(cubeT, new Vector3(i * 2.0F, 0, 0), Quaternion.identity);
+            cube.transform.parent = arenaClientTransform;
+            ArenaObject obj = cube.AddComponent(typeof(ArenaObject)) as ArenaObject;
+        }
     }
 
     public static Stream ToStream(string str)
