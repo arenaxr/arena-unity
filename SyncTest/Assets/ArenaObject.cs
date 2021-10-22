@@ -14,7 +14,8 @@ public class ArenaObject : MonoBehaviour
     [TextArea(10, 20)]
     [Tooltip("ARENA JSON-encoded message (debug only for now)")]
     public string arenaJson = "";
-
+    [HideInInspector]
+    public string parentId = null;
     private int updateInterval = 10; // in frames
     private bool created = false;
 
