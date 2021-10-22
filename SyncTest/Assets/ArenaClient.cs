@@ -62,6 +62,7 @@ public class ArenaClient : M2MqttUnityClient
     private string csrfToken = null;
     private List<string> eventMessages = new List<string>();
     private string sceneTopic = null;
+    private Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
 
     // local paths
     const string gAuthFile = ".arena_google_auth";
@@ -181,6 +182,7 @@ public class ArenaClient : M2MqttUnityClient
         string jsonString = cd.result.ToString();
         JArray jsonVal = JArray.Parse(jsonString) as JArray;
         dynamic objects = jsonVal;
+        // establish objects
         foreach (dynamic obj in objects)
         {
             if (obj.type == "object")
@@ -212,11 +214,23 @@ public class ArenaClient : M2MqttUnityClient
                     }
                 }
                 gobj.transform.parent = arenaClientTransform;
+                gobj.name = $"{obj.object_id} ({obj.attributes.object_type})";
                 ArenaObject aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
-                aobj.objectId = obj.object_id;
+                aobj.objectId = (string)obj.object_id;
+                aobj.parentId = (string)obj.attributes.parent;
                 aobj.persist = true;
                 aobj.arenaJson = obj.ToString();
-                gobj.name = $"{obj.object_id} ({obj.attributes.object_type})";
+                //arenaObjs.Add(gobj);
+                arenaObjs.Add((string)obj.object_id, gobj);
+            }
+        }
+        // establish parent/child relationships
+        foreach (KeyValuePair<string, GameObject> gobj in arenaObjs)
+        {
+            string parent = gobj.Value.GetComponent<ArenaObject>().parentId;
+            if (parent != null)
+            {
+                gobj.Value.GetComponent<ArenaObject>().transform.parent = arenaObjs[parent].transform;
             }
         }
 
