@@ -117,9 +117,11 @@ public class ArenaObject : MonoBehaviour
         if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
             return false;
 
-        String objectType = GetComponent<MeshFilter>().sharedMesh.name;
-        Color color = GetComponent<Renderer>().material.GetColor("_Color");
-
+        String objectType= "";
+        if (GetComponent<MeshFilter>())
+        {
+            objectType = GetComponent<MeshFilter>().sharedMesh.name.ToLower();
+        }
         ObjectMessage msg = new ObjectMessage
         {
             object_id = this.objectId,
@@ -128,7 +130,7 @@ public class ArenaObject : MonoBehaviour
             persist = this.persist,
             data = new ObjectData
             {
-                object_type = objectType.ToLower(),
+                object_type = objectType,
                 position = new Object3D
                 {
                     // Position Conversions:
@@ -146,9 +148,13 @@ public class ArenaObject : MonoBehaviour
                     z = (transform.rotation.eulerAngles.z).ToString()
                 },
                 scale = ToArenaScale(objectType.ToLower(), transform.localScale),
-                color = $"#{ColorUtility.ToHtmlStringRGB(color)}"
             }
         };
+        if (GetComponent<Renderer>())
+        {
+            Color color = GetComponent<Renderer>().material.GetColor("_Color");
+            msg.data.color = $"#{ColorUtility.ToHtmlStringRGB(color)}";
+        }
         string payload = JsonConvert.SerializeObject(msg);
         Debug.Log(payload);
         // ArenaClient.Instance.Publish(msg.object_id, payload);

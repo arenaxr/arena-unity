@@ -187,9 +187,9 @@ public class ArenaClient : M2MqttUnityClient
             {
                 // default
                 GameObject objT = new GameObject();
-                Vector3 position = new(0f, 0f, 0f);
+                Vector3 position = new Vector3(0f, 0f, 0f);
                 Quaternion rotation = Quaternion.identity;
-                Vector3 scale = new(1f, 1f, 1f);
+                Vector3 scale = new Vector3(1f, 1f, 1f);
                 // actual
                 foreach (JProperty attribute in obj.attributes)
                 {
@@ -228,10 +228,10 @@ public class ArenaClient : M2MqttUnityClient
             }
         }
 
-        //GameObject import = Importer.LoadFromFile("/Users/mwfarb/git/arena-core/models/Duck.glb");
-        //Debug.Log($"GLTFUtility: {import.name}");
-        //GameObject model = Instantiate(import, new Vector3(10f, 0f, 10f), Quaternion.identity);
-        //Debug.Log(model);
+        // GameObject import = Importer.LoadFromFile("/Users/mwfarb/git/arena-core/models/Duck.glb");
+        // Debug.Log($"GLTFUtility: {import.name}");
+        // GameObject model = Instantiate(import, new Vector3(10f, 0f, 10f), Quaternion.identity);
+        // Debug.Log(model);
 
         base.Start();
     }
@@ -239,15 +239,23 @@ public class ArenaClient : M2MqttUnityClient
     private GameObject getPrimitiveByObjType(string obj_type)
     {
         Debug.Log($"Adding ARENA object Type: {obj_type}");
-        return obj_type switch
+        switch (obj_type)
         {
-            "box" or "cube" => GameObject.CreatePrimitive(PrimitiveType.Cube),
-            "cylinder" => GameObject.CreatePrimitive(PrimitiveType.Cylinder),
-            "sphere" => GameObject.CreatePrimitive(PrimitiveType.Sphere),
-            "plane" => GameObject.CreatePrimitive(PrimitiveType.Quad),
-            //"quad" => GameObject.CreatePrimitive(PrimitiveType.Quad),
-            //"capsule" => GameObject.CreatePrimitive(PrimitiveType.Capsule),
-            _ => new GameObject(),
+            case "box":
+            case "cube":
+                return GameObject.CreatePrimitive(PrimitiveType.Cube);
+            case "cylinder":
+                return GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            case "sphere":
+                return GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            case "plane":
+                return GameObject.CreatePrimitive(PrimitiveType.Quad);
+            // case "quad":
+            //     return GameObject.CreatePrimitive(PrimitiveType.Quad);
+            // case "capsule":
+            //     return GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            default:
+                return new GameObject();
         };
     }
 
