@@ -186,40 +186,32 @@ public class ArenaClient : M2MqttUnityClient
             if (obj.type == "object")
             {
                 // default
-                GameObject objT = new GameObject();
-                Vector3 position = new Vector3(0f, 0f, 0f);
-                Quaternion rotation = Quaternion.identity;
-                Vector3 scale = new Vector3(1f, 1f, 1f);
+                GameObject gobj = getPrimitiveByObjType((string)obj.attributes.object_type);
                 // actual
                 foreach (JProperty attribute in obj.attributes)
                 {
                     switch (attribute.Name)
                     {
-                        case "object_type":
-                            dynamic t = obj.attributes.object_type;
-                            objT = getPrimitiveByObjType((string)t);
-                            break;
                         case "position":
                             dynamic p = obj.attributes.position;
                             if (p != null && p.z != null)
-                                position = new Vector3((float)p.x, (float)p.y, (float)p.z);
+                                gobj.transform.position = new Vector3((float)p.x, (float)p.y, (float)p.z);
                             break;
                         case "rotation":
                             dynamic r = obj.attributes.rotation;
                             if (r != null && r.w != null) // quaternion
-                                rotation = new Quaternion((float)r.x, (float)r.y, (float)r.z, (float)r.w);
+                                gobj.transform.rotation = new Quaternion((float)r.x, (float)r.y, (float)r.z, (float)r.w);
                             else if (r != null && r.z != null) // euler
-                                rotation = Quaternion.Euler((float)r.x, (float)r.y, (float)r.z);
+                                gobj.transform.rotation = Quaternion.Euler((float)r.x, (float)r.y, (float)r.z);
                             break;
                         case "scale":
                             dynamic s = obj.attributes.scale;
                             if (s != null && s.z != null)
-                                scale = new Vector3((float)s.x, (float)s.y, (float)s.z);
+                                gobj.transform.localScale = new Vector3((float)s.x, (float)s.y, (float)s.z);
                             break;
                     }
                 }
-                GameObject gobj = Instantiate(objT, position, rotation, arenaClientTransform);
-                gobj.transform.localScale = scale;
+                gobj.transform.parent = arenaClientTransform;
                 ArenaObject aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
                 aobj.objectId = obj.object_id;
                 aobj.persist = true;
