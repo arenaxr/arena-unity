@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt.Messages;
+//using Siccity.GLTFUtility;
 
 //[Serializable]
 //public struct Permissions
@@ -176,7 +177,6 @@ public class ArenaClient : M2MqttUnityClient
         cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
         yield return cd.coroutine;
 
-        GameObject cubeT = GameObject.CreatePrimitive(PrimitiveType.Cube);
         Transform arenaClientTransform = GameObject.FindObjectOfType<ArenaClient>().transform;
         string jsonString = cd.result.ToString();
         JArray jsonVal = JArray.Parse(jsonString) as JArray;
@@ -186,14 +186,19 @@ public class ArenaClient : M2MqttUnityClient
             if (obj.type == "object")
             {
                 // default
-                Vector3 position = new Vector3(0f, 0f, 0f);
+                GameObject objT = new GameObject();
+                Vector3 position = new(0f, 0f, 0f);
                 Quaternion rotation = Quaternion.identity;
-                Vector3 scale = new Vector3(1f, 1f, 1f);
+                Vector3 scale = new(1f, 1f, 1f);
                 // actual
                 foreach (JProperty attribute in obj.attributes)
                 {
                     switch (attribute.Name)
                     {
+                        case "object_type":
+                            dynamic t = obj.attributes.object_type;
+                            objT = getPrimitiveByObjType((string)t);
+                            break;
                         case "position":
                             dynamic p = obj.attributes.position;
                             if (p != null && p.z != null)
@@ -213,17 +218,37 @@ public class ArenaClient : M2MqttUnityClient
                             break;
                     }
                 }
-                GameObject cube = Instantiate(cubeT, position, rotation, arenaClientTransform);
-                cube.transform.localScale = scale;
-                ArenaObject aobj = cube.AddComponent(typeof(ArenaObject)) as ArenaObject;
+                GameObject gobj = Instantiate(objT, position, rotation, arenaClientTransform);
+                gobj.transform.localScale = scale;
+                ArenaObject aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
                 aobj.objectId = obj.object_id;
                 aobj.persist = true;
                 aobj.arenaJson = obj.ToString();
-                cube.name = $"{obj.object_id} ({obj.attributes.object_type})";
+                gobj.name = $"{obj.object_id} ({obj.attributes.object_type})";
             }
         }
 
+        //GameObject import = Importer.LoadFromFile("/Users/mwfarb/git/arena-core/models/Duck.glb");
+        //Debug.Log($"GLTFUtility: {import.name}");
+        //GameObject model = Instantiate(import, new Vector3(10f, 0f, 10f), Quaternion.identity);
+        //Debug.Log(model);
+
         base.Start();
+    }
+
+    private GameObject getPrimitiveByObjType(string obj_type)
+    {
+        Debug.Log($"Adding ARENA object Type: {obj_type}");
+        return obj_type switch
+        {
+            "box" or "cube" => GameObject.CreatePrimitive(PrimitiveType.Cube),
+            "cylinder" => GameObject.CreatePrimitive(PrimitiveType.Cylinder),
+            "sphere" => GameObject.CreatePrimitive(PrimitiveType.Sphere),
+            "plane" => GameObject.CreatePrimitive(PrimitiveType.Quad),
+            //"quad" => GameObject.CreatePrimitive(PrimitiveType.Quad),
+            //"capsule" => GameObject.CreatePrimitive(PrimitiveType.Capsule),
+            _ => new GameObject(),
+        };
     }
 
     private void generateArenaInternalTestObjs()

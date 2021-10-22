@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brokerAddress: arenaxr.org
-  sceneName: example
+  sceneName: badges-example
   email: 
   sceneUrl: 
   namespaceName: 
