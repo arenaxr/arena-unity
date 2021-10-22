@@ -118,7 +118,7 @@ public class ArenaObject : MonoBehaviour
         if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
             return false;
 
-        String objectType= "";
+        String objectType = "";
         if (GetComponent<MeshFilter>())
         {
             objectType = GetComponent<MeshFilter>().sharedMesh.name.ToLower();
@@ -157,7 +157,6 @@ public class ArenaObject : MonoBehaviour
             msg.data.color = $"#{ColorUtility.ToHtmlStringRGB(color)}";
         }
         string payload = JsonConvert.SerializeObject(msg);
-        Debug.Log(payload);
         // ArenaClient.Instance.Publish(msg.object_id, payload);
         if (!this.created)
             this.created = true;
@@ -178,7 +177,6 @@ public class ArenaObject : MonoBehaviour
                 action = "delete",
             };
             string payload = JsonConvert.SerializeObject(msg);
-            Debug.Log(payload);
             // ArenaClient.Instance.Publish(msg.object_id, payload);
         }
     }
