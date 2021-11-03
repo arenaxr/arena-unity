@@ -11,7 +11,7 @@ public class ArenaObject : MonoBehaviour
     public bool persist = true;
     //[Tooltip("Time-to-live seconds to create the object and automatically delete (default: 0)")]
     //public Int16 ttl = 0;
-    [TextArea(10, 20)]
+    [TextArea(10, 15)]
     [Tooltip("ARENA JSON-encoded message (debug only for now)")]
     public string arenaJson = "";
     [HideInInspector]
