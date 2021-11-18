@@ -9,14 +9,11 @@ public class ArenaObject : MonoBehaviour
     public string objectId = Guid.NewGuid().ToString();
     [Tooltip("Persist this object in the ARENA server database (default false = do not persist)")]
     public bool persist = true;
-    //[Tooltip("Time-to-live seconds to create the object and automatically delete (default: 0)")]
-    //public Int16 ttl = 0;
     [TextArea(10, 15)]
     [Tooltip("ARENA JSON-encoded message (debug only for now)")]
     public string arenaJson = "";
     [HideInInspector]
     public string parentId = null;
-    private int updateInterval = 10; // in frames
     private bool created = false;
 
     //public ArenaObject(string objectId, bool persist)
@@ -101,7 +98,7 @@ public class ArenaObject : MonoBehaviour
     void Update()
     {
         // send only when changed, each 10 frames or so
-        if (Time.frameCount % this.updateInterval != 0)
+        if (Time.frameCount % ArenaClient.Instance.updateInterval != 0)
             return;
 
         if (transform.hasChanged)
