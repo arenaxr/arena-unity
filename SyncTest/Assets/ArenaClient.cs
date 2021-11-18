@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Google.Apis.Auth.OAuth2;
@@ -51,14 +49,15 @@ public class ArenaClient : M2MqttUnityClient
     [Header("Optional Parameters")]
     [Tooltip("Namespace (automated with username), but can be overridden")]
     public string namespaceName = null;
-    // [Tooltip("Namespace (automated with username), but can be overridden")]
-    // public string namespaceName = null;
-    // [Tooltip("Namespace (automated with username), but can be overridden")]
-    // public string namespaceName = null;
-    // [Tooltip("Namespace (automated with username), but can be overridden")]
-    // public string namespaceName = null;
-    // [Tooltip("Namespace (automated with username), but can be overridden")]
-    // public string namespaceName = null;
+    [Tooltip("logMqttUsers")]
+    public bool logMqttUsers = false;
+    [Tooltip("logMqttObjects")]
+    public bool logMqttObjects = true;
+    [Tooltip("logMqttEvents")]
+    public bool logMqttEvents = true;
+    [Tooltip("updateInterval")]
+    [Range(0, 60)]
+    public int updateInterval = 10; // in frames
 
     //[Space()]
     //[SerializeField] private Permissions permissions;
@@ -344,7 +343,8 @@ public class ArenaClient : M2MqttUnityClient
     {
         byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
         client.Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
-        Debug.Log("Sending: " + msg);
+        dynamic obj = JsonConvert.DeserializeObject(msg);
+        LogMessage("Sent", obj);
     }
 
     protected override void OnConnecting()
@@ -398,7 +398,32 @@ public class ArenaClient : M2MqttUnityClient
 
     private void ProcessMessage(string msg)
     {
-        Debug.Log("Received: " + msg);
+        dynamic obj = JsonConvert.DeserializeObject(msg);
+        // consume object updates
+        if (obj.type == "object")
+        {
+            switch (obj.action)
+            {
+                case "create":
+                case "update":
+                    break;
+                case "delete":
+                    break;
+            }
+        }
+        LogMessage("Received", obj);
+    }
+
+    private void LogMessage(string dir, dynamic obj)
+    {
+        // determine logging level
+        if (obj.action == "clientEvent" && !logMqttEvents) return;
+        if (obj.type == "object")
+        {
+            if (obj.data != null && obj.data.object_type == "camera" && !logMqttUsers) return;
+            if (!logMqttObjects) return;
+        }
+        Debug.Log($"{dir}: {JsonConvert.SerializeObject(obj)}");
     }
 
     private void OnDestroy()
