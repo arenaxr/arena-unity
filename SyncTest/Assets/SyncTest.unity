@@ -151,10 +151,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brokerAddress: arenaxr.org
-  sceneName: ismar-dev
+  sceneName: example
   email: 
   sceneUrl: 
-  namespaceName: public
+  namespaceName: 
 --- !u!4 &282121966
 Transform:
   m_ObjectHideFlags: 0

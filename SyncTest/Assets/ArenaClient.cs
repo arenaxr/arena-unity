@@ -42,10 +42,8 @@ public class ArenaClient : M2MqttUnityClient
     private string realm = "realm";
     [Tooltip("Name of the scene, without namespace ('example', not 'username/example'")]
     public string sceneName = "example";
-    [ReadOnly]
     [Tooltip("Authenticated user email account.")]
     public string email = null;
-    [ReadOnly]
     [Tooltip("Browser URL for the scene.")]
     [TextArea(minLines: 1, maxLines: 2)]
     public string sceneUrl = null;
@@ -53,6 +51,14 @@ public class ArenaClient : M2MqttUnityClient
     [Header("Optional Parameters")]
     [Tooltip("Namespace (automated with username), but can be overridden")]
     public string namespaceName = null;
+    // [Tooltip("Namespace (automated with username), but can be overridden")]
+    // public string namespaceName = null;
+    // [Tooltip("Namespace (automated with username), but can be overridden")]
+    // public string namespaceName = null;
+    // [Tooltip("Namespace (automated with username), but can be overridden")]
+    // public string namespaceName = null;
+    // [Tooltip("Namespace (automated with username), but can be overridden")]
+    // public string namespaceName = null;
 
     //[Space()]
     //[SerializeField] private Permissions permissions;
