@@ -193,7 +193,7 @@ public class ArenaClient : M2MqttUnityClient
         {
             if (obj.type == "object")
             {
-                CreateUpdateObject((string)obj.object_id, true, obj.attributes);
+                CreateUpdateObject((string)obj.object_id, obj.attributes);
             }
         }
         // establish parent/child relationships
@@ -214,7 +214,7 @@ public class ArenaClient : M2MqttUnityClient
         base.Start();
     }
 
-    private void CreateUpdateObject(string object_id, bool persist, dynamic data)
+    private void CreateUpdateObject(string object_id, dynamic data)
     {
         GameObject gobj;
         ArenaObject aobj;
@@ -231,7 +231,7 @@ public class ArenaClient : M2MqttUnityClient
             aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
             aobj.objectId = object_id;
             aobj.parentId = (string)data.parent;
-            aobj.persist = persist;
+            aobj.persist = true;
         }
         // update Unity attributes
         foreach (JProperty attribute in data)
@@ -429,10 +429,15 @@ public class ArenaClient : M2MqttUnityClient
             {
                 case "create":
                 case "update":
-                    CreateUpdateObject((string)obj.object_id, (bool)obj.persist, obj.data);
+                    if (System.Convert.ToBoolean(obj.persist))
+                    {
+                        CreateUpdateObject((string)obj.object_id, obj.data);
+                    }
                     break;
                 case "delete":
                     RemoveObject((string)obj.object_id);
+                    break;
+                default:
                     break;
             }
         }

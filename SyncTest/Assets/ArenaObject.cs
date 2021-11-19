@@ -18,46 +18,7 @@ public class ArenaObject : MonoBehaviour
     public string parentId = null;
     private bool created = false;
 
-    //public ArenaObject(string objectId, bool persist)
-    //{
-    //    this.objectId = objectId;
-    //    this.persist = persist;
-    //}
-
-    private class ObjectMessage
-    {
-        public string object_id { get; set; }
-        public string action { get; set; }
-        public string type { get; set; }
-        public bool persist { get; set; }
-        public ObjectData data { get; set; }
-    }
-
-    private class ObjectData
-    {
-        public string object_type { get; set; }
-        public Object3D position { get; set; }
-        public Object3D rotation { get; set; }
-        public Object3D scale { get; set; }
-        public string color { get; set; }
-    }
-
-    private class Object3D
-    {
-        public string x { get; set; }
-        public string y { get; set; }
-        public string z { get; set; }
-    }
-
-    private class ObjectQuaternion
-    {
-        public string w { get; set; }
-        public string x { get; set; }
-        public string y { get; set; }
-        public string z { get; set; }
-    }
-
-    Object3D ToArenaScale(string object_type, Vector3 scale)
+    dynamic ToArenaScale(string object_type, Vector3 scale)
     {
         // Scale Conversions
         // cube: unity (side) 1, a-frame (side)  1
@@ -67,34 +28,34 @@ public class ArenaObject : MonoBehaviour
 
         switch (object_type)
         {
-            case "sphere":
-                return new Object3D
-                {
-                    x = (scale.x * 0.5).ToString(),
-                    y = (scale.y * 0.5).ToString(),
-                    z = (scale.z * 0.5).ToString()
-                };
-            case "cylinder":
-                return new Object3D
-                {
-                    x = (scale.x * 0.5).ToString(),
-                    y = (scale.y * 2).ToString(),
-                    z = (scale.z * 0.5).ToString()
-                };
-            case "cube":
+            // case "sphere":
+            //     return new
+            //     {
+            //         x = (scale.x * 0.5),
+            //         y = (scale.y * 0.5),
+            //         z = (scale.z * 0.5)
+            //     };
+            // case "cylinder":
+            //     return new
+            //     {
+            //         x = (scale.x * 0.5),
+            //         y = (scale.y * 2),
+            //         z = (scale.z * 0.5)
+            //     };
+            // case "cube":
             default:
-                return new Object3D
+                return new
                 {
-                    x = scale.x.ToString(),
-                    y = scale.y.ToString(),
-                    z = scale.z.ToString()
+                    x = scale.x,
+                    y = scale.y,
+                    z = scale.z
                 };
         }
     }
 
     void Start()
     {
-        transform.hasChanged = true;
+        //transform.hasChanged = true;
     }
 
     void Update()
@@ -122,41 +83,40 @@ public class ArenaObject : MonoBehaviour
         {
             objectType = GetComponent<MeshFilter>().sharedMesh.name.ToLower();
         }
-        ObjectMessage msg = new ObjectMessage
+        dynamic msg = new System.Dynamic.ExpandoObject();
+        msg.object_id = this.objectId;
+        msg.action = this.created ? "update" : "create";
+        msg.type = "object";
+        msg.persist = this.persist;
+        dynamic data = new System.Dynamic.ExpandoObject();
+        data.object_type = objectType;
+        data.position = new
         {
-            object_id = this.objectId,
-            action = this.created ? "update" : "create",
-            type = "object",
-            persist = this.persist,
-            data = new ObjectData
-            {
-                object_type = objectType,
-                position = new Object3D
-                {
-                    // Position Conversions:
-                    // all: z is inverted in a-frame
-
-                    x = transform.position.x.ToString(),
-                    y = transform.position.y.ToString(),
-                    z = (-transform.position.z).ToString()
-                },
-                rotation = new Object3D
-                {
-                    // TODO: quaternions are more direct, but a-frame doesn't like them somehow
-                    x = (-transform.rotation.eulerAngles.x).ToString(),
-                    y = (-transform.rotation.eulerAngles.y).ToString(),
-                    z = (transform.rotation.eulerAngles.z).ToString()
-                },
-                scale = ToArenaScale(objectType.ToLower(), transform.localScale),
-            }
+            // Position Conversions:
+            // all: z is inverted in a-frame
+            x = transform.position.x,
+            y = transform.position.y,
+            z = transform.position.z
+            // z = -transform.position.z
         };
+        data.rotation = new
+        {
+            // TODO: quaternions are more direct, but a-frame doesn't like them somehow
+            x = transform.rotation.eulerAngles.x,
+            //x = -transform.rotation.eulerAngles.x,
+            y = transform.rotation.eulerAngles.y,
+            //y = -transform.rotation.eulerAngles.y,
+            z = transform.rotation.eulerAngles.z
+        };
+        data.scale = ToArenaScale(objectType.ToLower(), transform.localScale);
         if (GetComponent<Renderer>())
         {
             Color color = GetComponent<Renderer>().material.GetColor("_Color");
-            msg.data.color = $"#{ColorUtility.ToHtmlStringRGB(color)}";
+            data.color = $"#{ColorUtility.ToHtmlStringRGB(color)}";
         }
+        msg.data = data;
         string payload = JsonConvert.SerializeObject(msg);
-        // ArenaClient.Instance.Publish(msg.object_id, payload);
+        ArenaClient.Instance.Publish(msg.object_id, payload);
         if (!this.created)
             this.created = true;
 
@@ -170,13 +130,13 @@ public class ArenaObject : MonoBehaviour
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
                 return;
 
-            ObjectMessage msg = new ObjectMessage
+            dynamic msg = new
             {
                 object_id = this.objectId,
                 action = "delete",
             };
             string payload = JsonConvert.SerializeObject(msg);
-            // ArenaClient.Instance.Publish(msg.object_id, payload);
+            ArenaClient.Instance.Publish(msg.object_id, payload);
         }
     }
 }
