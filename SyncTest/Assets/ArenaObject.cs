@@ -11,7 +11,9 @@ public class ArenaObject : MonoBehaviour
     public bool persist = true;
     [TextArea(10, 15)]
     [Tooltip("ARENA JSON-encoded message (debug only for now)")]
-    public string arenaJson = "";
+    public string jsonData = null;
+    [HideInInspector]
+    public dynamic data = null;
     [HideInInspector]
     public string parentId = null;
     private bool created = false;
@@ -98,7 +100,7 @@ public class ArenaObject : MonoBehaviour
     void Update()
     {
         // send only when changed, each 10 frames or so
-        if (Time.frameCount % ArenaClient.Instance.updateInterval != 0)
+        if (!ArenaClient.Instance || Time.frameCount % ArenaClient.Instance.updateInterval != 0)
             return;
 
         if (transform.hasChanged)

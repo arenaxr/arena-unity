@@ -77,6 +77,7 @@ public class ArenaClient : M2MqttUnityClient
     static string userHomePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
     private string gAuthPath = Path.Combine(userHomePath, userDirArena, userSubDirUnity);
     private string mqttTokenPath = Path.Combine(userHomePath, userDirArena, userSubDirUnity, mqttTokenFile);
+    private Transform arenaClientTransform;
 
     static string[] Scopes = {
         Oauth2Service.Scope.UserinfoProfile,
@@ -183,7 +184,7 @@ public class ArenaClient : M2MqttUnityClient
         cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
         yield return cd.coroutine;
 
-        Transform arenaClientTransform = GameObject.FindObjectOfType<ArenaClient>().transform;
+        arenaClientTransform = GameObject.FindObjectOfType<ArenaClient>().transform;
         string jsonString = cd.result.ToString();
         JArray jsonVal = JArray.Parse(jsonString) as JArray;
         dynamic objects = jsonVal;
@@ -192,41 +193,7 @@ public class ArenaClient : M2MqttUnityClient
         {
             if (obj.type == "object")
             {
-                // default
-                GameObject gobj = getPrimitiveByObjType((string)obj.attributes.object_type);
-                // actual
-                foreach (JProperty attribute in obj.attributes)
-                {
-                    switch (attribute.Name)
-                    {
-                        case "position":
-                            dynamic p = obj.attributes.position;
-                            if (p != null && p.z != null)
-                                gobj.transform.position = new Vector3((float)p.x, (float)p.y, (float)p.z);
-                            break;
-                        case "rotation":
-                            dynamic r = obj.attributes.rotation;
-                            if (r != null && r.w != null) // quaternion
-                                gobj.transform.rotation = new Quaternion((float)r.x, (float)r.y, (float)r.z, (float)r.w);
-                            else if (r != null && r.z != null) // euler
-                                gobj.transform.rotation = Quaternion.Euler((float)r.x, (float)r.y, (float)r.z);
-                            break;
-                        case "scale":
-                            dynamic s = obj.attributes.scale;
-                            if (s != null && s.z != null)
-                                gobj.transform.localScale = new Vector3((float)s.x, (float)s.y, (float)s.z);
-                            break;
-                    }
-                }
-                gobj.transform.parent = arenaClientTransform;
-                gobj.name = $"{obj.object_id} ({obj.attributes.object_type})";
-                ArenaObject aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
-                aobj.objectId = (string)obj.object_id;
-                aobj.parentId = (string)obj.attributes.parent;
-                aobj.persist = true;
-                aobj.arenaJson = obj.ToString();
-                //arenaObjs.Add(gobj);
-                arenaObjs.Add((string)obj.object_id, gobj);
+                CreateUpdateObject((string)obj.object_id, true, obj.attributes);
             }
         }
         // establish parent/child relationships
@@ -247,6 +214,64 @@ public class ArenaClient : M2MqttUnityClient
         base.Start();
     }
 
+    private void CreateUpdateObject(string object_id, bool persist, dynamic data)
+    {
+        GameObject gobj;
+        ArenaObject aobj;
+        if (arenaObjs.TryGetValue(object_id, out gobj))
+        { // update
+            aobj = gobj.GetComponent<ArenaObject>();
+        }
+        else
+        { //create
+            gobj = getPrimitiveByObjType((string)data.object_type);
+            gobj.transform.parent = arenaClientTransform;
+            gobj.name = $"{object_id} ({data.object_type})";
+            arenaObjs.Add(object_id, gobj);
+            aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
+            aobj.objectId = object_id;
+            aobj.parentId = (string)data.parent;
+            aobj.persist = persist;
+        }
+        // update Unity attributes
+        foreach (JProperty attribute in data)
+        {
+            switch (attribute.Name)
+            {
+                case "position":
+                    dynamic p = data.position;
+                    if (p != null && p.z != null)
+                        gobj.transform.position = new Vector3((float)p.x, (float)p.y, (float)p.z);
+                    break;
+                case "rotation":
+                    dynamic r = data.rotation;
+                    if (r != null && r.w != null) // quaternion
+                        gobj.transform.rotation = new Quaternion((float)r.x, (float)r.y, (float)r.z, (float)r.w);
+                    else if (r != null && r.z != null) // euler
+                        gobj.transform.rotation = Quaternion.Euler((float)r.x, (float)r.y, (float)r.z);
+                    break;
+                case "scale":
+                    dynamic s = data.scale;
+                    if (s != null && s.z != null)
+                        gobj.transform.localScale = new Vector3((float)s.x, (float)s.y, (float)s.z);
+                    break;
+            }
+        }
+        // update ARENA attributes
+        aobj.data = data;
+        aobj.jsonData = aobj.data.ToString();
+    }
+
+    private void RemoveObject(string object_id)
+    {
+        GameObject gobj;
+        if (arenaObjs.TryGetValue(object_id, out gobj))
+        {
+            Destroy(gobj);
+        }
+        arenaObjs.Remove(object_id);
+    }
+
     private GameObject getPrimitiveByObjType(string obj_type)
     {
         Debug.Log($"Adding ARENA object Type: {obj_type}");
@@ -259,8 +284,7 @@ public class ArenaClient : M2MqttUnityClient
                 return GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             case "sphere":
                 return GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            case "plane":
-                return GameObject.CreatePrimitive(PrimitiveType.Quad);
+            // case "plane":
             // case "quad":
             //     return GameObject.CreatePrimitive(PrimitiveType.Quad);
             // case "capsule":
@@ -387,7 +411,6 @@ public class ArenaClient : M2MqttUnityClient
     protected override void DecodeMessage(string topic, byte[] message)
     {
         string msg = System.Text.Encoding.UTF8.GetString(message);
-        //Debug.Log("Received: " + msg);
         StoreMessage(msg);
     }
 
@@ -402,12 +425,14 @@ public class ArenaClient : M2MqttUnityClient
         // consume object updates
         if (obj.type == "object")
         {
-            switch (obj.action)
+            switch ((string)obj.action)
             {
                 case "create":
                 case "update":
+                    CreateUpdateObject((string)obj.object_id, (bool)obj.persist, obj.data);
                     break;
                 case "delete":
+                    RemoveObject((string)obj.object_id);
                     break;
             }
         }
@@ -417,12 +442,12 @@ public class ArenaClient : M2MqttUnityClient
     private void LogMessage(string dir, dynamic obj)
     {
         // determine logging level
-        if (obj.action == "clientEvent" && !logMqttEvents) return;
         if (obj.type == "object")
         {
             if (obj.data != null && obj.data.object_type == "camera" && !logMqttUsers) return;
             if (!logMqttObjects) return;
         }
+        if (obj.action == "clientEvent" && !logMqttEvents) return;
         Debug.Log($"{dir}: {JsonConvert.SerializeObject(obj)}");
     }
 
