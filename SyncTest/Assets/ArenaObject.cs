@@ -18,6 +18,16 @@ public class ArenaObject : MonoBehaviour
     public string parentId = null;
     private bool created = false;
 
+    public string GetObjectType()
+    {
+        string objectType = "entity";
+        if (GetComponent<MeshFilter>())
+        {
+            objectType = GetComponent<MeshFilter>().sharedMesh.name.ToLower();
+        }
+        return objectType.ToLower();
+    }
+
     dynamic ToArenaScale(string object_type, Vector3 scale)
     {
         // Scale Conversions
@@ -53,10 +63,7 @@ public class ArenaObject : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        //transform.hasChanged = true;
-    }
+    void Start() { }
 
     void Update()
     {
@@ -78,18 +85,13 @@ public class ArenaObject : MonoBehaviour
         if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
             return false;
 
-        String objectType = "";
-        if (GetComponent<MeshFilter>())
-        {
-            objectType = GetComponent<MeshFilter>().sharedMesh.name.ToLower();
-        }
         dynamic msg = new System.Dynamic.ExpandoObject();
         msg.object_id = this.objectId;
         msg.action = this.created ? "update" : "create";
         msg.type = "object";
         msg.persist = this.persist;
         dynamic data = new System.Dynamic.ExpandoObject();
-        data.object_type = objectType;
+        data.object_type = GetObjectType();
         data.position = new
         {
             // Position Conversions:
@@ -108,13 +110,14 @@ public class ArenaObject : MonoBehaviour
             //y = -transform.rotation.eulerAngles.y,
             z = transform.rotation.eulerAngles.z
         };
-        data.scale = ToArenaScale(objectType.ToLower(), transform.localScale);
+        data.scale = ToArenaScale(data.object_type, transform.localScale);
         if (GetComponent<Renderer>())
         {
             Color color = GetComponent<Renderer>().material.GetColor("_Color");
             data.color = $"#{ColorUtility.ToHtmlStringRGB(color)}";
         }
         msg.data = data;
+        jsonData = data.ToString();
         string payload = JsonConvert.SerializeObject(msg);
         ArenaClient.Instance.Publish(msg.object_id, payload);
         if (!this.created)

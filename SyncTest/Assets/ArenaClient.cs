@@ -119,6 +119,20 @@ public class ArenaClient : M2MqttUnityClient
             }
             eventMessages.Clear();
         }
+
+        if (arenaObjs.Count != transform.childCount)
+        { // discover new objects
+            foreach (Transform child in transform)
+            {
+                ArenaObject aobj = child.gameObject.GetComponent<ArenaObject>();
+                if (aobj == null)
+                {
+                    aobj = child.gameObject.AddComponent(typeof(ArenaObject)) as ArenaObject;
+                    child.name = $"{aobj.objectId} ({aobj.GetObjectType()})";
+                    arenaObjs.Add(aobj.objectId, child.gameObject);
+                }
+            }
+        }
     }
 
     private IEnumerator SceneLogin()
@@ -274,7 +288,6 @@ public class ArenaClient : M2MqttUnityClient
 
     private GameObject getPrimitiveByObjType(string obj_type)
     {
-        Debug.Log($"Adding ARENA object Type: {obj_type}");
         switch (obj_type)
         {
             case "box":
