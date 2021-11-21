@@ -63,7 +63,11 @@ public class ArenaObject : MonoBehaviour
         }
     }
 
-    void Start() { }
+    void Start()
+    {
+        transform.hasChanged = false;
+
+    }
 
     void Update()
     {
@@ -98,8 +102,8 @@ public class ArenaObject : MonoBehaviour
             // all: z is inverted in a-frame
             x = transform.position.x,
             y = transform.position.y,
-            z = transform.position.z
-            // z = -transform.position.z
+            //z = transform.position.z
+            z = -transform.position.z
         };
         data.rotation = new
         {
