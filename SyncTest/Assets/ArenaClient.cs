@@ -154,7 +154,7 @@ public class ArenaClient : M2MqttUnityClient
                     "user",
                     CancellationToken.None,
                     new FileDataStore(this.gAuthPath, true)).Result;
-            Debug.Log("Credential file saved to: " + this.gAuthPath);
+            Debug.Log($"Credential file saved to: {this.gAuthPath}");
 
             var oauthService = new Oauth2Service(new BaseClientService.Initializer()
             {
@@ -197,7 +197,6 @@ public class ArenaClient : M2MqttUnityClient
         // get persistence objects
         cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
         yield return cd.coroutine;
-
         arenaClientTransform = GameObject.FindObjectOfType<ArenaClient>().transform;
         string jsonString = cd.result.ToString();
         JArray jsonVal = JArray.Parse(jsonString) as JArray;
@@ -255,7 +254,7 @@ public class ArenaClient : M2MqttUnityClient
                 case "position":
                     dynamic p = data.position;
                     if (p != null && p.z != null)
-                        gobj.transform.position = new Vector3((float)p.x, (float)p.y, (float)p.z);
+                        gobj.transform.position = new Vector3((float)p.x, (float)p.y, -(float)p.z);
                     break;
                 case "rotation":
                     dynamic r = data.rotation;
@@ -297,11 +296,12 @@ public class ArenaClient : M2MqttUnityClient
                 return GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             case "sphere":
                 return GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            // case "plane":
-            // case "quad":
-            //     return GameObject.CreatePrimitive(PrimitiveType.Quad);
-            // case "capsule":
-            //     return GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            case "plane":
+                return GameObject.CreatePrimitive(PrimitiveType.Plane);
+            case "quad":
+                return GameObject.CreatePrimitive(PrimitiveType.Quad);
+            case "capsule":
+                return GameObject.CreatePrimitive(PrimitiveType.Capsule);
             default:
                 return new GameObject();
         };
@@ -346,7 +346,7 @@ public class ArenaClient : M2MqttUnityClient
 
         if (uwr.isNetworkError)
         {
-            Debug.Log("Error While Sending: " + uwr.error);
+            Debug.Log($"Error While Sending: {uwr.error}");
             yield break;
         }
         else
@@ -361,7 +361,7 @@ public class ArenaClient : M2MqttUnityClient
                     csrfToken = GetCookie(SetCookie, "csrf");
             }
 
-            Debug.Log("Received: " + uwr.downloadHandler.text);
+            Debug.Log($"Received: {uwr.downloadHandler.text}");
             yield return uwr.downloadHandler.text;
         }
     }
@@ -369,7 +369,7 @@ public class ArenaClient : M2MqttUnityClient
     private string GetCookie(string SetCookie, string csrftag)
     {
         string csrfCookie = null;
-        Regex rxCookie = new Regex(csrftag + "=(?<csrf_token>.{64});");
+        Regex rxCookie = new Regex($"{csrftag}=(?<csrf_token>.{64});");
         MatchCollection cookieMatches = rxCookie.Matches(SetCookie);
         if (cookieMatches.Count > 0)
             csrfCookie = cookieMatches[0].Groups["csrf_token"].Value;
@@ -387,13 +387,13 @@ public class ArenaClient : M2MqttUnityClient
     protected override void OnConnecting()
     {
         base.OnConnecting();
-        Debug.Log("Connecting to broker on " + brokerAddress + ":" + brokerPort.ToString() + "...\n");
+        Debug.Log($"Connecting to broker on {brokerAddress}:{brokerPort.ToString()}...\n");
     }
 
     protected override void OnConnected()
     {
         base.OnConnected();
-        Debug.Log("Connected to broker on " + brokerAddress + "\n");
+        Debug.Log($"Connected to broker on {brokerAddress}\n");
     }
 
     protected override void SubscribeTopics()
@@ -408,7 +408,7 @@ public class ArenaClient : M2MqttUnityClient
 
     protected override void OnConnectionFailed(string errorMessage)
     {
-        Debug.LogError("CONNECTION FAILED! " + errorMessage);
+        Debug.LogError($"CONNECTION FAILED! {errorMessage}");
     }
 
     protected override void OnDisconnected()

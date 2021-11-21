@@ -155,6 +155,10 @@ MonoBehaviour:
   email: 
   sceneUrl: 
   namespaceName: 
+  logMqttUsers: 0
+  logMqttObjects: 1
+  logMqttEvents: 0
+  updateInterval: 10
 --- !u!4 &282121966
 Transform:
   m_ObjectHideFlags: 0
