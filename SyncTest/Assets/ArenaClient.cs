@@ -13,7 +13,6 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt.Messages;
-//using Siccity.GLTFUtility;
 
 //[Serializable]
 //public struct Permissions
@@ -218,12 +217,6 @@ public class ArenaClient : M2MqttUnityClient
                 gobj.Value.GetComponent<ArenaObject>().transform.parent = arenaObjs[parent].transform;
             }
         }
-
-        // GameObject import = Importer.LoadFromFile("/Users/mwfarb/git/arena-core/models/Duck.glb");
-        // Debug.Log($"GLTFUtility: {import.name}");
-        // GameObject model = Instantiate(import, new Vector3(10f, 0f, 10f), Quaternion.identity);
-        // Debug.Log(model);
-
         base.Start();
     }
 
@@ -252,21 +245,28 @@ public class ArenaClient : M2MqttUnityClient
             switch (attribute.Name)
             {
                 case "position":
-                    dynamic p = data.position;
-                    if (p != null && p.z != null)
-                        gobj.transform.position = new Vector3((float)p.x, (float)p.y, -(float)p.z);
+                    if (data.position != null)
+                        gobj.transform.position = ArenaUnity.ToUnityPosition(data.position);
                     break;
                 case "rotation":
-                    dynamic r = data.rotation;
-                    if (r != null && r.w != null) // quaternion
-                        gobj.transform.rotation = new Quaternion((float)r.x, (float)r.y, (float)r.z, (float)r.w);
-                    else if (r != null && r.z != null) // euler
-                        gobj.transform.rotation = Quaternion.Euler((float)r.x, (float)r.y, (float)r.z);
+                    if (data.rotation != null)
+                    {
+                        if (data.rotation.w != null) // quaternion
+                            gobj.transform.rotation = ArenaUnity.ToUnityRotationQuat(data.rotation);
+                        else // euler
+                            gobj.transform.rotation = ArenaUnity.ToUnityRotationEuler(data.rotation);
+                    }
                     break;
                 case "scale":
-                    dynamic s = data.scale;
-                    if (s != null && s.z != null)
-                        gobj.transform.localScale = new Vector3((float)s.x, (float)s.y, (float)s.z);
+                    if (data.scale != null)
+                        gobj.transform.localScale = ArenaUnity.ToUnityScale((string)data.object_type, data.scale);
+                    break;
+                case "color":
+                    if (data.color != null)
+                    {
+                        var renderer = gobj.GetComponent<Renderer>();
+                        renderer.material.SetColor("_Color", ArenaUnity.ToUnityColor((string)data.color));
+                    }
                     break;
             }
         }
