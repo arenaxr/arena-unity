@@ -12,10 +12,12 @@ public class ArenaObject : MonoBehaviour
     [TextArea(10, 15)]
     [Tooltip("ARENA JSON-encoded message (debug only for now)")]
     public string jsonData = null;
+
     [HideInInspector]
     public dynamic data = null;
     [HideInInspector]
     public string parentId = null;
+
     private bool created = false;
 
     public string GetObjectType()
@@ -28,45 +30,9 @@ public class ArenaObject : MonoBehaviour
         return objectType.ToLower();
     }
 
-    dynamic ToArenaScale(string object_type, Vector3 scale)
-    {
-        // Scale Conversions
-        // cube: unity (side) 1, a-frame (side)  1
-        // sphere: unity (diameter) 1, a-frame (radius)  0.5
-        // cylinder: unity (y height) 1, a-frame (y height) 2
-        // cylinder: unity (x,z diameter) 1, a-frame (x,z radius) 0.5
-
-        switch (object_type)
-        {
-            // case "sphere":
-            //     return new
-            //     {
-            //         x = (scale.x * 0.5),
-            //         y = (scale.y * 0.5),
-            //         z = (scale.z * 0.5)
-            //     };
-            // case "cylinder":
-            //     return new
-            //     {
-            //         x = (scale.x * 0.5),
-            //         y = (scale.y * 2),
-            //         z = (scale.z * 0.5)
-            //     };
-            // case "cube":
-            default:
-                return new
-                {
-                    x = scale.x,
-                    y = scale.y,
-                    z = scale.z
-                };
-        }
-    }
-
     void Start()
     {
         transform.hasChanged = false;
-
     }
 
     void Update()
@@ -94,32 +60,20 @@ public class ArenaObject : MonoBehaviour
         msg.action = this.created ? "update" : "create";
         msg.type = "object";
         msg.persist = this.persist;
-        dynamic data = new System.Dynamic.ExpandoObject();
-        data.object_type = GetObjectType();
-        data.position = new
-        {
-            // Position Conversions:
-            // all: z is inverted in a-frame
-            x = transform.position.x,
-            y = transform.position.y,
-            //z = transform.position.z
-            z = -transform.position.z
-        };
-        data.rotation = new
-        {
-            // TODO: quaternions are more direct, but a-frame doesn't like them somehow
-            x = transform.rotation.eulerAngles.x,
-            //x = -transform.rotation.eulerAngles.x,
-            y = transform.rotation.eulerAngles.y,
-            //y = -transform.rotation.eulerAngles.y,
-            z = transform.rotation.eulerAngles.z
-        };
-        data.scale = ToArenaScale(data.object_type, transform.localScale);
+        dynamic dataUp = new System.Dynamic.ExpandoObject();
+        dataUp.object_type = GetObjectType();
+        dataUp.position = ArenaUnity.ToArenaPosition(transform.position);
+        if (data.rotation != null && data.rotation.w != null)
+            dataUp.rotation = ArenaUnity.ToArenaRotationQuat(transform.rotation);
+        else
+            dataUp.rotation = ArenaUnity.ToArenaRotationEuler(transform.rotation.eulerAngles);
+        dataUp.scale = ArenaUnity.ToArenaScale(dataUp.object_type, transform.localScale);
         if (GetComponent<Renderer>())
         {
             Color color = GetComponent<Renderer>().material.GetColor("_Color");
-            data.color = $"#{ColorUtility.ToHtmlStringRGB(color)}";
+            dataUp.color = ArenaUnity.ToArenaColor(color);
         }
+        data = dataUp;
         msg.data = data;
         jsonData = data.ToString();
         string payload = JsonConvert.SerializeObject(msg);
