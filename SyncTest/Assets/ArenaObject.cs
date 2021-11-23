@@ -20,14 +20,15 @@ public class ArenaObject : MonoBehaviour
 
     private bool created = false;
 
-    public string GetObjectType()
+    public void OnEnable()
     {
-        string objectType = "entity";
-        if (GetComponent<MeshFilter>())
+        if (Application.isEditor)
         {
-            objectType = GetComponent<MeshFilter>().sharedMesh.name.ToLower();
+            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+                return;
+            // trigger publish for new object
+            transform.hasChanged = true;
         }
-        return objectType.ToLower();
     }
 
     void Start()
@@ -37,10 +38,10 @@ public class ArenaObject : MonoBehaviour
 
     void Update()
     {
-        // send only when changed, each 10 frames or so
-        if (!ArenaClient.Instance || Time.frameCount % ArenaClient.Instance.updateInterval != 0)
+        // send only when changed, each publishInterval frames, or stop at 0 frames
+        if (!ArenaClient.Instance || ArenaClient.Instance.publishInterval == 0 ||
+        Time.frameCount % ArenaClient.Instance.publishInterval != 0)
             return;
-
         if (transform.hasChanged)
         {
             if (SendUpdateSuccess())
@@ -61,9 +62,9 @@ public class ArenaObject : MonoBehaviour
         msg.type = "object";
         msg.persist = this.persist;
         dynamic dataUp = new System.Dynamic.ExpandoObject();
-        dataUp.object_type = GetObjectType();
+        dataUp.object_type = ArenaUnity.ToArenaObjectType(this.gameObject);
         dataUp.position = ArenaUnity.ToArenaPosition(transform.position);
-        if (data.rotation != null && data.rotation.w != null)
+        if (data != null && data.rotation != null && data.rotation.w != null)
             dataUp.rotation = ArenaUnity.ToArenaRotationQuat(transform.rotation);
         else
             dataUp.rotation = ArenaUnity.ToArenaRotationEuler(transform.rotation.eulerAngles);

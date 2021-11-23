@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -13,14 +14,6 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt.Messages;
-
-//[Serializable]
-//public struct Permissions
-//{
-//    [SerializeField] private string mqttPayload;
-
-//    public string MqttPayload => mqttPayload;
-//}
 
 [HelpURL("https://arena.conix.io")]
 [DisallowMultipleComponent()]
@@ -48,18 +41,20 @@ public class ArenaClient : M2MqttUnityClient
     [Header("Optional Parameters")]
     [Tooltip("Namespace (automated with username), but can be overridden")]
     public string namespaceName = null;
-    [Tooltip("logMqttUsers")]
-    public bool logMqttUsers = false;
-    [Tooltip("logMqttObjects")]
+    [Space()]
+    [Tooltip("Console log MQTT object messages")]
     public bool logMqttObjects = true;
-    [Tooltip("logMqttEvents")]
-    public bool logMqttEvents = true;
-    [Tooltip("updateInterval")]
+    [Tooltip("Console log MQTT user messages")]
+    public bool logMqttUsers = false;
+    [Tooltip("Console log MQTT client event messages")]
+    public bool logMqttEvents = false;
+    [Tooltip("Frequency to publish detected changes by frames (0 to stop)")]
     [Range(0, 60)]
-    public int updateInterval = 10; // in frames
-
-    //[Space()]
-    //[SerializeField] private Permissions permissions;
+    public int publishInterval = 30; // in publish per frames
+    [Space()]
+    [Tooltip("MQTT JWT Auth Payload and Claims")]
+    [TextArea(10, 15)]
+    public string permissions;
 
     // internal variables
     private string idToken = null;
@@ -127,7 +122,11 @@ public class ArenaClient : M2MqttUnityClient
                 if (aobj == null)
                 {
                     aobj = child.gameObject.AddComponent(typeof(ArenaObject)) as ArenaObject;
-                    child.name = $"{aobj.objectId} ({aobj.GetObjectType()})";
+                    if (!arenaObjs.ContainsKey(child.name))
+                        aobj.objectId = child.name;
+                    else
+                        aobj.objectId = $"{child.name}-{Random.Range(0, 1000000)}";
+                    child.name = $"{aobj.objectId} ({ArenaUnity.ToArenaObjectType(aobj.gameObject)})";
                     arenaObjs.Add(aobj.objectId, child.gameObject);
                 }
             }
@@ -189,6 +188,9 @@ public class ArenaClient : M2MqttUnityClient
         var auth = JsonConvert.DeserializeObject<MqttAuth>(cd.result.ToString());
         this.mqttUserName = auth.username;
         this.mqttPassword = auth.token;
+        var handler = new JwtSecurityTokenHandler();
+        JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
+        permissions = JValue.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
 
         sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
         sceneUrl = $"https://{this.brokerAddress}/{namespaceName}/{sceneName}";
@@ -230,7 +232,7 @@ public class ArenaClient : M2MqttUnityClient
         }
         else
         { //create
-            gobj = getPrimitiveByObjType((string)data.object_type);
+            gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
             gobj.transform.parent = arenaClientTransform;
             gobj.name = $"{object_id} ({data.object_type})";
             arenaObjs.Add(object_id, gobj);
@@ -283,28 +285,6 @@ public class ArenaClient : M2MqttUnityClient
             Destroy(gobj);
         }
         arenaObjs.Remove(object_id);
-    }
-
-    private GameObject getPrimitiveByObjType(string obj_type)
-    {
-        switch (obj_type)
-        {
-            case "box":
-            case "cube":
-                return GameObject.CreatePrimitive(PrimitiveType.Cube);
-            case "cylinder":
-                return GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            case "sphere":
-                return GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            case "plane":
-                return GameObject.CreatePrimitive(PrimitiveType.Plane);
-            case "quad":
-                return GameObject.CreatePrimitive(PrimitiveType.Quad);
-            case "capsule":
-                return GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            default:
-                return new GameObject();
-        };
     }
 
     private void generateArenaInternalTestObjs()
