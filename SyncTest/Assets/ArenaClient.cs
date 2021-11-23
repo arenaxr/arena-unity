@@ -17,6 +17,7 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 
 [HelpURL("https://arena.conix.io")]
 [DisallowMultipleComponent()]
+[AddComponentMenu("ArenaClient",0)]
 public class ArenaClient : M2MqttUnityClient
 {
     // Singleton instance of this connection object
