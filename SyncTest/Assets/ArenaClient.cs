@@ -62,6 +62,7 @@ public class ArenaClient : M2MqttUnityClient
     private List<string> eventMessages = new List<string>();
     private string sceneTopic = null;
     private Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
+    private static string ClientName = "ARENA Client";
 
     // local paths
     const string gAuthFile = ".arena_google_auth";
@@ -92,6 +93,15 @@ public class ArenaClient : M2MqttUnityClient
     {
         public string username { get; set; }
         public string token { get; set; }
+    }
+
+    public void OnEnable()
+    {
+        // ensure consistant name and transform
+        name = ClientName;
+        transform.position = new Vector3(0f, 0f, 0f);
+        transform.rotation = Quaternion.identity;
+        transform.localScale = new Vector3(1f, 1f, 1f);
     }
 
     // Start is called before the first frame update
