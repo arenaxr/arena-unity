@@ -2,8 +2,39 @@
 
 public static class ArenaUnity
 {
+    public static string ToArenaObjectType(GameObject gobj)
+    {
+        string objectType = "entity";
+        if (gobj.GetComponent<MeshFilter>())
+        {
+            objectType = gobj.GetComponent<MeshFilter>().sharedMesh.name.ToLower();
+        }
+        return objectType.ToLower();
+    }
+    public static GameObject ToUnityObjectType(string obj_type)
+    {
+        switch (obj_type)
+        {
+            case "cube":
+            case "box":
+                return GameObject.CreatePrimitive(PrimitiveType.Cube);
+            case "cylinder":
+                return GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            case "sphere":
+                return GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            case "plane":
+                return GameObject.CreatePrimitive(PrimitiveType.Plane);
+            case "quad":
+                return GameObject.CreatePrimitive(PrimitiveType.Quad);
+            case "capsule":
+                return GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            default:
+                return new GameObject();
+        };
+    }
+
     // Position Conversions:
-    // all: z is inverted in a-frame
+    // all: z is inverted between a-frame/unity
     public static dynamic ToArenaPosition(Vector3 position)
     {
         return new
@@ -43,13 +74,10 @@ public static class ArenaUnity
     }
     public static dynamic ToArenaRotationEuler(Vector3 rotationEuler)
     {
-        // TODO: quaternions are more direct, but a-frame doesn't like them somehow
         return new
         {
             x = rotationEuler.x,
-            //x = -rotationEuler.x,
             y = rotationEuler.y,
-            //y = -rotationEuler.y,
             z = rotationEuler.z
         };
     }
@@ -82,13 +110,13 @@ public static class ArenaUnity
         );
     }
 
+    // Scale Conversions
+    // cube: unity (side) 1, a-frame (side)  1
+    // sphere: unity (diameter) 1, a-frame (radius)  0.5
+    // cylinder: unity (y height) 1, a-frame (y height) 2
+    // cylinder: unity (x,z diameter) 1, a-frame (x,z radius) 0.5
     private static float[] GetScaleFactor(string object_type)
     {
-        // Scale Conversions
-        // cube: unity (side) 1, a-frame (side)  1
-        // sphere: unity (diameter) 1, a-frame (radius)  0.5
-        // cylinder: unity (y height) 1, a-frame (y height) 2
-        // cylinder: unity (x,z diameter) 1, a-frame (x,z radius) 0.5
         switch (object_type)
         {
             case "sphere":
