@@ -62,7 +62,7 @@ public class ArenaClient : M2MqttUnityClient
     private List<string> eventMessages = new List<string>();
     private string sceneTopic = null;
     private Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
-    private static string ClientName = "ARENA Client";
+    private static string ClientName = "ARENA Client Runtime";
 
     // local paths
     const string gAuthFile = ".arena_google_auth";
@@ -70,8 +70,6 @@ public class ArenaClient : M2MqttUnityClient
     const string userDirArena = ".arena";
     const string userSubDirUnity = "unity";
     static string userHomePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-    private string gAuthPath = Path.Combine(userHomePath, userDirArena, userSubDirUnity);
-    private string mqttTokenPath = Path.Combine(userHomePath, userDirArena, userSubDirUnity, mqttTokenFile);
     private Transform arenaClientTransform;
 
     static string[] Scopes = {
@@ -145,6 +143,10 @@ public class ArenaClient : M2MqttUnityClient
 
     private IEnumerator SceneLogin()
     {
+        string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, this.brokerAddress, "s");
+        string gAuthPath = sceneAuthDir;
+        string mqttTokenPath = Path.Combine(sceneAuthDir, mqttTokenFile);
+
         // get app credentials
         CoroutineWithData cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/conf/gauth.json"));
         yield return cd.coroutine;
@@ -161,8 +163,8 @@ public class ArenaClient : M2MqttUnityClient
                     Scopes,
                     "user",
                     CancellationToken.None,
-                    new FileDataStore(this.gAuthPath, true)).Result;
-            Debug.Log($"Credential file saved to: {this.gAuthPath}");
+                    new FileDataStore(gAuthPath, true)).Result;
+            Debug.Log($"Credential file saved to: {gAuthPath}");
 
             var oauthService = new Oauth2Service(new BaseClientService.Initializer()
             {
@@ -277,7 +279,8 @@ public class ArenaClient : M2MqttUnityClient
                     if (data.color != null)
                     {
                         var renderer = gobj.GetComponent<Renderer>();
-                        renderer.material.SetColor("_Color", ArenaUnity.ToUnityColor((string)data.color));
+                        if (renderer != null)
+                            renderer.material.SetColor("_Color", ArenaUnity.ToUnityColor((string)data.color));
                     }
                     break;
             }
