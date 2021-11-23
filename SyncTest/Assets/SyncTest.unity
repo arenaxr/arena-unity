@@ -157,7 +157,7 @@ MonoBehaviour:
   logMqttObjects: 1
   logMqttUsers: 0
   logMqttEvents: 0
-  publishInterval: 60
+  publishInterval: 30
   email: 
   permissions: 
 --- !u!4 &282121966
