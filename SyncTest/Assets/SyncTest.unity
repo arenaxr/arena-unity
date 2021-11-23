@@ -152,13 +152,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   brokerAddress: arenaxr.org
   sceneName: example
-  email: 
-  sceneUrl: 
   namespaceName: 
-  logMqttUsers: 0
+  sceneUrl: 
   logMqttObjects: 1
+  logMqttUsers: 0
   logMqttEvents: 0
-  updateInterval: 10
+  publishInterval: 60
+  email: 
+  permissions: 
 --- !u!4 &282121966
 Transform:
   m_ObjectHideFlags: 0

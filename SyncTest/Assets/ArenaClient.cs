@@ -27,21 +27,19 @@ public class ArenaClient : M2MqttUnityClient
         Instance = this;
     }
 
-    [Header("ARENA Configuration")]
+    [Header("ARENA Connection")]
     [Tooltip("Name of the topic realm for the scene.")]
     private string realm = "realm";
     [Tooltip("Name of the scene, without namespace ('example', not 'username/example'")]
     public string sceneName = "example";
-    [Tooltip("Authenticated user email account.")]
-    public string email = null;
+    [Tooltip("Namespace (automated with username), but can be overridden")]
+    public string namespaceName = null;
+    [Space()]
     [Tooltip("Browser URL for the scene.")]
     [TextArea(minLines: 1, maxLines: 2)]
     public string sceneUrl = null;
 
-    [Header("Optional Parameters")]
-    [Tooltip("Namespace (automated with username), but can be overridden")]
-    public string namespaceName = null;
-    [Space()]
+    [Header("Performance")]
     [Tooltip("Console log MQTT object messages")]
     public bool logMqttObjects = true;
     [Tooltip("Console log MQTT user messages")]
@@ -51,7 +49,10 @@ public class ArenaClient : M2MqttUnityClient
     [Tooltip("Frequency to publish detected changes by frames (0 to stop)")]
     [Range(0, 60)]
     public int publishInterval = 30; // in publish per frames
-    [Space()]
+
+    [Header("Authentication")]
+    [Tooltip("Authenticated user email account.")]
+    public string email = null;
     [Tooltip("MQTT JWT Auth Payload and Claims")]
     [TextArea(10, 15)]
     public string permissions;
@@ -217,7 +218,7 @@ public class ArenaClient : M2MqttUnityClient
         // establish objects
         foreach (dynamic obj in objects)
         {
-            if (obj.type == "object")
+            if (obj.type == "object" || obj.attributes.position != null)
             {
                 CreateUpdateObject((string)obj.object_id, obj.attributes);
             }
