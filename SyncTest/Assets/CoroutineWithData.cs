@@ -1,5 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
+
+namespace ArenaUnity
+{
 public class CoroutineWithData
 {
     public Coroutine coroutine { get; private set; }
@@ -19,4 +22,5 @@ public class CoroutineWithData
             yield return result;
         }
     }
+}
 }
