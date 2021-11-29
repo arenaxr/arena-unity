@@ -26,7 +26,8 @@ It would be good to create a public package for Unity projects to consume.
 1. Use Nuget manager to install: https://www.nuget.org/packages/Google.Apis.Oauth2.v2
 1. Unity doesn't load the platform builds of the Paho MQTT .NET (https://github.com/eclipse/paho.mqtt.m2mqtt) package (https://www.nuget.org/packages/M2Mqtt) yet so we're rolling our own for now.
 1. Copy the modified M2MqttUnity/Assets/M2Mqtt project (based on https://github.com/gpvigano/M2MqttUnity) from this repo to the project's Assets folder.
-1. Modify the project's build settings to include the Scripted Define Symbols: SSL.
+1. Modify the Project Settings, section Player, Scripted Define Symbols to include: SSL.
+1. Modify the Project Settings, section Player, Api Compatibility Level to: .NET 4.x.
 1. Attach the component script ArenaClient to the Camera or any empty GameObject, once is enough.
 1. Attach the component script ArenaObject to any object you want to publish to the ARENA.
 1. Modify the the inspector variables for the ArenaClient script to change host, scene, namespace.
