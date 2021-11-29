@@ -9,6 +9,7 @@
   "changelogUrl": "https://github.com/conix-center/ARENA-unity/blob/main/CHANGELOG.md",
   "licensesUrl": "https://github.com/conix-center/ARENA-unity/blob/main/LICENSE",
   "dependencies": {
+		"com.unity.nuget.newtonsoft-json": "2.0.2",
     "com.unity.collab-proxy": "1.2.16",
     "com.unity.ide.rider": "1.2.1",
     "com.unity.ide.visualstudio": "2.0.8",
