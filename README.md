@@ -1,4 +1,4 @@
-# ARENA-csharp
+# ARENA-unity
 Unity C# library for creating applications for the ARENA.
 An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/Unity-UDP-ARENA-Demo.
 **This is a Work-In-Progress.**
@@ -13,7 +13,7 @@ An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/
 1. Modify the `Project Settings | Player | Other Settings`.
 1. Change `Scripted Define Symbols` to include: `SSL`.
 1. Change `Api Compatibility Level` to: `.NET 4.x`.
-1. Open the `Window | Package Manager` and `+ | Add package from git URL...`, use this link: `https://github.com/conix-center/ARENA-csharp.git`.
+1. Open the `Window | Package Manager` and `+ | Add package from git URL...`, use this link: `https://github.com/conix-center/ARENA-unity.git`.
 1. Create an empty GameObject to use as ARENA client root, rename it to something meaningful, like: `ARENA`.
 1. Select the `ARENA` GameObject and press `Add Component` to add the `ArenaClient` script.
 1. Modify the the inspector variables for the `ArenaClient` script to change host, scene, namespace as you wish.

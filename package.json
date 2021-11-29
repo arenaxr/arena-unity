@@ -5,9 +5,9 @@
   "description": "Enables control of ARENA assets through Unity.",
   "unity": "2019.1",
   "unityRelease": "0b5",
-  "documentationUrl": "https://raw.githubusercontent.com/conix-center/ARENA-csharp/main/readme.md",
-  "changelogUrl": "https://raw.githubusercontent.com/conix-center/ARENA-csharp/main/changelog.md",
-  "licensesUrl": "https://raw.githubusercontent.com/conix-center/ARENA-csharp/main/license",
+  "documentationUrl": "https://raw.githubusercontent.com/conix-center/ARENA-unity/main/README.md",
+  "changelogUrl": "https://raw.githubusercontent.com/conix-center/ARENA-unity/main/CHANGELOG.md",
+  "licensesUrl": "https://raw.githubusercontent.com/conix-center/ARENA-unity/main/LICENSE",
   "dependencies": {
     "com.unity.collab-proxy": "1.2.16",
     "com.unity.ide.rider": "1.2.1",
@@ -50,12 +50,11 @@
     "com.unity.modules.xr": "1.0.0"
   },
   "keywords": [
-    "arena",
     "collaboration",
     "networking"
   ],
   "author": {
-    "name": "CONIX Research Center",
+    "name": "The CONIX Research Center",
     "email": "info@conix.io",
     "url": "https://arena.conix.io"
   }
