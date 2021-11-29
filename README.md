@@ -9,7 +9,7 @@ An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/
 - Paho MQTT: https://m2mqtt.wordpress.com/m2mqtt_doc
 
 ## Library Usage:
-1. Open a new or existing Unity project.
+1. Open a new or existing Unity project. **Only confirmed to work in Unity 2019.4.30f1, 2020+ has an import issue.**
 1. Modify the `Project Settings | Player | Other Settings`.
 1. Change `Scripted Define Symbols` to include: `SSL`.
 1. Change `Api Compatibility Level` to: `.NET 4.x`.
