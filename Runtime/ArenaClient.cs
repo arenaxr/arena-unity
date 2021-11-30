@@ -235,13 +235,18 @@ namespace ArenaUnity
                     gobj.Value.GetComponent<ArenaObject>().transform.parent = arenaObjs[parent].transform;
                 }
             }
-            ImportGLTFAsync("/Users/mwfarb/git/arena-services-docker/ARENA-core/store/models/Duck.glb");
+            ImportGLTF("/Users/mwfarb/git/arena-services-docker/ARENA-core/store/models/Duck.glb");
             base.Start();
+        }
+
+        void ImportGLTF(string filepath)
+        {
+            GameObject result = Importer.LoadFromFile(filepath);
         }
 
         void ImportGLTFAsync(string filepath)
         {
-            Importer.ImportGLTFAsync(filepath, new ImportSettings(), OnFinishAsync);
+            //Importer.ImportGLTFAsync(filepath, new ImportSettings(), OnFinishAsync);
         }
 
         void OnFinishAsync(GameObject result)

@@ -1,6 +1,8 @@
 {
     "name": "conix.arena.unity",
-    "references": [],
+    "references": [
+        "Siccity.GLTFUtility"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
