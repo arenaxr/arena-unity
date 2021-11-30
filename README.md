@@ -13,6 +13,7 @@ An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/
 1. Open `Edit | Project Settings | Player | Other Settings`.
 1. Change `Scripted Define Symbols` to include: `SSL`.
 1. Change `Api Compatibility Level` to: `.NET 4.x`.
+<!-- 1. `+ | Add package from git URL...`, use this link: `https://github.com/siccity/gltfutility.git`. **Temporary, the package dependencies as of 2020.3 won't allow .git protocol yet.** -->
 1. Open `Window | Package Manager` and `+ | Add package from git URL...`, use this link: `https://github.com/conix-center/ARENA-unity.git`.
 1. Create an empty GameObject to use as ARENA client root, rename it to something meaningful, like: `ARENA`.
 1. Select the `ARENA` GameObject and press `Add Component` to add the `ArenaClient` script.

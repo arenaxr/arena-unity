@@ -11,6 +11,7 @@ using Google.Apis.Util.Store;
 using M2MqttUnity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Siccity.GLTFUtility;
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt.Messages;
@@ -76,10 +77,10 @@ namespace ArenaUnity
         private Transform arenaClientTransform;
 
         static string[] Scopes = {
-        Oauth2Service.Scope.UserinfoProfile,
-        Oauth2Service.Scope.UserinfoEmail,
-        Oauth2Service.Scope.Openid
-    };
+            Oauth2Service.Scope.UserinfoProfile,
+            Oauth2Service.Scope.UserinfoEmail,
+            Oauth2Service.Scope.Openid
+        };
 
         public class UserState
         {
@@ -151,7 +152,7 @@ namespace ArenaUnity
             string mqttTokenPath = Path.Combine(sceneAuthDir, mqttTokenFile);
 
             // get app credentials
-            CoroutineWithData cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/conf/gauth.json"));
+            CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/conf/gauth.json"));
             yield return cd.coroutine;
             var gauthId = cd.result.ToString();
 
@@ -182,12 +183,12 @@ namespace ArenaUnity
             }
 
             // get arena web login token
-            yield return HttpRequest($"https://{this.brokerAddress}/user/login");
+            yield return HttpRequestAuth($"https://{this.brokerAddress}/user/login");
 
             // get arena user account state
             WWWForm form = new WWWForm();
             form.AddField("id_token", idToken);
-            cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/user/user_state", csrfToken, form));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/user/user_state", csrfToken, form));
             yield return cd.coroutine;
             var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
             if (user.authenticated && (this.namespaceName == null || this.namespaceName.Trim() == ""))
@@ -198,7 +199,7 @@ namespace ArenaUnity
             form.AddField("username", user.username);
             form.AddField("realm", realm);
             form.AddField("scene", $"{namespaceName}/{sceneName}");
-            cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/user/mqtt_auth", csrfToken, form));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/user/mqtt_auth", csrfToken, form));
             yield return cd.coroutine;
             var auth = JsonConvert.DeserializeObject<MqttAuth>(cd.result.ToString());
             this.mqttUserName = auth.username;
@@ -211,7 +212,7 @@ namespace ArenaUnity
             sceneUrl = $"https://{this.brokerAddress}/{namespaceName}/{sceneName}";
 
             // get persistence objects
-            cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
             yield return cd.coroutine;
             arenaClientTransform = GameObject.FindObjectOfType<ArenaClient>().transform;
             string jsonString = cd.result.ToString();
@@ -220,10 +221,24 @@ namespace ArenaUnity
             // establish objects
             foreach (dynamic obj in objects)
             {
+                string objUrl = null;
+                byte[] urlData = null;
                 if (obj.type == "object" || obj.attributes.position != null)
                 {
-                    CreateUpdateObject((string)obj.object_id, obj.attributes);
+                    if (obj.attributes.url != null)
+                    {
+                        objUrl = (string)obj.attributes.url;
+                        if (objUrl.StartsWith("/store/")) objUrl = $"https://{this.brokerAddress}{objUrl}";
+                        else if (objUrl.StartsWith("store/")) objUrl = $"https://{this.brokerAddress}/{objUrl}";
+                    }
                 }
+                if (obj.attributes.object_type == "gltf-model" && objUrl != null && objUrl.EndsWith(".glb"))
+                {
+                    cd = new CoroutineWithData(this, HttpRequestRaw(objUrl));
+                    yield return cd.coroutine;
+                    urlData = (byte[])cd.result;
+                }
+                CreateUpdateObject((string)obj.object_id, obj.attributes, urlData);
             }
             // establish parent/child relationships
             foreach (KeyValuePair<string, GameObject> gobj in arenaObjs)
@@ -237,7 +252,7 @@ namespace ArenaUnity
             base.Start();
         }
 
-        private void CreateUpdateObject(string object_id, dynamic data)
+        private void CreateUpdateObject(string object_id, dynamic data, byte[] urlData = null)
         {
             GameObject gobj;
             ArenaObject aobj;
@@ -247,7 +262,14 @@ namespace ArenaUnity
             }
             else
             { //create
-                gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
+                if (urlData != null)
+                {
+                    gobj = Importer.LoadFromBytes(urlData);
+                }
+                else
+                {
+                    gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
+                }
                 gobj.transform.parent = arenaClientTransform;
                 gobj.name = $"{object_id} ({data.object_type})";
                 arenaObjs.Add(object_id, gobj);
@@ -325,7 +347,24 @@ namespace ArenaUnity
             return stream;
         }
 
-        IEnumerator HttpRequest(string uri, string csrf = null, WWWForm form = null)
+        IEnumerator HttpRequestRaw(string uri)
+        {
+            UnityWebRequest uwr = new UnityWebRequest(uri);
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            yield return uwr.SendWebRequest();
+
+            if (uwr.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(uwr.error);
+            }
+            else
+            {
+                byte[] results = uwr.downloadHandler.data;
+                yield return results;
+            }
+        }
+
+        IEnumerator HttpRequestAuth(string uri, string csrf = null, WWWForm form = null)
         {
             UnityWebRequest uwr = null;
             if (form == null)
