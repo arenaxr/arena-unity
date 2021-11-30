@@ -152,7 +152,7 @@ namespace ArenaUnity
             string mqttTokenPath = Path.Combine(sceneAuthDir, mqttTokenFile);
 
             // get app credentials
-            CoroutineWithData cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/conf/gauth.json"));
+            CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/conf/gauth.json"));
             yield return cd.coroutine;
             var gauthId = cd.result.ToString();
 
@@ -183,12 +183,12 @@ namespace ArenaUnity
             }
 
             // get arena web login token
-            yield return HttpRequest($"https://{this.brokerAddress}/user/login");
+            yield return HttpRequestAuth($"https://{this.brokerAddress}/user/login");
 
             // get arena user account state
             WWWForm form = new WWWForm();
             form.AddField("id_token", idToken);
-            cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/user/user_state", csrfToken, form));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/user/user_state", csrfToken, form));
             yield return cd.coroutine;
             var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
             if (user.authenticated && (this.namespaceName == null || this.namespaceName.Trim() == ""))
@@ -199,7 +199,7 @@ namespace ArenaUnity
             form.AddField("username", user.username);
             form.AddField("realm", realm);
             form.AddField("scene", $"{namespaceName}/{sceneName}");
-            cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/user/mqtt_auth", csrfToken, form));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/user/mqtt_auth", csrfToken, form));
             yield return cd.coroutine;
             var auth = JsonConvert.DeserializeObject<MqttAuth>(cd.result.ToString());
             this.mqttUserName = auth.username;
@@ -212,7 +212,7 @@ namespace ArenaUnity
             sceneUrl = $"https://{this.brokerAddress}/{namespaceName}/{sceneName}";
 
             // get persistence objects
-            cd = new CoroutineWithData(this, HttpRequest($"https://{this.brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
             yield return cd.coroutine;
             arenaClientTransform = GameObject.FindObjectOfType<ArenaClient>().transform;
             string jsonString = cd.result.ToString();
@@ -223,7 +223,17 @@ namespace ArenaUnity
             {
                 if (obj.type == "object" || obj.attributes.position != null)
                 {
-                    CreateUpdateObject((string)obj.object_id, obj.attributes);
+                    byte[] urlData = null;
+                    if (obj.attributes.object_type == "gltf-model" && obj.attributes.url != null)
+                    {
+                        string url = (string)obj.attributes.url;
+                        if (url.StartsWith("/store/")) url = $"https://{this.brokerAddress}{url}";
+                        else if (url.StartsWith("store/")) url = $"https://{this.brokerAddress}/{url}";
+                        cd = new CoroutineWithData(this, HttpRequestRaw(url));
+                        yield return cd.coroutine;
+                        urlData = (byte[])cd.result;
+                    }
+                    CreateUpdateObject((string)obj.object_id, obj.attributes, urlData);
                 }
             }
             // establish parent/child relationships
@@ -235,26 +245,10 @@ namespace ArenaUnity
                     gobj.Value.GetComponent<ArenaObject>().transform.parent = arenaObjs[parent].transform;
                 }
             }
-            ImportGLTF("/Users/mwfarb/git/arena-services-docker/ARENA-core/store/models/Duck.glb");
             base.Start();
         }
 
-        void ImportGLTF(string filepath)
-        {
-            GameObject result = Importer.LoadFromFile(filepath);
-        }
-
-        void ImportGLTFAsync(string filepath)
-        {
-            //Importer.ImportGLTFAsync(filepath, new ImportSettings(), OnFinishAsync);
-        }
-
-        void OnFinishAsync(GameObject result)
-        {
-            Debug.Log("Finished importing " + result.name);
-        }
-
-        private void CreateUpdateObject(string object_id, dynamic data)
+        private void CreateUpdateObject(string object_id, dynamic data, byte[] urlData = null)
         {
             GameObject gobj;
             ArenaObject aobj;
@@ -264,7 +258,14 @@ namespace ArenaUnity
             }
             else
             { //create
-                gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
+                if (urlData != null)
+                {
+                    gobj = Importer.LoadFromBytes(urlData);
+                }
+                else
+                {
+                    gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
+                }
                 gobj.transform.parent = arenaClientTransform;
                 gobj.name = $"{object_id} ({data.object_type})";
                 arenaObjs.Add(object_id, gobj);
@@ -342,7 +343,24 @@ namespace ArenaUnity
             return stream;
         }
 
-        IEnumerator HttpRequest(string uri, string csrf = null, WWWForm form = null)
+        IEnumerator HttpRequestRaw(string uri)
+        {
+            UnityWebRequest uwr = new UnityWebRequest(uri);
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            yield return uwr.SendWebRequest();
+
+            if (uwr.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(uwr.error);
+            }
+            else
+            {
+                byte[] results = uwr.downloadHandler.data;
+                yield return results;
+            }
+        }
+
+        IEnumerator HttpRequestAuth(string uri, string csrf = null, WWWForm form = null)
         {
             UnityWebRequest uwr = null;
             if (form == null)

@@ -3,6 +3,7 @@ ARENA-unity uses some third-party libraries in its package. Some have been modif
 
 ## Git
 - github.com/gpvigano/M2MqttUnity
+- github.com/Siccity/GLTFUtility
 
 ## NuGet
 - Google.Apis
