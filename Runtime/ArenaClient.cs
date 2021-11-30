@@ -221,20 +221,24 @@ namespace ArenaUnity
             // establish objects
             foreach (dynamic obj in objects)
             {
+                string objUrl = null;
+                byte[] urlData = null;
                 if (obj.type == "object" || obj.attributes.position != null)
                 {
-                    byte[] urlData = null;
-                    if (obj.attributes.object_type == "gltf-model" && obj.attributes.url != null)
+                    if (obj.attributes.url != null)
                     {
-                        string url = (string)obj.attributes.url;
-                        if (url.StartsWith("/store/")) url = $"https://{this.brokerAddress}{url}";
-                        else if (url.StartsWith("store/")) url = $"https://{this.brokerAddress}/{url}";
-                        cd = new CoroutineWithData(this, HttpRequestRaw(url));
-                        yield return cd.coroutine;
-                        urlData = (byte[])cd.result;
+                        objUrl = (string)obj.attributes.url;
+                        if (objUrl.StartsWith("/store/")) objUrl = $"https://{this.brokerAddress}{objUrl}";
+                        else if (objUrl.StartsWith("store/")) objUrl = $"https://{this.brokerAddress}/{objUrl}";
                     }
-                    CreateUpdateObject((string)obj.object_id, obj.attributes, urlData);
                 }
+                if (obj.attributes.object_type == "gltf-model" && objUrl != null && objUrl.EndsWith(".glb"))
+                {
+                    cd = new CoroutineWithData(this, HttpRequestRaw(objUrl));
+                    yield return cd.coroutine;
+                    urlData = (byte[])cd.result;
+                }
+                CreateUpdateObject((string)obj.object_id, obj.attributes, urlData);
             }
             // establish parent/child relationships
             foreach (KeyValuePair<string, GameObject> gobj in arenaObjs)
