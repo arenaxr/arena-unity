@@ -11,6 +11,7 @@ using Google.Apis.Util.Store;
 using M2MqttUnity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Siccity.GLTFUtility;
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt.Messages;
@@ -76,10 +77,10 @@ namespace ArenaUnity
         private Transform arenaClientTransform;
 
         static string[] Scopes = {
-        Oauth2Service.Scope.UserinfoProfile,
-        Oauth2Service.Scope.UserinfoEmail,
-        Oauth2Service.Scope.Openid
-    };
+            Oauth2Service.Scope.UserinfoProfile,
+            Oauth2Service.Scope.UserinfoEmail,
+            Oauth2Service.Scope.Openid
+        };
 
         public class UserState
         {
@@ -234,7 +235,18 @@ namespace ArenaUnity
                     gobj.Value.GetComponent<ArenaObject>().transform.parent = arenaObjs[parent].transform;
                 }
             }
+            ImportGLTFAsync("/Users/mwfarb/git/arena-services-docker/ARENA-core/store/models/Duck.glb");
             base.Start();
+        }
+
+        void ImportGLTFAsync(string filepath)
+        {
+            Importer.ImportGLTFAsync(filepath, new ImportSettings(), OnFinishAsync);
+        }
+
+        void OnFinishAsync(GameObject result)
+        {
+            Debug.Log("Finished importing " + result.name);
         }
 
         private void CreateUpdateObject(string object_id, dynamic data)

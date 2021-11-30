@@ -9,11 +9,12 @@ An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/
 - Paho MQTT: https://m2mqtt.wordpress.com/m2mqtt_doc
 
 ## Library Usage:
-1. Open a new or existing Unity project. **Only confirmed to work in Unity 2019.4.30f1, 2020+ has an import issue.**
-1. Modify the `Project Settings | Player | Other Settings`.
+1. Open a new or existing Unity project. **Unity 2019.1+ supported.**
+1. Open `Edit | Project Settings | Player | Other Settings`.
 1. Change `Scripted Define Symbols` to include: `SSL`.
 1. Change `Api Compatibility Level` to: `.NET 4.x`.
-1. Open the `Window | Package Manager` and `+ | Add package from git URL...`, use this link: `https://github.com/conix-center/ARENA-unity.git`.
+<!-- 1. `+ | Add package from git URL...`, use this link: `https://github.com/siccity/gltfutility.git`. **Temporary, the package dependencies as of 2020.3 won't allow .git protocol yet.** -->
+1. Open `Window | Package Manager` and `+ | Add package from git URL...`, use this link: `https://github.com/conix-center/ARENA-unity.git`.
 1. Create an empty GameObject to use as ARENA client root, rename it to something meaningful, like: `ARENA`.
 1. Select the `ARENA` GameObject and press `Add Component` to add the `ArenaClient` script.
 1. Modify the the inspector variables for the `ArenaClient` script to change host, scene, namespace as you wish.
