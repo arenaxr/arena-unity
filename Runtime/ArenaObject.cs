@@ -26,13 +26,10 @@ namespace ArenaUnity
 
         public void OnEnable()
         {
-            if (Application.isEditor)
-            {
-                if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
-                    return;
-                // trigger publish for new object
-                transform.hasChanged = true;
-            }
+            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+                return;
+            // trigger publish for new object
+            transform.hasChanged = true;
         }
 
         void Start()
@@ -96,19 +93,16 @@ namespace ArenaUnity
 
         public void OnDestroy()
         {
-            if (Application.isEditor)
-            {
-                if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
-                    return;
+            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+                return;
 
-                dynamic msg = new
-                {
-                    object_id = this.objectId,
-                    action = "delete",
-                };
-                string payload = JsonConvert.SerializeObject(msg);
-                ArenaClient.Instance.Publish(msg.object_id, payload);
-            }
+            dynamic msg = new
+            {
+                object_id = this.objectId,
+                action = "delete",
+            };
+            string payload = JsonConvert.SerializeObject(msg);
+            ArenaClient.Instance.Publish(msg.object_id, payload);
         }
     }
 }

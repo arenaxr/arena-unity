@@ -1,5 +1,5 @@
 # ARENA-unity
-Unity C# library for creating applications for the ARENA.
+Unity C# library for editing scenes and creating applications for the ARENA.
 An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/Unity-UDP-ARENA-Demo.
 **This is a Work-In-Progress.**
 
