@@ -36,6 +36,23 @@ Almost all steps to develop the library are the same, just prepare a development
 1. Open `Window | Package Manager` and `+ | Add package from disk...`, use your local repo location.
 1. Create changes on a development fork or branch and submit a Pull Request.
 
+## Debugging in VS Code
+1. Install the extension https://marketplace.visualstudio.com/items?itemName=Unity.unity-debug.
+1. Add a `.vscode/launch.json` inside your local copy of this repo with at least:
+    ``` json
+    {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "Unity Editor",
+                "type": "unity",
+                "request": "launch"
+            }
+        ]
+    }```
+1. Set breakpoints and run debug configuration `Unity Editor`.
+1. Press **Play**.
+
 ## Deprecated Support Notes
 1. Determine when/how these steps are still needed (TODO mwfarb):
 1. Add NuGet community package manager to Unity runtime: https://github.com/GlitchEnzo/NuGetForUnity
