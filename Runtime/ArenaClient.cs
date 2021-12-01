@@ -450,8 +450,12 @@ namespace ArenaUnity
 
         protected override void DecodeMessage(string topic, byte[] message)
         {
-            string msg = System.Text.Encoding.UTF8.GetString(message);
-            StoreMessage(msg);
+            // ignore this client's messages
+            if (!topic.Contains(client.ClientId))
+            {
+                string msg = System.Text.Encoding.UTF8.GetString(message);
+                StoreMessage(msg);
+            }
         }
 
         private void StoreMessage(string eventMsg)
