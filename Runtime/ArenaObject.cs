@@ -76,7 +76,12 @@ namespace ArenaUnity
             if (GetComponent<Renderer>())
             {
                 Color color = GetComponent<Renderer>().material.GetColor("_Color");
-                dataUp.color = ArenaUnity.ToArenaColor(color);
+                if (color != null)
+                {
+                    dynamic material = new System.Dynamic.ExpandoObject();
+                    material.color = ArenaUnity.ToArenaColor(color);
+                    dataUp.material = material;
+                }
             }
             data = dataUp;
             msg.data = data;

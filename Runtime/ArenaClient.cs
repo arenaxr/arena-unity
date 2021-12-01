@@ -259,11 +259,11 @@ namespace ArenaUnity
             GameObject gobj;
             ArenaObject aobj;
             if (arenaObjs.TryGetValue(object_id, out gobj))
-            { // update
+            { // update local
                 aobj = gobj.GetComponent<ArenaObject>();
             }
             else
-            { //create
+            { // create local
                 if (urlData != null)
                 {
                     gobj = Importer.LoadFromBytes(urlData);
@@ -282,7 +282,7 @@ namespace ArenaUnity
                 aobj.parentId = (string)data.parent;
                 aobj.persist = true;
             }
-            // update Unity attributes
+            // modify Unity attributes
             foreach (JProperty attribute in data)
             {
                 switch (attribute.Name)
@@ -304,12 +304,12 @@ namespace ArenaUnity
                         if (data.scale != null)
                             gobj.transform.localScale = ArenaUnity.ToUnityScale((string)data.object_type, data.scale);
                         break;
-                    case "color":
-                        if (data.color != null)
+                    case "material":
+                        if (data.material != null && data.material.color != null)
                         {
                             var renderer = gobj.GetComponent<Renderer>();
                             if (renderer != null)
-                                renderer.material.SetColor("_Color", ArenaUnity.ToUnityColor((string)data.color));
+                                renderer.material.SetColor("_Color", ArenaUnity.ToUnityColor((string)data.material.color));                                //renderer.material.color = ArenaUnity.ToUnityColor((string)data.color);
                         }
                         break;
                 }
