@@ -35,6 +35,7 @@ namespace ArenaUnity
                     Camera camera = gobj.transform.gameObject.AddComponent<Camera>();
                     camera.nearClipPlane = 0.1f; // match arena
                     camera.farClipPlane = 10000f; // match arena
+                    camera.fieldOfView = 80f; // match arena
                     return gobj;
                 default:
                     return new GameObject();
