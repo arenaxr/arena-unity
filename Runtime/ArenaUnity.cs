@@ -32,7 +32,9 @@ namespace ArenaUnity
                     return GameObject.CreatePrimitive(PrimitiveType.Capsule);
                 case "camera":
                     GameObject gobj = new GameObject();
-                	Camera camera = gobj.transform.gameObject.AddComponent<Camera>();
+                    Camera camera = gobj.transform.gameObject.AddComponent<Camera>();
+                    camera.nearClipPlane = 0.1f; // match arena
+                    camera.farClipPlane = 10000f; // match arena
                     return gobj;
                 default:
                     return new GameObject();
