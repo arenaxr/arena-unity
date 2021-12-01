@@ -13,11 +13,10 @@ An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/
 1. Open `Edit | Project Settings | Player | Other Settings`.
 1. Change `Scripted Define Symbols` to include: `SSL`.
 1. Change `Api Compatibility Level` to: `.NET 4.x`.
-<!-- 1. `+ | Add package from git URL...`, use this link: `https://github.com/siccity/gltfutility.git`. **Temporary, the package dependencies as of 2020.3 won't allow .git protocol yet.** -->
 1. Open `Window | Package Manager` and `+ | Add package from git URL...`, use this link: `https://github.com/conix-center/ARENA-unity.git`.
 1. Create an empty GameObject to use as ARENA client root, rename it to something meaningful, like: `ARENA`.
 1. Select the `ARENA` GameObject and press `Add Component` to add the `ArenaClient` script.
-1. Modify the the inspector variables for the `ArenaClient` script to change host, scene, namespace as you wish.
+1. Modify the the inspector variables for the `ArenaClient` script to change **host, scene, namespace** as you wish.
 1. Press **Play**.
 1. The auth flow will open a web browser page for you to login, if you haven't yet.
 
@@ -31,6 +30,12 @@ An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/
 - **ArenaClient** is a Singleton class, meant to be instantiated only once to control the auth and MQTT communication flow.
 - **ArenaObject** is a class for each GameObjects to publish to the ARENA, accessing the publish and subscribe MQTT methods through **ArenaClient.Instance**. `ArenaClient` will manage attaching `ArenaObject` to Unity GameObjects for you.
 
+## Library Development:
+Almost all steps to develop the library are the same, just prepare a development project using the [Library Usage](#library-usage) steps, except import the `ARENA Unity` package locally instead of from a Git URL.
+1. Clone this repo locally.
+1. Open `Window | Package Manager` and `+ | Add package from disk...`, use your local repo location.
+1. Create changes on a development fork or branch and submit a Pull Request.
+
 ## Deprecated Support Notes
 1. Determine when/how these steps are still needed (TODO mwfarb):
 1. Add NuGet community package manager to Unity runtime: https://github.com/GlitchEnzo/NuGetForUnity
@@ -40,8 +45,5 @@ An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/
 1. Copy the modified M2MqttUnity/Assets/M2Mqtt project (based on https://github.com/gpvigano/M2MqttUnity) from this repo to the project's Assets folder.
 
 ## Proposed TODO List:
-- Determine right platforms to support, UI required
 - Add a smooth disconnect/logout experience
-- Move code to a Unity-specific repo, C# is too general a repo name
 - Expand the object properties that can be synchronized between Unity-ARENA
-- Use case discovery to determine the right level of Unity-ARENA interaction
