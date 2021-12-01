@@ -127,13 +127,15 @@ namespace ArenaUnity
             }
 
             if (arenaObjs.Count != transform.childCount)
-            { // discover new objects
+            { // discover new objects created in Unity as relatives of our client
                 foreach (Transform child in transform)
                 {
                     ArenaObject aobj = child.gameObject.GetComponent<ArenaObject>();
                     if (aobj == null)
                     {
                         aobj = child.gameObject.AddComponent(typeof(ArenaObject)) as ArenaObject;
+                        aobj.created = false;
+                        aobj.storeType = "object";
                         if (!arenaObjs.ContainsKey(child.name))
                             aobj.objectId = child.name;
                         else
@@ -238,7 +240,7 @@ namespace ArenaUnity
                     yield return cd.coroutine;
                     urlData = (byte[])cd.result;
                 }
-                CreateUpdateObject((string)obj.object_id, obj.attributes, urlData);
+                CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, urlData);
             }
             // establish parent/child relationships
             foreach (KeyValuePair<string, GameObject> gobj in arenaObjs)
@@ -252,7 +254,7 @@ namespace ArenaUnity
             base.Start();
         }
 
-        private void CreateUpdateObject(string object_id, dynamic data, byte[] urlData = null)
+        private void CreateUpdateObject(string object_id, string storeType, dynamic data, byte[] urlData = null)
         {
             GameObject gobj;
             ArenaObject aobj;
@@ -274,6 +276,8 @@ namespace ArenaUnity
                 gobj.name = $"{object_id} ({data.object_type})";
                 arenaObjs.Add(object_id, gobj);
                 aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
+                aobj.created = true;
+                aobj.storeType = storeType;
                 aobj.objectId = object_id;
                 aobj.parentId = (string)data.parent;
                 aobj.persist = true;
@@ -323,18 +327,6 @@ namespace ArenaUnity
                 Destroy(gobj);
             }
             arenaObjs.Remove(object_id);
-        }
-
-        private void generateArenaInternalTestObjs()
-        {
-            GameObject cubeT = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            Transform arenaClientTransform = GameObject.FindObjectOfType<ArenaClient>().transform;
-            for (int i = 0; i < 10; i++)
-            {
-                GameObject cube = Instantiate(cubeT, new Vector3(i * 2.0F, 0, 0), Quaternion.identity);
-                cube.transform.parent = arenaClientTransform;
-                ArenaObject obj = cube.AddComponent(typeof(ArenaObject)) as ArenaObject;
-            }
         }
 
         public static Stream ToStream(string str)
@@ -479,7 +471,7 @@ namespace ArenaUnity
                     case "update":
                         if (System.Convert.ToBoolean(obj.persist))
                         {
-                            CreateUpdateObject((string)obj.object_id, obj.data);
+                            CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.data);
                         }
                         break;
                     case "delete":

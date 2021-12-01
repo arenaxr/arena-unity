@@ -9,6 +9,8 @@ namespace ArenaUnity
     {
         [Tooltip("A uuid or otherwise unique identifier for this object")]
         public string objectId = Guid.NewGuid().ToString();
+        [Tooltip("Type in storage schema (RO)")]
+        public string storeType = "entity"; // default to entity
         [Tooltip("Persist this object in the ARENA server database (default false = do not persist)")]
         public bool persist = true;
         [TextArea(10, 15)]
@@ -19,8 +21,8 @@ namespace ArenaUnity
         public dynamic data = null;
         [HideInInspector]
         public string parentId = null;
-
-        private bool created = false;
+        [HideInInspector]
+        public bool created = false;
 
         public void OnEnable()
         {
@@ -61,7 +63,7 @@ namespace ArenaUnity
             dynamic msg = new System.Dynamic.ExpandoObject();
             msg.object_id = this.objectId;
             msg.action = this.created ? "update" : "create";
-            msg.type = "object";
+            msg.type = this.storeType;
             msg.persist = this.persist;
             dynamic dataUp = new System.Dynamic.ExpandoObject();
             dataUp.object_type = ArenaUnity.ToArenaObjectType(this.gameObject);
