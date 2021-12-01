@@ -38,7 +38,7 @@ Almost all steps to develop the library are the same, just prepare a development
 
 ## Debugging in VS Code
 1. Install the extension https://marketplace.visualstudio.com/items?itemName=Unity.unity-debug.
-1. Add a `.vscode/launch.json` inside your local copy of this repo with at least:
+1. Add a `.vscode/launch.json` file inside your local copy of this repo with at least:
     ``` json
     {
         "version": "0.2.0",
@@ -49,7 +49,8 @@ Almost all steps to develop the library are the same, just prepare a development
                 "request": "launch"
             }
         ]
-    }```
+    }
+    ```
 1. Set breakpoints and run debug configuration `Unity Editor`.
 1. Press **Play**.
 

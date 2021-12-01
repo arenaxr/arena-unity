@@ -30,6 +30,10 @@ namespace ArenaUnity
                     return GameObject.CreatePrimitive(PrimitiveType.Quad);
                 case "capsule":
                     return GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                case "camera":
+                    GameObject gobj = new GameObject();
+                	Camera camera = gobj.transform.gameObject.AddComponent<Camera>();
+                    return gobj;
                 default:
                     return new GameObject();
             };
@@ -59,8 +63,8 @@ namespace ArenaUnity
         {
             return new
             {
-                x = rotationQuat.x,
-                y = rotationQuat.y,
+                x = -rotationQuat.x,
+                y = -rotationQuat.y,
                 z = rotationQuat.z,
                 w = rotationQuat.w
             };
@@ -68,8 +72,8 @@ namespace ArenaUnity
         public static Quaternion ToUnityRotationQuat(dynamic rotationQuat)
         {
             return new Quaternion(
-                (float)rotationQuat.x,
-                (float)rotationQuat.y,
+                -(float)rotationQuat.x,
+                -(float)rotationQuat.y,
                 (float)rotationQuat.z,
                 (float)rotationQuat.w
             );
@@ -78,16 +82,16 @@ namespace ArenaUnity
         {
             return new
             {
-                x = rotationEuler.x,
-                y = rotationEuler.y,
+                x = -rotationEuler.x,
+                y = -rotationEuler.y,
                 z = rotationEuler.z
             };
         }
         public static Quaternion ToUnityRotationEuler(dynamic rotationEuler)
         {
             return Quaternion.Euler(
-                (float)rotationEuler.x,
-                (float)rotationEuler.y,
+                -(float)rotationEuler.x,
+                -(float)rotationEuler.y,
                 (float)rotationEuler.z
             );
         }

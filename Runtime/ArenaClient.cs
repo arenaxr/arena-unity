@@ -33,10 +33,10 @@ namespace ArenaUnity
         [Header("ARENA Connection")]
         [Tooltip("Name of the topic realm for the scene.")]
         private string realm = "realm";
-        [Tooltip("Name of the scene, without namespace ('example', not 'username/example'")]
-        public string sceneName = "example";
         [Tooltip("Namespace (automated with username), but can be overridden")]
         public string namespaceName = null;
+        [Tooltip("Name of the scene, without namespace ('example', not 'username/example'")]
+        public string sceneName = "example";
         [Space()]
         [Tooltip("Browser URL for the scene.")]
         [TextArea(minLines: 1, maxLines: 2)]
@@ -470,6 +470,10 @@ namespace ArenaUnity
                     case "create":
                     case "update":
                         if (System.Convert.ToBoolean(obj.persist))
+                        {
+                            CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.data);
+                        }
+                        else if (obj.data.object_type == "camera") // try to manage camera
                         {
                             CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.data);
                         }
