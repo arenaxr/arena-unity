@@ -18,4 +18,4 @@ jobs:
       with:
         use-quiet-mode: 'yes'
         use-verbose-mode: 'yes'
-        folder-path: '.', 'Runtime/.'
+        folder-path: '., Runtime/.'
