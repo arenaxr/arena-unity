@@ -53,6 +53,7 @@ Almost all steps to develop the library are the same, just prepare a development
     ```
 1. Set breakpoints and run debug configuration `Unity Editor`.
 1. Press **Play**.
+1. Other useful setup here: https://code.visualstudio.com/docs/other/unity.
 
 ## Deprecated Support Notes
 1. Determine when/how these steps are still needed (TODO mwfarb):
