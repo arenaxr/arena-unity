@@ -140,7 +140,7 @@ namespace ArenaUnity
                             aobj.objectId = child.name;
                         else
                             aobj.objectId = $"{child.name}-{Random.Range(0, 1000000)}";
-                        child.name = $"{aobj.objectId} ({ArenaUnity.ToArenaObjectType(aobj.gameObject)})";
+                        child.name = aobj.objectId;
                         arenaObjs.Add(aobj.objectId, child.gameObject);
                     }
                 }
@@ -288,24 +288,19 @@ namespace ArenaUnity
                 switch (attribute.Name)
                 {
                     case "position":
-                        if (data.position != null)
-                            gobj.transform.position = ArenaUnity.ToUnityPosition(data.position);
+                        gobj.transform.position = ArenaUnity.ToUnityPosition(data.position);
                         break;
                     case "rotation":
-                        if (data.rotation != null)
-                        {
-                            if (data.rotation.w != null) // quaternion
-                                gobj.transform.rotation = ArenaUnity.ToUnityRotationQuat(data.rotation);
-                            else // euler
-                                gobj.transform.rotation = ArenaUnity.ToUnityRotationEuler(data.rotation);
-                        }
+                        if (data.rotation.w != null) // quaternion
+                            gobj.transform.rotation = ArenaUnity.ToUnityRotationQuat(data.rotation);
+                        else // euler
+                            gobj.transform.rotation = ArenaUnity.ToUnityRotationEuler(data.rotation);
                         break;
                     case "scale":
-                        if (data.scale != null)
-                            gobj.transform.localScale = ArenaUnity.ToUnityScale((string)data.object_type, data.scale);
+                        gobj.transform.localScale = ArenaUnity.ToUnityScale((string)data.object_type, data.scale);
                         break;
                     case "material":
-                        if (data.material != null && data.material.color != null)
+                        if (data.material.color != null)
                         {
                             var renderer = gobj.GetComponent<Renderer>();
                             if (renderer != null)

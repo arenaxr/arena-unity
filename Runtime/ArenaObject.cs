@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using UnityEngine;
+using System.Dynamic;
 
 namespace ArenaUnity
 {
@@ -57,32 +58,33 @@ namespace ArenaUnity
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
                 return false;
 
-            dynamic msg = new System.Dynamic.ExpandoObject();
+            dynamic msg = new ExpandoObject();
             msg.object_id = this.objectId;
             msg.action = this.created ? "update" : "create";
             msg.type = this.storeType;
             msg.persist = this.persist;
-            dynamic dataUp = new System.Dynamic.ExpandoObject();
-            dataUp.object_type = ArenaUnity.ToArenaObjectType(this.gameObject);
+
+            dynamic dataUp = new ExpandoObject();
+            if (data.object_type == null)
+                dataUp.object_type = ArenaUnity.ToArenaObjectType(this.gameObject);
             dataUp.position = ArenaUnity.ToArenaPosition(transform.position);
-            if (data != null && data.rotation != null && data.rotation.w != null)
+            if (data.rotation == null || data.rotation.w != null)
                 dataUp.rotation = ArenaUnity.ToArenaRotationQuat(transform.rotation);
             else
                 dataUp.rotation = ArenaUnity.ToArenaRotationEuler(transform.rotation.eulerAngles);
-            dataUp.scale = ArenaUnity.ToArenaScale(dataUp.object_type, transform.localScale);
+            dataUp.scale = ArenaUnity.ToArenaScale((string)data.object_type, transform.localScale);
             if (GetComponent<Renderer>())
             {
                 Color color = GetComponent<Renderer>().material.GetColor("_Color");
                 if (color != null)
                 {
-                    dynamic material = new System.Dynamic.ExpandoObject();
+                    dynamic material = new ExpandoObject();
                     material.color = ArenaUnity.ToArenaColor(color);
                     dataUp.material = material;
                 }
             }
-            data = dataUp;
-            msg.data = data;
-            jsonData = data.ToString();
+            msg.data = dataUp;
+            //jsonData = JsonConvert.SerializeObject(data);
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClient.Instance.Publish(msg.object_id, payload);
             if (!this.created)
