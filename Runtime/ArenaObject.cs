@@ -31,6 +31,8 @@ namespace ArenaUnity
         [HideInInspector]
         public bool created = false;
 
+        private string oldName; // test for rename
+
         public void OnEnable()
         {
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
@@ -57,6 +59,28 @@ namespace ArenaUnity
                     transform.hasChanged = false;
                 }
             }
+            else if (oldName != null && name != oldName)
+            {
+                HandleRename();
+            }
+            oldName = name;
+        }
+
+        private void HandleRename()
+        {
+            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+                return;
+            // pub delete old
+            dynamic msg = new
+            {
+                object_id = oldName,
+                action = "delete",
+            };
+            string payload = JsonConvert.SerializeObject(msg);
+            ArenaClient.Instance.Publish(msg.object_id, payload);
+            // add new object with new name, it pubs
+            created = false;
+            transform.hasChanged = true;
         }
 
         bool SendUpdateSuccess()
