@@ -64,38 +64,56 @@ namespace ArenaUnity
 
         public static dynamic ToArenaRotationQuat(Quaternion rotationQuat)
         {
+            Quaternion quaternion = Quaternion.Euler(
+                -rotationQuat.eulerAngles.x,
+                -rotationQuat.eulerAngles.y,
+                rotationQuat.eulerAngles.z
+            );
             return new
             {
-                x = -rotationQuat.x,
-                y = -rotationQuat.y,
-                z = rotationQuat.z,
-                w = rotationQuat.w
+                x = quaternion.x,
+                y = quaternion.y,
+                z = quaternion.z,
+                w = quaternion.w
             };
         }
         public static Quaternion ToUnityRotationQuat(dynamic rotationQuat)
         {
-            return new Quaternion(
-                -(float)rotationQuat.x,
-                -(float)rotationQuat.y,
-                (float)rotationQuat.z,
-                (float)rotationQuat.w
+
+            Quaternion q = new Quaternion(
+                 (float)rotationQuat.x,
+                 (float)rotationQuat.y,
+                 (float)rotationQuat.z,
+                 (float)rotationQuat.w
+             );
+            Vector3 rotation = new Vector3(
+                -q.eulerAngles.x,
+                -q.eulerAngles.y,
+                q.eulerAngles.z
             );
+            return Quaternion.Euler(rotation);
         }
         public static dynamic ToArenaRotationEuler(Vector3 rotationEuler)
         {
+            Quaternion qUnity = Quaternion.Euler(rotationEuler);
             return new
             {
-                x = -rotationEuler.x,
-                y = -rotationEuler.y,
-                z = rotationEuler.z
+                x = -qUnity.eulerAngles.x,
+                y = -qUnity.eulerAngles.y,
+                z = qUnity.eulerAngles.z
             };
         }
         public static Quaternion ToUnityRotationEuler(dynamic rotationEuler)
         {
-            return Quaternion.Euler(
-                -(float)rotationEuler.x,
-                -(float)rotationEuler.y,
+            Quaternion qArena = Quaternion.Euler(
+                (float)rotationEuler.x,
+                (float)rotationEuler.y,
                 (float)rotationEuler.z
+            );
+            return Quaternion.Euler(
+                -qArena.eulerAngles.x,
+                -qArena.eulerAngles.y,
+                qArena.eulerAngles.z
             );
         }
 
