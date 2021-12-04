@@ -35,7 +35,7 @@ namespace ArenaUnity
 
         void Start()
         {
-            transform.hasChanged = false;
+            //transform.hasChanged = false;
         }
 
         void Update()
@@ -59,20 +59,22 @@ namespace ArenaUnity
                 return false;
 
             dynamic msg = new ExpandoObject();
-            msg.object_id = this.objectId;
-            msg.action = this.created ? "update" : "create";
-            msg.type = this.storeType;
-            msg.persist = this.persist;
+            msg.object_id = objectId;
+            msg.action = created ? "update" : "create";
+            msg.type = storeType;
+            msg.persist = persist;
 
             dynamic dataUp = new ExpandoObject();
-            if (data.object_type == null)
-                dataUp.object_type = ArenaUnity.ToArenaObjectType(this.gameObject);
+            if (data == null || data.object_type == null)
+                dataUp.object_type = ArenaUnity.ToArenaObjectType(gameObject);
+            else
+                dataUp.object_type = (string)data.object_type;
             dataUp.position = ArenaUnity.ToArenaPosition(transform.position);
-            if (data.rotation == null || data.rotation.w != null)
+            if (data == null || data.rotation == null || data.rotation.w != null)
                 dataUp.rotation = ArenaUnity.ToArenaRotationQuat(transform.rotation);
             else
                 dataUp.rotation = ArenaUnity.ToArenaRotationEuler(transform.rotation.eulerAngles);
-            dataUp.scale = ArenaUnity.ToArenaScale((string)data.object_type, transform.localScale);
+            dataUp.scale = ArenaUnity.ToArenaScale(dataUp.object_type, transform.localScale);
             if (GetComponent<Renderer>())
             {
                 Color color = GetComponent<Renderer>().material.GetColor("_Color");
@@ -87,8 +89,8 @@ namespace ArenaUnity
             //jsonData = JsonConvert.SerializeObject(data);
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClient.Instance.Publish(msg.object_id, payload);
-            if (!this.created)
-                this.created = true;
+            if (!created)
+                created = true;
 
             return true;
         }
@@ -100,7 +102,7 @@ namespace ArenaUnity
 
             dynamic msg = new
             {
-                object_id = this.objectId,
+                object_id = objectId,
                 action = "delete",
             };
             string payload = JsonConvert.SerializeObject(msg);

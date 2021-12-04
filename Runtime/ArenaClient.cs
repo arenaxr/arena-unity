@@ -66,17 +66,17 @@ namespace ArenaUnity
         private List<string> eventMessages = new List<string>();
         private string sceneTopic = null;
         private Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
-        private static string ClientName = "ARENA Client Runtime";
+        private static readonly string ClientName = "ARENA Client Runtime";
 
         // local paths
         const string gAuthFile = ".arena_google_auth";
         const string mqttTokenFile = ".arena_mqtt_auth";
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
-        static string userHomePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+        static readonly string userHomePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
         private Transform arenaClientTransform;
 
-        static string[] Scopes = {
+        static readonly string[] Scopes = {
             Oauth2Service.Scope.UserinfoProfile,
             Oauth2Service.Scope.UserinfoEmail,
             Oauth2Service.Scope.Openid
@@ -136,6 +136,7 @@ namespace ArenaUnity
                         aobj = child.gameObject.AddComponent(typeof(ArenaObject)) as ArenaObject;
                         aobj.created = false;
                         aobj.storeType = "object";
+                        child.gameObject.transform.hasChanged = true;
                         if (!arenaObjs.ContainsKey(child.name))
                             aobj.objectId = child.name;
                         else
@@ -149,14 +150,14 @@ namespace ArenaUnity
 
         private IEnumerator SceneLogin()
         {
-            string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, this.brokerAddress, "s");
+            string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, brokerAddress, "s");
             string gAuthPath = sceneAuthDir;
             string mqttTokenPath = Path.Combine(sceneAuthDir, mqttTokenFile);
 
             // get app credentials
-            CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/conf/gauth.json"));
+            CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/conf/gauth.json"));
             yield return cd.coroutine;
-            var gauthId = cd.result.ToString();
+            string gauthId = cd.result.ToString();
 
             // request user auth
             UserCredential credential;
@@ -180,45 +181,45 @@ namespace ArenaUnity
 
                 var userInfo = oauthService.Userinfo.Get().Execute();
 
-                this.email = userInfo.Email;
-                this.idToken = credential.Token.IdToken;
+                email = userInfo.Email;
+                idToken = credential.Token.IdToken;
             }
 
             // get arena web login token
-            yield return HttpRequestAuth($"https://{this.brokerAddress}/user/login");
+            yield return HttpRequestAuth($"https://{brokerAddress}/user/login");
 
             // get arena user account state
             WWWForm form = new WWWForm();
             form.AddField("id_token", idToken);
-            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/user/user_state", csrfToken, form));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/user_state", csrfToken, form));
             yield return cd.coroutine;
             var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
-            if (user.authenticated && (this.namespaceName == null || this.namespaceName.Trim() == ""))
-                this.namespaceName = user.username;
+            if (user.authenticated && (namespaceName == null || namespaceName.Trim() == ""))
+                namespaceName = user.username;
 
             // get arena user mqtt token
             form.AddField("id_auth", "google-installed");
             form.AddField("username", user.username);
             form.AddField("realm", realm);
             form.AddField("scene", $"{namespaceName}/{sceneName}");
-            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/user/mqtt_auth", csrfToken, form));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/mqtt_auth", csrfToken, form));
             yield return cd.coroutine;
             var auth = JsonConvert.DeserializeObject<MqttAuth>(cd.result.ToString());
-            this.mqttUserName = auth.username;
-            this.mqttPassword = auth.token;
+            mqttUserName = auth.username;
+            mqttPassword = auth.token;
             var handler = new JwtSecurityTokenHandler();
             JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
-            permissions = JValue.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
+            permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
 
             sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
-            sceneUrl = $"https://{this.brokerAddress}/{namespaceName}/{sceneName}";
+            sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
 
             // get persistence objects
-            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
             yield return cd.coroutine;
-            arenaClientTransform = GameObject.FindObjectOfType<ArenaClient>().transform;
+            arenaClientTransform = FindObjectOfType<ArenaClient>().transform;
             string jsonString = cd.result.ToString();
-            JArray jsonVal = JArray.Parse(jsonString) as JArray;
+            JArray jsonVal = JArray.Parse(jsonString);
             dynamic objects = jsonVal;
             // establish objects
             foreach (dynamic obj in objects)
@@ -230,8 +231,8 @@ namespace ArenaUnity
                     if (obj.attributes.url != null)
                     {
                         objUrl = (string)obj.attributes.url;
-                        if (objUrl.StartsWith("/store/")) objUrl = $"https://{this.brokerAddress}{objUrl}";
-                        else if (objUrl.StartsWith("store/")) objUrl = $"https://{this.brokerAddress}/{objUrl}";
+                        if (objUrl.StartsWith("/store/")) objUrl = $"https://{brokerAddress}{objUrl}";
+                        else if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
                     }
                 }
                 if (obj.attributes.object_type == "gltf-model" && objUrl != null && objUrl.EndsWith(".glb"))
@@ -256,9 +257,8 @@ namespace ArenaUnity
 
         private void CreateUpdateObject(string object_id, string storeType, dynamic data, byte[] urlData = null)
         {
-            GameObject gobj;
             ArenaObject aobj;
-            if (arenaObjs.TryGetValue(object_id, out gobj))
+            if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
             { // update local
                 aobj = gobj.GetComponent<ArenaObject>();
             }
@@ -316,8 +316,7 @@ namespace ArenaUnity
 
         private void RemoveObject(string object_id)
         {
-            GameObject gobj;
-            if (arenaObjs.TryGetValue(object_id, out gobj))
+            if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
             {
                 Destroy(gobj);
             }
@@ -336,11 +335,11 @@ namespace ArenaUnity
 
         IEnumerator HttpRequestRaw(string uri)
         {
-            UnityWebRequest uwr = new UnityWebRequest(uri);
+            UnityWebRequest uwr = UnityWebRequest.Get(uri);
             uwr.downloadHandler = new DownloadHandlerBuffer();
             yield return uwr.SendWebRequest();
 
-            if (uwr.result != UnityWebRequest.Result.Success)
+            if (uwr.isNetworkError)
             {
                 Debug.Log(uwr.error);
             }
@@ -353,7 +352,7 @@ namespace ArenaUnity
 
         IEnumerator HttpRequestAuth(string uri, string csrf = null, WWWForm form = null)
         {
-            UnityWebRequest uwr = null;
+            UnityWebRequest uwr;
             if (form == null)
                 uwr = UnityWebRequest.Get(uri);
             else
