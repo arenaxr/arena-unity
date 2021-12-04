@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
+    /// <summary>
+    /// Static utility class for object translation.
+    /// </summary>
     public static class ArenaUnity
     {
         public static string ToArenaObjectType(GameObject gobj)

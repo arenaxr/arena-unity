@@ -23,6 +23,9 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace ArenaUnity
 {
+    /// <summary>
+    /// Class to manage a singleton instance of the ARENA client connection.
+    /// </summary>
     [HelpURL("https://arena.conix.io")]
     [DisallowMultipleComponent()]
     [AddComponentMenu("ArenaClient", 0)]
@@ -142,12 +145,9 @@ namespace ArenaUnity
                         aobj.created = false;
                         aobj.storeType = "object";
                         child.gameObject.transform.hasChanged = true;
-                        if (!arenaObjs.ContainsKey(child.name))
-                            aobj.objectId = child.name;
-                        else
-                            aobj.objectId = $"{child.name}-{Random.Range(0, 1000000)}";
-                        child.name = aobj.objectId;
-                        arenaObjs.Add(aobj.objectId, child.gameObject);
+                        if (arenaObjs.ContainsKey(child.name))
+                            child.name = $"{child.name}-{Random.Range(0, 1000000)}";
+                        arenaObjs.Add(child.name, child.gameObject);
                     }
                 }
             }
@@ -278,12 +278,11 @@ namespace ArenaUnity
                     gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
                 }
                 gobj.transform.parent = arenaClientTransform;
-                gobj.name = $"{object_id} ({data.object_type})";
+                gobj.name = object_id;
                 arenaObjs.Add(object_id, gobj);
                 aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
                 aobj.created = true;
                 aobj.storeType = storeType;
-                aobj.objectId = object_id;
                 aobj.parentId = (string)data.parent;
                 aobj.persist = true;
             }

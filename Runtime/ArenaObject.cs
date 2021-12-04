@@ -10,11 +10,12 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
+    /// <summary>
+    /// Class to manage an ARENA object, publishing, and its properties.
+    /// </summary>
     [HelpURL("https://arena.conix.io/content/messaging/definitions.html")]
     public class ArenaObject : MonoBehaviour
     {
-        [Tooltip("A uuid or otherwise unique identifier for this object")]
-        public string objectId = Guid.NewGuid().ToString();
         [Tooltip("Type in storage schema (RO)")]
         public string storeType = "entity"; // default to entity
         [Tooltip("Persist this object in the ARENA server database (default false = do not persist)")]
@@ -64,7 +65,7 @@ namespace ArenaUnity
                 return false;
 
             dynamic msg = new ExpandoObject();
-            msg.object_id = objectId;
+            msg.object_id = name;
             msg.action = created ? "update" : "create";
             msg.type = storeType;
             msg.persist = persist;
@@ -107,7 +108,7 @@ namespace ArenaUnity
 
             dynamic msg = new
             {
-                object_id = objectId,
+                object_id = name,
                 action = "delete",
             };
             string payload = JsonConvert.SerializeObject(msg);
