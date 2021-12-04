@@ -57,6 +57,8 @@ namespace ArenaUnity
         public bool logMqttUsers = false;
         [Tooltip("Console log MQTT client event messages")]
         public bool logMqttEvents = false;
+        [Tooltip("Console log MQTT non-persist messages")]
+        public bool logMqttNonPersist = false;
         [Tooltip("Frequency to publish detected changes by frames (0 to stop)")]
         [Range(0, 60)]
         public int publishInterval = 30; // in publish per frames
@@ -262,10 +264,11 @@ namespace ArenaUnity
 
         private void CreateUpdateObject(string object_id, string storeType, dynamic data, byte[] urlData = null)
         {
-            ArenaObject aobj;
+            ArenaObject aobj = null;
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
             { // update local
-                aobj = gobj.GetComponent<ArenaObject>();
+                if (gobj != null)
+                    aobj = gobj.GetComponent<ArenaObject>();
             }
             else
             { // create local
@@ -314,8 +317,12 @@ namespace ArenaUnity
                 }
             }
             // update ARENA attributes
-            aobj.data = data;
-            aobj.jsonData = aobj.data.ToString();
+            gobj.transform.hasChanged = false;
+            if (aobj != null)
+            {
+                aobj.data = data;
+                aobj.jsonData = aobj.data.ToString();
+            }
         }
 
         private void RemoveObject(string object_id)
@@ -493,6 +500,7 @@ namespace ArenaUnity
         private void LogMessage(string dir, dynamic obj)
         {
             // determine logging level
+            if (!System.Convert.ToBoolean(obj.persist) && !logMqttNonPersist) return;
             if (obj.type == "object")
             {
                 if (obj.data != null && obj.data.object_type == "camera" && !logMqttUsers) return;

@@ -35,15 +35,10 @@ namespace ArenaUnity
 
         public void OnEnable()
         {
-            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
-                return;
-            // trigger publish for new object
-            transform.hasChanged = true;
         }
 
         void Start()
         {
-            //transform.hasChanged = false;
         }
 
         void Update()
@@ -75,6 +70,7 @@ namespace ArenaUnity
             {
                 object_id = oldName,
                 action = "delete",
+                persist = persist,
             };
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClient.Instance.Publish(msg.object_id, payload);
@@ -134,6 +130,7 @@ namespace ArenaUnity
             {
                 object_id = name,
                 action = "delete",
+                persist = persist,
             };
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClient.Instance.Publish(msg.object_id, payload);

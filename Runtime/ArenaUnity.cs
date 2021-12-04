@@ -151,8 +151,7 @@ namespace ArenaUnity
         }
         public static Color ToUnityColor(string color)
         {
-            Color colorObj;
-            ColorUtility.TryParseHtmlString(color, out colorObj);
+            ColorUtility.TryParseHtmlString(color, out Color colorObj);
             return colorObj;
         }
 
