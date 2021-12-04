@@ -1,4 +1,9 @@
-﻿using System.Collections;
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ */
+
+using System.Collections;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -304,7 +309,7 @@ namespace ArenaUnity
                         {
                             var renderer = gobj.GetComponent<Renderer>();
                             if (renderer != null)
-                                renderer.material.SetColor("_Color", ArenaUnity.ToUnityColor((string)data.material.color));                                //renderer.material.color = ArenaUnity.ToUnityColor((string)data.color);
+                                renderer.material.SetColor("_Color", ArenaUnity.ToUnityColor((string)data.material.color));
                         }
                         break;
                 }

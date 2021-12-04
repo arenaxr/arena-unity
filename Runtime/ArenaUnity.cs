@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ */
+
+using UnityEngine;
 
 namespace ArenaUnity
 {

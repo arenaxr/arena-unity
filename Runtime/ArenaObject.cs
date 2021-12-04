@@ -1,7 +1,12 @@
-﻿using System;
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ */
+
+using System;
+using System.Dynamic;
 using Newtonsoft.Json;
 using UnityEngine;
-using System.Dynamic;
 
 namespace ArenaUnity
 {
