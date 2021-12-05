@@ -16,10 +16,22 @@ namespace ArenaUnity
         public static string ToArenaObjectType(GameObject gobj)
         {
             string objectType = "entity";
-            if (gobj.GetComponent<MeshFilter>())
+            MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
+            Light light = gobj.GetComponent<Light>();
+            SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
+            if (meshFilter && meshFilter.sharedMesh)
             {
-                objectType = gobj.GetComponent<MeshFilter>().sharedMesh.name.ToLower();
+                objectType = meshFilter.sharedMesh.name.ToLower();
             }
+            else if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0)
+            {
+                objectType = "image";
+            }
+            else if (light)
+            {
+                objectType = "light";
+            }
+
             return objectType.ToLower();
         }
         public static GameObject ToUnityObjectType(string obj_type)
