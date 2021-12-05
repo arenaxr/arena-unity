@@ -290,33 +290,31 @@ namespace ArenaUnity
                 aobj.persist = true;
             }
             // modify Unity attributes
-            foreach (JProperty attribute in data)
+            if (data.position != null)
             {
-                switch (attribute.Name)
+                gobj.transform.position = ArenaUnity.ToUnityPosition(data.position);
+            }
+            if (data.rotation != null)
+            {
+                if (data.rotation.w != null) // quaternion
+                    gobj.transform.rotation = ArenaUnity.ToUnityRotationQuat(data.rotation);
+                else // euler
+                    gobj.transform.rotation = ArenaUnity.ToUnityRotationEuler(data.rotation);
+            }
+            if (data.scale != null)
+            {
+                gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
+            }
+            if (data.material != null)
+            {
+                if (data.material.color != null)
                 {
-                    case "position":
-                        gobj.transform.position = ArenaUnity.ToUnityPosition(data.position);
-                        break;
-                    case "rotation":
-                        if (data.rotation.w != null) // quaternion
-                            gobj.transform.rotation = ArenaUnity.ToUnityRotationQuat(data.rotation);
-                        else // euler
-                            gobj.transform.rotation = ArenaUnity.ToUnityRotationEuler(data.rotation);
-                        break;
-                    case "scale":
-                        gobj.transform.localScale = ArenaUnity.ToUnityScale((string)data.object_type, data.scale);
-                        break;
-                    case "material":
-                        if (data.material.color != null)
-                        {
-                            var renderer = gobj.GetComponent<Renderer>();
-                            if (renderer != null)
-                                renderer.material.SetColor("_Color", ArenaUnity.ToUnityColor((string)data.material.color));
-                        }
-                        break;
+                    var renderer = gobj.GetComponent<Renderer>();
+                    if (renderer != null)
+                        renderer.material.SetColor("_Color", ArenaUnity.ToUnityColor((string)data.material.color));
                 }
             }
-            // update ARENA attributes
+            ArenaUnity.ToUnityDimensions(data, ref gobj);
             gobj.transform.hasChanged = false;
             if (aobj != null)
             {

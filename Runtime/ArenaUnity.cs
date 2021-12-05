@@ -12,6 +12,7 @@ namespace ArenaUnity
     /// </summary>
     public static class ArenaUnity
     {
+        // object type
         public static string ToArenaObjectType(GameObject gobj)
         {
             string objectType = "entity";
@@ -49,8 +50,7 @@ namespace ArenaUnity
                     return new GameObject();
             };
         }
-
-        // Position Conversions:
+        // position
         // all: z is inverted between a-frame/unity
         public static dynamic ToArenaPosition(Vector3 position)
         {
@@ -69,7 +69,7 @@ namespace ArenaUnity
                 -(float)position.z
             );
         }
-
+        // rotation
         public static dynamic ToArenaRotationQuat(Quaternion rotationQuat)
         {
             return new
@@ -106,45 +106,79 @@ namespace ArenaUnity
                 (float)rotationEuler.z
             );
         }
-
-        public static dynamic ToArenaScale(string object_type, Vector3 scale)
+        // scale
+        public static dynamic ToArenaScale(Vector3 scale)
         {
-            float[] f = GetScaleFactor(object_type);
             return new
             {
-                x = scale.x * f[0],
-                y = scale.y * f[1],
-                z = scale.z * f[2]
+                x = scale.x,
+                y = scale.y,
+                z = scale.z
             };
         }
-        public static Vector3 ToUnityScale(string object_type, dynamic scale)
+        public static Vector3 ToUnityScale(dynamic scale)
         {
-            float[] f = GetScaleFactor(object_type);
             return new Vector3(
-                (float)scale.x / f[0],
-                (float)scale.y / f[1],
-                (float)scale.z / f[2]
+                (float)scale.x,
+                (float)scale.y,
+                (float)scale.z
             );
         }
-
-        // Scale Conversions
-        // cube: unity (side) 1, a-frame (side)  1
-        // sphere: unity (diameter) 1, a-frame (radius)  0.5
-        // cylinder: unity (y height) 1, a-frame (y height) 2
-        // cylinder: unity (x,z diameter) 1, a-frame (x,z radius) 0.5
-        private static float[] GetScaleFactor(string object_type)
+        // size dimensions
+        public static void ToArenaDimensions(GameObject gobj, ref dynamic data)
         {
-            switch (object_type)
+            string collider = gobj.GetComponent<Collider>().GetType().ToString();
+            switch (collider)
             {
-                case "sphere":
-                    return new float[3] { 0.5f, 0.5f, 0.5f };
-                case "cylinder":
-                    return new float[3] { 0.5f, 2f, 0.5f };
+                case "BoxCollider":
+                    BoxCollider bc = gobj.GetComponent<BoxCollider>();
+                    data.width = bc.size.x;
+                    data.height = bc.size.y;
+                    data.depth = bc.size.z;
+                    break;
+                case "SphereCollider":
+                    SphereCollider sc = gobj.GetComponent<SphereCollider>();
+                    data.radius = sc.radius;
+                    break;
+                case "CapsuleCollider":
+                    CapsuleCollider cc = gobj.GetComponent<CapsuleCollider>();
+                    data.height = cc.height;
+                    data.radius = cc.radius;
+                    break;
                 default:
-                    return new float[3] { 1f, 1f, 1f };
+                    break;
             }
         }
-
+        public static void ToUnityDimensions(dynamic data, ref GameObject gobj)
+        {
+            if (data.object_type != null)
+            {
+                // use arena defaults if missing for consistency
+                switch ((string)data.object_type)
+                {
+                    case "box":
+                    case "cube":
+                        BoxCollider bc = gobj.GetComponent<BoxCollider>();
+                        bc.size = new Vector3(
+                            data.width != null ? (float)data.width : 1f,
+                            data.height != null ? (float)data.height : 1f,
+                            data.depth != null ? (float)data.depth : 1f
+                        );
+                        break;
+                    case "cylinder":
+                    case "capsule":
+                        CapsuleCollider cc = gobj.GetComponent<CapsuleCollider>();
+                        cc.height = data.height != null ? (float)data.height : 2f;
+                        cc.radius = data.radius != null ? (float)data.radius : 1f;
+                        break;
+                    case "sphere":
+                        SphereCollider sc = gobj.GetComponent<SphereCollider>();
+                        sc.radius = data.radius != null ? (float)data.radius : 1f;
+                        break;
+                }
+            }
+        }
+        // color
         public static string ToArenaColor(Color color)
         {
             return $"#{ColorUtility.ToHtmlStringRGB(color)}";
