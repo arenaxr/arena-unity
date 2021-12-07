@@ -27,9 +27,16 @@ namespace ArenaUnity.Editor
         const string githubName = "ARENA-unity";
         private static string gitLatestUrl = $"https://api.github.com/repos/{githubOrg}/{githubName}/releases/latest";
         private static ListRequest _listRequest;
+        private static bool checkGihub = false;
 
         static ArenaVersion()
         {
+            string latest = PlayerPrefs.GetString("GitVersionLatest", "0.0.4");
+            long time = (long)PlayerPrefs.GetFloat("GitVersionCheckTime", 0);
+            TimeSpan t = DateTime.UtcNow - new DateTime(time);
+            // only check github every 24 hours to avoid hitting api rate limit
+            if (t.TotalDays > 1f) checkGihub = true;
+
             _listRequest = Client.List();
             EditorApplication.update += OnUpdate;
         }
@@ -49,7 +56,11 @@ namespace ArenaUnity.Editor
                         }
                     }
                     // Check github directly next
-                    EditorCoroutineUtility.StartCoroutineOwnerless(CheckGithubVersion(local));
+                    if (checkGihub)
+                    {
+                        EditorCoroutineUtility.StartCoroutineOwnerless(CheckGithubVersion(local));
+                    }
+                    Debug.Log(CurrentMessage(local));
                 }
                 _listRequest = null;
             }
@@ -75,6 +86,7 @@ namespace ArenaUnity.Editor
                 {
                     if (Version.TryParse((string)git.tag_name, out var latest))
                     {
+                        PlayerPrefs.SetString("GitVersionLatest", (string)git.tag_name);
                         if (local < latest)
                         {
                             Debug.LogWarning(UpgradeMessage(local, latest));
@@ -82,11 +94,18 @@ namespace ArenaUnity.Editor
                     }
                 }
             }
+            PlayerPrefs.SetFloat("GitVersionCheckTime", DateTimeOffset.Now.Ticks);
+            PlayerPrefs.Save();
         }
 
         private static string UpgradeMessage(Version local, Version latest)
         {
             return $"ARENA for Unity Package version {latest} is available, however {local} is installed.\nUpdate to https://github.com/{githubOrg}/{githubName}.git#{latest}";
+        }
+
+        private static string CurrentMessage(Version local)
+        {
+            return $"ARENA for Unity Package version {local} is installed.\nLatest: https://github.com/{githubOrg}/{githubName}/releases";
         }
 
         private static void OnUpdate()
