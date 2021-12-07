@@ -2,6 +2,10 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.0.4] - 2021-12-07
+### Changed
+- Reduced frequency of GitHub version checking.
+
 ## [0.0.3] - 2021-12-06
 ### Added
 - Version upgrade reminder direct from latest GitHub release tag.

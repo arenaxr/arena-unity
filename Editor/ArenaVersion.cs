@@ -29,9 +29,12 @@ namespace ArenaUnity.Editor
         private static ListRequest _listRequest;
         private static bool checkGihub = false;
 
+        // first version to avoid hitting GiHub's rate-limit
+        private const string GH_RATE_LIMIT_VERSION = "0.0.4";
+
         static ArenaVersion()
         {
-            string latest = PlayerPrefs.GetString("GitVersionLatest", "0.0.4");
+            string latest = PlayerPrefs.GetString("GitVersionLatest", GH_RATE_LIMIT_VERSION);
             long time = (long)PlayerPrefs.GetFloat("GitVersionCheckTime", 0);
             TimeSpan t = DateTime.UtcNow - new DateTime(time);
             // only check github every 24 hours to avoid hitting api rate limit
