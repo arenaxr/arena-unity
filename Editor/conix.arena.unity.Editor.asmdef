@@ -2,7 +2,8 @@
     "name": "conix.arena.unity.Editor",
     "rootNamespace": "",
     "references": [
-        "Siccity.GLTFUtility"
+        "Unity.EditorCoroutines.Editor",
+        "Siccity.GLTFUtility.Editor"
     ],
     "includePlatforms": [
         "Editor"

@@ -344,45 +344,50 @@ namespace ArenaUnity
 
         IEnumerator HttpRequestRaw(string uri)
         {
-            UnityWebRequest uwr = UnityWebRequest.Get(uri);
-            uwr.downloadHandler = new DownloadHandlerBuffer();
-            yield return uwr.SendWebRequest();
-
-            if (uwr.isNetworkError)
+            UnityWebRequest www = UnityWebRequest.Get(uri);
+            www.downloadHandler = new DownloadHandlerBuffer();
+            yield return www.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+#else
+            if (www.isNetworkError || www.isHttpError)
+#endif
             {
-                Debug.Log(uwr.error);
+                Debug.Log(www.error);
             }
             else
             {
-                byte[] results = uwr.downloadHandler.data;
+                byte[] results = www.downloadHandler.data;
                 yield return results;
             }
         }
 
         IEnumerator HttpRequestAuth(string uri, string csrf = null, WWWForm form = null)
         {
-            UnityWebRequest uwr;
+            UnityWebRequest www;
             if (form == null)
-                uwr = UnityWebRequest.Get(uri);
+                www = UnityWebRequest.Get(uri);
             else
-                uwr = UnityWebRequest.Post(uri, form);
+                www = UnityWebRequest.Post(uri, form);
             if (csrf != null)
             {
-                uwr.SetRequestHeader("Cookie", $"csrftoken={csrf}");
-                uwr.SetRequestHeader("X-CSRFToken", csrf);
+                www.SetRequestHeader("Cookie", $"csrftoken={csrf}");
+                www.SetRequestHeader("X-CSRFToken", csrf);
             }
-
-            yield return uwr.SendWebRequest();
-
-            if (uwr.isNetworkError)
+            yield return www.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+#else
+            if (www.isNetworkError || www.isHttpError)
+#endif
             {
-                Debug.Log($"Error While Sending: {uwr.error}");
+                Debug.Log($"Error While Sending: {www.error}");
                 yield break;
             }
             else
             {
                 // get the csrf cookie
-                string SetCookie = uwr.GetResponseHeader("Set-Cookie");
+                string SetCookie = www.GetResponseHeader("Set-Cookie");
                 if (SetCookie != null)
                 {
                     if (SetCookie.Contains("csrftoken="))
@@ -391,8 +396,8 @@ namespace ArenaUnity
                         csrfToken = GetCookie(SetCookie, "csrf");
                 }
 
-                Debug.Log($"Received: {uwr.downloadHandler.text}");
-                yield return uwr.downloadHandler.text;
+                Debug.Log($"Received: {www.downloadHandler.text}");
+                yield return www.downloadHandler.text;
             }
         }
 
