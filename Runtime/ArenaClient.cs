@@ -84,6 +84,7 @@ namespace ArenaUnity
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
         static readonly string userHomePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+
         private Transform arenaClientTransform;
 
         static readonly string[] Scopes = {
@@ -171,14 +172,18 @@ namespace ArenaUnity
             using (var stream = ToStream(gauthId))
             {
                 string applicationName = "ArenaClientCSharp";
-
+                IDataStore ds;
+                if (Application.isMobilePlatform) ds = new NullDataStore();
+                else ds = new FileDataStore(gAuthPath, true);
+                // GoogleWebAuthorizationBroker.AuthorizeAsync for "installed" creds only
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                         GoogleClientSecrets.FromStream(stream).Secrets,
                         Scopes,
                         "user",
                         CancellationToken.None,
-                        new FileDataStore(gAuthPath, true)).Result;
-                Debug.Log($"Credential file saved to: {gAuthPath}");
+                        ds).Result;
+                if (ds.GetType() == typeof(FileDataStore))
+                    Debug.Log($"Credential file saved to: {gAuthPath}");
 
                 var oauthService = new Oauth2Service(new BaseClientService.Initializer()
                 {
