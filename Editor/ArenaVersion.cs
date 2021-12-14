@@ -124,5 +124,29 @@ namespace ArenaUnity.Editor
             var package = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(ArenaVersion).Assembly);
             return package.version;
         }
+
+        static bool WantsToQuit()
+        {
+            Debug.Log("Exiting play mode...");
+            EditorApplication.ExitPlaymode();
+
+            // Check that this instance was actually launched from a batch mode session, so that game code
+            // doesn't inadvertently exit the editor during development.
+            if (Application.isBatchMode)
+            {
+                EditorApplication.Exit(0);
+            }
+            else
+            {
+                Debug.Log("Exiting application.");
+            }
+            return true;
+        }
+
+        [RuntimeInitializeOnLoadMethod]
+        static void RunOnStart()
+        {
+            Application.wantsToQuit += WantsToQuit;
+        }
     }
 }
