@@ -18,8 +18,8 @@ An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/
     https://github.com/conix-center/ARENA-unity.git#0.0.4
     ```
 1. Create an empty GameObject to use as ARENA client root, rename it to something meaningful, like: `ARENA`.
-1. Select the `ARENA` GameObject and press `Add Component` to add the `ArenaClient` script.
-1. Modify the the inspector variables for the `ArenaClient` script to change **host, scene, namespace** as you wish.
+1. Select the `ARENA` GameObject and press `Add Component` to add the `ArenaHeadlessent` script.
+1. Modify the the inspector variables for the `ArenaHeadlessent` script to change **host, scene, namespace** as you wish.
 1. Press **Play**.
 1. The auth flow will open a web browser page for you to login, if you haven't yet.
 
@@ -30,8 +30,8 @@ An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/
 
 ## Architecture
 - The `.NET 4.x` API level is required since ARENA JSON payloads are fluid, and we cannot keep up with schema serialization definitions by developers and users. So we use the `dynamic` object instantiations offered in the .Net 4 API to test for JSON attributes at runtime.
-- **ArenaClient** is a Singleton class, meant to be instantiated only once to control the auth and MQTT communication flow.
-- **ArenaObject** is a class for each GameObjects to publish to the ARENA, accessing the publish and subscribe MQTT methods through **ArenaClient.Instance**. `ArenaClient` will manage attaching `ArenaObject` to Unity GameObjects for you.
+- **ArenaHeadlessent** is a Singleton class, meant to be instantiated only once to control the auth and MQTT communication flow.
+- **ArenaObject** is a class for each GameObjects to publish to the ARENA, accessing the publish and subscribe MQTT methods through **ArenaHeadlessent.Instance**. `ArenaHeadlessent` will manage attaching `ArenaObject` to Unity GameObjects for you.
 
 ## Library Development:
 Almost all steps to develop the library are the same, just prepare a development project using the [Library Usage](#library-usage) steps, except import the `ARENA Unity` package locally instead of from a Git URL.

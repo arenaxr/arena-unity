@@ -44,8 +44,8 @@ namespace ArenaUnity
         void Update()
         {
             // send only when changed, each publishInterval frames, or stop at 0 frames
-            if (!ArenaClient.Instance || ArenaClient.Instance.publishInterval == 0 ||
-            Time.frameCount % ArenaClient.Instance.publishInterval != 0)
+            if (!ArenaHeadlessent.Instance || ArenaHeadlessent.Instance.publishInterval == 0 ||
+            Time.frameCount % ArenaHeadlessent.Instance.publishInterval != 0)
                 return;
             if (transform.hasChanged)
             {
@@ -63,7 +63,7 @@ namespace ArenaUnity
 
         private void HandleRename()
         {
-            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+            if (ArenaHeadlessent.Instance == null || !ArenaHeadlessent.Instance.mqttClientConnected)
                 return;
             // pub delete old
             dynamic msg = new
@@ -73,7 +73,7 @@ namespace ArenaUnity
                 persist = persist,
             };
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.Publish(msg.object_id, payload);
+            ArenaHeadlessent.Instance.Publish(msg.object_id, payload);
             // add new object with new name, it pubs
             created = false;
             transform.hasChanged = true;
@@ -81,7 +81,7 @@ namespace ArenaUnity
 
         bool SendUpdateSuccess()
         {
-            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+            if (ArenaHeadlessent.Instance == null || !ArenaHeadlessent.Instance.mqttClientConnected)
                 return false;
 
             dynamic msg = new ExpandoObject();
@@ -115,7 +115,7 @@ namespace ArenaUnity
             msg.data = dataUp;
             //jsonData = JsonConvert.SerializeObject(data);
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.Publish(msg.object_id, payload);
+            ArenaHeadlessent.Instance.Publish(msg.object_id, payload);
             if (!created)
                 created = true;
 
@@ -124,7 +124,7 @@ namespace ArenaUnity
 
         public void OnDestroy()
         {
-            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+            if (ArenaHeadlessent.Instance == null || !ArenaHeadlessent.Instance.mqttClientConnected)
                 return;
 
             dynamic msg = new
@@ -134,7 +134,7 @@ namespace ArenaUnity
                 persist = persist,
             };
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.Publish(msg.object_id, payload);
+            ArenaHeadlessent.Instance.Publish(msg.object_id, payload);
         }
     }
 }

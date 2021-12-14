@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 
 // This class must live in an Editor folder
-public static class ArenaCLITest
+public static class ArenaHeadless
 {
     public static bool isBatchMode;
 
