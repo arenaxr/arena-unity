@@ -1,4 +1,9 @@
-﻿using System.Collections;
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ */
+
+using System.Collections;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -12,12 +17,16 @@ using M2MqttUnity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Siccity.GLTFUtility;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace ArenaUnity
 {
+    /// <summary>
+    /// Class to manage a singleton instance of the ARENA client connection.
+    /// </summary>
     [HelpURL("https://arena.conix.io")]
     [DisallowMultipleComponent()]
     [AddComponentMenu("ArenaClient", 0)]
@@ -49,6 +58,8 @@ namespace ArenaUnity
         public bool logMqttUsers = false;
         [Tooltip("Console log MQTT client event messages")]
         public bool logMqttEvents = false;
+        [Tooltip("Console log MQTT non-persist messages")]
+        public bool logMqttNonPersist = false;
         [Tooltip("Frequency to publish detected changes by frames (0 to stop)")]
         [Range(0, 60)]
         public int publishInterval = 30; // in publish per frames
@@ -66,17 +77,20 @@ namespace ArenaUnity
         private List<string> eventMessages = new List<string>();
         private string sceneTopic = null;
         private Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
-        private static string ClientName = "ARENA Client Runtime";
+        private static readonly string ClientName = "ARENA Client Runtime";
 
         // local paths
         const string gAuthFile = ".arena_google_auth";
         const string mqttTokenFile = ".arena_mqtt_auth";
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
-        static string userHomePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-        private Transform arenaClientTransform;
+        static readonly string userHomePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+        public static string export_path = "Assets/ArenaUnity/export";
 
-        static string[] Scopes = {
+
+        private Transform ArenaClientTransform;
+
+        static readonly string[] Scopes = {
             Oauth2Service.Scope.UserinfoProfile,
             Oauth2Service.Scope.UserinfoEmail,
             Oauth2Service.Scope.Openid
@@ -104,6 +118,30 @@ namespace ArenaUnity
             transform.position = new Vector3(0f, 0f, 0f);
             transform.rotation = Quaternion.identity;
             transform.localScale = new Vector3(1f, 1f, 1f);
+
+            //Create if there is no export folder
+            string guid_exist = AssetDatabase.AssetPathToGUID(export_path);
+            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/export"))
+            {
+                AssetDatabase.CreateFolder("Assets/ArenaUnity", "export");
+                AssetDatabase.Refresh();
+            }
+
+            //Create an images folder
+            guid_exist = AssetDatabase.AssetPathToGUID(export_path + "/images");
+            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/export/images"))
+            {
+                AssetDatabase.CreateFolder(export_path, "images");
+                AssetDatabase.Refresh();
+            }
+
+            //Create a models folder
+            guid_exist = AssetDatabase.AssetPathToGUID(export_path + "/models");
+            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/export/models"))
+            {
+                AssetDatabase.CreateFolder(export_path, "models");
+                AssetDatabase.Refresh();
+            }
         }
 
         // Start is called before the first frame update
@@ -136,12 +174,10 @@ namespace ArenaUnity
                         aobj = child.gameObject.AddComponent(typeof(ArenaObject)) as ArenaObject;
                         aobj.created = false;
                         aobj.storeType = "object";
-                        if (!arenaObjs.ContainsKey(child.name))
-                            aobj.objectId = child.name;
-                        else
-                            aobj.objectId = $"{child.name}-{Random.Range(0, 1000000)}";
-                        child.name = aobj.objectId;
-                        arenaObjs.Add(aobj.objectId, child.gameObject);
+                        child.gameObject.transform.hasChanged = true;
+                        if (arenaObjs.ContainsKey(child.name))
+                            child.name = $"{child.name}-{Random.Range(0, 1000000)}";
+                        arenaObjs.Add(child.name, child.gameObject);
                     }
                 }
             }
@@ -149,28 +185,32 @@ namespace ArenaUnity
 
         private IEnumerator SceneLogin()
         {
-            string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, this.brokerAddress, "s");
+            string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, brokerAddress, "s");
             string gAuthPath = sceneAuthDir;
             string mqttTokenPath = Path.Combine(sceneAuthDir, mqttTokenFile);
 
             // get app credentials
-            CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/conf/gauth.json"));
+            CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/conf/gauth.json"));
             yield return cd.coroutine;
-            var gauthId = cd.result.ToString();
+            string gauthId = cd.result.ToString();
 
             // request user auth
             UserCredential credential;
             using (var stream = ToStream(gauthId))
             {
                 string applicationName = "ArenaClientCSharp";
-
+                IDataStore ds;
+                if (Application.isMobilePlatform) ds = new NullDataStore();
+                else ds = new FileDataStore(gAuthPath, true);
+                // GoogleWebAuthorizationBroker.AuthorizeAsync for "installed" creds only
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                         GoogleClientSecrets.FromStream(stream).Secrets,
                         Scopes,
                         "user",
                         CancellationToken.None,
-                        new FileDataStore(gAuthPath, true)).Result;
-                Debug.Log($"Credential file saved to: {gAuthPath}");
+                        ds).Result;
+                if (ds.GetType() == typeof(FileDataStore))
+                    Debug.Log($"Credential file saved to: {gAuthPath}");
 
                 var oauthService = new Oauth2Service(new BaseClientService.Initializer()
                 {
@@ -180,45 +220,45 @@ namespace ArenaUnity
 
                 var userInfo = oauthService.Userinfo.Get().Execute();
 
-                this.email = userInfo.Email;
-                this.idToken = credential.Token.IdToken;
+                email = userInfo.Email;
+                idToken = credential.Token.IdToken;
             }
 
             // get arena web login token
-            yield return HttpRequestAuth($"https://{this.brokerAddress}/user/login");
+            yield return HttpRequestAuth($"https://{brokerAddress}/user/login");
 
             // get arena user account state
             WWWForm form = new WWWForm();
             form.AddField("id_token", idToken);
-            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/user/user_state", csrfToken, form));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/user_state", csrfToken, form));
             yield return cd.coroutine;
             var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
-            if (user.authenticated && (this.namespaceName == null || this.namespaceName.Trim() == ""))
-                this.namespaceName = user.username;
+            if (user.authenticated && (namespaceName == null || namespaceName.Trim() == ""))
+                namespaceName = user.username;
 
             // get arena user mqtt token
             form.AddField("id_auth", "google-installed");
             form.AddField("username", user.username);
             form.AddField("realm", realm);
             form.AddField("scene", $"{namespaceName}/{sceneName}");
-            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/user/mqtt_auth", csrfToken, form));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/mqtt_auth", csrfToken, form));
             yield return cd.coroutine;
             var auth = JsonConvert.DeserializeObject<MqttAuth>(cd.result.ToString());
-            this.mqttUserName = auth.username;
-            this.mqttPassword = auth.token;
+            mqttUserName = auth.username;
+            mqttPassword = auth.token;
             var handler = new JwtSecurityTokenHandler();
             JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
-            permissions = JValue.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
+            permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
 
             sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
-            sceneUrl = $"https://{this.brokerAddress}/{namespaceName}/{sceneName}";
+            sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
 
             // get persistence objects
-            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{this.brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
             yield return cd.coroutine;
-            arenaClientTransform = GameObject.FindObjectOfType<ArenaClient>().transform;
+            ArenaClientTransform = FindObjectOfType<ArenaClient>().transform;
             string jsonString = cd.result.ToString();
-            JArray jsonVal = JArray.Parse(jsonString) as JArray;
+            JArray jsonVal = JArray.Parse(jsonString);
             dynamic objects = jsonVal;
             // establish objects
             foreach (dynamic obj in objects)
@@ -230,8 +270,8 @@ namespace ArenaUnity
                     if (obj.attributes.url != null)
                     {
                         objUrl = (string)obj.attributes.url;
-                        if (objUrl.StartsWith("/store/")) objUrl = $"https://{this.brokerAddress}{objUrl}";
-                        else if (objUrl.StartsWith("store/")) objUrl = $"https://{this.brokerAddress}/{objUrl}";
+                        if (objUrl.StartsWith("/store/")) objUrl = $"https://{brokerAddress}{objUrl}";
+                        else if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
                     }
                 }
                 if (obj.attributes.object_type == "gltf-model" && objUrl != null && objUrl.EndsWith(".glb"))
@@ -256,68 +296,62 @@ namespace ArenaUnity
 
         private void CreateUpdateObject(string object_id, string storeType, dynamic data, byte[] urlData = null)
         {
-            GameObject gobj;
-            ArenaObject aobj;
-            if (arenaObjs.TryGetValue(object_id, out gobj))
+            ArenaObject aobj = null;
+            if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
             { // update local
-                aobj = gobj.GetComponent<ArenaObject>();
+                if (gobj != null)
+                    aobj = gobj.GetComponent<ArenaObject>();
             }
             else
             { // create local
                 if (urlData != null)
-                {
                     gobj = Importer.LoadFromBytes(urlData);
-                }
                 else
-                {
                     gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
-                }
-                gobj.transform.parent = arenaClientTransform;
-                gobj.name = $"{object_id} ({data.object_type})";
+                gobj.transform.parent = ArenaClientTransform;
+                gobj.name = object_id;
                 arenaObjs.Add(object_id, gobj);
                 aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
                 aobj.created = true;
                 aobj.storeType = storeType;
-                aobj.objectId = object_id;
                 aobj.parentId = (string)data.parent;
                 aobj.persist = true;
             }
             // modify Unity attributes
-            foreach (JProperty attribute in data)
+            if (data.position != null)
+                gobj.transform.position = ArenaUnity.ToUnityPosition(data.position);
+            if (data.rotation != null)
             {
-                switch (attribute.Name)
+                if (data.rotation.w != null) // quaternion
+                    gobj.transform.rotation = ArenaUnity.ToUnityRotationQuat(data.rotation);
+                else // euler
+                    gobj.transform.rotation = ArenaUnity.ToUnityRotationEuler(data.rotation);
+            }
+            if (data.scale != null)
+                gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
+            if (data.material != null)
+            {
+                if (data.material.color != null)
                 {
-                    case "position":
-                        gobj.transform.position = ArenaUnity.ToUnityPosition(data.position);
-                        break;
-                    case "rotation":
-                        if (data.rotation.w != null) // quaternion
-                            gobj.transform.rotation = ArenaUnity.ToUnityRotationQuat(data.rotation);
-                        else // euler
-                            gobj.transform.rotation = ArenaUnity.ToUnityRotationEuler(data.rotation);
-                        break;
-                    case "scale":
-                        gobj.transform.localScale = ArenaUnity.ToUnityScale((string)data.object_type, data.scale);
-                        break;
-                    case "material":
-                        if (data.material.color != null)
-                        {
-                            var renderer = gobj.GetComponent<Renderer>();
-                            if (renderer != null)
-                                renderer.material.SetColor("_Color", ArenaUnity.ToUnityColor((string)data.material.color));                                //renderer.material.color = ArenaUnity.ToUnityColor((string)data.color);
-                        }
-                        break;
+                    var renderer = gobj.GetComponent<Renderer>();
+                    if (renderer != null)
+                        renderer.material.SetColor("_Color", ArenaUnity.ToUnityColor((string)data.material.color));
                 }
             }
-            // update ARENA attributes
-            aobj.data = data;
-            aobj.jsonData = aobj.data.ToString();
+            ArenaUnity.ToUnityDimensions(data, ref gobj);
+            if ((string)data.object_type == "light")
+                ArenaUnity.ToUnityLight(data, ref gobj);
+            gobj.transform.hasChanged = false;
+            if (aobj != null)
+            {
+                aobj.data = data;
+                aobj.jsonData = aobj.data.ToString();
+            }
         }
 
         private void RemoveObject(string object_id)
         {
-            GameObject gobj;
-            if (arenaObjs.TryGetValue(object_id, out gobj))
+            if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
             {
                 Destroy(gobj);
             }
@@ -336,45 +370,50 @@ namespace ArenaUnity
 
         IEnumerator HttpRequestRaw(string uri)
         {
-            UnityWebRequest uwr = new UnityWebRequest(uri);
-            uwr.downloadHandler = new DownloadHandlerBuffer();
-            yield return uwr.SendWebRequest();
-
-            if (uwr.result != UnityWebRequest.Result.Success)
+            UnityWebRequest www = UnityWebRequest.Get(uri);
+            www.downloadHandler = new DownloadHandlerBuffer();
+            yield return www.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+#else
+            if (www.isNetworkError || www.isHttpError)
+#endif
             {
-                Debug.Log(uwr.error);
+                Debug.Log(www.error);
             }
             else
             {
-                byte[] results = uwr.downloadHandler.data;
+                byte[] results = www.downloadHandler.data;
                 yield return results;
             }
         }
 
         IEnumerator HttpRequestAuth(string uri, string csrf = null, WWWForm form = null)
         {
-            UnityWebRequest uwr = null;
+            UnityWebRequest www;
             if (form == null)
-                uwr = UnityWebRequest.Get(uri);
+                www = UnityWebRequest.Get(uri);
             else
-                uwr = UnityWebRequest.Post(uri, form);
+                www = UnityWebRequest.Post(uri, form);
             if (csrf != null)
             {
-                uwr.SetRequestHeader("Cookie", $"csrftoken={csrf}");
-                uwr.SetRequestHeader("X-CSRFToken", csrf);
+                www.SetRequestHeader("Cookie", $"csrftoken={csrf}");
+                www.SetRequestHeader("X-CSRFToken", csrf);
             }
-
-            yield return uwr.SendWebRequest();
-
-            if (uwr.isNetworkError)
+            yield return www.SendWebRequest();
+#if UNITY_2020_1_OR_NEWER
+            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+#else
+            if (www.isNetworkError || www.isHttpError)
+#endif
             {
-                Debug.Log($"Error While Sending: {uwr.error}");
+                Debug.Log($"Error While Sending: {www.error}");
                 yield break;
             }
             else
             {
                 // get the csrf cookie
-                string SetCookie = uwr.GetResponseHeader("Set-Cookie");
+                string SetCookie = www.GetResponseHeader("Set-Cookie");
                 if (SetCookie != null)
                 {
                     if (SetCookie.Contains("csrftoken="))
@@ -383,8 +422,8 @@ namespace ArenaUnity
                         csrfToken = GetCookie(SetCookie, "csrf");
                 }
 
-                Debug.Log($"Received: {uwr.downloadHandler.text}");
-                yield return uwr.downloadHandler.text;
+                Debug.Log($"Received: {www.downloadHandler.text}");
+                yield return www.downloadHandler.text;
             }
         }
 
@@ -490,6 +529,7 @@ namespace ArenaUnity
         private void LogMessage(string dir, dynamic obj)
         {
             // determine logging level
+            if (!System.Convert.ToBoolean(obj.persist) && !logMqttNonPersist) return;
             if (obj.type == "object")
             {
                 if (obj.data != null && obj.data.object_type == "camera" && !logMqttUsers) return;

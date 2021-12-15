@@ -1,17 +1,17 @@
 # Third Party Notices
 ARENA-unity uses some third-party libraries in its package. Some have been modified slightly to work better for Unity and the ARENA.
 
-## Git
-- github.com/gpvigano/M2MqttUnity
-- github.com/Siccity/GLTFUtility
+## GitHub
+- https://github.com/gpvigano/M2MqttUnity
+- https://github.com/Siccity/GLTFUtility
 
 ## NuGet
-- Google.Apis
-- Google.Apis.Auth
-- Google.Apis.Core
-- Google.Apis.Oauth2.v2
-- Microsoft.IdentityModel.JsonWebTokens
-- Microsoft.IdentityModel.Logging
-- Microsoft.IdentityModel.Tokens
-- Newtonsoft.Json
-- System.IdentityModel.Tokens.Jwt
+- https://www.nuget.org/packages/Google.Apis
+- https://www.nuget.org/packages/Google.Apis.Auth
+- https://www.nuget.org/packages/Google.Apis.Core
+- https://www.nuget.org/packages/Google.Apis.Oauth2.v2
+- https://www.nuget.org/packages/Microsoft.IdentityModel.JsonWebTokens
+- https://www.nuget.org/packages/Microsoft.IdentityModel.Logging
+- https://www.nuget.org/packages/Microsoft.IdentityModel.Tokens
+- https://www.nuget.org/packages/Newtonsoft.Json
+- https://www.nuget.org/packages/System.IdentityModel.Tokens.Jwt

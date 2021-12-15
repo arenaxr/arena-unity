@@ -1,16 +1,33 @@
-﻿using UnityEngine;
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ */
+
+using System.Dynamic;
+using System.IO;
+using UnityEditor;
+using UnityEngine;
 
 namespace ArenaUnity
 {
+    /// <summary>
+    /// Static utility class for object translation.
+    /// </summary>
     public static class ArenaUnity
     {
+        // object type
         public static string ToArenaObjectType(GameObject gobj)
         {
             string objectType = "entity";
-            if (gobj.GetComponent<MeshFilter>())
-            {
-                objectType = gobj.GetComponent<MeshFilter>().sharedMesh.name.ToLower();
-            }
+            MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
+            Light light = gobj.GetComponent<Light>();
+            SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
+            if (meshFilter && meshFilter.sharedMesh)
+                objectType = meshFilter.sharedMesh.name.ToLower();
+            else if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0)
+                objectType = "image";
+            else if (light)
+                objectType = "light";
             return objectType.ToLower();
         }
         public static GameObject ToUnityObjectType(string obj_type)
@@ -30,19 +47,22 @@ namespace ArenaUnity
                     return GameObject.CreatePrimitive(PrimitiveType.Quad);
                 case "capsule":
                     return GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                case "light":
+                    GameObject lgobj = new GameObject();
+                    Light light = lgobj.transform.gameObject.AddComponent<Light>();
+                    return lgobj;
                 case "camera":
-                    GameObject gobj = new GameObject();
-                    Camera camera = gobj.transform.gameObject.AddComponent<Camera>();
+                    GameObject cgobj = new GameObject();
+                    Camera camera = cgobj.transform.gameObject.AddComponent<Camera>();
                     camera.nearClipPlane = 0.1f; // match arena
                     camera.farClipPlane = 10000f; // match arena
                     camera.fieldOfView = 80f; // match arena
-                    return gobj;
+                    return cgobj;
                 default:
                     return new GameObject();
             };
         }
-
-        // Position Conversions:
+        // position
         // all: z is inverted between a-frame/unity
         public static dynamic ToArenaPosition(Vector3 position)
         {
@@ -61,7 +81,7 @@ namespace ArenaUnity
                 -(float)position.z
             );
         }
-
+        // rotation
         public static dynamic ToArenaRotationQuat(Quaternion rotationQuat)
         {
             Quaternion quaternion = Quaternion.Euler(
@@ -116,54 +136,214 @@ namespace ArenaUnity
                 qArena.eulerAngles.z
             );
         }
-
-        public static dynamic ToArenaScale(string object_type, Vector3 scale)
+        // scale
+        public static dynamic ToArenaScale(Vector3 scale)
         {
-            float[] f = GetScaleFactor(object_type);
             return new
             {
-                x = scale.x * f[0],
-                y = scale.y * f[1],
-                z = scale.z * f[2]
+                x = scale.x,
+                y = scale.y,
+                z = scale.z
             };
         }
-        public static Vector3 ToUnityScale(string object_type, dynamic scale)
+        public static Vector3 ToUnityScale(dynamic scale)
         {
-            float[] f = GetScaleFactor(object_type);
             return new Vector3(
-                (float)scale.x / f[0],
-                (float)scale.y / f[1],
-                (float)scale.z / f[2]
+                (float)scale.x,
+                (float)scale.y,
+                (float)scale.z
             );
         }
-
-        // Scale Conversions
-        // cube: unity (side) 1, a-frame (side)  1
-        // sphere: unity (diameter) 1, a-frame (radius)  0.5
-        // cylinder: unity (y height) 1, a-frame (y height) 2
-        // cylinder: unity (x,z diameter) 1, a-frame (x,z radius) 0.5
-        private static float[] GetScaleFactor(string object_type)
+        // size dimensions
+        public static void ToArenaDimensions(GameObject gobj, ref dynamic data)
         {
-            switch (object_type)
+            string collider = gobj.GetComponent<Collider>().GetType().ToString();
+            switch (collider)
             {
-                case "sphere":
-                    return new float[3] { 0.5f, 0.5f, 0.5f };
-                case "cylinder":
-                    return new float[3] { 0.5f, 2f, 0.5f };
+                case "BoxCollider":
+                    BoxCollider bc = gobj.GetComponent<BoxCollider>();
+                    data.width = bc.size.x;
+                    data.height = bc.size.y;
+                    data.depth = bc.size.z;
+                    break;
+                case "SphereCollider":
+                    SphereCollider sc = gobj.GetComponent<SphereCollider>();
+                    data.radius = sc.radius;
+                    break;
+                case "CapsuleCollider":
+                    CapsuleCollider cc = gobj.GetComponent<CapsuleCollider>();
+                    data.height = cc.height;
+                    data.radius = cc.radius;
+                    break;
                 default:
-                    return new float[3] { 1f, 1f, 1f };
+                    break;
             }
         }
-
+        public static void ToUnityDimensions(dynamic data, ref GameObject gobj)
+        {
+            if (data.object_type != null)
+            {
+                // use arena defaults if missing for consistency
+                switch ((string)data.object_type)
+                {
+                    case "box":
+                    case "cube":
+                        BoxCollider bc = gobj.GetComponent<BoxCollider>();
+                        bc.size = new Vector3(
+                            data.width != null ? (float)data.width : 1f,
+                            data.height != null ? (float)data.height : 1f,
+                            data.depth != null ? (float)data.depth : 1f
+                        );
+                        break;
+                    case "cylinder":
+                    case "capsule":
+                        CapsuleCollider cc = gobj.GetComponent<CapsuleCollider>();
+                        cc.height = data.height != null ? (float)data.height : 2f;
+                        cc.radius = data.radius != null ? (float)data.radius : 1f;
+                        break;
+                    case "sphere":
+                        SphereCollider sc = gobj.GetComponent<SphereCollider>();
+                        sc.radius = data.radius != null ? (float)data.radius : 1f;
+                        break;
+                }
+            }
+        }
+        // color
         public static string ToArenaColor(Color color)
         {
             return $"#{ColorUtility.ToHtmlStringRGB(color)}";
         }
         public static Color ToUnityColor(string color)
         {
-            Color colorObj;
-            ColorUtility.TryParseHtmlString(color, out colorObj);
+            ColorUtility.TryParseHtmlString(color, out Color colorObj);
             return colorObj;
+        }
+        // light
+        public static void ToArenaLight(GameObject gobj, ref dynamic data)
+        {
+            Light light = gobj.GetComponent<Light>();
+            switch (light.type)
+            {
+                case LightType.Directional:
+                    data.type = "directional";
+                    break;
+                case LightType.Area:
+                    data.type = "ambient";
+                    break;
+                case LightType.Point:
+                    data.type = "point";
+                    break;
+                case LightType.Spot:
+                    data.type = "spot";
+                    break;
+            }
+            data.intensity = light.intensity;
+            data.color = ToArenaColor(light.color);
+        }
+        public static void ToUnityLight(dynamic data, ref GameObject gobj)
+        {
+            if (data.type != null)
+            {
+                Light light = gobj.GetComponent<Light>();
+                switch ((string)data.type)
+                {
+                    case "directional":
+                        light.type = LightType.Directional;
+                        break;
+                    case "ambient":
+                        light.type = LightType.Area;
+                        break;
+                    case "point":
+                        light.type = LightType.Point;
+                        break;
+                    case "spot":
+                        light.type = LightType.Spot;
+                        break;
+                }
+                light.intensity = (float)data.intensity;
+                light.color = ToUnityColor((string)data.color);
+            }
+        }
+        // material
+        public static void ToArenaMaterial(GameObject obj, ref dynamic data)
+        {
+            Material mat = obj.GetComponent<Renderer>().sharedMaterial;
+            if (!mat)
+                return;
+            dynamic material = new ExpandoObject();
+            data.material = material;
+            // shaders only
+            if (mat.shader.name == "Standard")
+            {
+                data.material.shader = "standard";
+                data.url = ToArenaTexture(mat);
+                data.material.repeat = mat.mainTextureScale.x;
+                data.material.color = ToArenaColor(mat.color);
+                data.material.metalness = mat.GetFloat("_Metallic");
+                data.material.roughness = 1f - mat.GetFloat("_Glossiness");
+                data.material.transparent = mat.GetFloat("_Mode") == 3 ? true : false;
+                data.material.opacity = mat.color.a;
+                if (mat.color.a == 1f)
+                    data.material.side = "double";
+            }
+            else if (mat.shader.name == "Unlit/Color")
+            {
+                data.material.shader = "flat";
+                data.material.side = "double";
+            }
+            else if (mat.shader.name == "Unlit/Texture")
+            {
+                data.material.shader = "flat";
+                data.url = ToArenaTexture(mat);
+                data.material.repeat = mat.mainTextureScale.x;
+                data.material.side = "double";
+            }
+            else if (mat.shader.name == "Unlit/Texture Colored")
+            {
+                data.material.shader = "flat";
+                data.url = ToArenaTexture(mat);
+                data.material.repeat = mat.mainTextureScale.x;
+                data.material.color = ToArenaColor(mat.color);
+                data.material.side = "double";
+            }
+            else if (mat.shader.name == "Legacy Shaders/Transparent/Diffuse")
+            {
+                data.material.shader = "flat";
+                data.url = ToArenaTexture(mat);
+                data.material.repeat = mat.mainTextureScale.x;
+                data.material.color = ToArenaColor(mat.color);
+                data.material.transparent = true;
+                data.material.opacity = mat.color.a;
+                if (mat.color.a == 1f)
+                    data.material.side = "double";
+            }
+            else
+            {
+                // other shaders
+                data.material.shader = "standard";
+                data.url = ToArenaTexture(mat);
+                data.material.repeat = mat.mainTextureScale.x;
+                if (mat.HasProperty("_Color"))
+                    data.material.color = ToArenaColor(mat.color);
+                data.material.side = "double";
+            }
+        }
+        // texture
+        public static string ToArenaTexture(Material mat)
+        {
+            Texture tex = mat.GetTexture("_MainTex");
+            if (tex)
+            {
+                string texture_path = AssetDatabase.GetAssetPath(tex);
+                string new_path = ArenaClient.export_path + "/images/" + Path.GetFileName(texture_path);
+                // copy if there is no texture
+                if (AssetDatabase.AssetPathToGUID(new_path) == "")
+                {
+                    AssetDatabase.CopyAsset(texture_path, new_path);
+                }
+                return "images/" + Path.GetFileName(texture_path);
+            }
+            return "";
         }
 
     }
