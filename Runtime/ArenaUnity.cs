@@ -306,13 +306,7 @@ namespace ArenaUnity
                 data.url = ToArenaTexture(mat);
                 data.material.repeat = mat.mainTextureScale.x;
                 if (mat.HasProperty("_Color"))
-                {
                     data.material.color = ToArenaColor(mat.color);
-                }
-                //data.material.metalness = mat.GetFloat("_ Metallic");
-                //data.material.roughness = 1f - mat.GetFloat("_Glossiness");
-                //data.material.transparent = mat.GetFloat("_Mode") == 3 ? true : false;
-                //data.material.opacity = mat.color.a;
                 data.material.side = "double";
             }
         }
