@@ -17,6 +17,7 @@ using M2MqttUnity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Siccity.GLTFUtility;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt.Messages;
@@ -84,6 +85,8 @@ namespace ArenaUnity
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
         static readonly string userHomePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+        public static string export_path = "Assets/ArenaUnity/export";
+
 
         private Transform ArenaClientTransform;
 
@@ -115,6 +118,30 @@ namespace ArenaUnity
             transform.position = new Vector3(0f, 0f, 0f);
             transform.rotation = Quaternion.identity;
             transform.localScale = new Vector3(1f, 1f, 1f);
+
+            //Create if there is no export folder
+            string guid_exist = AssetDatabase.AssetPathToGUID(export_path);
+            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/export"))
+            {
+                AssetDatabase.CreateFolder("Assets/ArenaUnity", "export");
+                AssetDatabase.Refresh();
+            }
+
+            //Create an images folder
+            guid_exist = AssetDatabase.AssetPathToGUID(export_path + "/images");
+            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/export/images"))
+            {
+                AssetDatabase.CreateFolder(export_path, "images");
+                AssetDatabase.Refresh();
+            }
+
+            //Create a models folder
+            guid_exist = AssetDatabase.AssetPathToGUID(export_path + "/models");
+            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/export/models"))
+            {
+                AssetDatabase.CreateFolder(export_path, "models");
+                AssetDatabase.Refresh();
+            }
         }
 
         // Start is called before the first frame update

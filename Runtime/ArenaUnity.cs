@@ -3,6 +3,9 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
+using System.Dynamic;
+using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -20,17 +23,11 @@ namespace ArenaUnity
             Light light = gobj.GetComponent<Light>();
             SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
             if (meshFilter && meshFilter.sharedMesh)
-            {
                 objectType = meshFilter.sharedMesh.name.ToLower();
-            }
             else if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0)
-            {
                 objectType = "image";
-            }
             else if (light)
-            {
                 objectType = "light";
-            }
             return objectType.ToLower();
         }
         public static GameObject ToUnityObjectType(string obj_type)
@@ -230,7 +227,6 @@ namespace ArenaUnity
             if (data.type != null)
             {
                 Light light = gobj.GetComponent<Light>();
-                // use arena defaults if missing for consistency
                 switch ((string)data.type)
                 {
                     case "directional":
@@ -250,5 +246,93 @@ namespace ArenaUnity
                 light.color = ToUnityColor((string)data.color);
             }
         }
+        // material
+        public static void ToArenaMaterial(GameObject obj, ref dynamic data)
+        {
+            Material mat = obj.GetComponent<Renderer>().sharedMaterial;
+            if (!mat)
+                return;
+            dynamic material = new ExpandoObject();
+            data.material = material;
+            // shaders only
+            if (mat.shader.name == "Standard")
+            {
+                data.material.shader = "standard";
+                data.url = ToArenaTexture(mat);
+                data.material.repeat = mat.mainTextureScale.x;
+                data.material.color = ToArenaColor(mat.color);
+                data.material.metalness = mat.GetFloat("_Metallic");
+                data.material.roughness = 1f - mat.GetFloat("_Glossiness");
+                data.material.transparent = mat.GetFloat("_Mode") == 3 ? true : false;
+                data.material.opacity = mat.color.a;
+                if (mat.color.a == 1f)
+                    data.material.side = "double";
+            }
+            else if (mat.shader.name == "Unlit/Color")
+            {
+                data.material.shader = "flat";
+                data.material.side = "double";
+            }
+            else if (mat.shader.name == "Unlit/Texture")
+            {
+                data.material.shader = "flat";
+                data.url = ToArenaTexture(mat);
+                data.material.repeat = mat.mainTextureScale.x;
+                data.material.side = "double";
+            }
+            else if (mat.shader.name == "Unlit/Texture Colored")
+            {
+                data.material.shader = "flat";
+                data.url = ToArenaTexture(mat);
+                data.material.repeat = mat.mainTextureScale.x;
+                data.material.color = ToArenaColor(mat.color);
+                data.material.side = "double";
+            }
+            else if (mat.shader.name == "Legacy Shaders/Transparent/Diffuse")
+            {
+                data.material.shader = "flat";
+                data.url = ToArenaTexture(mat);
+                data.material.repeat = mat.mainTextureScale.x;
+                data.material.color = ToArenaColor(mat.color);
+                data.material.transparent = true;
+                data.material.opacity = mat.color.a;
+                if (mat.color.a == 1f)
+                    data.material.side = "double";
+            }
+            else
+            {
+                // other shaders
+                data.material.shader = "standard";
+                data.url = ToArenaTexture(mat);
+                data.material.repeat = mat.mainTextureScale.x;
+                if (mat.HasProperty("_Color"))
+                {
+                    data.material.color = ToArenaColor(mat.color);
+                }
+                //data.material.metalness = mat.GetFloat("_ Metallic");
+                //data.material.roughness = 1f - mat.GetFloat("_Glossiness");
+                //data.material.transparent = mat.GetFloat("_Mode") == 3 ? true : false;
+                //data.material.opacity = mat.color.a;
+                data.material.side = "double";
+            }
+        }
+        // texture
+        public static string ToArenaTexture(Material mat)
+        {
+            Texture tex = mat.GetTexture("_MainTex");
+            if (tex)
+            {
+                string texture_path = AssetDatabase.GetAssetPath(tex);
+                string new_path = ArenaClient.export_path + "/images/" + Path.GetFileName(texture_path);
+                // copy if there is no texture
+                if (AssetDatabase.AssetPathToGUID(new_path) == "")
+                {
+                    AssetDatabase.CopyAsset(texture_path, new_path);
+                }
+                return "images/" + Path.GetFileName(texture_path);
+            }
+            return "";
+        }
+
     }
 }

@@ -105,15 +105,7 @@ namespace ArenaUnity
             if (GetComponent<Light>())
                 ArenaUnity.ToArenaLight(gameObject, ref dataUp);
             if (GetComponent<Renderer>())
-            {
-                Color color = GetComponent<Renderer>().material.GetColor("_Color");
-                if (color != null)
-                {
-                    dynamic material = new ExpandoObject();
-                    material.color = ArenaUnity.ToArenaColor(color);
-                    dataUp.material = material;
-                }
-            }
+                ArenaUnity.ToArenaMaterial(gameObject, ref dataUp);
             msg.data = dataUp;
             //jsonData = JsonConvert.SerializeObject(data);
             string payload = JsonConvert.SerializeObject(msg);
