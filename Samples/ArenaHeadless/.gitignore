@@ -2,6 +2,11 @@
 token.json
 credentials.json
 
+*.meta
+Library/
+ProjectSettings/
+UserSettings/
+
 # Editors
 .vscode/
 .idea/
