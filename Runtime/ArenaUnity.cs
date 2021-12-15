@@ -31,7 +31,6 @@ namespace ArenaUnity
             {
                 objectType = "light";
             }
-
             return objectType.ToLower();
         }
         public static GameObject ToUnityObjectType(string obj_type)
@@ -51,13 +50,17 @@ namespace ArenaUnity
                     return GameObject.CreatePrimitive(PrimitiveType.Quad);
                 case "capsule":
                     return GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                case "light":
+                    GameObject lgobj = new GameObject();
+                    Light light = lgobj.transform.gameObject.AddComponent<Light>();
+                    return lgobj;
                 case "camera":
-                    GameObject gobj = new GameObject();
-                    Camera camera = gobj.transform.gameObject.AddComponent<Camera>();
+                    GameObject cgobj = new GameObject();
+                    Camera camera = cgobj.transform.gameObject.AddComponent<Camera>();
                     camera.nearClipPlane = 0.1f; // match arena
                     camera.farClipPlane = 10000f; // match arena
                     camera.fieldOfView = 80f; // match arena
-                    return gobj;
+                    return cgobj;
                 default:
                     return new GameObject();
             };
@@ -200,6 +203,52 @@ namespace ArenaUnity
             ColorUtility.TryParseHtmlString(color, out Color colorObj);
             return colorObj;
         }
-
+        // light
+        public static void ToArenaLight(GameObject gobj, ref dynamic data)
+        {
+            Light light = gobj.GetComponent<Light>();
+            switch (light.type)
+            {
+                case LightType.Directional:
+                    data.type = "directional";
+                    break;
+                case LightType.Area:
+                    data.type = "ambient";
+                    break;
+                case LightType.Point:
+                    data.type = "point";
+                    break;
+                case LightType.Spot:
+                    data.type = "spot";
+                    break;
+            }
+            data.intensity = light.intensity;
+            data.color = ToArenaColor(light.color);
+        }
+        public static void ToUnityLight(dynamic data, ref GameObject gobj)
+        {
+            if (data.type != null)
+            {
+                Light light = gobj.GetComponent<Light>();
+                // use arena defaults if missing for consistency
+                switch ((string)data.type)
+                {
+                    case "directional":
+                        light.type = LightType.Directional;
+                        break;
+                    case "ambient":
+                        light.type = LightType.Area;
+                        break;
+                    case "point":
+                        light.type = LightType.Point;
+                        break;
+                    case "spot":
+                        light.type = LightType.Spot;
+                        break;
+                }
+                light.intensity = (float)data.intensity;
+                light.color = ToUnityColor((string)data.color);
+            }
+        }
     }
 }

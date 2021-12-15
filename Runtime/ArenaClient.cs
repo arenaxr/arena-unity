@@ -278,13 +278,9 @@ namespace ArenaUnity
             else
             { // create local
                 if (urlData != null)
-                {
                     gobj = Importer.LoadFromBytes(urlData);
-                }
                 else
-                {
                     gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
-                }
                 gobj.transform.parent = ArenaClientTransform;
                 gobj.name = object_id;
                 arenaObjs.Add(object_id, gobj);
@@ -296,9 +292,7 @@ namespace ArenaUnity
             }
             // modify Unity attributes
             if (data.position != null)
-            {
                 gobj.transform.position = ArenaUnity.ToUnityPosition(data.position);
-            }
             if (data.rotation != null)
             {
                 if (data.rotation.w != null) // quaternion
@@ -307,9 +301,7 @@ namespace ArenaUnity
                     gobj.transform.rotation = ArenaUnity.ToUnityRotationEuler(data.rotation);
             }
             if (data.scale != null)
-            {
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
-            }
             if (data.material != null)
             {
                 if (data.material.color != null)
@@ -320,6 +312,8 @@ namespace ArenaUnity
                 }
             }
             ArenaUnity.ToUnityDimensions(data, ref gobj);
+            if ((string)data.object_type == "light")
+                ArenaUnity.ToUnityLight(data, ref gobj);
             gobj.transform.hasChanged = false;
             if (aobj != null)
             {

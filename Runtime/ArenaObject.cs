@@ -102,6 +102,8 @@ namespace ArenaUnity
                 dataUp.rotation = ArenaUnity.ToArenaRotationEuler(transform.rotation.eulerAngles);
             dataUp.scale = ArenaUnity.ToArenaScale(transform.localScale);
             ArenaUnity.ToArenaDimensions(gameObject, ref dataUp);
+            if (GetComponent<Light>())
+                ArenaUnity.ToArenaLight(gameObject, ref dataUp);
             if (GetComponent<Renderer>())
             {
                 Color color = GetComponent<Renderer>().material.GetColor("_Color");
