@@ -28,11 +28,11 @@ namespace ArenaUnity
     /// </summary>
     [HelpURL("https://arena.conix.io")]
     [DisallowMultipleComponent()]
-    [AddComponentMenu("ArenaHeadlessent", 0)]
-    public class ArenaHeadlessent : M2MqttUnityClient
+    [AddComponentMenu("ArenaClient", 0)]
+    public class ArenaClient : M2MqttUnityClient
     {
         // Singleton instance of this connection object
-        public static ArenaHeadlessent Instance { get; private set; }
+        public static ArenaClient Instance { get; private set; }
 
         protected override void Awake()
         {
@@ -85,7 +85,7 @@ namespace ArenaUnity
         const string userSubDirUnity = "unity";
         static readonly string userHomePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
 
-        private Transform ArenaHeadlessentTransform;
+        private Transform ArenaClientTransform;
 
         static readonly string[] Scopes = {
             Oauth2Service.Scope.UserinfoProfile,
@@ -171,7 +171,7 @@ namespace ArenaUnity
             UserCredential credential;
             using (var stream = ToStream(gauthId))
             {
-                string applicationName = "ArenaHeadlessentCSharp";
+                string applicationName = "ArenaClientCSharp";
                 IDataStore ds;
                 if (Application.isMobilePlatform) ds = new NullDataStore();
                 else ds = new FileDataStore(gAuthPath, true);
@@ -229,7 +229,7 @@ namespace ArenaUnity
             // get persistence objects
             cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
             yield return cd.coroutine;
-            ArenaHeadlessentTransform = FindObjectOfType<ArenaHeadlessent>().transform;
+            ArenaClientTransform = FindObjectOfType<ArenaClient>().transform;
             string jsonString = cd.result.ToString();
             JArray jsonVal = JArray.Parse(jsonString);
             dynamic objects = jsonVal;
@@ -285,7 +285,7 @@ namespace ArenaUnity
                 {
                     gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
                 }
-                gobj.transform.parent = ArenaHeadlessentTransform;
+                gobj.transform.parent = ArenaClientTransform;
                 gobj.name = object_id;
                 arenaObjs.Add(object_id, gobj);
                 aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
