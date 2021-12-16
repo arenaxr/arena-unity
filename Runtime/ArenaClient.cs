@@ -3,6 +3,7 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -176,7 +177,7 @@ namespace ArenaUnity
                         aobj.storeType = "object";
                         child.gameObject.transform.hasChanged = true;
                         if (arenaObjs.ContainsKey(child.name))
-                            child.name = $"{child.name}-{Random.Range(0, 1000000)}";
+                            child.name = $"{child.name}-{UnityEngine.Random.Range(0, 1000000)}";
                         arenaObjs.Add(child.name, child.gameObject);
                     }
                 }
@@ -274,6 +275,7 @@ namespace ArenaUnity
                         objUrl = (string)obj.attributes.url;
                         if (objUrl.StartsWith("/store/")) objUrl = $"https://{brokerAddress}{objUrl}";
                         else if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
+                        objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
                     }
                 }
                 if (obj.attributes.object_type == "gltf-model" && objUrl != null && objUrl.Contains(".glb"))
@@ -309,9 +311,21 @@ namespace ArenaUnity
             else
             { // create local
                 if (urlData != null)
-                    gobj = Importer.LoadFromBytes(urlData);
+                {
+                    try
+                    {
+                        gobj = Importer.LoadFromBytes(urlData);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"Importing object {object_id}: {e}");
+                        gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
+                    }
+                }
                 else
+                {
                     gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
+                }
                 gobj.transform.parent = ArenaClientTransform;
                 gobj.name = object_id;
                 arenaObjs.Add(object_id, gobj);
