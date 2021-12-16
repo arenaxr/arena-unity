@@ -264,7 +264,7 @@ namespace ArenaUnity
             int objects_num = 0;
             foreach (dynamic obj in objects)
             {
-                EditorUtility.DisplayProgressBar("Progress", $"Loading persistence: {(string)obj.object_id}...", (float)objects_num / (float)(jsonVal.Count + arenaObjs.Count));
+                EditorUtility.DisplayProgressBar("Progress", $"Loading persistence: {(string)obj.object_id}...", (float)objects_num / (float)(jsonVal.Count));
                 string objUrl = null;
                 byte[] urlData = null;
                 if (obj.type == "object" || obj.attributes.position != null)
@@ -276,7 +276,7 @@ namespace ArenaUnity
                         else if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
                     }
                 }
-                if (obj.attributes.object_type == "gltf-model" && objUrl != null && objUrl.EndsWith(".glb"))
+                if (obj.attributes.object_type == "gltf-model" && objUrl != null && objUrl.Contains(".glb"))
                 {
                     cd = new CoroutineWithData(this, HttpRequestRaw(objUrl));
                     yield return cd.coroutine;
