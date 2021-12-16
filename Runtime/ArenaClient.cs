@@ -326,10 +326,12 @@ namespace ArenaUnity
                 gobj.transform.position = ArenaUnity.ToUnityPosition(data.position);
             if (data.rotation != null)
             {
+                // TODO: needed? bool invertY = !((string)data.object_type == "camera");
+                bool invertY = true;
                 if (data.rotation.w != null) // quaternion
-                    gobj.transform.rotation = ArenaUnity.ToUnityRotationQuat(data.rotation);
+                    gobj.transform.rotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
                 else // euler
-                    gobj.transform.rotation = ArenaUnity.ToUnityRotationEuler(data.rotation);
+                    gobj.transform.rotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
             }
             if (data.scale != null)
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
