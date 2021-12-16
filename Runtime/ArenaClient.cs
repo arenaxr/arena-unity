@@ -79,6 +79,7 @@ namespace ArenaUnity
         private string sceneTopic = null;
         private Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
         private static readonly string ClientName = "ARENA Client Runtime";
+        private static UserCredential credential;
 
         // local paths
         const string gAuthFile = ".arena_google_auth";
@@ -148,7 +149,7 @@ namespace ArenaUnity
         // Start is called before the first frame update
         protected override void Start()
         {
-            StartCoroutine(SceneLogin());
+            StartCoroutine(SceneSignin());
         }
 
         // Update is called once per frame
@@ -184,7 +185,7 @@ namespace ArenaUnity
             }
         }
 
-        private IEnumerator SceneLogin()
+        private IEnumerator SceneSignin()
         {
             string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, brokerAddress, "s");
             string gAuthPath = sceneAuthDir;
@@ -196,13 +197,13 @@ namespace ArenaUnity
             string gauthId = cd.result.ToString();
 
             // request user auth
-            UserCredential credential;
             using (var stream = ToStream(gauthId))
             {
                 string applicationName = "ArenaClientCSharp";
                 IDataStore ds;
                 if (Application.isMobilePlatform) ds = new NullDataStore();
                 else ds = new FileDataStore(gAuthPath, true);
+                GoogleWebAuthorizationBroker.Folder = gAuthPath;
                 // GoogleWebAuthorizationBroker.AuthorizeAsync for "installed" creds only
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                         GoogleClientSecrets.FromStream(stream).Secrets,
@@ -250,9 +251,9 @@ namespace ArenaUnity
             var handler = new JwtSecurityTokenHandler();
             JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
             permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
-
             sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
             sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
+            base.Start(); // background mqtt connect
 
             // get persistence objects
             cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
@@ -297,7 +298,17 @@ namespace ArenaUnity
                     gobj.Value.GetComponent<ArenaObject>().transform.parent = arenaObjs[parent].transform;
                 }
             }
-            base.Start();
+        }
+
+#if UNITY_EDITOR
+		[MenuItem("ARENA/Signout")]
+#endif
+        public static void SceneSignout()
+        {
+            EditorApplication.ExitPlaymode();
+            if (Directory.Exists(GoogleWebAuthorizationBroker.Folder))
+                Directory.Delete(GoogleWebAuthorizationBroker.Folder, true);
+            Debug.Log("Logged out of the ARENA");
         }
 
         private void CreateUpdateObject(string object_id, string storeType, dynamic data, byte[] urlData = null)
