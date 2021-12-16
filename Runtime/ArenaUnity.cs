@@ -23,12 +23,17 @@ namespace ArenaUnity
             Light light = gobj.GetComponent<Light>();
             SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
             if (meshFilter && meshFilter.sharedMesh)
-                objectType = meshFilter.sharedMesh.name.ToLower();
+            {
+                if (meshFilter.sharedMesh.name == "Cube")
+                    objectType = "box";
+                else
+                    objectType = meshFilter.sharedMesh.name.ToLower();
+            }
             else if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0)
                 objectType = "image";
             else if (light)
                 objectType = "light";
-            return objectType.ToLower();
+            return objectType;
         }
         public static GameObject ToUnityObjectType(string obj_type)
         {
@@ -82,39 +87,39 @@ namespace ArenaUnity
             );
         }
         // rotation
-        public static dynamic ToArenaRotationQuat(Quaternion rotationQuat)
+        public static dynamic ToArenaRotationQuat(Quaternion rotationQuat, bool invertY = true)
         {
             return new
             {
                 x = -rotationQuat.x,
-                y = -rotationQuat.y,
+                y = rotationQuat.y * (invertY ? -1 : 1),
                 z = rotationQuat.z,
                 w = rotationQuat.w
             };
         }
-        public static Quaternion ToUnityRotationQuat(dynamic rotationQuat)
+        public static Quaternion ToUnityRotationQuat(dynamic rotationQuat, bool invertY = true)
         {
             return new Quaternion(
                 -(float)rotationQuat.x,
-                -(float)rotationQuat.y,
+                (float)rotationQuat.y * (invertY ? -1 : 1),
                 (float)rotationQuat.z,
                 (float)rotationQuat.w
             );
         }
-        public static dynamic ToArenaRotationEuler(Vector3 rotationEuler)
+        public static dynamic ToArenaRotationEuler(Vector3 rotationEuler, bool invertY = true)
         {
             return new
             {
                 x = -rotationEuler.x,
-                y = -rotationEuler.y,
+                y = rotationEuler.y * (invertY ? -1 : 1),
                 z = rotationEuler.z
             };
         }
-        public static Quaternion ToUnityRotationEuler(dynamic rotationEuler)
+        public static Quaternion ToUnityRotationEuler(dynamic rotationEuler, bool invertY = true)
         {
             return Quaternion.Euler(
                 -(float)rotationEuler.x,
-                -(float)rotationEuler.y,
+                (float)rotationEuler.y * (invertY ? -1 : 1),
                 (float)rotationEuler.z
             );
         }
