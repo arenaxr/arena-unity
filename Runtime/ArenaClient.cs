@@ -261,8 +261,10 @@ namespace ArenaUnity
             JArray jsonVal = JArray.Parse(jsonString);
             dynamic objects = jsonVal;
             // establish objects
+            int objects_num = 0;
             foreach (dynamic obj in objects)
             {
+                EditorUtility.DisplayProgressBar("Progress", $"Loading persistence: {(string)obj.object_id}...", (float)objects_num / (float)(jsonVal.Count + arenaObjs.Count));
                 string objUrl = null;
                 byte[] urlData = null;
                 if (obj.type == "object" || obj.attributes.position != null)
@@ -281,7 +283,9 @@ namespace ArenaUnity
                     urlData = (byte[])cd.result;
                 }
                 CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, urlData);
+                objects_num++;
             }
+            EditorUtility.ClearProgressBar();
             // establish parent/child relationships
             foreach (KeyValuePair<string, GameObject> gobj in arenaObjs)
             {
