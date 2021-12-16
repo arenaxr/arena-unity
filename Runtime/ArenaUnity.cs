@@ -23,12 +23,17 @@ namespace ArenaUnity
             Light light = gobj.GetComponent<Light>();
             SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
             if (meshFilter && meshFilter.sharedMesh)
-                objectType = meshFilter.sharedMesh.name.ToLower();
+            {
+                if (meshFilter.sharedMesh.name == "Cube")
+                    objectType = "box";
+                else
+                    objectType = meshFilter.sharedMesh.name.ToLower();
+            }
             else if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0)
                 objectType = "image";
             else if (light)
                 objectType = "light";
-            return objectType.ToLower();
+            return objectType;
         }
         public static GameObject ToUnityObjectType(string obj_type)
         {
@@ -82,58 +87,40 @@ namespace ArenaUnity
             );
         }
         // rotation
-        public static dynamic ToArenaRotationQuat(Quaternion rotationQuat)
+        public static dynamic ToArenaRotationQuat(Quaternion rotationQuat, bool invertY = true)
         {
-            Quaternion quaternion = Quaternion.Euler(
-                -rotationQuat.eulerAngles.x,
-                -rotationQuat.eulerAngles.y,
-                rotationQuat.eulerAngles.z
-            );
             return new
             {
-                x = quaternion.x,
-                y = quaternion.y,
-                z = quaternion.z,
-                w = quaternion.w
+                x = -rotationQuat.x,
+                y = rotationQuat.y * (invertY ? -1 : 1),
+                z = rotationQuat.z,
+                w = rotationQuat.w
             };
         }
-        public static Quaternion ToUnityRotationQuat(dynamic rotationQuat)
+        public static Quaternion ToUnityRotationQuat(dynamic rotationQuat, bool invertY = true)
         {
-
-            Quaternion q = new Quaternion(
-                 (float)rotationQuat.x,
-                 (float)rotationQuat.y,
-                 (float)rotationQuat.z,
-                 (float)rotationQuat.w
-             );
-            Vector3 rotation = new Vector3(
-                -q.eulerAngles.x,
-                -q.eulerAngles.y,
-                q.eulerAngles.z
+            return new Quaternion(
+                -(float)rotationQuat.x,
+                (float)rotationQuat.y * (invertY ? -1 : 1),
+                (float)rotationQuat.z,
+                (float)rotationQuat.w
             );
-            return Quaternion.Euler(rotation);
         }
-        public static dynamic ToArenaRotationEuler(Vector3 rotationEuler)
+        public static dynamic ToArenaRotationEuler(Vector3 rotationEuler, bool invertY = true)
         {
-            Quaternion qUnity = Quaternion.Euler(rotationEuler);
             return new
             {
-                x = -qUnity.eulerAngles.x,
-                y = -qUnity.eulerAngles.y,
-                z = qUnity.eulerAngles.z
+                x = -rotationEuler.x,
+                y = rotationEuler.y * (invertY ? -1 : 1),
+                z = rotationEuler.z
             };
         }
-        public static Quaternion ToUnityRotationEuler(dynamic rotationEuler)
+        public static Quaternion ToUnityRotationEuler(dynamic rotationEuler, bool invertY = true)
         {
-            Quaternion qArena = Quaternion.Euler(
-                (float)rotationEuler.x,
-                (float)rotationEuler.y,
-                (float)rotationEuler.z
-            );
             return Quaternion.Euler(
-                -qArena.eulerAngles.x,
-                -qArena.eulerAngles.y,
-                qArena.eulerAngles.z
+                -(float)rotationEuler.x,
+                (float)rotationEuler.y * (invertY ? -1 : 1),
+                (float)rotationEuler.z
             );
         }
         // scale
