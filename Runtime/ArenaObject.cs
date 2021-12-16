@@ -83,6 +83,7 @@ namespace ArenaUnity
         {
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
                 return false;
+            if (ArenaClient.Instance.IsShuttingDown) return false;
 
             dynamic msg = new ExpandoObject();
             msg.object_id = name;
@@ -120,6 +121,7 @@ namespace ArenaUnity
         {
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
                 return;
+            if (ArenaClient.Instance.IsShuttingDown) return;
 
             dynamic msg = new
             {
@@ -129,6 +131,12 @@ namespace ArenaUnity
             };
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClient.Instance.Publish(msg.object_id, payload);
+        }
+
+        public void OnApplicationQuit()
+        {
+            if (ArenaClient.Instance == null)
+                ArenaClient.Instance.IsShuttingDown = true;
         }
     }
 }

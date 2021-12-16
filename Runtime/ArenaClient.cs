@@ -35,6 +35,7 @@ namespace ArenaUnity
     {
         // Singleton instance of this connection object
         public static ArenaClient Instance { get; private set; }
+        public bool IsShuttingDown { get; internal set; }
 
         protected override void Awake()
         {
@@ -88,7 +89,6 @@ namespace ArenaUnity
         const string userSubDirUnity = "unity";
         static readonly string userHomePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
         public static string export_path = "Assets/ArenaUnity/export";
-
 
         private Transform ArenaClientTransform;
 
@@ -538,7 +538,7 @@ namespace ArenaUnity
                 {
                     case "create":
                     case "update":
-                        if (System.Convert.ToBoolean(obj.persist))
+                        if (Convert.ToBoolean(obj.persist))
                         {
                             CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.data);
                         }
@@ -560,7 +560,7 @@ namespace ArenaUnity
         private void LogMessage(string dir, dynamic obj)
         {
             // determine logging level
-            if (!System.Convert.ToBoolean(obj.persist) && !logMqttNonPersist) return;
+            if (!Convert.ToBoolean(obj.persist) && !logMqttNonPersist) return;
             if (obj.type == "object")
             {
                 if (obj.data != null && obj.data.object_type == "camera" && !logMqttUsers) return;
@@ -578,6 +578,12 @@ namespace ArenaUnity
         private void OnValidate()
         {
             // TODO
+        }
+
+        public new void OnApplicationQuit()
+        {
+            IsShuttingDown = true;
+            base.OnApplicationQuit();
         }
     }
 }
