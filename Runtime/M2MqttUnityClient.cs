@@ -231,6 +231,7 @@ namespace M2MqttUnity
 
         private void ProcessMqttMessageBackgroundQueue()
         {
+            if (backMessageQueue == null) return;
             foreach (MqttMsgPublishEventArgs msg in backMessageQueue)
             {
                 DecodeMessage(msg.Topic, msg.Message);
