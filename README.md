@@ -24,9 +24,7 @@ An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/
 1. The auth flow will open a web browser page for you to login, if you haven't yet.
 
 ## During Runtime (Play)
-1. If objects are stored in the ARENA Persistence Database, they will be child objects of the `ARENA` GameObject.
-1. You may create or change an object and if it is a child of the `ARENA` GameObject, its properties will be published to the ARENA Persistence Database.
-1. Incoming authorized messages may also add/change/remove your ARENA Unity objects.
+See [operational documentation](Documentation/arena.unity.md).
 
 ## Architecture
 - The `.NET 4.x` API level is required since ARENA JSON payloads are fluid, and we cannot keep up with schema serialization definitions by developers and users. So we use the `dynamic` object instantiations offered in the .Net 4 API to test for JSON attributes at runtime.
