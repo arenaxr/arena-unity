@@ -68,7 +68,6 @@ namespace ArenaUnity
                     camera.nearClipPlane = 0.1f; // match arena
                     camera.farClipPlane = 10000f; // match arena
                     camera.fieldOfView = 80f; // match arena
-                    camera.targetDisplay = secondDisplay; // default to secondary
                     return cgobj;
                 default:
                     return new GameObject();

@@ -234,6 +234,7 @@ namespace M2MqttUnity
             if (backMessageQueue == null) return;
             foreach (MqttMsgPublishEventArgs msg in backMessageQueue)
             {
+                if (msg == null) continue;
                 DecodeMessage(msg.Topic, msg.Message);
             }
             backMessageQueue.Clear();

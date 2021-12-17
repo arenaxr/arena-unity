@@ -54,11 +54,13 @@ namespace ArenaUnity
         public string sceneUrl = null;
 
         [Header("Performance & Control")]
-        [Tooltip("Showing a list of loaded cameras")]
+        [Tooltip("Cameras for Display 1")]
         [SerializeField]
-        public Camera cameraView;
+        public Camera cameraForDisplay;
+        [Tooltip("Synchronize camera display to first ARENA user in the scene")]
+        public bool cameraAutoSync = false;
         [Tooltip("Console log MQTT object messages")]
-        public bool logMqttObjects = true;
+        public bool logMqttObjects = false;
         [Tooltip("Console log MQTT user messages")]
         public bool logMqttUsers = false;
         [Tooltip("Console log MQTT client event messages")]
@@ -119,7 +121,7 @@ namespace ArenaUnity
 
         protected void OnEnable()
         {
-            cameraView = Camera.main;
+            cameraForDisplay = Camera.main;
 
             // ensure consistant name and transform
             name = ClientName;
@@ -356,6 +358,17 @@ namespace ArenaUnity
                 aobj.storeType = storeType;
                 aobj.parentId = (string)data.parent;
                 aobj.persist = true;
+                if ((string)data.object_type == "camera")
+                {   // sync camera to main display if requested
+                    Camera cam = gobj.GetComponent<Camera>();
+                    if (cameraAutoSync && !cameraForDisplay.name.StartsWith("camera_"))
+                    {
+                        cam.targetDisplay = ArenaUnity.mainDisplay;
+                        cameraForDisplay = cam;
+                    }
+                    else
+                        cam.targetDisplay = ArenaUnity.secondDisplay;
+                }
             }
             // modify Unity attributes
             if (data.position != null)
@@ -527,7 +540,7 @@ namespace ArenaUnity
 
         protected override void OnConnectionLost()
         {
-            Debug.Log("CONNECTION LOST!");
+            Debug.LogWarning("CONNECTION LOST!");
         }
 
         protected override void DecodeMessage(string topic, byte[] message)
@@ -595,11 +608,11 @@ namespace ArenaUnity
         protected void OnValidate()
         {
             // camera change?
-            if (cameraView != null)
+            if (cameraForDisplay != null)
             {
                 foreach (Camera cam in Camera.allCameras)
                 {
-                    if (cam.name == cameraView.name)
+                    if (cam.name == cameraForDisplay.name)
                     {
                         cam.targetDisplay = ArenaUnity.mainDisplay;
                         Debug.Log($"{cam.name} now using Display {cam.targetDisplay + 1}.");
