@@ -116,6 +116,11 @@ namespace ArenaUnity
             return true;
         }
 
+        public void OnValidate()
+        {
+            // TODO: color/material change?
+        }
+
         public void OnDestroy()
         {
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)

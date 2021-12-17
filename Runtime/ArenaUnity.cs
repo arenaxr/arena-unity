@@ -3,6 +3,7 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
+using System;
 using System.Dynamic;
 using System.IO;
 using UnityEditor;
@@ -18,6 +19,8 @@ namespace ArenaUnity
         public static int mainDisplay = 0;
         public static int secondDisplay = 1;
 
+        private static float ArenaFloat(float n) { return (float)Math.Round(n, 3); }
+
         // object type
         public static string ToArenaObjectType(GameObject gobj)
         {
@@ -32,7 +35,7 @@ namespace ArenaUnity
                 else
                     objectType = meshFilter.sharedMesh.name.ToLower();
             }
-            else if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0)
+            else if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0f)
                 objectType = "image";
             else if (light)
                 objectType = "light";
@@ -57,7 +60,7 @@ namespace ArenaUnity
                     return GameObject.CreatePrimitive(PrimitiveType.Capsule);
                 case "light":
                     GameObject lgobj = new GameObject();
-                    Light light = lgobj.transform.gameObject.AddComponent<Light>();
+                    lgobj.transform.gameObject.AddComponent<Light>();
                     return lgobj;
                 case "camera":
                     GameObject cgobj = new GameObject();
@@ -77,9 +80,9 @@ namespace ArenaUnity
         {
             return new
             {
-                x = position.x,
-                y = position.y,
-                z = -position.z
+                x = ArenaFloat(position.x),
+                y = ArenaFloat(position.y),
+                z = ArenaFloat(-position.z)
             };
         }
         public static Vector3 ToUnityPosition(dynamic position)
@@ -95,10 +98,10 @@ namespace ArenaUnity
         {
             return new
             {
-                x = -rotationQuat.x,
-                y = rotationQuat.y * (invertY ? -1 : 1),
-                z = rotationQuat.z,
-                w = rotationQuat.w
+                x = ArenaFloat(-rotationQuat.x),
+                y = ArenaFloat(rotationQuat.y * (invertY ? -1 : 1)),
+                z = ArenaFloat(rotationQuat.z),
+                w = ArenaFloat(rotationQuat.w)
             };
         }
         public static Quaternion ToUnityRotationQuat(dynamic rotationQuat, bool invertY = true)
@@ -114,9 +117,9 @@ namespace ArenaUnity
         {
             return new
             {
-                x = -rotationEuler.x,
-                y = rotationEuler.y * (invertY ? -1 : 1),
-                z = rotationEuler.z
+                x = ArenaFloat(-rotationEuler.x),
+                y = ArenaFloat(rotationEuler.y * (invertY ? -1 : 1)),
+                z = ArenaFloat(rotationEuler.z)
             };
         }
         public static Quaternion ToUnityRotationEuler(dynamic rotationEuler, bool invertY = true)
@@ -132,9 +135,9 @@ namespace ArenaUnity
         {
             return new
             {
-                x = scale.x,
-                y = scale.y,
-                z = scale.z
+                x = ArenaFloat(scale.x),
+                y = ArenaFloat(scale.y),
+                z = ArenaFloat(scale.z)
             };
         }
         public static Vector3 ToUnityScale(dynamic scale)
@@ -153,18 +156,18 @@ namespace ArenaUnity
             {
                 case "BoxCollider":
                     BoxCollider bc = gobj.GetComponent<BoxCollider>();
-                    data.width = bc.size.x;
-                    data.height = bc.size.y;
-                    data.depth = bc.size.z;
+                    data.width = ArenaFloat(bc.size.x);
+                    data.height = ArenaFloat(bc.size.y);
+                    data.depth = ArenaFloat(bc.size.z);
                     break;
                 case "SphereCollider":
                     SphereCollider sc = gobj.GetComponent<SphereCollider>();
-                    data.radius = sc.radius;
+                    data.radius = ArenaFloat(sc.radius);
                     break;
                 case "CapsuleCollider":
                     CapsuleCollider cc = gobj.GetComponent<CapsuleCollider>();
-                    data.height = cc.height;
-                    data.radius = cc.radius;
+                    data.height = ArenaFloat(cc.height);
+                    data.radius = ArenaFloat(cc.radius);
                     break;
                 default:
                     break;
@@ -228,7 +231,7 @@ namespace ArenaUnity
                     data.type = "spot";
                     break;
             }
-            data.intensity = light.intensity;
+            data.intensity = ArenaFloat(light.intensity);
             data.color = ToArenaColor(light.color);
         }
         public static void ToUnityLight(dynamic data, ref GameObject gobj)
@@ -268,12 +271,12 @@ namespace ArenaUnity
             {
                 data.material.shader = "standard";
                 data.url = ToArenaTexture(mat);
-                data.material.repeat = mat.mainTextureScale.x;
+                data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
                 data.material.color = ToArenaColor(mat.color);
-                data.material.metalness = mat.GetFloat("_Metallic");
-                data.material.roughness = 1f - mat.GetFloat("_Glossiness");
-                data.material.transparent = mat.GetFloat("_Mode") == 3 ? true : false;
-                data.material.opacity = mat.color.a;
+                data.material.metalness = ArenaFloat(mat.GetFloat("_Metallic"));
+                data.material.roughness = ArenaFloat(1f - mat.GetFloat("_Glossiness"));
+                data.material.transparent = mat.GetFloat("_Mode") == 3f ? true : false;
+                data.material.opacity = ArenaFloat(mat.color.a);
                 if (mat.color.a == 1f)
                     data.material.side = "double";
             }
@@ -286,14 +289,14 @@ namespace ArenaUnity
             {
                 data.material.shader = "flat";
                 data.url = ToArenaTexture(mat);
-                data.material.repeat = mat.mainTextureScale.x;
+                data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
                 data.material.side = "double";
             }
             else if (mat.shader.name == "Unlit/Texture Colored")
             {
                 data.material.shader = "flat";
                 data.url = ToArenaTexture(mat);
-                data.material.repeat = mat.mainTextureScale.x;
+                data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
                 data.material.color = ToArenaColor(mat.color);
                 data.material.side = "double";
             }
@@ -301,10 +304,10 @@ namespace ArenaUnity
             {
                 data.material.shader = "flat";
                 data.url = ToArenaTexture(mat);
-                data.material.repeat = mat.mainTextureScale.x;
+                data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
                 data.material.color = ToArenaColor(mat.color);
                 data.material.transparent = true;
-                data.material.opacity = mat.color.a;
+                data.material.opacity = ArenaFloat(mat.color.a);
                 if (mat.color.a == 1f)
                     data.material.side = "double";
             }
@@ -313,7 +316,7 @@ namespace ArenaUnity
                 // other shaders
                 data.material.shader = "standard";
                 data.url = ToArenaTexture(mat);
-                data.material.repeat = mat.mainTextureScale.x;
+                data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
                 if (mat.HasProperty("_Color"))
                     data.material.color = ToArenaColor(mat.color);
                 data.material.side = "double";
