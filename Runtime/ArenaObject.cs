@@ -3,7 +3,6 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
-using System;
 using System.Dynamic;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -135,7 +134,7 @@ namespace ArenaUnity
 
         public void OnApplicationQuit()
         {
-            if (ArenaClient.Instance == null)
+            if (ArenaClient.Instance != null)
                 ArenaClient.Instance.IsShuttingDown = true;
         }
     }

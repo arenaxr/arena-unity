@@ -15,6 +15,9 @@ namespace ArenaUnity
     /// </summary>
     public static class ArenaUnity
     {
+        public static int mainDisplay = 0;
+        public static int secondDisplay = 1;
+
         // object type
         public static string ToArenaObjectType(GameObject gobj)
         {
@@ -62,6 +65,7 @@ namespace ArenaUnity
                     camera.nearClipPlane = 0.1f; // match arena
                     camera.farClipPlane = 10000f; // match arena
                     camera.fieldOfView = 80f; // match arena
+                    camera.targetDisplay = secondDisplay; // default to secondary
                     return cgobj;
                 default:
                     return new GameObject();

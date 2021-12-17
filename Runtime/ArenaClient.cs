@@ -53,7 +53,10 @@ namespace ArenaUnity
         [TextArea(minLines: 1, maxLines: 2)]
         public string sceneUrl = null;
 
-        [Header("Performance")]
+        [Header("Performance & Control")]
+        [Tooltip("Showing a list of loaded cameras")]
+        [SerializeField]
+        public Camera cameraView;
         [Tooltip("Console log MQTT object messages")]
         public bool logMqttObjects = true;
         [Tooltip("Console log MQTT user messages")]
@@ -82,12 +85,13 @@ namespace ArenaUnity
         private static readonly string ClientName = "ARENA Client Runtime";
         private static UserCredential credential;
 
+
         // local paths
         const string gAuthFile = ".arena_google_auth";
         const string mqttTokenFile = ".arena_mqtt_auth";
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
-        static readonly string userHomePath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+        static readonly string userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
         public static string export_path = "Assets/ArenaUnity/export";
 
         private Transform ArenaClientTransform;
@@ -115,6 +119,8 @@ namespace ArenaUnity
 
         public void OnEnable()
         {
+            cameraView = Camera.main;
+
             // ensure consistant name and transform
             name = ClientName;
             transform.position = new Vector3(0f, 0f, 0f);
@@ -575,9 +581,24 @@ namespace ArenaUnity
             Disconnect();
         }
 
-        private void OnValidate()
+        public void OnValidate()
         {
-            // TODO
+            // camera change?
+            if (cameraView != null)
+            {
+                foreach (Camera cam in Camera.allCameras)
+                {
+                    if (cam.name == cameraView.name)
+                    {
+                        cam.targetDisplay = ArenaUnity.mainDisplay;
+                        Debug.Log($"{cam.name} now using Display {cam.targetDisplay + 1}.");
+                    }
+                    else
+                    {
+                        cam.targetDisplay = ArenaUnity.secondDisplay;
+                    }
+                }
+            }
         }
 
         public new void OnApplicationQuit()
