@@ -80,7 +80,7 @@ namespace ArenaUnity.Editor
             if (www.isNetworkError || www.isHttpError)
 #endif
             {
-                Debug.Log(www.error);
+                Debug.LogError($"{www.error}: {www.url}");
             }
             else
             {

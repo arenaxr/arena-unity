@@ -117,7 +117,7 @@ namespace ArenaUnity
             public string token { get; set; }
         }
 
-        public void OnEnable()
+        protected void OnEnable()
         {
             cameraView = Camera.main;
 
@@ -200,6 +200,7 @@ namespace ArenaUnity
             // get app credentials
             CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/conf/gauth.json"));
             yield return cd.coroutine;
+            if (!isCrdSuccess(cd.result)) yield break;
             string gauthId = cd.result.ToString();
 
             // request user auth
@@ -240,6 +241,7 @@ namespace ArenaUnity
             form.AddField("id_token", idToken);
             cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/user_state", csrfToken, form));
             yield return cd.coroutine;
+            if (!isCrdSuccess(cd.result)) yield break;
             var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
             if (user.authenticated && (namespaceName == null || namespaceName.Trim() == ""))
                 namespaceName = user.username;
@@ -251,6 +253,7 @@ namespace ArenaUnity
             form.AddField("scene", $"{namespaceName}/{sceneName}");
             cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/mqtt_auth", csrfToken, form));
             yield return cd.coroutine;
+            if (!isCrdSuccess(cd.result)) yield break;
             var auth = JsonConvert.DeserializeObject<MqttAuth>(cd.result.ToString());
             mqttUserName = auth.username;
             mqttPassword = auth.token;
@@ -264,6 +267,7 @@ namespace ArenaUnity
             // get persistence objects
             cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
             yield return cd.coroutine;
+            if (!isCrdSuccess(cd.result)) yield break;
             ArenaClientTransform = FindObjectOfType<ArenaClient>().transform;
             string jsonString = cd.result.ToString();
             JArray jsonVal = JArray.Parse(jsonString);
@@ -272,7 +276,7 @@ namespace ArenaUnity
             int objects_num = 0;
             foreach (dynamic obj in objects)
             {
-                EditorUtility.DisplayProgressBar("Progress", $"Loading persistence: {(string)obj.object_id}...", (float)objects_num / (float)(jsonVal.Count));
+                EditorUtility.DisplayProgressBar("Progress", $"Loading persistence: {(string)obj.object_id}...", objects_num / (float)jsonVal.Count);
                 string objUrl = null;
                 byte[] urlData = null;
                 if (obj.type == "object" || obj.attributes.position != null)
@@ -289,7 +293,8 @@ namespace ArenaUnity
                 {
                     cd = new CoroutineWithData(this, HttpRequestRaw(objUrl));
                     yield return cd.coroutine;
-                    urlData = (byte[])cd.result;
+                    if (isCrdSuccess(cd.result))
+                        urlData = (byte[])cd.result;
                 }
                 CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, urlData);
                 objects_num++;
@@ -307,7 +312,7 @@ namespace ArenaUnity
         }
 
 #if UNITY_EDITOR
-		[MenuItem("ARENA/Signout")]
+        [MenuItem("ARENA/Signout")]
 #endif
         public static void SceneSignout()
         {
@@ -405,9 +410,9 @@ namespace ArenaUnity
             return stream;
         }
 
-        IEnumerator HttpRequestRaw(string uri)
+        private IEnumerator HttpRequestRaw(string url)
         {
-            UnityWebRequest www = UnityWebRequest.Get(uri);
+            UnityWebRequest www = UnityWebRequest.Get(url);
             www.downloadHandler = new DownloadHandlerBuffer();
             yield return www.SendWebRequest();
 #if UNITY_2020_1_OR_NEWER
@@ -416,7 +421,8 @@ namespace ArenaUnity
             if (www.isNetworkError || www.isHttpError)
 #endif
             {
-                Debug.Log(www.error);
+                Debug.LogError($"{www.error}: {www.url}");
+                yield break;
             }
             else
             {
@@ -425,13 +431,13 @@ namespace ArenaUnity
             }
         }
 
-        IEnumerator HttpRequestAuth(string uri, string csrf = null, WWWForm form = null)
+        private IEnumerator HttpRequestAuth(string url, string csrf = null, WWWForm form = null)
         {
             UnityWebRequest www;
             if (form == null)
-                www = UnityWebRequest.Get(uri);
+                www = UnityWebRequest.Get(url);
             else
-                www = UnityWebRequest.Post(uri, form);
+                www = UnityWebRequest.Post(url, form);
             if (csrf != null)
             {
                 www.SetRequestHeader("Cookie", $"csrftoken={csrf}");
@@ -444,7 +450,7 @@ namespace ArenaUnity
             if (www.isNetworkError || www.isHttpError)
 #endif
             {
-                Debug.Log($"Error While Sending: {www.error}");
+                Debug.LogError($"{www.error}: {www.url}");
                 yield break;
             }
             else
@@ -462,6 +468,11 @@ namespace ArenaUnity
                 Debug.Log($"Received: {www.downloadHandler.text}");
                 yield return www.downloadHandler.text;
             }
+        }
+
+        private bool isCrdSuccess(object result)
+        {
+            return result.ToString() != "UnityEngine.Networking.UnityWebRequestAsyncOperation";
         }
 
         private string GetCookie(string SetCookie, string csrftag)
@@ -485,7 +496,7 @@ namespace ArenaUnity
         protected override void OnConnecting()
         {
             base.OnConnecting();
-            Debug.Log($"Connecting to broker on {brokerAddress}:{brokerPort.ToString()}...\n");
+            Debug.Log($"Connecting to broker on {brokerAddress}:{brokerPort}...\n");
         }
 
         protected override void OnConnected()
@@ -576,12 +587,12 @@ namespace ArenaUnity
             Debug.Log($"{dir}: {JsonConvert.SerializeObject(obj)}");
         }
 
-        private void OnDestroy()
+        protected void OnDestroy()
         {
             Disconnect();
         }
 
-        public void OnValidate()
+        protected void OnValidate()
         {
             // camera change?
             if (cameraView != null)
@@ -601,7 +612,7 @@ namespace ArenaUnity
             }
         }
 
-        public new void OnApplicationQuit()
+        protected new void OnApplicationQuit()
         {
             IsShuttingDown = true;
             base.OnApplicationQuit();
