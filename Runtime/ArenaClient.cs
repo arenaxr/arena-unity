@@ -94,7 +94,7 @@ namespace ArenaUnity
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
         static readonly string userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-        public static string export_path = "Assets/ArenaUnity/export";
+        public static string export_path = Path.Combine("Assets", "ArenaUnity", "export");
 
         private Transform ArenaClientTransform;
 
@@ -131,23 +131,23 @@ namespace ArenaUnity
 
             //Create if there is no export folder
             string guid_exist = AssetDatabase.AssetPathToGUID(export_path);
-            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/export"))
+            if (!Directory.Exists(Path.Combine(Application.dataPath, "ArenaUnity", "export")))
             {
-                AssetDatabase.CreateFolder("Assets/ArenaUnity", "export");
+                AssetDatabase.CreateFolder(Path.Combine("Assets","ArenaUnity"), "export");
                 AssetDatabase.Refresh();
             }
 
             //Create an images folder
-            guid_exist = AssetDatabase.AssetPathToGUID(export_path + "/images");
-            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/export/images"))
+            guid_exist = AssetDatabase.AssetPathToGUID($"{export_path}/images");
+            if (!Directory.Exists(Path.Combine(Application.dataPath, "ArenaUnity", "export", "images")))
             {
                 AssetDatabase.CreateFolder(export_path, "images");
                 AssetDatabase.Refresh();
             }
 
             //Create a models folder
-            guid_exist = AssetDatabase.AssetPathToGUID(export_path + "/models");
-            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/export/models"))
+            guid_exist = AssetDatabase.AssetPathToGUID($"{export_path}/models");
+            if (!Directory.Exists(Path.Combine(Application.dataPath, "ArenaUnity", "export", "models")))
             {
                 AssetDatabase.CreateFolder(export_path, "models");
                 AssetDatabase.Refresh();
@@ -275,7 +275,7 @@ namespace ArenaUnity
             JArray jsonVal = JArray.Parse(jsonString);
             dynamic objects = jsonVal;
             // establish objects
-            int objects_num = 0;
+            int objects_num = 1;
             foreach (dynamic obj in objects)
             {
                 EditorUtility.DisplayProgressBar("Progress", $"Loading persistence: {(string)obj.object_id}...", objects_num / (float)jsonVal.Count);
@@ -509,13 +509,13 @@ namespace ArenaUnity
         protected override void OnConnecting()
         {
             base.OnConnecting();
-            Debug.Log($"Connecting to broker on {brokerAddress}:{brokerPort}...\n");
+            Debug.Log($"Connecting to broker on {brokerAddress}:{brokerPort}...");
         }
 
         protected override void OnConnected()
         {
             base.OnConnected();
-            Debug.Log($"Connected to broker on {brokerAddress}\n");
+            Debug.Log($"Connected to broker on {brokerAddress}");
         }
 
         protected override void SubscribeTopics()

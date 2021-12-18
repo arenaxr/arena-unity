@@ -269,56 +269,56 @@ namespace ArenaUnity
             if (mat.shader.name == "Standard")
             {
                 data.material.shader = "standard";
-                data.url = ToArenaTexture(mat);
-                data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
+                //data.url = ToArenaTexture(mat);
+                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
                 data.material.color = ToArenaColor(mat.color);
-                data.material.metalness = ArenaFloat(mat.GetFloat("_Metallic"));
-                data.material.roughness = ArenaFloat(1f - mat.GetFloat("_Glossiness"));
+                //data.material.metalness = ArenaFloat(mat.GetFloat("_Metallic"));
+                //data.material.roughness = ArenaFloat(1f - mat.GetFloat("_Glossiness"));
                 data.material.transparent = mat.GetFloat("_Mode") == 3f ? true : false;
                 data.material.opacity = ArenaFloat(mat.color.a);
-                if (mat.color.a == 1f)
-                    data.material.side = "double";
+                //if (mat.color.a == 1f)
+                //    data.material.side = "double";
             }
             else if (mat.shader.name == "Unlit/Color")
             {
                 data.material.shader = "flat";
-                data.material.side = "double";
+                //data.material.side = "double";
             }
             else if (mat.shader.name == "Unlit/Texture")
             {
                 data.material.shader = "flat";
-                data.url = ToArenaTexture(mat);
-                data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
-                data.material.side = "double";
+                //data.url = ToArenaTexture(mat);
+                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
+                //data.material.side = "double";
             }
             else if (mat.shader.name == "Unlit/Texture Colored")
             {
                 data.material.shader = "flat";
-                data.url = ToArenaTexture(mat);
-                data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
+                //data.url = ToArenaTexture(mat);
+                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
                 data.material.color = ToArenaColor(mat.color);
-                data.material.side = "double";
+                //data.material.side = "double";
             }
             else if (mat.shader.name == "Legacy Shaders/Transparent/Diffuse")
             {
                 data.material.shader = "flat";
-                data.url = ToArenaTexture(mat);
-                data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
+                //data.url = ToArenaTexture(mat);
+                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
                 data.material.color = ToArenaColor(mat.color);
                 data.material.transparent = true;
                 data.material.opacity = ArenaFloat(mat.color.a);
-                if (mat.color.a == 1f)
-                    data.material.side = "double";
+                //if (mat.color.a == 1f)
+                //    data.material.side = "double";
             }
             else
             {
                 // other shaders
                 data.material.shader = "standard";
-                data.url = ToArenaTexture(mat);
-                data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
+                //data.url = ToArenaTexture(mat);
+                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
                 if (mat.HasProperty("_Color"))
                     data.material.color = ToArenaColor(mat.color);
-                data.material.side = "double";
+                //data.material.side = "double";
             }
         }
         // texture
@@ -328,13 +328,13 @@ namespace ArenaUnity
             if (tex)
             {
                 string texture_path = AssetDatabase.GetAssetPath(tex);
-                string new_path = ArenaClient.export_path + "/images/" + Path.GetFileName(texture_path);
+                string new_path = $"{ArenaClient.export_path}/images/{Path.GetFileName(texture_path)}";
                 // copy if there is no texture
                 if (AssetDatabase.AssetPathToGUID(new_path) == "")
                 {
                     AssetDatabase.CopyAsset(texture_path, new_path);
                 }
-                return "images/" + Path.GetFileName(texture_path);
+                return $"images/{Path.GetFileName(texture_path)}";
             }
             return "";
         }
