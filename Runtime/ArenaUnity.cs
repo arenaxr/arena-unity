@@ -225,9 +225,12 @@ namespace ArenaUnity
                     break;
                 case LightType.Point:
                     data.type = "point";
+                    data.distance = ArenaFloat(light.range);
                     break;
                 case LightType.Spot:
                     data.type = "spot";
+                    data.distance = ArenaFloat(light.range);
+                    data.angle = ArenaFloat(light.spotAngle);
                     break;
             }
             data.intensity = ArenaFloat(light.intensity);
@@ -248,9 +251,12 @@ namespace ArenaUnity
                         break;
                     case "point":
                         light.type = LightType.Point;
+                        light.range = (float)data.distance;
                         break;
                     case "spot":
                         light.type = LightType.Spot;
+                        light.range = (float)data.distance;
+                        light.spotAngle = (float)data.angle;
                         break;
                 }
                 light.intensity = (float)data.intensity;
