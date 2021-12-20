@@ -129,25 +129,20 @@ namespace ArenaUnity
             transform.rotation = Quaternion.identity;
             transform.localScale = new Vector3(1f, 1f, 1f);
 
-            //Create if there is no export folder
             string guid_exist = AssetDatabase.AssetPathToGUID(export_path);
-            if (!Directory.Exists(Path.Combine(Application.dataPath, "ArenaUnity", "export")))
+            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/export"))
             {
-                AssetDatabase.CreateFolder(Path.Combine("Assets","ArenaUnity"), "export");
+                AssetDatabase.CreateFolder("Assets/ArenaUnity", "export");
                 AssetDatabase.Refresh();
             }
-
-            //Create an images folder
-            guid_exist = AssetDatabase.AssetPathToGUID($"{export_path}/images");
-            if (!Directory.Exists(Path.Combine(Application.dataPath, "ArenaUnity", "export", "images")))
+            guid_exist = AssetDatabase.AssetPathToGUID(export_path + "/images");
+            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/export/images"))
             {
                 AssetDatabase.CreateFolder(export_path, "images");
                 AssetDatabase.Refresh();
             }
-
-            //Create a models folder
-            guid_exist = AssetDatabase.AssetPathToGUID($"{export_path}/models");
-            if (!Directory.Exists(Path.Combine(Application.dataPath, "ArenaUnity", "export", "models")))
+            guid_exist = AssetDatabase.AssetPathToGUID(export_path + "/models");
+            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/export/models"))
             {
                 AssetDatabase.CreateFolder(export_path, "models");
                 AssetDatabase.Refresh();
@@ -276,11 +271,13 @@ namespace ArenaUnity
             dynamic objects = jsonVal;
             // establish objects
             int objects_num = 1;
+            Directory.Delete(Application.dataPath + "/ArenaUnity/export/models/", true);
             foreach (dynamic obj in objects)
             {
                 EditorUtility.DisplayProgressBar("Progress", $"Loading persistence: {(string)obj.object_id}...", objects_num / (float)jsonVal.Count);
                 string objUrl = null;
                 byte[] urlData = null;
+                string new_path = null;
                 if (obj.type == "object" || obj.attributes.position != null)
                 {
                     if (obj.attributes.url != null)
@@ -291,14 +288,33 @@ namespace ArenaUnity
                         objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
                     }
                 }
-                if (obj.attributes.object_type == "gltf-model" && objUrl != null && objUrl.Contains(".glb"))
+                if (obj.attributes.object_type == "gltf-model" && objUrl != null)
                 {
                     cd = new CoroutineWithData(this, HttpRequestRaw(objUrl));
                     yield return cd.coroutine;
                     if (isCrdSuccess(cd.result))
+                    {
                         urlData = (byte[])cd.result;
+                        Uri url = new Uri(objUrl);
+                        string url2Path = url.Host + url.AbsolutePath;
+                        string objFileName = string.Join("/", url2Path.Split(Path.GetInvalidFileNameChars()));
+                        new_path = export_path + "/models/" + objFileName;
+                        Directory.CreateDirectory(Path.GetDirectoryName(new_path));
+                        if (!File.Exists(Application.dataPath + "/ArenaUnity/export/models/" + objFileName))
+                        {
+                            using (FileStream fs = new FileStream(new_path, FileMode.Create))
+                            {
+                                for (int i = 0; i < urlData.Length; i++)
+                                {
+                                    fs.WriteByte(urlData[i]);
+                                }
+                            }
+                            AssetDatabase.ImportAsset(new_path);
+                            AssetDatabase.Refresh();
+                        }
+                    }
                 }
-                CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, urlData);
+                CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, new_path);
                 objects_num++;
             }
             EditorUtility.ClearProgressBar();
@@ -324,7 +340,7 @@ namespace ArenaUnity
             Debug.Log("Logged out of the ARENA");
         }
 
-        private void CreateUpdateObject(string object_id, string storeType, dynamic data, byte[] urlData = null)
+        private void CreateUpdateObject(string object_id, string storeType, dynamic data, string assetPath = null)
         {
             ArenaObject aobj = null;
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
@@ -334,11 +350,11 @@ namespace ArenaUnity
             }
             else
             { // create local
-                if (urlData != null)
+                if (assetPath != null)
                 {
                     try
                     {
-                        gobj = Importer.LoadFromBytes(urlData);
+                        gobj = Importer.LoadFromFile(assetPath);
                     }
                     catch (Exception e)
                     {
