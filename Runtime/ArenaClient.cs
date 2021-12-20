@@ -283,12 +283,10 @@ namespace ArenaUnity
                 {
                     if (obj.attributes.url != null)
                     {
-                        objUrl = (string)obj.attributes.url;
-                        if (objUrl.StartsWith("/store/")) objUrl = $"https://{brokerAddress}{objUrl}";
-                        else if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
-                        else if (objUrl.StartsWith("/models/")) objUrl = $"https://{brokerAddress}/store{objUrl}";
+                        objUrl = ((string)obj.attributes.url).TrimStart('/');
+                        if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
                         else if (objUrl.StartsWith("models/")) objUrl = $"https://{brokerAddress}/store/{objUrl}";
-                        objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
+                        else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
                     }
                 }
                 // load remote assets

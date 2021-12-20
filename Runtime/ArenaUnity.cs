@@ -45,7 +45,7 @@ namespace ArenaUnity
         {
             switch (obj_type)
             {
-                case "cube":
+                case "cube": // support legacy arena 'cube' == 'box'
                 case "box":
                     return GameObject.CreatePrimitive(PrimitiveType.Cube);
                 case "cylinder":
@@ -74,7 +74,6 @@ namespace ArenaUnity
             };
         }
         // position
-        // all: z is inverted between a-frame/unity
         public static dynamic ToArenaPosition(Vector3 position)
         {
             return new
@@ -220,7 +219,7 @@ namespace ArenaUnity
                 case LightType.Directional:
                     data.type = "directional";
                     break;
-                case LightType.Area:
+                case LightType.Area: // TODO: translate from Scene Lighting
                     data.type = "ambient";
                     break;
                 case LightType.Point:
@@ -246,7 +245,7 @@ namespace ArenaUnity
                     case "directional":
                         light.type = LightType.Directional;
                         break;
-                    case "ambient":
+                    case "ambient": // TODO: translate to Scene Lighting
                         light.type = LightType.Area;
                         break;
                     case "point":
