@@ -334,7 +334,7 @@ namespace ArenaUnity
             if (tex)
             {
                 string texture_path = AssetDatabase.GetAssetPath(tex);
-                string new_path = $"{ArenaClient.export_path}/images/{Path.GetFileName(texture_path)}";
+                string new_path = $"{ArenaClient.importPath}/images/{Path.GetFileName(texture_path)}";
                 // copy if there is no texture
                 if (AssetDatabase.AssetPathToGUID(new_path) == "")
                 {
