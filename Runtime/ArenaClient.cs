@@ -286,6 +286,8 @@ namespace ArenaUnity
                         objUrl = (string)obj.attributes.url;
                         if (objUrl.StartsWith("/store/")) objUrl = $"https://{brokerAddress}{objUrl}";
                         else if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
+                        else if (objUrl.StartsWith("/models/")) objUrl = $"https://{brokerAddress}/store{objUrl}";
+                        else if (objUrl.StartsWith("models/")) objUrl = $"https://{brokerAddress}/store/{objUrl}";
                         objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
                     }
                 }
@@ -331,12 +333,12 @@ namespace ArenaUnity
                         }
                         // allows detailed assets view in project
                         AssetDatabase.ImportAsset(localPath);
-                        AssetDatabase.Refresh();
                     }
                 }
                 CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, localPath);
                 objects_num++;
             }
+            AssetDatabase.Refresh();
             EditorUtility.ClearProgressBar();
             // establish parent/child relationships
             foreach (KeyValuePair<string, GameObject> gobj in arenaObjs)
