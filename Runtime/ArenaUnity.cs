@@ -331,6 +331,31 @@ namespace ArenaUnity
                 //data.material.side = "double";
             }
         }
+        public static void ToUnityMaterial(dynamic data, ref GameObject gobj)
+        {
+            if (data.material != null)
+            {
+                var renderer = gobj.GetComponent<Renderer>();
+                if (renderer != null)
+                {
+                    renderer.sharedMaterial.shader.name = "Standard";
+                    if (data.material.color != null)
+                        renderer.sharedMaterial.SetColor("_Color", ToUnityColor((string)data.material.color));
+                    if (data.material.transparent != null)
+                    {
+                        if (Convert.ToBoolean(data.material.transparent))
+                            renderer.sharedMaterial.SetFloat("_Mode", 3f); // StandardShaderGUI.BlendMode.Transparent
+                        else
+                            renderer.sharedMaterial.SetFloat("_Mode", 0f); // StandardShaderGUI.BlendMode.Opaque
+                    }
+                    if (data.material.opacity != null)
+                    {
+                        Color c = renderer.sharedMaterial.GetColor("_Color");
+                        renderer.sharedMaterial.SetColor("_Color", new Color(c.r, c.g, c.b, (float)data.material.opacity));
+                    }
+                }
+            }
+        }
         // texture
         public static string ToArenaTexture(Material mat)
         {
