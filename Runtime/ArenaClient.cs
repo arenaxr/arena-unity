@@ -276,45 +276,48 @@ namespace ArenaUnity
                 // load remote assets
                 if (obj.attributes.object_type == "gltf-model" && objUrl != null)
                 {
-                    // get main url src
-                    cd = new CoroutineWithData(this, HttpRequestRaw(objUrl));
-                    yield return cd.coroutine;
-                    if (isCrdSuccess(cd.result))
+                    Uri baseUri = new Uri(objUrl);
+                    string url2Path = baseUri.Host + baseUri.AbsolutePath;
+                    string objFileName = string.Join("/", url2Path.Split(Path.GetInvalidFileNameChars()));
+                    localPath = importPath + "/models/" + objFileName;
+                    if (!File.Exists(localPath))
                     {
-                        urlData = (byte[])cd.result;
-                        Uri baseUri = new Uri(objUrl);
-                        string url2Path = baseUri.Host + baseUri.AbsolutePath;
-                        string objFileName = string.Join("/", url2Path.Split(Path.GetInvalidFileNameChars()));
-                        localPath = importPath + "/models/" + objFileName;
-                        SaveAsset(urlData, localPath);
-                        // get gltf sub-assets
-                        if (".gltf" == Path.GetExtension(localPath).ToLower())
+                        // get main url src
+                        cd = new CoroutineWithData(this, HttpRequestRaw(objUrl));
+                        yield return cd.coroutine;
+                        if (isCrdSuccess(cd.result))
                         {
-                            string json;
-                            using (StreamReader r = new StreamReader(localPath))
+                            urlData = (byte[])cd.result;
+                            SaveAsset(urlData, localPath);
+                            // get gltf sub-assets
+                            if (".gltf" == Path.GetExtension(localPath).ToLower())
                             {
-                                json = r.ReadToEnd();
-                            }
-                            JObject jData = JObject.Parse(json);
-                            foreach (JToken child in jData.SelectTokens("$.*[*].uri"))
-                            {
-                                string relativeUri = (string)child;
-                                if (relativeUri != null)
+                                string json;
+                                using (StreamReader r = new StreamReader(localPath))
                                 {
-                                    Uri subUrl = new Uri(baseUri, relativeUri);
-                                    cd = new CoroutineWithData(this, HttpRequestRaw(subUrl.AbsoluteUri));
-                                    yield return cd.coroutine;
-                                    if (isCrdSuccess(cd.result))
+                                    json = r.ReadToEnd();
+                                }
+                                JObject jData = JObject.Parse(json);
+                                foreach (JToken child in jData.SelectTokens("$.*[*].uri"))
+                                {
+                                    string relativeUri = (string)child;
+                                    if (relativeUri != null)
                                     {
-                                        byte[] urlSubData = (byte[])cd.result;
-                                        string localSubPath = Path.Combine(Path.GetDirectoryName(localPath), relativeUri);
-                                        SaveAsset(urlSubData, localSubPath);
+                                        Uri subUrl = new Uri(baseUri, relativeUri);
+                                        cd = new CoroutineWithData(this, HttpRequestRaw(subUrl.AbsoluteUri));
+                                        yield return cd.coroutine;
+                                        if (isCrdSuccess(cd.result))
+                                        {
+                                            byte[] urlSubData = (byte[])cd.result;
+                                            string localSubPath = Path.Combine(Path.GetDirectoryName(localPath), relativeUri);
+                                            SaveAsset(urlSubData, localSubPath);
+                                        }
                                     }
                                 }
                             }
+                            // allows detailed assets view in project
+                            AssetDatabase.ImportAsset(localPath);
                         }
-                        // allows detailed assets view in project
-                        AssetDatabase.ImportAsset(localPath);
                     }
                 }
                 CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, localPath);
