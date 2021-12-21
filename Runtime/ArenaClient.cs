@@ -271,6 +271,7 @@ namespace ArenaUnity
             dynamic objects = jsonVal;
             // establish objects
             int objects_num = 1;
+            File.Delete(Application.dataPath + "/ArenaUnity.meta");
             Directory.Delete(Application.dataPath + "/ArenaUnity", true);
             foreach (dynamic obj in objects)
             {
@@ -393,7 +394,7 @@ namespace ArenaUnity
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError($"Importing object {object_id}: {e}");
+                        Debug.LogError($"Importing ARENA object {object_id}: {e}");
                         gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
                     }
                 }
