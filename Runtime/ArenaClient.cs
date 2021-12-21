@@ -161,6 +161,7 @@ namespace ArenaUnity
                         aobj.created = false;
                         aobj.storeType = "object";
                         child.gameObject.transform.hasChanged = true;
+                        child.name = Regex.Replace(child.name, @"[^\w\-.:]", "-");
                         if (arenaObjs.ContainsKey(child.name))
                             child.name = $"{child.name}-{UnityEngine.Random.Range(0, 1000000)}";
                         arenaObjs.Add(child.name, child.gameObject);
