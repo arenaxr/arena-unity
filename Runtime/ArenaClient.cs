@@ -128,25 +128,6 @@ namespace ArenaUnity
             transform.position = new Vector3(0f, 0f, 0f);
             transform.rotation = Quaternion.identity;
             transform.localScale = new Vector3(1f, 1f, 1f);
-
-            string guid_exist = AssetDatabase.AssetPathToGUID(importPath);
-            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/import"))
-            {
-                AssetDatabase.CreateFolder("Assets/ArenaUnity", "import");
-                AssetDatabase.Refresh();
-            }
-            guid_exist = AssetDatabase.AssetPathToGUID(importPath + "/images");
-            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/import/images"))
-            {
-                AssetDatabase.CreateFolder(importPath, "images");
-                AssetDatabase.Refresh();
-            }
-            guid_exist = AssetDatabase.AssetPathToGUID(importPath + "/models");
-            if (!Directory.Exists(Application.dataPath + "/ArenaUnity/import/models"))
-            {
-                AssetDatabase.CreateFolder(importPath, "models");
-                AssetDatabase.Refresh();
-            }
         }
 
         // Start is called before the first frame update
@@ -271,8 +252,10 @@ namespace ArenaUnity
             dynamic objects = jsonVal;
             // establish objects
             int objects_num = 1;
-            File.Delete(Application.dataPath + "/ArenaUnity.meta");
-            Directory.Delete(Application.dataPath + "/ArenaUnity", true);
+            if (Directory.Exists(Application.dataPath + "/ArenaUnity"))
+                Directory.Delete(Application.dataPath + "/ArenaUnity", true);
+            if (File.Exists(Application.dataPath + "/ArenaUnity.meta"))
+                File.Delete(Application.dataPath + "/ArenaUnity.meta");
             foreach (dynamic obj in objects)
             {
                 EditorUtility.DisplayProgressBar("Progress", $"Loading persistence: {(string)obj.object_id}...", objects_num / (float)jsonVal.Count);
