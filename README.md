@@ -23,13 +23,18 @@ An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/
 1. Press **Play**.
 1. The auth flow will open a web browser page for you to login, if you haven't yet.
 
-## During Runtime (Play)
+## Runtime (Play)
 See [operational documentation](Documentation/arena.unity.md).
 
-## Signin
+### Navigation
+You can use the `Scene` or `Game` tabs to navigate.
+- **Scene**: Use the Unity controls, https://docs.unity3d.com/Manual/SceneViewNavigation.html
+- **Game**: Set the Unity Editor option `Camera Auto Sync` to true, enter the ARENA scene web page, then navigation in the ARENA will also move the `Game` view.
+
+### Signin
 In the Unity Editor, pressing `Play` will begin the signin authorization flow.
 
-## Signout
+### Signout
 In the Unity Editor, select the menu item `ARENA | Signout`.
 
 ## Architecture
