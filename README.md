@@ -26,6 +26,12 @@ An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/
 ## During Runtime (Play)
 See [operational documentation](Documentation/arena.unity.md).
 
+## Signin
+In the Unity Editor, pressing `Play` will begin the signin authorization flow.
+
+## Signout
+In the Unity Editor, select the menu item `ARENA | Signout`.
+
 ## Architecture
 - The `.NET 4.x` API level is required since ARENA JSON payloads are fluid, and we cannot keep up with schema serialization definitions by developers and users. So we use the `dynamic` object instantiations offered in the .Net 4 API to test for JSON attributes at runtime.
 - **ArenaClient** is a Singleton class, meant to be instantiated only once to control the auth and MQTT communication flow.
