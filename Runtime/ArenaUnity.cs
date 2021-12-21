@@ -8,6 +8,7 @@ using System.Dynamic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace ArenaUnity
 {
@@ -213,14 +214,13 @@ namespace ArenaUnity
         // light
         public static void ToArenaLight(GameObject gobj, ref dynamic data)
         {
+            // TODO: translate from RenderSettings.ambientMode, made need centralized one-time publish
+
             Light light = gobj.GetComponent<Light>();
             switch (light.type)
             {
                 case LightType.Directional:
                     data.type = "directional";
-                    break;
-                case LightType.Area: // TODO: translate from Scene Lighting
-                    data.type = "ambient";
                     break;
                 case LightType.Point:
                     data.type = "point";
@@ -239,27 +239,32 @@ namespace ArenaUnity
         {
             if (data.type != null)
             {
-                Light light = gobj.GetComponent<Light>();
-                switch ((string)data.type)
+                if ((string)data.type == "ambient")
                 {
-                    case "directional":
-                        light.type = LightType.Directional;
-                        break;
-                    case "ambient": // TODO: translate to Scene Lighting
-                        light.type = LightType.Area;
-                        break;
-                    case "point":
-                        light.type = LightType.Point;
-                        light.range = (float)data.distance;
-                        break;
-                    case "spot":
-                        light.type = LightType.Spot;
-                        light.range = (float)data.distance;
-                        light.spotAngle = (float)data.angle;
-                        break;
+                    RenderSettings.ambientLight = ToUnityColor((string)data.color);
+                    RenderSettings.ambientMode = AmbientMode.Flat;
                 }
-                light.intensity = (float)data.intensity;
-                light.color = ToUnityColor((string)data.color);
+                else
+                {
+                    Light light = gobj.GetComponent<Light>();
+                    switch ((string)data.type)
+                    {
+                        case "directional":
+                            light.type = LightType.Directional;
+                            break;
+                        case "point":
+                            light.type = LightType.Point;
+                            light.range = (float)data.distance;
+                            break;
+                        case "spot":
+                            light.type = LightType.Spot;
+                            light.range = (float)data.distance;
+                            light.spotAngle = (float)data.angle;
+                            break;
+                    }
+                    light.intensity = (float)data.intensity;
+                    light.color = ToUnityColor((string)data.color);
+                }
             }
         }
         // material
