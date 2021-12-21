@@ -258,7 +258,7 @@ namespace ArenaUnity
                 File.Delete(Application.dataPath + "/ArenaUnity.meta");
             foreach (dynamic obj in objects)
             {
-                EditorUtility.DisplayProgressBar("Progress", $"Loading persistence: {(string)obj.object_id}...", objects_num / (float)jsonVal.Count);
+                EditorUtility.DisplayProgressBar("ARENA Persistance", $"Loading object-id: {(string)obj.object_id}", objects_num / (float)jsonVal.Count);
                 string objUrl = null;
                 byte[] urlData = null;
                 string localPath = null;
@@ -315,15 +315,12 @@ namespace ArenaUnity
                                     }
                                 }
                             }
-                            // allows detailed assets view in project
-                            AssetDatabase.ImportAsset(localPath);
                         }
                     }
                 }
                 CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, localPath);
                 objects_num++;
             }
-            AssetDatabase.Refresh();
             EditorUtility.ClearProgressBar();
             // establish parent/child relationships
             foreach (KeyValuePair<string, GameObject> gobj in arenaObjs)
