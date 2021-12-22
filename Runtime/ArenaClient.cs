@@ -259,7 +259,7 @@ namespace ArenaUnity
                 File.Delete(Application.dataPath + "/ArenaUnity.meta");
             foreach (dynamic obj in objects)
             {
-                EditorUtility.DisplayProgressBar("ARENA Persistance", $"Loading object-id: {(string)obj.object_id}", objects_num / (float)jsonVal.Count);
+                EditorUtility.DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)obj.object_id}", objects_num / (float)jsonVal.Count);
                 string objUrl = null;
                 byte[] urlData = null;
                 string localPath = null;
@@ -370,21 +370,18 @@ namespace ArenaUnity
             }
             else
             { // create local
+                gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
                 if (assetPath != null)
                 {
                     try
                     {
-                        gobj = Importer.LoadFromFile(assetPath);
+                        GameObject mobj = Importer.LoadFromFile(assetPath);
+                        mobj.transform.parent = gobj.transform;
                     }
                     catch (Exception e)
                     {
                         Debug.LogError($"Importing ARENA object {object_id}: {e}");
-                        gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
                     }
-                }
-                else
-                {
-                    gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
                 }
                 gobj.transform.parent = ArenaClientTransform;
                 gobj.name = object_id;
