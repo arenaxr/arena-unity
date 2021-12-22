@@ -5,6 +5,7 @@
 
 using System.Dynamic;
 using Newtonsoft.Json;
+using UnityEditor;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -126,15 +127,18 @@ namespace ArenaUnity
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
                 return;
             if (ArenaClient.Instance.IsShuttingDown) return;
-
-            dynamic msg = new
+            if (EditorUtility.DisplayDialog("Delete!",
+                 $"Are you sure you want to delete {name}?", "Delete", "Save"))
             {
-                object_id = name,
-                action = "delete",
-                persist = persist,
-            };
-            string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.Publish(msg.object_id, payload);
+                dynamic msg = new
+                {
+                    object_id = name,
+                    action = "delete",
+                    persist = persist,
+                };
+                string payload = JsonConvert.SerializeObject(msg);
+                ArenaClient.Instance.Publish(msg.object_id, payload);
+            }
         }
 
         public void OnApplicationQuit()

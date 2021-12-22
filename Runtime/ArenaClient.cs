@@ -312,12 +312,14 @@ namespace ArenaUnity
                                             byte[] urlSubData = (byte[])cd.result;
                                             string localSubPath = Path.Combine(Path.GetDirectoryName(localPath), relativeUri);
                                             SaveAsset(urlSubData, localSubPath);
+                                            // import each sub-file for a deterministic reference
                                             AssetDatabase.ImportAsset(localSubPath);
                                         }
                                     }
                                 }
                             }
                         }
+                        // import master-file to link to the rest
                         AssetDatabase.ImportAsset(localPath);
                         AssetDatabase.Refresh();
                     }
