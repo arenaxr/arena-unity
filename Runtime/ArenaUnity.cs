@@ -42,9 +42,9 @@ namespace ArenaUnity
                 objectType = "light";
             return objectType;
         }
-        public static GameObject ToUnityObjectType(string obj_type)
+        public static GameObject ToUnityObjectType(dynamic data)
         {
-            switch (obj_type)
+            switch ((string)data.object_type)
             {
                 case "cube": // support legacy arena 'cube' == 'box'
                 case "box":
@@ -60,9 +60,14 @@ namespace ArenaUnity
                 case "capsule":
                     return GameObject.CreatePrimitive(PrimitiveType.Capsule);
                 case "light":
-                    GameObject lgobj = new GameObject();
-                    lgobj.transform.gameObject.AddComponent<Light>();
-                    return lgobj;
+                    if (data.type == null || (string)data.type == "ambient")
+                        return new GameObject();
+                    else
+                    {
+                        GameObject lgobj = new GameObject();
+                        lgobj.transform.gameObject.AddComponent<Light>();
+                        return lgobj;
+                    }
                 case "camera":
                     GameObject cgobj = new GameObject();
                     Camera camera = cgobj.transform.gameObject.AddComponent<Camera>();
@@ -254,16 +259,21 @@ namespace ArenaUnity
                             break;
                         case "point":
                             light.type = LightType.Point;
-                            light.range = (float)data.distance;
+                            if (data.distance != null)
+                                light.range = (float)data.distance;
                             break;
                         case "spot":
                             light.type = LightType.Spot;
-                            light.range = (float)data.distance;
-                            light.spotAngle = (float)data.angle;
+                            if (data.distance != null)
+                                light.range = (float)data.distance;
+                            if (data.angle != null)
+                                light.spotAngle = (float)data.angle;
                             break;
                     }
-                    light.intensity = (float)data.intensity;
-                    light.color = ToUnityColor((string)data.color);
+                    if (data.intensity != null)
+                        light.intensity = (float)data.intensity;
+                    if (data.color != null)
+                        light.color = ToUnityColor((string)data.color);
                 }
             }
         }

@@ -280,7 +280,7 @@ namespace ArenaUnity
                     Uri baseUri = new Uri(objUrl);
                     string url2Path = baseUri.Host + baseUri.AbsolutePath;
                     string objFileName = string.Join("/", url2Path.Split(Path.GetInvalidFileNameChars()));
-                    localPath = importPath + "/models/" + objFileName;
+                    localPath = importPath + "/" + objFileName;
                     if (!File.Exists(localPath))
                     {
                         // get main url src
@@ -312,11 +312,14 @@ namespace ArenaUnity
                                             byte[] urlSubData = (byte[])cd.result;
                                             string localSubPath = Path.Combine(Path.GetDirectoryName(localPath), relativeUri);
                                             SaveAsset(urlSubData, localSubPath);
+                                            AssetDatabase.ImportAsset(localSubPath);
                                         }
                                     }
                                 }
                             }
                         }
+                        AssetDatabase.ImportAsset(localPath);
+                        AssetDatabase.Refresh();
                     }
                 }
                 CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, localPath);
@@ -370,7 +373,7 @@ namespace ArenaUnity
             }
             else
             { // create local
-                gobj = ArenaUnity.ToUnityObjectType((string)data.object_type);
+                gobj = ArenaUnity.ToUnityObjectType(data);
                 if (assetPath != null)
                 {
                     try
