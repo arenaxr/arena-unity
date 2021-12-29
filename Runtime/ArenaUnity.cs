@@ -134,6 +134,17 @@ namespace ArenaUnity
                 (float)rotationEuler.z
             );
         }
+        public static Quaternion GltfToUnityRotationQuat(Quaternion rotationQuat)
+        {
+            rotationQuat *= Quaternion.Euler(0, 180f, 0);
+            return rotationQuat;
+        }
+        public static Quaternion UnityToGltfRotationQuat(Quaternion rotationQuat)
+        {
+            // TODO: implement
+            rotationQuat *= Quaternion.Euler(0, -180f, 0);
+            return rotationQuat;
+        }
         // scale
         public static dynamic ToArenaScale(Vector3 scale)
         {

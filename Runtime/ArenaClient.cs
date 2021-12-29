@@ -419,6 +419,8 @@ namespace ArenaUnity
                     gobj.transform.rotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
                 else // euler
                     gobj.transform.rotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
+                if ((string)data.object_type == "gltf-model")
+                    gobj.transform.rotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.rotation);
             }
             if (data.scale != null)
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
