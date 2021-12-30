@@ -332,7 +332,7 @@ namespace ArenaUnity
             foreach (KeyValuePair<string, GameObject> gobj in arenaObjs)
             {
                 string parent = gobj.Value.GetComponent<ArenaObject>().parentId;
-                if (parent != null)
+                if (parent != null &&  arenaObjs.ContainsKey(parent))
                 {
                     gobj.Value.GetComponent<ArenaObject>().transform.parent = arenaObjs[parent].transform;
                 }
