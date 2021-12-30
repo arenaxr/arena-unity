@@ -2,6 +2,23 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.0.5] - 2021-12-29
+### Added
+- Allow `.gltf` GLTF load.
+- Saves all GLTF files locally in project.
+- GLTF import progress dialog.
+- Ability to browse GLTF components in project `/Assets` folder.
+- Support for lights, transparency, opacity.
+- Delete confirmations.
+- Ability to select an ARENA camera view to mimic.
+- `ARENA | Signout` menu option.
+
+### Changed
+- Update `GTLFUtility` to ...
+- Fixed GTLF to Unity transforms.
+- Round floats to ARENA granularity.
+- Minor fixes and improved error reporting.
+
 ## [0.0.4] - 2021-12-07
 ### Changed
 - Reduced frequency of GitHub version checking.
