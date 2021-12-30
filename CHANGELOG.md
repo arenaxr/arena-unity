@@ -14,7 +14,7 @@ ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 - `ARENA | Signout` menu option.
 
 ### Changed
-- Update `GTLFUtility` to ...
+- Update `GTLFUtility` to https://github.com/Siccity/GLTFUtility/commit/0392488470b79e74b88676e023653de4ada63194.
 - Fixed GTLF to Unity transforms.
 - Round floats to ARENA granularity.
 - Minor fixes and improved error reporting.
