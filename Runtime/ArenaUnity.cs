@@ -357,28 +357,50 @@ namespace ArenaUnity
             var renderer = gobj.GetComponent<Renderer>();
             if (renderer != null)
             {
-                renderer.material.shader.name = "Standard";
+                var material = renderer.material;
+                material.shader.name = "Standard";
                 if (data.material != null)
                 {
                     if (data.material.color != null)
-                        renderer.material.SetColor("_Color", ToUnityColor((string)data.material.color));
+                        material.SetColor("_Color", ToUnityColor((string)data.material.color));
                 }
                 if (data.color != null) // support legacy arena color
                 {   // legacy color overrides material color in the arena
-                    renderer.material.SetColor("_Color", ToUnityColor((string)data.color));
+                    material.SetColor("_Color", ToUnityColor((string)data.color));
                 }
-                if (data.material != null){
-                    if (data.material.transparent != null)
-                    {
-                        if (!Convert.ToBoolean(data.material.transparent))
-                            renderer.material.SetFloat("_Mode", 0f); // StandardShaderGUI.BlendMode.Opaque
-                        else
-                            renderer.material.SetFloat("_Mode", 3f); // StandardShaderGUI.BlendMode.Transparent
-                    }
+                if (data.material != null)
+                {
                     if (data.material.opacity != null)
                     {
-                        Color c = renderer.material.GetColor("_Color");
-                        renderer.material.SetColor("_Color", new Color(c.r, c.g, c.b, (float)data.material.opacity));
+                        Color c = material.GetColor("_Color");
+                        material.SetColor("_Color", new Color(c.r, c.g, c.b, (float)data.material.opacity));
+                    }
+                    if (data.material.transparent != null)
+                    {
+                        // For runtime set/change transparency mode, follow GUI params
+                        // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/StandardShaderGUI.cs#L344
+                        if (Convert.ToBoolean(data.material.transparent))
+                        {
+                            material.SetFloat("_Mode", 3f); // StandardShaderGUI.BlendMode.Transparent
+                            material.SetInt("_SrcBlend", (int)BlendMode.One);
+                            material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+                            material.SetInt("_ZWrite", 0);
+                            material.DisableKeyword("_ALPHATEST_ON");
+                            material.DisableKeyword("_ALPHABLEND_ON");
+                            material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                            material.renderQueue = 3000;
+                        }
+                        else
+                        {
+                            material.SetFloat("_Mode", 0f); // StandardShaderGUI.BlendMode.Opaque
+                            material.SetInt("_SrcBlend", (int)BlendMode.One);
+                            material.SetInt("_DstBlend", (int)BlendMode.Zero);
+                            material.SetInt("_ZWrite", 1);
+                            material.DisableKeyword("_ALPHATEST_ON");
+                            material.DisableKeyword("_ALPHABLEND_ON");
+                            material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                            material.renderQueue = -1;
+                        }
                     }
                 }
             }
