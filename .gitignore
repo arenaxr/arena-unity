@@ -1,5 +1,11 @@
 .arena*
-[Ss]amples/**/*.meta
+[Ll]ibrary.meta
+[Tt]emp.meta
+[Oo]bj.meta
+[Bb]uild.meta
+[Bb]uilds.meta
+[Ll]ogs.meta
+[Uu]ser[Ss]ettings.meta
 
 # Editors
 .vscode/
