@@ -354,20 +354,26 @@ namespace ArenaUnity
         }
         public static void ToUnityMaterial(dynamic data, ref GameObject gobj)
         {
-            if (data.material != null)
+            var renderer = gobj.GetComponent<Renderer>();
+            if (renderer != null)
             {
-                var renderer = gobj.GetComponent<Renderer>();
-                if (renderer != null)
+                renderer.material.shader.name = "Standard";
+                if (data.material != null)
                 {
-                    renderer.material.shader.name = "Standard";
                     if (data.material.color != null)
                         renderer.material.SetColor("_Color", ToUnityColor((string)data.material.color));
+                }
+                if (data.color != null) // support legacy arena color
+                {   // legacy color overrides material color in the arena
+                    renderer.material.SetColor("_Color", ToUnityColor((string)data.color));
+                }
+                if (data.material != null){
                     if (data.material.transparent != null)
                     {
-                        if (Convert.ToBoolean(data.material.transparent))
-                            renderer.material.SetFloat("_Mode", 3f); // StandardShaderGUI.BlendMode.Transparent
-                        else
+                        if (!Convert.ToBoolean(data.material.transparent))
                             renderer.material.SetFloat("_Mode", 0f); // StandardShaderGUI.BlendMode.Opaque
+                        else
+                            renderer.material.SetFloat("_Mode", 3f); // StandardShaderGUI.BlendMode.Transparent
                     }
                     if (data.material.opacity != null)
                     {

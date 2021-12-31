@@ -424,7 +424,7 @@ namespace ArenaUnity
             }
             if (data.scale != null)
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
-            if (data.material != null)
+            if (data.material != null || data.color != null)
                 ArenaUnity.ToUnityMaterial(data, ref gobj);
             ArenaUnity.ToUnityDimensions(data, ref gobj);
             if ((string)data.object_type == "light")
