@@ -2,6 +2,10 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.0.6] - 2021-12-30
+### Changed
+- Fixed samples folder missing meta files.
+
 ## [0.0.5] - 2021-12-29
 ### Added
 - Allow `.gltf` GLTF load.
