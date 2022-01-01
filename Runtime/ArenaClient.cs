@@ -21,6 +21,7 @@ using Siccity.GLTFUtility;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace ArenaUnity
@@ -376,16 +377,21 @@ namespace ArenaUnity
             else
             { // create local
                 gobj = ArenaUnity.ToUnityObjectType(data);
-                if (assetPath != null &&  (string)data.object_type == "gltf-model")
+                if (assetPath != null)
                 {
-                    try
+                    switch ((string)data.object_type)
                     {
-                        GameObject mobj = Importer.LoadFromFile(assetPath);
-                        mobj.transform.parent = gobj.transform;
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError($"Importing ARENA object {object_id}: {e}");
+                        case "gltf-model":
+                            GameObject mobj = Importer.LoadFromFile(assetPath);
+                            mobj.transform.parent = gobj.transform;
+                            break;
+                        case "image":
+                            Sprite sprite = LoadSpriteFromFile(assetPath);
+                            SpriteRenderer spriteRenderer = gobj.AddComponent<SpriteRenderer>();
+                            spriteRenderer.GetComponent<SpriteRenderer>().sprite = sprite;
+                            spriteRenderer.drawMode = SpriteDrawMode.Sliced;
+                            spriteRenderer.size = new Vector2(1f, 1f);
+                            break;
                     }
                 }
                 gobj.transform.parent = ArenaClientTransform;
@@ -435,6 +441,16 @@ namespace ArenaUnity
                 aobj.data = data;
                 aobj.jsonData = aobj.data.ToString();
             }
+        }
+
+        private static Sprite LoadSpriteFromFile(string assetPath)
+        {
+            Texture2D tex = new Texture2D(2, 2, TextureFormat.RGB24, false);
+            tex.filterMode = FilterMode.Trilinear;
+            var imgdata = File.ReadAllBytes(assetPath);
+            tex.LoadImage(imgdata);
+            Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+            return sprite;
         }
 
         private void RemoveObject(string object_id)

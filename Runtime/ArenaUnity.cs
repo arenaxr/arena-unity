@@ -405,23 +405,6 @@ namespace ArenaUnity
                 }
             }
         }
-        // texture
-        public static string ToArenaTexture(Material mat)
-        {
-            Texture tex = mat.GetTexture("_MainTex");
-            if (tex)
-            {
-                string texture_path = AssetDatabase.GetAssetPath(tex);
-                string new_path = $"{ArenaClient.importPath}/images/{Path.GetFileName(texture_path)}";
-                // copy if there is no texture
-                if (AssetDatabase.AssetPathToGUID(new_path) == "")
-                {
-                    AssetDatabase.CopyAsset(texture_path, new_path);
-                }
-                return $"images/{Path.GetFileName(texture_path)}";
-            }
-            return "";
-        }
 
     }
 }
