@@ -257,8 +257,11 @@ namespace ArenaUnity
             {
                 if ((string)data.type == "ambient")
                 {
-                    RenderSettings.ambientLight = ToUnityColor((string)data.color);
                     RenderSettings.ambientMode = AmbientMode.Flat;
+                    if (data.intensity != null)
+                        RenderSettings.ambientIntensity = (float)data.intensity;
+                    if (data.color != null)
+                        RenderSettings.ambientLight = ToUnityColor((string)data.color);
                 }
                 else
                 {
@@ -358,18 +361,15 @@ namespace ArenaUnity
             if (renderer != null)
             {
                 var material = renderer.material;
-                material.shader.name = "Standard";
-                if (data.material != null)
-                {
-                    if (data.material.color != null)
-                        material.SetColor("_Color", ToUnityColor((string)data.material.color));
-                }
+                // legacy color overrides material color in the arena
                 if (data.color != null) // support legacy arena color
-                {   // legacy color overrides material color in the arena
                     material.SetColor("_Color", ToUnityColor((string)data.color));
-                }
+                else if (data.material != null && data.material.color != null)
+                    material.SetColor("_Color", ToUnityColor((string)data.material.color));
                 if (data.material != null)
                 {
+                    if (data.material.shader != null)
+                        material.shader.name = (string)data.material.shader == "flat" ? "Unlit/Color" : "Standard";
                     if (data.material.opacity != null)
                     {
                         Color c = material.GetColor("_Color");
