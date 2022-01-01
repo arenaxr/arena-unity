@@ -332,7 +332,7 @@ namespace ArenaUnity
             foreach (KeyValuePair<string, GameObject> gobj in arenaObjs)
             {
                 string parent = gobj.Value.GetComponent<ArenaObject>().parentId;
-                if (parent != null &&  arenaObjs.ContainsKey(parent))
+                if (parent != null && arenaObjs.ContainsKey(parent))
                 {
                     gobj.Value.GetComponent<ArenaObject>().transform.parent = arenaObjs[parent].transform;
                 }
@@ -460,7 +460,12 @@ namespace ArenaUnity
         {
             UnityWebRequest www = UnityWebRequest.Get(url);
             www.downloadHandler = new DownloadHandlerBuffer();
-            yield return www.SendWebRequest();
+            www.SendWebRequest();
+            while (!www.isDone)
+            {
+                EditorUtility.DisplayCancelableProgressBar("ARENA URL", $"{url} downloading...", www.downloadProgress);
+                yield return null;
+            }
 #if UNITY_2020_1_OR_NEWER
             if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
 #else
