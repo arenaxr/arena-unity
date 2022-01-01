@@ -275,7 +275,7 @@ namespace ArenaUnity
                     }
                 }
                 // load remote assets
-                if (obj.attributes.object_type == "gltf-model" && objUrl != null)
+                if (objUrl != null)
                 {
                     Uri baseUri = new Uri(objUrl);
                     string url2Path = baseUri.Host + baseUri.AbsolutePath;
@@ -376,7 +376,7 @@ namespace ArenaUnity
             else
             { // create local
                 gobj = ArenaUnity.ToUnityObjectType(data);
-                if (assetPath != null)
+                if (assetPath != null &&  (string)data.object_type == "gltf-model")
                 {
                     try
                     {
