@@ -5,7 +5,9 @@
 
 using System.Dynamic;
 using Newtonsoft.Json;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace ArenaUnity
@@ -79,7 +81,7 @@ namespace ArenaUnity
             transform.hasChanged = true;
         }
 
-        bool SendUpdateSuccess()
+        public bool SendUpdateSuccess()
         {
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
                 return false;
@@ -118,16 +120,17 @@ namespace ArenaUnity
             return true;
         }
 
-        public void OnValidate()
-        {
-            // TODO: color/material change?
-        }
+        //public void OnValidate()
+        //{
+        //    // TODO: color/material change?
+        //}
 
         public void OnDestroy()
         {
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
                 return;
             if (ArenaClient.Instance.IsShuttingDown) return;
+#if UNITY_EDITOR
             if (EditorUtility.DisplayDialog("Delete!",
                  $"Are you sure you want to delete {name}?", "Delete", "Save"))
             {
@@ -140,6 +143,7 @@ namespace ArenaUnity
                 string payload = JsonConvert.SerializeObject(msg);
                 ArenaClient.Instance.Publish(msg.object_id, payload);
             }
+#endif
         }
 
         public void OnApplicationQuit()
