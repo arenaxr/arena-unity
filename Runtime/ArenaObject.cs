@@ -97,10 +97,11 @@ namespace ArenaUnity
             else
                 dataUp.object_type = (string)data.object_type;
             dataUp.position = ArenaUnity.ToArenaPosition(transform.position);
+            Quaternion rotOut = (string)data.object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(transform.rotation) : transform.rotation;
             if (data == null || data.rotation == null || data.rotation.w != null)
-                dataUp.rotation = ArenaUnity.ToArenaRotationQuat(transform.rotation);
+                dataUp.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
             else
-                dataUp.rotation = ArenaUnity.ToArenaRotationEuler(transform.rotation.eulerAngles);
+                dataUp.rotation = ArenaUnity.ToArenaRotationEuler(rotOut.eulerAngles);
             dataUp.scale = ArenaUnity.ToArenaScale(transform.localScale);
             ArenaUnity.ToArenaDimensions(gameObject, ref dataUp);
             if (GetComponent<Light>())

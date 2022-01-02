@@ -141,7 +141,6 @@ namespace ArenaUnity
         }
         public static Quaternion UnityToGltfRotationQuat(Quaternion rotationQuat)
         {
-            // TODO: implement
             rotationQuat *= Quaternion.Euler(0, -180f, 0);
             return rotationQuat;
         }
