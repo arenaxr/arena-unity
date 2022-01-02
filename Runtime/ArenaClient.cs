@@ -335,7 +335,10 @@ namespace ArenaUnity
                 string parent = gobj.Value.GetComponent<ArenaObject>().parentId;
                 if (parent != null && arenaObjs.ContainsKey(parent))
                 {
-                    gobj.Value.GetComponent<ArenaObject>().transform.parent = arenaObjs[parent].transform;
+                    bool worldPositionStays = false;
+                    // makes the child keep its local orientation rather than its global orientation
+                    gobj.Value.transform.SetParent(arenaObjs[parent].transform, worldPositionStays);
+                    gobj.Value.GetComponent<ArenaObject>().transform.hasChanged = false;
                 }
             }
         }
@@ -449,7 +452,7 @@ namespace ArenaUnity
             tex.filterMode = FilterMode.Trilinear;
             var imgdata = File.ReadAllBytes(assetPath);
             tex.LoadImage(imgdata);
-            Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+            Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f, 1, SpriteMeshType.FullRect);
             return sprite;
         }
 
