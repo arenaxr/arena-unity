@@ -442,7 +442,7 @@ namespace ArenaUnity
             if (aobj != null)
             {
                 aobj.data = data;
-                aobj.jsonData = aobj.data.ToString();
+                aobj.jsonData = JsonConvert.SerializeObject(aobj.data, Formatting.Indented);
             }
         }
 

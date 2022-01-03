@@ -5,6 +5,7 @@
 
 using System.Dynamic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -27,7 +28,7 @@ namespace ArenaUnity
         public string jsonData = null;
 
         [HideInInspector]
-        public dynamic data = null;
+        public dynamic data = null; // original message data for object, if any
         [HideInInspector]
         public string parentId = null;
         [HideInInspector]
@@ -51,7 +52,7 @@ namespace ArenaUnity
                 return;
             if (transform.hasChanged)
             {
-                if (SendUpdateSuccess())
+                if (SendUpdateSuccess(true))
                 {
                     transform.hasChanged = false;
                 }
@@ -81,37 +82,53 @@ namespace ArenaUnity
             transform.hasChanged = true;
         }
 
-        public bool SendUpdateSuccess()
+        public bool SendUpdateSuccess(bool transformOnly = false)
         {
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
                 return false;
             if (ArenaClient.Instance.IsShuttingDown) return false;
 
+            // message type information
             dynamic msg = new ExpandoObject();
             msg.object_id = name;
             msg.action = created ? "update" : "create";
             msg.type = messageType;
             msg.persist = persist;
-
-            dynamic dataUp = new ExpandoObject();
+            transformOnly = created ? transformOnly : false;
+            dynamic dataUnity = new ExpandoObject();
             if (data == null || data.object_type == null)
-                dataUp.object_type = ArenaUnity.ToArenaObjectType(gameObject);
+                dataUnity.object_type = ArenaUnity.ToArenaObjectType(gameObject);
             else
-                dataUp.object_type = (string)data.object_type;
-            dataUp.position = ArenaUnity.ToArenaPosition(transform.localPosition);
-            Quaternion rotOut = (string)data.object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(transform.localRotation) : transform.localRotation;
+                dataUnity.object_type = (string)data.object_type;
+
+            // minimum transform information
+            dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
+            Quaternion rotOut = dataUnity.object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(transform.localRotation) : transform.localRotation;
             if (data == null || data.rotation == null || data.rotation.w != null)
-                dataUp.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
+                dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
             else
-                dataUp.rotation = ArenaUnity.ToArenaRotationEuler(rotOut.eulerAngles);
-            dataUp.scale = ArenaUnity.ToArenaScale(transform.localScale);
-            ArenaUnity.ToArenaDimensions(gameObject, ref dataUp);
-            if (GetComponent<Light>())
-                ArenaUnity.ToArenaLight(gameObject, ref dataUp);
-            if (GetComponent<Renderer>())
-                ArenaUnity.ToArenaMaterial(gameObject, ref dataUp);
-            msg.data = dataUp;
-            //jsonData = JsonConvert.SerializeObject(data);
+                dataUnity.rotation = ArenaUnity.ToArenaRotationEuler(rotOut.eulerAngles);
+            dataUnity.scale = ArenaUnity.ToArenaScale(transform.localScale);
+            ArenaUnity.ToArenaDimensions(gameObject, ref dataUnity);
+
+            // other attributes information
+            if (!transformOnly)
+            {
+                if (GetComponent<Light>())
+                    ArenaUnity.ToArenaLight(gameObject, ref dataUnity);
+                if (GetComponent<Renderer>())
+                    ArenaUnity.ToArenaMaterial(gameObject, ref dataUnity);
+            }
+
+            // merge unity data with original message data
+            var updatedData = new JObject();
+            if (data != null)
+                updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(data)));
+            updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(dataUnity)));
+
+            // publish
+            msg.data = transformOnly ? dataUnity : updatedData;
+            jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClient.Instance.Publish(msg.object_id, payload);
             if (!created)
