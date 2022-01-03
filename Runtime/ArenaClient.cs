@@ -160,7 +160,7 @@ namespace ArenaUnity
                     {
                         aobj = child.gameObject.AddComponent(typeof(ArenaObject)) as ArenaObject;
                         aobj.created = false;
-                        aobj.storeType = "object";
+                        aobj.messageType = "object";
                         child.gameObject.transform.hasChanged = true;
                         child.name = Regex.Replace(child.name, @"[^\w\-.:]", "-");
                         if (arenaObjs.ContainsKey(child.name))
@@ -402,7 +402,7 @@ namespace ArenaUnity
                 arenaObjs.Add(object_id, gobj);
                 aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
                 aobj.created = true;
-                aobj.storeType = storeType;
+                aobj.messageType = storeType;
                 aobj.parentId = (string)data.parent;
                 aobj.persist = true;
                 if ((string)data.object_type == "camera")

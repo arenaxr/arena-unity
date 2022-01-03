@@ -18,9 +18,9 @@ namespace ArenaUnity
     [HelpURL("https://arena.conix.io/content/messaging/definitions.html")]
     public class ArenaObject : MonoBehaviour
     {
-        [Tooltip("Type in persistance storage schema")]
-        public string storeType = "entity"; // default to entity
-        [Tooltip("Persist this object in the ARENA server database (default false = do not persist)")]
+        [Tooltip("Message type in persistance storage schema")]
+        public string messageType = "object"; // default to object
+        [Tooltip("Persist this object in the ARENA server database (default true = persist on server)")]
         public bool persist = true;
         [TextArea(10, 15)]
         [Tooltip("ARENA JSON-encoded message (debug only for now)")]
@@ -90,7 +90,7 @@ namespace ArenaUnity
             dynamic msg = new ExpandoObject();
             msg.object_id = name;
             msg.action = created ? "update" : "create";
-            msg.type = storeType;
+            msg.type = messageType;
             msg.persist = persist;
 
             dynamic dataUp = new ExpandoObject();

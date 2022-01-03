@@ -18,11 +18,11 @@ Namespace Name | string | null | Namespace (automated with username), but can be
 Scene Name | string | example | Name of the scene, without namespace ('example', not 'username/example'
 Scene Url | string | null | Browser URL for the scene
 Camera For Display | Camera | MainCamera | Cameras for Display 1
-Camera Auto Sync | bool | FALSE | Synchronize camera display to first ARENA user in the scene
-Log Mqtt Objects | bool | FALSE | Console log MQTT object messages
-Log Mqtt Users | bool | FALSE | Console log MQTT user messages
-Log Mqtt Events | bool | FALSE | Console log MQTT client event messages
-Log Mqtt Non Persist | bool | FALSE | Console log MQTT non-persist messages
+Camera Auto Sync | bool | false | Synchronize camera display to first ARENA user in the scene
+Log Mqtt Objects | bool | false | Console log MQTT object messages
+Log Mqtt Users | bool | false | Console log MQTT user messages
+Log Mqtt Events | bool | false | Console log MQTT client event messages
+Log Mqtt Non Persist | bool | false | Console log MQTT non-persist messages
 Transform Publish Interval | int | 30 | Publish per frames frequency to publish detected transform changes (0 to stop)
 Email | string | null | Authenticated user email account
 Permissions | string | null | MQTT JWT Auth Payload and Claims
@@ -33,6 +33,6 @@ name | type | default | description
 -- | -- | -- | --
 Publish Object Update | button | -- | Manual button to publish an object update (transform changes will update automatically)
 Script | ArenaObject | -- | The script instance to manage an ARENA object runtime.
-Store Type | string | entity | Type in persistance storage schema
-Persist | bool | true | Persist this object in the ARENA server database (default false = do not persist)
+Message Type | string | object | Message type in persistance storage schema
+Persist | bool | true | Persist this object in the ARENA server database (default true = persist on server)
 Json Data | string | null | ARENA JSON-encoded message (debug only for now)
