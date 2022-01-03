@@ -2,6 +2,17 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.0.7] - 2022-01-03
+### Added
+- Import images as sprites, stored in project `/Assets` folder.
+- Accurate download progress dialog.
+- Manual publish button for objects.
+### Changed
+- Allowed legacy color import.
+- Fixed runtime transparency/opacity.
+- Fixed parent/child position.
+- Minor updates to ambient lights, shaders.
+
 ## [0.0.6] - 2021-12-30
 ### Changed
 - Fixed samples folder missing meta files.
@@ -16,7 +27,6 @@ ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 - Delete confirmations.
 - Ability to select an ARENA camera view to mimic.
 - `ARENA | Signout` menu option.
-
 ### Changed
 - Update `GTLFUtility` to https://github.com/Siccity/GLTFUtility/commit/0392488470b79e74b88676e023653de4ada63194.
 - Fixed GTLF to Unity transforms.
