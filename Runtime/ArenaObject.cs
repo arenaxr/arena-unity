@@ -4,6 +4,7 @@
  */
 
 using System.Dynamic;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 #if UNITY_EDITOR
@@ -59,6 +60,8 @@ namespace ArenaUnity
             }
             else if (oldName != null && name != oldName)
             {
+                // Ensure arena-compatible naming
+                name = Regex.Replace(name, @"[^\w\-.:]", "-");
                 HandleRename();
             }
             oldName = name;
