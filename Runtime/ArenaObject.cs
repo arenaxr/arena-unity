@@ -24,7 +24,7 @@ namespace ArenaUnity
         public string messageType = "object"; // default to object
         [Tooltip("Persist this object in the ARENA server database (default true = persist on server)")]
         public bool persist = true;
-        [TextArea(10, 15)]
+        [TextArea(5, 10)]
         [Tooltip("ARENA JSON-encoded message (debug only for now)")]
         public string jsonData = null;
 
@@ -39,6 +39,10 @@ namespace ArenaUnity
 
         public void OnEnable()
         {
+#if UNITY_EDITOR
+            // sort arena compoen to the top below Transform
+            while (UnityEditorInternal.ComponentUtility.MoveComponentUp(this)) { }
+#endif
         }
 
         void Start()
