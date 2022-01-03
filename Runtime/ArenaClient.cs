@@ -68,9 +68,9 @@ namespace ArenaUnity
         public bool logMqttEvents = false;
         [Tooltip("Console log MQTT non-persist messages")]
         public bool logMqttNonPersist = false;
-        [Tooltip("Frequency to publish detected changes by frames (0 to stop)")]
+        [Tooltip("Publish per frames frequency to publish detected transform changes (0 to stop)")]
         [Range(0, 60)]
-        public int publishInterval = 30; // in publish per frames
+        public int transformPublishInterval = 30; // in publish per frames
 
         [Header("Authentication")]
         [Tooltip("Authenticated user email account.")]

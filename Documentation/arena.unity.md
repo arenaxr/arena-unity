@@ -10,18 +10,29 @@
 
 ## ArenaClient Script
 
-| type | name | default | description |
-| -- | -- | -- | -- |
-| string | Broker Address | "arenaxr.org" | Host name of the ARENA MQTT broker |
-| string | Namespace Name | null | Namespace (automated with username), but can be overridden |
-| string | Scene Name | "example" | Name of the scene, without namespace ('example', not 'username/example' |
-| string | Scene Url | null | Browser URL for the scene |
-| Camera | Camera For Display | MainCamera | Cameras for Display 1 |
-| bool | Camera Auto Sync | false | Synchronize camera display to first ARENA user in the scene |
-| bool | Log Mqtt Objects | false | Console log MQTT object messages |
-| bool | Log Mqtt Users | false | Console log MQTT user messages |
-| bool | Log Mqtt Events | false | Console log MQTT client event messages |
-| bool | Log Mqtt Non Persist | false | Console log MQTT non-persist messages |
-| int | Publish Interval | 30 | in publish per frames Frequency to publish detected changes by frames (0 to stop) |
-| string | Email | null | Authenticated user email account |
-| string | Permissions | null | MQTT JWT Auth Payload and Claims |
+name | type | default | description
+-- | -- | -- | --
+Script | ArenaClient | -- | The script instance to manage the MQTT runtime.
+Broker Address | string | arenaxr.org | Host name of the ARENA MQTT broker
+Namespace Name | string | null | Namespace (automated with username), but can be overridden
+Scene Name | string | example | Name of the scene, without namespace ('example', not 'username/example'
+Scene Url | string | null | Browser URL for the scene
+Camera For Display | Camera | MainCamera | Cameras for Display 1
+Camera Auto Sync | bool | FALSE | Synchronize camera display to first ARENA user in the scene
+Log Mqtt Objects | bool | FALSE | Console log MQTT object messages
+Log Mqtt Users | bool | FALSE | Console log MQTT user messages
+Log Mqtt Events | bool | FALSE | Console log MQTT client event messages
+Log Mqtt Non Persist | bool | FALSE | Console log MQTT non-persist messages
+Transform Publish Interval | int | 30 | Publish per frames frequency to publish detected transform changes (0 to stop)
+Email | string | null | Authenticated user email account
+Permissions | string | null | MQTT JWT Auth Payload and Claims
+
+## ArenaObject Script
+
+name | type | default | description
+-- | -- | -- | --
+Publish Object Update | button | -- | Manual button to publish an object update (transform changes will update automatically)
+Script | ArenaObject | -- | The script instance to manage an ARENA object runtime.
+Store Type | string | entity | Type in persistance storage schema
+Persist | bool | true | Persist this object in the ARENA server database (default false = do not persist)
+Json Data | string | null | ARENA JSON-encoded message (debug only for now)

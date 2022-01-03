@@ -18,7 +18,7 @@ namespace ArenaUnity
     [HelpURL("https://arena.conix.io/content/messaging/definitions.html")]
     public class ArenaObject : MonoBehaviour
     {
-        [Tooltip("Type in storage schema (RO)")]
+        [Tooltip("Type in persistance storage schema")]
         public string storeType = "entity"; // default to entity
         [Tooltip("Persist this object in the ARENA server database (default false = do not persist)")]
         public bool persist = true;
@@ -46,8 +46,8 @@ namespace ArenaUnity
         void Update()
         {
             // send only when changed, each publishInterval frames, or stop at 0 frames
-            if (!ArenaClient.Instance || ArenaClient.Instance.publishInterval == 0 ||
-            Time.frameCount % ArenaClient.Instance.publishInterval != 0)
+            if (!ArenaClient.Instance || ArenaClient.Instance.transformPublishInterval == 0 ||
+            Time.frameCount % ArenaClient.Instance.transformPublishInterval != 0)
                 return;
             if (transform.hasChanged)
             {
