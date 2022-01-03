@@ -126,9 +126,9 @@ namespace ArenaUnity
 
             // ensure consistant name and transform
             name = ClientName;
-            transform.position = new Vector3(0f, 0f, 0f);
+            transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
-            transform.localScale = new Vector3(1f, 1f, 1f);
+            transform.localScale = Vector3.one;
         }
 
         // Start is called before the first frame update
@@ -393,7 +393,7 @@ namespace ArenaUnity
                             SpriteRenderer spriteRenderer = gobj.AddComponent<SpriteRenderer>();
                             spriteRenderer.GetComponent<SpriteRenderer>().sprite = sprite;
                             spriteRenderer.drawMode = SpriteDrawMode.Sliced;
-                            spriteRenderer.size = new Vector2(1f, 1f);
+                            spriteRenderer.size = Vector2.one;
                             break;
                     }
                 }
