@@ -419,17 +419,17 @@ namespace ArenaUnity
             }
             // modify Unity attributes
             if (data.position != null)
-                gobj.transform.position = ArenaUnity.ToUnityPosition(data.position);
+                gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
             if (data.rotation != null)
             {
                 // TODO: needed? bool invertY = !((string)data.object_type == "camera");
                 bool invertY = true;
                 if (data.rotation.w != null) // quaternion
-                    gobj.transform.rotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
+                    gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
                 else // euler
-                    gobj.transform.rotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
+                    gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
                 if ((string)data.object_type == "gltf-model")
-                    gobj.transform.rotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.rotation);
+                    gobj.transform.rotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
             }
             if (data.scale != null)
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);

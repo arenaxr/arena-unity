@@ -99,7 +99,7 @@ namespace ArenaUnity
             else
                 dataUp.object_type = (string)data.object_type;
             dataUp.position = ArenaUnity.ToArenaPosition(transform.localPosition);
-            Quaternion rotOut = (string)data.object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(transform.rotation) : transform.rotation;
+            Quaternion rotOut = (string)data.object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(transform.localRotation) : transform.localRotation;
             if (data == null || data.rotation == null || data.rotation.w != null)
                 dataUp.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
             else
