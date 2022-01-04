@@ -291,69 +291,12 @@ namespace ArenaUnity
             foreach (dynamic obj in objects)
             {
                 DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)obj.object_id}", objects_num / (float)jsonVal.Count);
-                string objUrl = null;
-                byte[] urlData = null;
                 string localPath = null;
-                // update urls, if any
-                if (obj.type == "object" || obj.attributes.position != null)
+                if (obj.attributes != null && obj.attributes.url != null)
                 {
-                    if (obj.attributes.url != null)
-                    {
-                        objUrl = ((string)obj.attributes.url).TrimStart('/');
-                        if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
-                        else if (objUrl.StartsWith("models/")) objUrl = $"https://{brokerAddress}/store/{objUrl}";
-                        else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
-                    }
-                }
-                // load remote assets
-                if (objUrl != null)
-                {
-                    Uri baseUri = new Uri(objUrl);
-                    string url2Path = baseUri.Host + baseUri.AbsolutePath;
-                    string objFileName = string.Join("/", url2Path.Split(Path.GetInvalidFileNameChars()));
-                    localPath = importPath + "/" + objFileName;
-                    if (!File.Exists(localPath))
-                    {
-                        // get main url src
-                        cd = new CoroutineWithData(this, HttpRequestRaw(objUrl));
-                        yield return cd.coroutine;
-                        if (isCrdSuccess(cd.result))
-                        {
-                            urlData = (byte[])cd.result;
-                            SaveAsset(urlData, localPath);
-                            // get gltf sub-assets
-                            if (".gltf" == Path.GetExtension(localPath).ToLower())
-                            {
-                                string json;
-                                using (StreamReader r = new StreamReader(localPath))
-                                {
-                                    json = r.ReadToEnd();
-                                }
-                                JObject jData = JObject.Parse(json);
-                                foreach (JToken child in jData.SelectTokens("$.*[*].uri"))
-                                {
-                                    string relativeUri = (string)child;
-                                    if (relativeUri != null)
-                                    {
-                                        Uri subUrl = new Uri(baseUri, relativeUri);
-                                        cd = new CoroutineWithData(this, HttpRequestRaw(subUrl.AbsoluteUri));
-                                        yield return cd.coroutine;
-                                        if (isCrdSuccess(cd.result))
-                                        {
-                                            byte[] urlSubData = (byte[])cd.result;
-                                            string localSubPath = Path.Combine(Path.GetDirectoryName(localPath), relativeUri);
-                                            SaveAsset(urlSubData, localSubPath);
-                                            // import each sub-file for a deterministic reference
-                                            AssetDatabase.ImportAsset(localSubPath);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        // import master-file to link to the rest
-                        AssetDatabase.ImportAsset(localPath);
-                        AssetDatabase.Refresh();
-                    }
+                    cd = new CoroutineWithData(this, DownloadAssets(obj));
+                    yield return cd.coroutine;
+                    localPath = cd.result.ToString();
                 }
                 CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, localPath);
                 objects_num++;
@@ -371,6 +314,74 @@ namespace ArenaUnity
                     gobj.Value.GetComponent<ArenaObject>().transform.hasChanged = false;
                 }
             }
+        }
+
+        private IEnumerator DownloadAssets(dynamic obj)
+        {
+            string objUrl = null;
+            string localPath = null;
+            // update urls, if any
+            if (obj.type == "object" || obj.attributes.position != null)
+            {
+                if (obj.attributes.url != null)
+                {
+                    objUrl = ((string)obj.attributes.url).TrimStart('/');
+                    if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
+                    else if (objUrl.StartsWith("models/")) objUrl = $"https://{brokerAddress}/store/{objUrl}";
+                    else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
+                }
+            }
+            // load remote assets
+            if (objUrl != null)
+            {
+                Uri baseUri = new Uri(objUrl);
+                string url2Path = baseUri.Host + baseUri.AbsolutePath;
+                string objFileName = string.Join("/", url2Path.Split(Path.GetInvalidFileNameChars()));
+                localPath = importPath + "/" + objFileName;
+                if (!File.Exists(localPath))
+                {
+                    // get main url src
+                    CoroutineWithData cd = new CoroutineWithData(this, HttpRequestRaw(objUrl));
+                    yield return cd.coroutine;
+                    if (isCrdSuccess(cd.result))
+                    {
+                        byte[] urlData = (byte[])cd.result;
+                        SaveAsset(urlData, localPath);
+                        // get gltf sub-assets
+                        if (".gltf" == Path.GetExtension(localPath).ToLower())
+                        {
+                            string json;
+                            using (StreamReader r = new StreamReader(localPath))
+                            {
+                                json = r.ReadToEnd();
+                            }
+                            JObject jData = JObject.Parse(json);
+                            foreach (JToken child in jData.SelectTokens("$.*[*].uri"))
+                            {
+                                string relativeUri = (string)child;
+                                if (relativeUri != null)
+                                {
+                                    Uri subUrl = new Uri(baseUri, relativeUri);
+                                    cd = new CoroutineWithData(this, HttpRequestRaw(subUrl.AbsoluteUri));
+                                    yield return cd.coroutine;
+                                    if (isCrdSuccess(cd.result))
+                                    {
+                                        byte[] urlSubData = (byte[])cd.result;
+                                        string localSubPath = Path.Combine(Path.GetDirectoryName(localPath), relativeUri);
+                                        SaveAsset(urlSubData, localSubPath);
+                                        // import each sub-file for a deterministic reference
+                                        AssetDatabase.ImportAsset(localSubPath);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // import master-file to link to the rest
+                    AssetDatabase.ImportAsset(localPath);
+                    AssetDatabase.Refresh();
+                }
+            }
+            yield return localPath;
         }
 
         private void DisplayCancelableProgressBar(string title, string info, float progress)
@@ -580,7 +591,7 @@ namespace ArenaUnity
                         csrfToken = GetCookie(SetCookie, "csrf");
                 }
 
-                Debug.Log($"Received: {www.downloadHandler.text}");
+                Debug.Log($"REST: {www.downloadHandler.text}");
                 yield return www.downloadHandler.text;
             }
         }
@@ -663,6 +674,12 @@ namespace ArenaUnity
         private void ProcessMessage(string msg)
         {
             dynamic obj = JsonConvert.DeserializeObject(msg);
+            LogMessage("Received", obj);
+            StartCoroutine(ProcessArenaMessage(obj));
+        }
+
+        private IEnumerator ProcessArenaMessage(dynamic obj)
+        {
             // consume object updates
             if (obj.type == "object")
             {
@@ -672,7 +689,17 @@ namespace ArenaUnity
                     case "update":
                         if (Convert.ToBoolean(obj.persist))
                         {
-                            CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.data);
+                            string localPath = null;
+                            // TODO: fix coroutine error
+                            //if (obj.data != null && obj.data.url != null)
+                            //{
+                            //    DisplayCancelableProgressBar("ARENA Message", $"Loading object-id: {(string)obj.object_id}", 0f);
+                            //    CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets(obj));
+                            //    yield return cd.coroutine;
+                            //    localPath = cd.result.ToString();
+                            //    ClearProgressBar();
+                            //}
+                            CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.data, localPath);
                         }
                         else if (obj.data.object_type == "camera") // try to manage camera
                         {
@@ -685,8 +712,8 @@ namespace ArenaUnity
                     default:
                         break;
                 }
+                yield break;
             }
-            LogMessage("Received", obj);
         }
 
         private void LogMessage(string dir, dynamic obj)
