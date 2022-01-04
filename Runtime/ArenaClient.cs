@@ -130,6 +130,11 @@ namespace ArenaUnity
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
             transform.localScale = Vector3.one;
+
+#if UNITY_EDITOR
+            // sort arena component to the top, below Transform
+            while (UnityEditorInternal.ComponentUtility.MoveComponentUp(this)) { }
+#endif
         }
 
         // Start is called before the first frame update
