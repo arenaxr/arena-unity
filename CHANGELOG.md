@@ -2,6 +2,16 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.0.8] - 2022-01-04
+### Added
+- Consolidated delete conformation.
+- Transform-only object updates.
+- Sort ARENA Components to top of inspector.
+- Signout button on ArenaClient component.
+### Changed
+- Fixed inaccurate merge of json data.
+- Minor updates to rename, parenting.
+
 ## [0.0.7] - 2022-01-03
 ### Added
 - Import images as sprites, stored in project `/Assets` folder.
