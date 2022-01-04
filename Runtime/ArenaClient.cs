@@ -21,7 +21,6 @@ using Siccity.GLTFUtility;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
 using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace ArenaUnity
@@ -87,7 +86,6 @@ namespace ArenaUnity
         private Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
         private static readonly string ClientName = "ARENA Client Runtime";
         private static UserCredential credential;
-
 
         // local paths
         const string gAuthFile = ".arena_google_auth";
@@ -162,7 +160,7 @@ namespace ArenaUnity
                         aobj.created = false;
                         aobj.messageType = "object";
                         child.gameObject.transform.hasChanged = true;
-                        child.name = Regex.Replace(child.name, @"[^\w\-.:]", "-");
+                        child.name = Regex.Replace(child.name, ArenaUnity.regexArenaObjectId, "-");
                         if (arenaObjs.ContainsKey(child.name))
                             child.name = $"{child.name}-{UnityEngine.Random.Range(0, 1000000)}";
                         arenaObjs.Add(child.name, child.gameObject);

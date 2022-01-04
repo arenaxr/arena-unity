@@ -5,8 +5,6 @@
 
 using System;
 using System.Dynamic;
-using System.IO;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -19,6 +17,7 @@ namespace ArenaUnity
     {
         public static int mainDisplay = 0;
         public static int secondDisplay = 1;
+        public const string regexArenaObjectId = @"[^\w\-.:]";
 
         private static float ArenaFloat(float n) { return (float)Math.Round(n, 3); }
 

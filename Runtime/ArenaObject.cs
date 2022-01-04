@@ -40,7 +40,7 @@ namespace ArenaUnity
         public void OnEnable()
         {
 #if UNITY_EDITOR
-            // sort arena compoen to the top below Transform
+            // sort arena component to the top, below Transform
             while (UnityEditorInternal.ComponentUtility.MoveComponentUp(this)) { }
 #endif
         }
@@ -65,7 +65,7 @@ namespace ArenaUnity
             else if (oldName != null && name != oldName)
             {
                 // Ensure arena-compatible naming
-                name = Regex.Replace(name, @"[^\w\-.:]", "-");
+                name = Regex.Replace(name, ArenaUnity.regexArenaObjectId, "-");
                 HandleRename();
             }
             oldName = name;
