@@ -35,7 +35,8 @@ namespace ArenaUnity
         [HideInInspector]
         public bool created = false;
 
-        private string oldName; // test for rename
+        internal string oldName; // test for rename
+        internal bool externalDelete = false;
 
         public void OnEnable()
         {
@@ -57,7 +58,7 @@ namespace ArenaUnity
                 return;
             if (transform.hasChanged)
             {
-                if (SendUpdateSuccess(true))
+                if (PublishCreateUpdate(true))
                 {
                     transform.hasChanged = false;
                 }
@@ -89,7 +90,7 @@ namespace ArenaUnity
             transform.hasChanged = true;
         }
 
-        public bool SendUpdateSuccess(bool transformOnly = false)
+        public bool PublishCreateUpdate(bool transformOnly = false)
         {
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
                 return false;
@@ -159,20 +160,9 @@ namespace ArenaUnity
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
                 return;
             if (ArenaClient.Instance.IsShuttingDown) return;
-#if UNITY_EDITOR
-            if (EditorUtility.DisplayDialog("Delete!",
-                 $"Are you sure you want to delete {name}?", "Delete", "Save"))
-            {
-                dynamic msg = new
-                {
-                    object_id = name,
-                    action = "delete",
-                    persist = persist,
-                };
-                string payload = JsonConvert.SerializeObject(msg);
-                ArenaClient.Instance.Publish(msg.object_id, payload);
-            }
-#endif
+
+            if (!externalDelete)
+                ArenaClient.Instance.pendingDelete.Add(name);
         }
 
         public void OnApplicationQuit()

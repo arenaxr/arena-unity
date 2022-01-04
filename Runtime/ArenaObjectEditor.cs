@@ -11,7 +11,7 @@ namespace ArenaUnity
             ArenaObject script = (ArenaObject)target;
             if (GUILayout.Button("Publish Object Update"))
             {
-                script.SendUpdateSuccess();
+                script.PublishCreateUpdate();
             }
 
             DrawDefaultInspector();

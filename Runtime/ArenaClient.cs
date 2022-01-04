@@ -18,7 +18,9 @@ using M2MqttUnity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Siccity.GLTFUtility;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt.Messages;
@@ -86,6 +88,9 @@ namespace ArenaUnity
         private Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
         private static readonly string ClientName = "ARENA Client Runtime";
         private static UserCredential credential;
+        private Transform ArenaClientTransform;
+
+        public List<string> pendingDelete = new List<string>();
 
         // local paths
         const string gAuthFile = ".arena_google_auth";
@@ -94,8 +99,6 @@ namespace ArenaUnity
         const string userSubDirUnity = "unity";
         static readonly string userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
         public static string importPath = "Assets/ArenaUnity/import";
-
-        private Transform ArenaClientTransform;
 
         static readonly string[] Scopes = {
             Oauth2Service.Scope.UserinfoProfile,
@@ -166,6 +169,30 @@ namespace ArenaUnity
                         arenaObjs.Add(child.name, child.gameObject);
                     }
                 }
+            }
+
+            if (pendingDelete.Count > 0)
+            {   // confirm for any deletes requested
+                string ids = string.Join(", ", pendingDelete);
+#if UNITY_EDITOR
+
+                if (EditorUtility.DisplayDialog("Delete!",
+                     $"Are you sure you want to delete object: {ids}?", "Delete", "Save"))
+                {
+                    foreach (string object_id in pendingDelete)
+                    {
+                        dynamic msg = new
+                        {
+                            object_id = object_id,
+                            action = "delete",
+                            persist = true,
+                        };
+                        string payload = JsonConvert.SerializeObject(msg);
+                        Publish(msg.object_id, payload);
+                    }
+                }
+#endif
+                pendingDelete.Clear();
             }
         }
 
@@ -258,7 +285,7 @@ namespace ArenaUnity
                 File.Delete(Application.dataPath + "/ArenaUnity.meta");
             foreach (dynamic obj in objects)
             {
-                EditorUtility.DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)obj.object_id}", objects_num / (float)jsonVal.Count);
+                DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)obj.object_id}", objects_num / (float)jsonVal.Count);
                 string objUrl = null;
                 byte[] urlData = null;
                 string localPath = null;
@@ -326,7 +353,7 @@ namespace ArenaUnity
                 CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, localPath);
                 objects_num++;
             }
-            EditorUtility.ClearProgressBar();
+            ClearProgressBar();
             // establish parent/child relationships
             foreach (KeyValuePair<string, GameObject> gobj in arenaObjs)
             {
@@ -339,6 +366,20 @@ namespace ArenaUnity
                     gobj.Value.GetComponent<ArenaObject>().transform.hasChanged = false;
                 }
             }
+        }
+
+        private void DisplayCancelableProgressBar(string title, string info, float progress)
+        {
+#if UNITY_EDITOR
+            EditorUtility.DisplayCancelableProgressBar(title, info, progress);
+#endif
+        }
+
+        private void ClearProgressBar()
+        {
+#if UNITY_EDITOR
+            EditorUtility.ClearProgressBar();
+#endif
         }
 
         private static void SaveAsset(byte[] data, string path)
@@ -371,12 +412,12 @@ namespace ArenaUnity
         {
             ArenaObject aobj = null;
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
-            { // update local
+            {   // update local
                 if (gobj != null)
                     aobj = gobj.GetComponent<ArenaObject>();
             }
             else
-            { // create local
+            {   // create local
                 gobj = ArenaUnity.ToUnityObjectType(data);
                 if (assetPath != null)
                 {
@@ -458,6 +499,7 @@ namespace ArenaUnity
         {
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
             {
+                gobj.GetComponent<ArenaObject>().externalDelete = true;
                 Destroy(gobj);
             }
             arenaObjs.Remove(object_id);
@@ -480,7 +522,7 @@ namespace ArenaUnity
             www.SendWebRequest();
             while (!www.isDone)
             {
-                EditorUtility.DisplayCancelableProgressBar("ARENA URL", $"{url} downloading...", www.downloadProgress);
+                DisplayCancelableProgressBar("ARENA URL", $"{url} downloading...", www.downloadProgress);
                 yield return null;
             }
 #if UNITY_2020_1_OR_NEWER
