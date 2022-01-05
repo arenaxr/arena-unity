@@ -27,9 +27,9 @@ namespace ArenaUnity.Editor
         const string githubName = "ARENA-unity";
         private static string gitLatestUrl = $"https://api.github.com/repos/{githubOrg}/{githubName}/releases/latest";
         private static ListRequest _listRequest;
-        private static bool checkGihub = false;
+        private static bool checkGithub = false;
 
-        // first version to avoid hitting GiHub's rate-limit
+        // first version to avoid hitting Github's rate-limit
         private const string GH_RATE_LIMIT_VERSION = "0.0.4";
 
         static ArenaVersion()
@@ -38,7 +38,7 @@ namespace ArenaUnity.Editor
             long time = (long)PlayerPrefs.GetFloat("GitVersionCheckTime", 0);
             TimeSpan t = DateTime.UtcNow - new DateTime(time);
             // only check github every 24 hours to avoid hitting api rate limit
-            if (t.TotalDays > 1f) checkGihub = true;
+            if (t.TotalDays > 1f) checkGithub = true;
 
             _listRequest = Client.List();
             EditorApplication.update += OnUpdate;
@@ -59,7 +59,7 @@ namespace ArenaUnity.Editor
                         }
                     }
                     // Check github directly next
-                    if (checkGihub)
+                    if (checkGithub)
                     {
                         EditorCoroutineUtility.StartCoroutineOwnerless(CheckGithubVersion(local));
                     }
