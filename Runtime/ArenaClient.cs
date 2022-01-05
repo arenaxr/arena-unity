@@ -90,7 +90,7 @@ namespace ArenaUnity
         private static UserCredential credential;
         private Transform ArenaClientTransform;
 
-        public List<string> pendingDelete = new List<string>();
+        internal List<string> pendingDelete = new List<string>();
 
         // local paths
         const string gAuthFile = ".arena_google_auth";
@@ -292,7 +292,7 @@ namespace ArenaUnity
             {
                 DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)obj.object_id}", objects_num / (float)jsonVal.Count);
                 string localPath = null;
-                if (obj.attributes != null && obj.attributes.url != null)
+                if (isElement(obj.attributes) && isElement(obj.attributes.url) && !isElementEmpty(obj.attributes.url))
                 {
                     cd = new CoroutineWithData(this, DownloadAssets(obj));
                     yield return cd.coroutine;
@@ -316,20 +316,27 @@ namespace ArenaUnity
             }
         }
 
+        private bool isElement(dynamic el)
+        {
+            return el != null;
+        }
+
+        private bool isElementEmpty(dynamic el)
+        {
+            return string.IsNullOrWhiteSpace((string)el);
+        }
+
         private IEnumerator DownloadAssets(dynamic obj)
         {
             string objUrl = null;
             string localPath = null;
             // update urls, if any
-            if (obj.type == "object" || obj.attributes.position != null)
+            if (obj.type == "object")
             {
-                if (obj.attributes.url != null)
-                {
-                    objUrl = ((string)obj.attributes.url).TrimStart('/');
-                    if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
-                    else if (objUrl.StartsWith("models/")) objUrl = $"https://{brokerAddress}/store/{objUrl}";
-                    else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
-                }
+                objUrl = ((string)obj.attributes.url).TrimStart('/');
+                if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
+                else if (objUrl.StartsWith("models/")) objUrl = $"https://{brokerAddress}/store/{objUrl}";
+                else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
             }
             // load remote assets
             if (objUrl != null)
@@ -473,22 +480,22 @@ namespace ArenaUnity
                 }
             }
             // modify Unity attributes
-            if (data.position != null)
+            if (isElement(data.position))
                 gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
-            if (data.rotation != null)
+            if (isElement(data.rotation))
             {
                 // TODO: needed? bool invertY = !((string)data.object_type == "camera");
                 bool invertY = true;
-                if (data.rotation.w != null) // quaternion
+                if (isElement(data.rotation.w)) // quaternion
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
                 else // euler
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
                 if ((string)data.object_type == "gltf-model")
                     gobj.transform.rotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
             }
-            if (data.scale != null)
+            if (isElement(data.scale))
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
-            if (data.material != null || data.color != null)
+            if (isElement(data.material) || isElement(data.color))
                 ArenaUnity.ToUnityMaterial(data, ref gobj);
             ArenaUnity.ToUnityDimensions(data, ref gobj);
             if ((string)data.object_type == "light")
@@ -691,7 +698,7 @@ namespace ArenaUnity
                         {
                             string localPath = null;
                             // TODO: fix coroutine error
-                            //if (obj.data != null && obj.data.url != null)
+                            //if (isElement(obj.data) && isElement(obj.data.url) && !isElementEmpty(obj.data.url))
                             //{
                             //    DisplayCancelableProgressBar("ARENA Message", $"Loading object-id: {(string)obj.object_id}", 0f);
                             //    CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets(obj));
