@@ -37,9 +37,9 @@ You can use the `Scene` or `Game` tabs to navigate.
 In the Unity Editor, pressing `Play` will begin the signin authorization flow.
 
 ### Signout
-Two options in the Unity Editor:
-- Select the menu item `ARENA | Signout`.
-- Click the `Signout` button on the `ArenaClient` Component.
+Two options:
+- **Editor:** Select the menu item `ARENA | Signout`.
+- **Runtime:** Click the `Signout` button on the `ArenaClient` Component.
 
 ## Architecture
 - The `.NET 4.x` API level is required since ARENA JSON payloads are fluid, and we cannot keep up with schema serialization definitions by developers and users. So we use the `dynamic` object instantiations offered in the .Net 4 API to test for JSON attributes at runtime.
