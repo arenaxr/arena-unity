@@ -1,4 +1,3 @@
-using System;
 using System.Dynamic;
 using Newtonsoft.Json;
 using UnityEditor;
@@ -49,6 +48,8 @@ namespace ArenaUnity
                     Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);
                     Selection.activeObject = go;
                 }
+                else
+                    Debug.LogError($"Failed to create object '{object_id}', press Play before creating an ARENA {object_type}.");
                 Close();
             }
 
