@@ -37,7 +37,9 @@ You can use the `Scene` or `Game` tabs to navigate.
 In the Unity Editor, pressing `Play` will begin the signin authorization flow.
 
 ### Signout
-In the Unity Editor, select the menu item `ARENA | Signout`.
+Two options in the Unity Editor:
+- Select the menu item `ARENA | Signout`.
+- Click the `Signout` button on the `ArenaClient` Component.
 
 ## Architecture
 - The `.NET 4.x` API level is required since ARENA JSON payloads are fluid, and we cannot keep up with schema serialization definitions by developers and users. So we use the `dynamic` object instantiations offered in the .Net 4 API to test for JSON attributes at runtime.
@@ -76,7 +78,3 @@ Almost all steps to develop the library are the same, just prepare a development
 1. Use Nuget manager to install: https://www.nuget.org/packages/Google.Apis.Oauth2.v2
 1. Unity doesn't load the platform builds of the Paho MQTT .NET (https://github.com/eclipse/paho.mqtt.m2mqtt) package (https://www.nuget.org/packages/M2Mqtt) yet so we're rolling our own for now.
 1. Copy the modified M2MqttUnity/Assets/M2Mqtt project (based on https://github.com/gpvigano/M2MqttUnity) from this repo to the project's Assets folder.
-
-## Proposed TODO List:
-- Add a smooth disconnect/logout experience
-- Expand the object properties that can be synchronized between Unity-ARENA
