@@ -423,12 +423,34 @@ namespace ArenaUnity
 #if UNITY_EDITOR
         [MenuItem("ARENA/Signout")]
 #endif
-        public static void SceneSignout()
+        internal static void SceneSignout()
         {
             EditorApplication.ExitPlaymode();
             if (Directory.Exists(GoogleWebAuthorizationBroker.Folder))
                 Directory.Delete(GoogleWebAuthorizationBroker.Folder, true);
             Debug.Log("Logged out of the ARENA");
+        }
+
+        // Add a menu item to create custom GameObjects.
+        // Priority 1 ensures it is grouped with the other menu items of the same kind
+        // and propagated to the hierarchy dropdown and hierarchy context menus.
+#if UNITY_EDITOR
+        [MenuItem("GameObject/ARENA/GLTF Model", false, 10)]
+#endif
+        internal static void CreateArenaGltfModel(MenuCommand menuCommand)
+        {
+            ArenaObjectAddUrlWindow window = (ArenaObjectAddUrlWindow)EditorWindow.GetWindow(typeof(ArenaObjectAddUrlWindow));
+            window.Init("gltf-model", menuCommand);
+            window.Show();
+        }
+#if UNITY_EDITOR
+        [MenuItem("GameObject/ARENA/Image", false, 10)]
+#endif
+        internal static void CreateArenaImage(MenuCommand menuCommand)
+        {
+            ArenaObjectAddUrlWindow window = (ArenaObjectAddUrlWindow)EditorWindow.GetWindow(typeof(ArenaObjectAddUrlWindow));
+            window.Init("image", menuCommand);
+            window.Show();
         }
 
         private void CreateUpdateObject(string object_id, string storeType, dynamic data, string assetPath = null)
@@ -528,7 +550,7 @@ namespace ArenaUnity
             arenaObjs.Remove(object_id);
         }
 
-        public static Stream ToStream(string str)
+        private static Stream ToStream(string str)
         {
             MemoryStream stream = new MemoryStream();
             StreamWriter writer = new StreamWriter(stream);
@@ -618,7 +640,7 @@ namespace ArenaUnity
             return csrfCookie;
         }
 
-        public void Publish(string object_id, string msg)
+        internal void Publish(string object_id, string msg)
         {
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
             client.Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
@@ -678,7 +700,7 @@ namespace ArenaUnity
             eventMessages.Add(eventMsg);
         }
 
-        private void ProcessMessage(string msg)
+        internal void ProcessMessage(string msg)
         {
             dynamic obj = JsonConvert.DeserializeObject(msg);
             LogMessage("Received", obj);
