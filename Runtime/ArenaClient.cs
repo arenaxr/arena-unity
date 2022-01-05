@@ -470,14 +470,20 @@ namespace ArenaUnity
                     {
                         case "gltf-model":
                             GameObject mobj = Importer.LoadFromFile(assetPath);
-                            mobj.transform.parent = gobj.transform;
+                            if (mobj != null)
+                            {
+                                mobj.transform.parent = gobj.transform;
+                            }
                             break;
                         case "image":
                             Sprite sprite = LoadSpriteFromFile(assetPath);
-                            SpriteRenderer spriteRenderer = gobj.AddComponent<SpriteRenderer>();
-                            spriteRenderer.GetComponent<SpriteRenderer>().sprite = sprite;
-                            spriteRenderer.drawMode = SpriteDrawMode.Sliced;
-                            spriteRenderer.size = Vector2.one;
+                            if (sprite != null)
+                            {
+                                SpriteRenderer spriteRenderer = gobj.AddComponent<SpriteRenderer>();
+                                spriteRenderer.GetComponent<SpriteRenderer>().sprite = sprite;
+                                spriteRenderer.drawMode = SpriteDrawMode.Sliced;
+                                spriteRenderer.size = Vector2.one;
+                            }
                             break;
                     }
                 }
