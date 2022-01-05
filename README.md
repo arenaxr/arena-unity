@@ -3,6 +3,8 @@ Unity C# library for editing scenes and creating applications for the ARENA.
 An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/Unity-UDP-ARENA-Demo.
 **This is a Work-In-Progress.**
 
+<img alt="" src="Documentation/arena-unity-demo.gif" width="300">
+
 ## Documentation
 - ARENA Auth/Messaging: https://arena.conix.io
 - Google Auth: https://googleapis.dev/dotnet/Google.Apis.Auth/latest/api/Google.Apis.Auth.html
