@@ -281,24 +281,24 @@ namespace ArenaUnity
             ArenaClientTransform = FindObjectOfType<ArenaClient>().transform;
             string jsonString = cd.result.ToString();
             JArray jsonVal = JArray.Parse(jsonString);
-            dynamic objects = jsonVal;
+            dynamic persistMessages = jsonVal;
             // establish objects
             int objects_num = 1;
             if (Directory.Exists(Application.dataPath + "/ArenaUnity"))
                 Directory.Delete(Application.dataPath + "/ArenaUnity", true);
             if (File.Exists(Application.dataPath + "/ArenaUnity.meta"))
                 File.Delete(Application.dataPath + "/ArenaUnity.meta");
-            foreach (dynamic obj in objects)
+            foreach (dynamic msg in persistMessages)
             {
-                DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)obj.object_id}", objects_num / (float)jsonVal.Count);
+                DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)msg.object_id}", objects_num / (float)jsonVal.Count);
                 string localPath = null;
-                if (isElement(obj.attributes) && isElement(obj.attributes.url) && !isElementEmpty(obj.attributes.url))
+                if (isElement(msg.attributes) && isElement(msg.attributes.url) && !isElementEmpty(msg.attributes.url))
                 {
-                    cd = new CoroutineWithData(this, DownloadAssets((string)obj.type, obj.attributes));
+                    cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, msg.attributes));
                     yield return cd.coroutine;
                     localPath = cd.result.ToString();
                 }
-                CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, localPath);
+                CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.attributes, localPath);
                 objects_num++;
             }
             ClearProgressBar();
@@ -648,12 +648,12 @@ namespace ArenaUnity
             return csrfCookie;
         }
 
-        internal void Publish(string object_id, string msg)
+        internal void Publish(string object_id, string msgJson)
         {
-            byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
+            byte[] payload = System.Text.Encoding.UTF8.GetBytes(msgJson);
             client.Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
-            dynamic obj = JsonConvert.DeserializeObject(msg);
-            LogMessage("Sent", obj);
+            dynamic msg = JsonConvert.DeserializeObject(msgJson);
+            LogMessage("Sent", msg);
         }
 
         protected override void OnConnecting()
@@ -708,11 +708,11 @@ namespace ArenaUnity
             eventMessages.Add(eventMsg);
         }
 
-        internal void ProcessMessage(string msg, MenuCommand menuCommand = null)
+        internal void ProcessMessage(string msgJson, MenuCommand menuCommand = null)
         {
-            dynamic obj = JsonConvert.DeserializeObject(msg);
-            LogMessage("Received", obj);
-            StartCoroutine(ProcessArenaMessage(obj, menuCommand));
+            dynamic msg = JsonConvert.DeserializeObject(msgJson);
+            LogMessage("Received", msg);
+            StartCoroutine(ProcessArenaMessage(msg, menuCommand));
         }
 
         private IEnumerator ProcessArenaMessage(dynamic msg, MenuCommand menuCommand = null)
@@ -752,17 +752,17 @@ namespace ArenaUnity
             }
         }
 
-        private void LogMessage(string dir, dynamic obj)
+        private void LogMessage(string dir, dynamic msg)
         {
             // determine logging level
-            if (!Convert.ToBoolean(obj.persist) && !logMqttNonPersist) return;
-            if (obj.type == "object")
+            if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
+            if (msg.type == "object")
             {
-                if (obj.data != null && obj.data.object_type == "camera" && !logMqttUsers) return;
+                if (msg.data != null && msg.data.object_type == "camera" && !logMqttUsers) return;
                 if (!logMqttObjects) return;
             }
-            if (obj.action == "clientEvent" && !logMqttEvents) return;
-            Debug.Log($"{dir}: {JsonConvert.SerializeObject(obj)}");
+            if (msg.action == "clientEvent" && !logMqttEvents) return;
+            Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
         }
 
         protected void OnDestroy()
