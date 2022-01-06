@@ -294,7 +294,7 @@ namespace ArenaUnity
                 string localPath = null;
                 if (isElement(obj.attributes) && isElement(obj.attributes.url) && !isElementEmpty(obj.attributes.url))
                 {
-                    cd = new CoroutineWithData(this, DownloadAssets(obj));
+                    cd = new CoroutineWithData(this, DownloadAssets((string)obj.type, obj.attributes));
                     yield return cd.coroutine;
                     localPath = cd.result.ToString();
                 }
@@ -326,14 +326,14 @@ namespace ArenaUnity
             return string.IsNullOrWhiteSpace((string)el);
         }
 
-        private IEnumerator DownloadAssets(dynamic obj)
+        private IEnumerator DownloadAssets(string type, dynamic data)
         {
             string objUrl = null;
             string localPath = null;
             // update urls, if any
-            if (obj.type == "object")
+            if (type == "object")
             {
-                objUrl = ((string)obj.attributes.url).TrimStart('/');
+                objUrl = ((string)data.url).TrimStart('/');
                 if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
                 else if (objUrl.StartsWith("models/")) objUrl = $"https://{brokerAddress}/store/{objUrl}";
                 else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
@@ -727,15 +727,14 @@ namespace ArenaUnity
                         if (Convert.ToBoolean(obj.persist))
                         {
                             string localPath = null;
-                            // TODO: fix coroutine error
-                            //if (isElement(obj.data) && isElement(obj.data.url) && !isElementEmpty(obj.data.url))
-                            //{
-                            //    DisplayCancelableProgressBar("ARENA Message", $"Loading object-id: {(string)obj.object_id}", 0f);
-                            //    CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets(obj));
-                            //    yield return cd.coroutine;
-                            //    localPath = cd.result.ToString();
-                            //    ClearProgressBar();
-                            //}
+                            if (isElement(obj.data) && isElement(obj.data.url) && !isElementEmpty(obj.data.url))
+                            {
+                                DisplayCancelableProgressBar("ARENA Message", $"Loading object-id: {(string)obj.object_id}", 0f);
+                                CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets((string)obj.type, obj.data));
+                                yield return cd.coroutine;
+                                localPath = cd.result.ToString();
+                                ClearProgressBar();
+                            }
                             CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.data, localPath, menuCommand);
                         }
                         else if (obj.data.object_type == "camera") // try to manage camera
