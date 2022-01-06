@@ -118,10 +118,15 @@ namespace ArenaUnity
                 dataUnity.rotation = ArenaUnity.ToArenaRotationEuler(rotOut.eulerAngles);
             dataUnity.scale = ArenaUnity.ToArenaScale(transform.localScale);
             ArenaUnity.ToArenaDimensions(gameObject, ref dataUnity);
-            if (transform.parent != null && transform.parent.gameObject.GetComponent<ArenaObject>() != null)
-            {
+            if (transform.parent.gameObject.GetComponent<ArenaObject>() != null)
+            {   // parent
                 dataUnity.parent = transform.parent.name;
                 parentId = transform.parent.name;
+            }
+            else if (parentId != null)
+            {   // unparent
+                dataUnity.parent = null;
+                parentId = null;
             }
 
             // other attributes information
