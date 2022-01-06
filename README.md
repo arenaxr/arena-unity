@@ -33,6 +33,11 @@ You can use the `Scene` or `Game` tabs to navigate.
 - **Scene**: Use the Unity controls, https://docs.unity3d.com/Manual/SceneViewNavigation.html
 - **Game**: Set the Unity Editor option `Camera Auto Sync` to true, enter the ARENA scene web page, then navigation in the ARENA will also move the `Game` view.
 
+### Sorting Objects
+1. Settings:`Edit > Preferences > General > Enable Alpha Numeric Sorting`
+1. Change the sorting mode with top right button of the `Hierarchy` window.
+    ![Documentation/alphanumeric-sort.png](Documentation/alphanumeric-sort.png)
+
 ### Signin
 In the Unity Editor, pressing `Play` will begin the signin authorization flow.
 
