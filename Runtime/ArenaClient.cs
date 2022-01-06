@@ -391,20 +391,6 @@ namespace ArenaUnity
             yield return localPath;
         }
 
-        private void DisplayCancelableProgressBar(string title, string info, float progress)
-        {
-#if UNITY_EDITOR
-            EditorUtility.DisplayCancelableProgressBar(title, info, progress);
-#endif
-        }
-
-        private void ClearProgressBar()
-        {
-#if UNITY_EDITOR
-            EditorUtility.ClearProgressBar();
-#endif
-        }
-
         private static void SaveAsset(byte[] data, string path)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path));
@@ -420,9 +406,9 @@ namespace ArenaUnity
             }
         }
 
+        // methods for the editor
 #if UNITY_EDITOR
         [MenuItem("ARENA/Signout")]
-#endif
         internal static void SceneSignout()
         {
             EditorApplication.ExitPlaymode();
@@ -434,18 +420,15 @@ namespace ArenaUnity
         // Add a menu item to create custom GameObjects.
         // Priority 1 ensures it is grouped with the other menu items of the same kind
         // and propagated to the hierarchy dropdown and hierarchy context menus.
-#if UNITY_EDITOR
         [MenuItem("GameObject/ARENA/GLTF Model", false, 10)]
-#endif
         internal static void CreateArenaGltfModel(MenuCommand menuCommand)
         {
             ArenaObjectAddUrlWindow window = (ArenaObjectAddUrlWindow)EditorWindow.GetWindow(typeof(ArenaObjectAddUrlWindow));
             window.Init("gltf-model", menuCommand);
             window.Show();
         }
-#if UNITY_EDITOR
+
         [MenuItem("GameObject/ARENA/Image", false, 10)]
-#endif
         internal static void CreateArenaImage(MenuCommand menuCommand)
         {
             ArenaObjectAddUrlWindow window = (ArenaObjectAddUrlWindow)EditorWindow.GetWindow(typeof(ArenaObjectAddUrlWindow));
@@ -453,7 +436,18 @@ namespace ArenaUnity
             window.Show();
         }
 
-        private void CreateUpdateObject(string object_id, string storeType, dynamic data, string assetPath = null)
+        private void DisplayCancelableProgressBar(string title, string info, float progress)
+        {
+            EditorUtility.DisplayCancelableProgressBar(title, info, progress);
+        }
+
+        private void ClearProgressBar()
+        {
+            EditorUtility.ClearProgressBar();
+        }
+#endif
+
+        private void CreateUpdateObject(string object_id, string storeType, dynamic data, string assetPath = null, MenuCommand menuCommand = null)
         {
             ArenaObject aobj = null;
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
@@ -495,6 +489,7 @@ namespace ArenaUnity
                 aobj.messageType = storeType;
                 aobj.parentId = (string)data.parent;
                 aobj.persist = true;
+                // camera
                 if ((string)data.object_type == "camera")
                 {   // sync camera to main display if requested
                     Camera cam = gobj.GetComponent<Camera>();
@@ -505,6 +500,13 @@ namespace ArenaUnity
                     }
                     else
                         cam.targetDisplay = ArenaUnity.secondDisplay;
+                }
+                // local create context auto-select
+                if (menuCommand != null)
+                {
+                    // Register the creation in the undo system
+                    Undo.RegisterCreatedObjectUndo(gobj, "Create " + gobj.name);
+                    Selection.activeObject = gobj;
                 }
             }
             // modify Unity attributes
@@ -706,14 +708,14 @@ namespace ArenaUnity
             eventMessages.Add(eventMsg);
         }
 
-        internal void ProcessMessage(string msg)
+        internal void ProcessMessage(string msg, MenuCommand menuCommand = null)
         {
             dynamic obj = JsonConvert.DeserializeObject(msg);
             LogMessage("Received", obj);
-            StartCoroutine(ProcessArenaMessage(obj));
+            StartCoroutine(ProcessArenaMessage(obj, menuCommand));
         }
 
-        private IEnumerator ProcessArenaMessage(dynamic obj)
+        private IEnumerator ProcessArenaMessage(dynamic obj, MenuCommand menuCommand = null)
         {
             // consume object updates
             if (obj.type == "object")
@@ -734,7 +736,7 @@ namespace ArenaUnity
                             //    localPath = cd.result.ToString();
                             //    ClearProgressBar();
                             //}
-                            CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.data, localPath);
+                            CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.data, localPath, menuCommand);
                         }
                         else if (obj.data.object_type == "camera") // try to manage camera
                         {

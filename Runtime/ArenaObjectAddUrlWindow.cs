@@ -39,14 +39,7 @@ namespace ArenaUnity
                 if (ArenaClient.Instance != null)
                 {
                     ArenaClient.Instance.Publish(object_id, payload); // remote
-                    ArenaClient.Instance.ProcessMessage(payload); // local
-
-                    GameObject go = GameObject.Find(object_id);
-                    // Ensure it gets reparented if this was a context click (otherwise does nothing)
-                    GameObjectUtility.SetParentAndAlign(go, menuCommand.context as GameObject);
-                    // Register the creation in the undo system
-                    Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);
-                    Selection.activeObject = go;
+                    ArenaClient.Instance.ProcessMessage(payload, menuCommand); // local
                 }
                 else
                     Debug.LogError($"Failed to create object '{object_id}', press Play before creating an ARENA {object_type}.");
