@@ -46,6 +46,8 @@ namespace ArenaUnity
                 dynamic data = new ExpandoObject();
                 data.object_type = object_type;
                 data.url = object_url;
+                Quaternion rotOut = object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(Quaternion.identity) : Quaternion.identity;
+                data.rotation = ArenaUnity.ToArenaRotationEuler(rotOut.eulerAngles);
                 msg.data = data;
                 string payload = JsonConvert.SerializeObject(msg);
                 ArenaClient.Instance.Publish(object_id, payload); // remote
