@@ -281,24 +281,24 @@ namespace ArenaUnity
             ArenaClientTransform = FindObjectOfType<ArenaClient>().transform;
             string jsonString = cd.result.ToString();
             JArray jsonVal = JArray.Parse(jsonString);
-            dynamic objects = jsonVal;
+            dynamic persistMessages = jsonVal;
             // establish objects
             int objects_num = 1;
             if (Directory.Exists(Application.dataPath + "/ArenaUnity"))
                 Directory.Delete(Application.dataPath + "/ArenaUnity", true);
             if (File.Exists(Application.dataPath + "/ArenaUnity.meta"))
                 File.Delete(Application.dataPath + "/ArenaUnity.meta");
-            foreach (dynamic obj in objects)
+            foreach (dynamic msg in persistMessages)
             {
-                DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)obj.object_id}", objects_num / (float)jsonVal.Count);
+                DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)msg.object_id}", objects_num / (float)jsonVal.Count);
                 string localPath = null;
-                if (isElement(obj.attributes) && isElement(obj.attributes.url) && !isElementEmpty(obj.attributes.url))
+                if (isElement(msg.attributes) && isElement(msg.attributes.url) && !isElementEmpty(msg.attributes.url))
                 {
-                    cd = new CoroutineWithData(this, DownloadAssets((string)obj.type, obj.attributes));
+                    cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, msg.attributes));
                     yield return cd.coroutine;
                     localPath = cd.result.ToString();
                 }
-                CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, localPath);
+                CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.attributes, localPath);
                 objects_num++;
             }
             ClearProgressBar();
@@ -326,12 +326,12 @@ namespace ArenaUnity
             return string.IsNullOrWhiteSpace((string)el);
         }
 
-        private IEnumerator DownloadAssets(string type, dynamic data)
+        private IEnumerator DownloadAssets(string messageType, dynamic data)
         {
             string objUrl = null;
             string localPath = null;
             // update urls, if any
-            if (type == "object")
+            if (messageType == "object")
             {
                 objUrl = ((string)data.url).TrimStart('/');
                 if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
@@ -715,35 +715,35 @@ namespace ArenaUnity
             StartCoroutine(ProcessArenaMessage(obj, menuCommand));
         }
 
-        private IEnumerator ProcessArenaMessage(dynamic obj, MenuCommand menuCommand = null)
+        private IEnumerator ProcessArenaMessage(dynamic msg, MenuCommand menuCommand = null)
         {
             // consume object updates
-            if (obj.type == "object")
+            if (msg.type == "object")
             {
-                switch ((string)obj.action)
+                switch ((string)msg.action)
                 {
                     case "create":
                     case "update":
-                        if (Convert.ToBoolean(obj.persist))
+                        if (Convert.ToBoolean(msg.persist))
                         {
                             string localPath = null;
-                            if (isElement(obj.data) && isElement(obj.data.url) && !isElementEmpty(obj.data.url))
+                            if (isElement(msg.data) && isElement(msg.data.url) && !isElementEmpty(msg.data.url))
                             {
-                                DisplayCancelableProgressBar("ARENA Message", $"Loading object-id: {(string)obj.object_id}", 0f);
-                                CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets((string)obj.type, obj.data));
+                                DisplayCancelableProgressBar("ARENA Message", $"Loading object-id: {(string)msg.object_id}", 0f);
+                                CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, msg.data));
                                 yield return cd.coroutine;
                                 localPath = cd.result.ToString();
                                 ClearProgressBar();
                             }
-                            CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.data, localPath, menuCommand);
+                            CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.data, localPath, menuCommand);
                         }
-                        else if (obj.data.object_type == "camera") // try to manage camera
+                        else if (msg.data.object_type == "camera") // try to manage camera
                         {
-                            CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.data);
+                            CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.data);
                         }
                         break;
                     case "delete":
-                        RemoveObject((string)obj.object_id);
+                        RemoveObject((string)msg.object_id);
                         break;
                     default:
                         break;
@@ -752,17 +752,17 @@ namespace ArenaUnity
             }
         }
 
-        private void LogMessage(string dir, dynamic obj)
+        private void LogMessage(string dir, dynamic msg)
         {
             // determine logging level
-            if (!Convert.ToBoolean(obj.persist) && !logMqttNonPersist) return;
-            if (obj.type == "object")
+            if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
+            if (msg.type == "object")
             {
-                if (obj.data != null && obj.data.object_type == "camera" && !logMqttUsers) return;
+                if (msg.data != null && msg.data.object_type == "camera" && !logMqttUsers) return;
                 if (!logMqttObjects) return;
             }
-            if (obj.action == "clientEvent" && !logMqttEvents) return;
-            Debug.Log($"{dir}: {JsonConvert.SerializeObject(obj)}");
+            if (msg.action == "clientEvent" && !logMqttEvents) return;
+            Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
         }
 
         protected void OnDestroy()
