@@ -467,6 +467,10 @@ namespace ArenaUnity
                             if (mobj != null)
                             {
                                 mobj.transform.parent = gobj.transform;
+                                foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
+                                {   // prevent inadvertent editing of gltf elements
+                                    child.gameObject.isStatic = true;
+                                }
                             }
                             break;
                         case "image":
