@@ -36,7 +36,7 @@ ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 - Support for lights, transparency, opacity.
 - Delete confirmations.
 - Ability to select an ARENA camera view to mimic.
-- `ARENA | Signout` menu option.
+- `ARENA > Signout` menu option.
 ### Changed
 - Update `GTLFUtility` to https://github.com/Siccity/GLTFUtility/commit/0392488470b79e74b88676e023653de4ada63194.
 - Fixed GTLF to Unity transforms.
