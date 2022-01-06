@@ -248,6 +248,7 @@ namespace ArenaUnity
             }
             data.intensity = ArenaFloat(light.intensity);
             data.color = ToArenaColor(light.color);
+            data.castShadow = light.shadows != LightShadows.None;
         }
         public static void ToUnityLight(dynamic data, ref GameObject gobj)
         {
@@ -286,13 +287,24 @@ namespace ArenaUnity
                         light.intensity = (float)data.intensity;
                     if (data.color != null)
                         light.color = ToUnityColor((string)data.color);
+                    light.shadows = data.castShadow == null ? LightShadows.None : LightShadows.Hard;
                 }
             }
         }
         // material
         public static void ToArenaMaterial(GameObject obj, ref dynamic data)
         {
-            Material mat = obj.GetComponent<Renderer>().material;
+            Renderer renderer = obj.GetComponent<Renderer>();
+            // object shadows
+            if (data.shadow != null)
+            {
+                dynamic shadow = new ExpandoObject();
+                data.shadow.cast = renderer.shadowCastingMode != ShadowCastingMode.Off;
+                data.shadow.receive = renderer.receiveShadows;
+                data.shadow = shadow;
+            }
+            // object material
+            Material mat = renderer.material;
             if (!mat)
                 return;
             dynamic material = new ExpandoObject();
@@ -358,6 +370,15 @@ namespace ArenaUnity
             var renderer = gobj.GetComponent<Renderer>();
             if (renderer != null)
             {
+                // object shadows
+                if (data.shadow != null)
+                {
+                    if (data.shadow.cast != null)
+                        renderer.shadowCastingMode = Convert.ToBoolean(data.shadow.cast) ? ShadowCastingMode.On : ShadowCastingMode.Off;
+                    if (data.shadow.receive != null)
+                        renderer.receiveShadows = Convert.ToBoolean(data.shadow.receive);
+                }
+                // object material
                 var material = renderer.material;
                 // legacy color overrides material color in the arena
                 if (data.color != null) // support legacy arena color
