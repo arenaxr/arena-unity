@@ -1,4 +1,6 @@
+using System;
 using System.Dynamic;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
@@ -25,8 +27,19 @@ namespace ArenaUnity
 
             if (GUILayout.Button($"Create new {object_type}"))
             {
+                if (ArenaClient.Instance == null)
+                {
+                    Debug.LogError($"Failed to create object '{object_id}', press Play before creating an ARENA {object_type}.");
+                    return;
+                }
+                // validate uri
+                if (!Uri.IsWellFormedUriString(object_url, UriKind.RelativeOrAbsolute))
+                {
+                    Debug.LogError($"Badly-formed Uri: '{object_url}'.");
+                    return;
+                }
                 dynamic msg = new ExpandoObject();
-                msg.object_id = object_id;
+                msg.object_id = Regex.Replace(object_id, ArenaUnity.regexArenaObjectId, "-"); ;
                 msg.action = "create";
                 msg.type = "object";
                 msg.persist = true;
@@ -35,18 +48,12 @@ namespace ArenaUnity
                 data.url = object_url;
                 msg.data = data;
                 string payload = JsonConvert.SerializeObject(msg);
-
-                if (ArenaClient.Instance != null)
-                {
-                    ArenaClient.Instance.Publish(object_id, payload); // remote
-                    ArenaClient.Instance.ProcessMessage(payload, menuCommand); // local
-                }
-                else
-                    Debug.LogError($"Failed to create object '{object_id}', press Play before creating an ARENA {object_type}.");
+                ArenaClient.Instance.Publish(object_id, payload); // remote
+                ArenaClient.Instance.ProcessMessage(payload, menuCommand); // local
                 Close();
             }
 
-            if (GUILayout.Button("Abort"))
+            if (GUILayout.Button("Cancel"))
                 Close();
         }
     }
