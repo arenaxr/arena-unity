@@ -2,6 +2,15 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.0.9] - 2022-01-06
+### Added
+- Live import of models/images from MQTT messages.
+- `GameObject > ARENA` menu items to quickly add models/images by URL.
+- Allow `Undo` of ARENA objects, handled by delete system.
+- Support cast/receive shadows.
+### Changed
+- Fixed unparenting publish.
+
 ## [0.0.8] - 2022-01-04
 ### Added
 - Consolidated delete conformation.
