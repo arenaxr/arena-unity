@@ -281,24 +281,24 @@ namespace ArenaUnity
             ArenaClientTransform = FindObjectOfType<ArenaClient>().transform;
             string jsonString = cd.result.ToString();
             JArray jsonVal = JArray.Parse(jsonString);
-            dynamic persistMessages = jsonVal;
+            dynamic objects = jsonVal;
             // establish objects
             int objects_num = 1;
             if (Directory.Exists(Application.dataPath + "/ArenaUnity"))
                 Directory.Delete(Application.dataPath + "/ArenaUnity", true);
             if (File.Exists(Application.dataPath + "/ArenaUnity.meta"))
                 File.Delete(Application.dataPath + "/ArenaUnity.meta");
-            foreach (dynamic msg in persistMessages)
+            foreach (dynamic obj in objects)
             {
-                DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)msg.object_id}", objects_num / (float)jsonVal.Count);
+                DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)obj.object_id}", objects_num / (float)jsonVal.Count);
                 string localPath = null;
-                if (isElement(msg.attributes) && isElement(msg.attributes.url) && !isElementEmpty(msg.attributes.url))
+                if (isElement(obj.attributes) && isElement(obj.attributes.url) && !isElementEmpty(obj.attributes.url))
                 {
-                    cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, msg.attributes));
+                    cd = new CoroutineWithData(this, DownloadAssets((string)obj.type, obj.attributes));
                     yield return cd.coroutine;
                     localPath = cd.result.ToString();
                 }
-                CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.attributes, localPath);
+                CreateUpdateObject((string)obj.object_id, (string)obj.type, obj.attributes, localPath);
                 objects_num++;
             }
             ClearProgressBar();
@@ -752,17 +752,17 @@ namespace ArenaUnity
             }
         }
 
-        private void LogMessage(string dir, dynamic msg)
+        private void LogMessage(string dir, dynamic obj)
         {
             // determine logging level
-            if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
-            if (msg.type == "object")
+            if (!Convert.ToBoolean(obj.persist) && !logMqttNonPersist) return;
+            if (obj.type == "object")
             {
-                if (msg.data != null && msg.data.object_type == "camera" && !logMqttUsers) return;
+                if (obj.data != null && obj.data.object_type == "camera" && !logMqttUsers) return;
                 if (!logMqttObjects) return;
             }
-            if (msg.action == "clientEvent" && !logMqttEvents) return;
-            Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
+            if (obj.action == "clientEvent" && !logMqttEvents) return;
+            Debug.Log($"{dir}: {JsonConvert.SerializeObject(obj)}");
         }
 
         protected void OnDestroy()
