@@ -516,6 +516,8 @@ namespace ArenaUnity
             // modify Unity attributes
             if (isElement(data.position))
                 gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
+            else
+                gobj.transform.localPosition = Vector3.zero;
             if (isElement(data.rotation))
             {
                 // TODO: needed? bool invertY = !((string)data.object_type == "camera");
@@ -524,11 +526,15 @@ namespace ArenaUnity
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
                 else // euler
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
-                if ((string)data.object_type == "gltf-model")
-                    gobj.transform.rotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
             }
+            else
+                gobj.transform.localRotation = Quaternion.identity;
+            if ((string)data.object_type == "gltf-model")
+                gobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
             if (isElement(data.scale))
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
+            else
+                gobj.transform.localScale = Vector3.one;
             if (isElement(data.material) || isElement(data.color))
                 ArenaUnity.ToUnityMaterial(data, ref gobj);
             ArenaUnity.ToUnityDimensions(data, ref gobj);
