@@ -164,6 +164,7 @@ namespace ArenaUnity
         // size dimensions
         public static void ToArenaDimensions(GameObject gobj, ref dynamic data)
         {
+            // always publish unity render dimensions for consistency
             string collider = gobj.GetComponent<Collider>().GetType().ToString();
             switch (collider)
             {
@@ -190,6 +191,7 @@ namespace ArenaUnity
         {
             if (data.object_type != null)
             {
+                bool defaultScaled = gobj.transform.localScale == Vector3.one;
                 // use arena defaults if missing for consistency
                 switch ((string)data.object_type)
                 {
@@ -205,7 +207,7 @@ namespace ArenaUnity
                     case "cylinder":
                     case "capsule":
                         CapsuleCollider cc = gobj.GetComponent<CapsuleCollider>();
-                        cc.height = data.height != null ? (float)data.height : 2f;
+                        cc.height = data.height != null ? (float)data.height : 1f;
                         cc.radius = data.radius != null ? (float)data.radius : 1f;
                         break;
                     case "sphere":
