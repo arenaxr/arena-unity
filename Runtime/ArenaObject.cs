@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using UnityEditor;
 #endif
 using UnityEngine;
+using PrettyHierarchy;
 
 namespace ArenaUnity
 {
@@ -18,7 +19,8 @@ namespace ArenaUnity
     /// Class to manage an ARENA object, publishing, and its properties.
     /// </summary>
     [HelpURL("https://arena.conix.io/content/messaging/definitions.html")]
-    public class ArenaObject : MonoBehaviour
+    [DisallowMultipleComponent]
+    public class ArenaObject : PrettyObject
     {
         [Tooltip("Message type in persistance storage schema")]
         public string messageType = "object"; // default to object

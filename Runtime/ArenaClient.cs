@@ -31,7 +31,7 @@ namespace ArenaUnity
     /// Class to manage a singleton instance of the ARENA client connection.
     /// </summary>
     [HelpURL("https://arena.conix.io")]
-    [DisallowMultipleComponent()]
+    [DisallowMultipleComponent]
     [AddComponentMenu("ArenaClient", 0)]
     public class ArenaClient : M2MqttUnityClient
     {
