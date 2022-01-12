@@ -12,12 +12,12 @@ An early version was based on Olivia Lynn's demo: https://github.com/OliviaLynn/
 
 ## Library Usage:
 1. Open a new or existing Unity project. **Unity 2019.1+ supported.**
-1. Open `Edit | Project Settings | Player | Other Settings`.
+1. Open `Edit > Project Settings > Player > Other Settings`.
 1. Change `Scripted Define Symbols` to include: `SSL`.
 1. Change `Api Compatibility Level` to: `.NET 4.x`.
-1. Open `Window | Package Manager` and `+ | Add package from git URL...`, use this link:
+1. Open `Window > Package Manager` and `+ > Add package from git URL...`, use this link:
     ```
-    https://github.com/conix-center/ARENA-unity.git#0.0.8
+    https://github.com/conix-center/ARENA-unity.git#0.0.9
     ```
 1. Create an empty GameObject to use as ARENA client root, rename it to something meaningful, like: `ARENA`.
 1. Select the `ARENA` GameObject and press `Add Component` to add the `ArenaClient` script.
@@ -33,12 +33,17 @@ You can use the `Scene` or `Game` tabs to navigate.
 - **Scene**: Use the Unity controls, https://docs.unity3d.com/Manual/SceneViewNavigation.html
 - **Game**: Set the Unity Editor option `Camera Auto Sync` to true, enter the ARENA scene web page, then navigation in the ARENA will also move the `Game` view.
 
+### Sorting Objects
+1. Settings:`Edit > Preferences > General > Enable Alpha Numeric Sorting`
+1. Change the sorting mode with top right button of the `Hierarchy` window.
+    ![Documentation/alphanumeric-sort.png](Documentation/alphanumeric-sort.png)
+
 ### Signin
 In the Unity Editor, pressing `Play` will begin the signin authorization flow.
 
 ### Signout
 Two options:
-- **Editor:** Select the menu item `ARENA | Signout`.
+- **Editor:** Select the menu item `ARENA > Signout`.
 - **Runtime:** Click the `Signout` button on the `ArenaClient` Component.
 
 ## Architecture
@@ -49,7 +54,7 @@ Two options:
 ## Library Development:
 Almost all steps to develop the library are the same, just prepare a development project using the [Library Usage](#library-usage) steps, except import the `ARENA Unity` package locally instead of from a Git URL.
 1. Clone this repo locally.
-1. Open `Window | Package Manager` and `+ | Add package from disk...`, use your local repo location.
+1. Open `Window > Package Manager` and `+ > Add package from disk...`, use your local repo location.
 1. Create changes on a development fork or branch and submit a Pull Request.
 
 ## Debugging in VS Code

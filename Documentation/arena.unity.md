@@ -12,6 +12,7 @@
 
 name | type | default | description
 -- | -- | -- | --
+Signout | button | -- | Manual button to signout from the ARENA and stop the Runtime.
 Script | ArenaClient | -- | The script instance to manage the MQTT runtime.
 Broker Address | string | arenaxr.org | Host name of the ARENA MQTT broker
 Namespace Name | string | null | Namespace (automated with username), but can be overridden

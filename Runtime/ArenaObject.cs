@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 using UnityEditor;
 #endif
 using UnityEngine;
+using PrettyHierarchy;
 
 namespace ArenaUnity
 {
@@ -19,7 +20,8 @@ namespace ArenaUnity
     /// Class to manage an ARENA object, publishing, and its properties.
     /// </summary>
     [HelpURL("https://arena.conix.io/content/messaging/definitions.html")]
-    public class ArenaObject : MonoBehaviour
+    [DisallowMultipleComponent]
+    public class ArenaObject : PrettyObject
     {
         [Tooltip("Message type in persistance storage schema")]
         public string messageType = "object"; // default to object
@@ -120,10 +122,15 @@ namespace ArenaUnity
                 dataUnity.rotation = ArenaUnity.ToArenaRotationEuler(rotOut.eulerAngles);
             dataUnity.scale = ArenaUnity.ToArenaScale(transform.localScale);
             ArenaUnity.ToArenaDimensions(gameObject, ref dataUnity);
-            if (transform.parent != null && transform.parent.gameObject.GetComponent<ArenaObject>() != null)
-            {
+            if (transform.parent.gameObject.GetComponent<ArenaObject>() != null)
+            {   // parent
                 dataUnity.parent = transform.parent.name;
                 parentId = transform.parent.name;
+            }
+            else if (parentId != null)
+            {   // unparent
+                dataUnity.parent = null;
+                parentId = null;
             }
 
             // other attributes information
