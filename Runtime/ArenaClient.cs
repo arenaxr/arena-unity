@@ -141,6 +141,8 @@ namespace ArenaUnity
         protected override void Start()
         {
             StartCoroutine(SceneSignin());
+
+            Selection.activeGameObject = gameObject; // client focus at runtime starts
         }
 
         // Update is called once per frame
