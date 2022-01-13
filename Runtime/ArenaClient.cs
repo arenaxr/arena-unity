@@ -24,6 +24,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt.Messages;
+using SandolkakosDigital.EditorUtils;
 
 namespace ArenaUnity
 {
@@ -143,6 +144,7 @@ namespace ArenaUnity
             StartCoroutine(SceneSignin());
 
             Selection.activeGameObject = gameObject; // client focus at runtime starts
+            SceneHierarchyUtility.SetExpanded(gameObject, true); // expand arena list
         }
 
         // Update is called once per frame
