@@ -5,6 +5,7 @@
 
 using System;
 using System.Dynamic;
+using MeshBuilder;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -45,6 +46,7 @@ namespace ArenaUnity
         {
             switch ((string)data.object_type)
             {
+                // unity primitives
                 case "cube": // support legacy arena 'cube' == 'box'
                 case "box":
                     return GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -58,6 +60,18 @@ namespace ArenaUnity
                     return GameObject.CreatePrimitive(PrimitiveType.Quad);
                 case "capsule":
                     return GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                // build your own meshes
+                case "cone":
+                    return GenerateMeshObject(ConeBuilder.Build(10, 1f, 1f));
+                case "icosahedron":
+                    return GenerateMeshObject(IcosahedronBuilder.Build(1f, 0));
+                case "octahedron":
+                    return GenerateMeshObject(OctahedronBuilder.Build(1f, 0));
+                case "ring":
+                    return GenerateMeshObject(RingBuilder.Build(.5f, 1f, 16, 16));
+                case "torus":
+                    return GenerateMeshObject(TorusBuilder.Build(1f, .5f));
+                // camera
                 case "camera":
                     GameObject cgobj = new GameObject();
                     Camera camera = cgobj.transform.gameObject.AddComponent<Camera>();
@@ -69,6 +83,20 @@ namespace ArenaUnity
                     return new GameObject();
             };
         }
+
+        private static GameObject GenerateMeshObject(Mesh mesh)
+        {
+            GameObject mobj = new GameObject();
+            mobj.transform.GetComponent<MeshFilter>();
+            if (!mobj.transform.GetComponent<MeshFilter>() || !mobj.transform.GetComponent<MeshRenderer>())
+            {
+                mobj.transform.gameObject.AddComponent<MeshFilter>();
+                mobj.transform.gameObject.AddComponent<MeshRenderer>();
+            }
+            mobj.transform.GetComponent<MeshFilter>().mesh = mesh;
+            return mobj;
+        }
+
         // position
         public static dynamic ToArenaPosition(Vector3 position)
         {
@@ -291,12 +319,12 @@ namespace ArenaUnity
         {
             Renderer renderer = obj.GetComponent<Renderer>();
             // object shadows
-            if (data.shadow != null)
+            if (renderer != null)
             {
                 dynamic shadow = new ExpandoObject();
+                data.shadow = shadow;
                 data.shadow.cast = renderer.shadowCastingMode != ShadowCastingMode.Off;
                 data.shadow.receive = renderer.receiveShadows;
-                data.shadow = shadow;
             }
             // object material
             Material mat = renderer.material;
