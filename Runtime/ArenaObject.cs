@@ -3,6 +3,7 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
+using System;
 using System.Dynamic;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
@@ -39,6 +40,7 @@ namespace ArenaUnity
 
         internal string oldName; // test for rename
         internal bool externalDelete = false;
+        internal bool isJsonValidated = false;
 
         public void OnEnable()
         {
@@ -50,6 +52,7 @@ namespace ArenaUnity
 
         void Start()
         {
+            isJsonValidated = jsonData != null;
         }
 
         void Update()
@@ -157,10 +160,43 @@ namespace ArenaUnity
             return true;
         }
 
-        //public void OnValidate()
-        //{
-        //    // TODO: color/material change?
-        //}
+        internal void PublishJsonData()
+        {
+            dynamic msg = new ExpandoObject();
+            msg.object_id = name;
+            msg.action = "update";
+            msg.type = messageType;
+            msg.persist = persist;
+            msg.data = JsonConvert.DeserializeObject(jsonData);
+            string payload = JsonConvert.SerializeObject(msg);
+            ArenaClient.Instance.Publish(msg.object_id, payload); // remote
+            ArenaClient.Instance.ProcessMessage(payload); // local
+        }
+
+        public void OnValidate()
+        {
+            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+                return;
+            if (ArenaClient.Instance.IsShuttingDown) return;
+
+            // jsonData edited manually by user?
+            if (jsonData != null)
+            {
+                JToken parsed = null;
+                try
+                {   // test for valid json
+                    parsed = JToken.Parse(jsonData);
+                }
+                catch { }
+                finally
+                {
+                    // notify GUI to allow publish
+                    isJsonValidated = parsed != null;
+                }
+            }
+
+            // TODO: color/material change?
+        }
 
         public void OnDestroy()
         {

@@ -9,12 +9,21 @@ namespace ArenaUnity
         public override void OnInspectorGUI()
         {
             ArenaObject script = (ArenaObject)target;
-            if (GUILayout.Button("Publish Object Update"))
+
+            // add button to publish unity changes
+            if (GUILayout.Button("Publish Unity Data"))
             {
                 script.PublishCreateUpdate();
             }
 
             DrawDefaultInspector();
+
+            // add button to publish manual json data changes if valid
+            GUI.enabled = script.isJsonValidated;
+            if (GUILayout.Button("Publish Json Data"))
+            {
+                script.PublishJsonData();
+            }
         }
     }
 }

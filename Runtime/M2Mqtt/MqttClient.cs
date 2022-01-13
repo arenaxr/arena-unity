@@ -38,9 +38,7 @@ using Microsoft.SPOT.Net.Security;
 #endif
 // else other frameworks (.Net, .Net Compact, Mono, Windows Phone)
 #else
-using System.Collections.Generic;
 #if (SSL && !(WINDOWS_APP || WINDOWS_PHONE_APP || (!UNITY_EDITOR&&UNITY_WSA_10_0&&!ENABLE_IL2CPP)))
-using System.Security.Authentication;
 using System.Net.Security;
 #endif
 #endif
@@ -55,7 +53,6 @@ using System.Collections;
 // (it's ambiguos with uPLibrary.Networking.M2Mqtt.Utility.Trace)
 using MqttUtility = uPLibrary.Networking.M2Mqtt.Utility;
 using System.IO;
-using System.Net.Security;
 
 namespace uPLibrary.Networking.M2Mqtt
 {
