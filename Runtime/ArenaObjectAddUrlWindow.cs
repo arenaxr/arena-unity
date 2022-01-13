@@ -39,7 +39,7 @@ namespace ArenaUnity
                     return;
                 }
                 dynamic msg = new ExpandoObject();
-                msg.object_id = Regex.Replace(object_id, ArenaUnity.regexArenaObjectId, "-"); ;
+                msg.object_id = Regex.Replace(object_id, ArenaUnity.regexArenaObjectId, "-");
                 msg.action = "create";
                 msg.type = "object";
                 msg.persist = true;

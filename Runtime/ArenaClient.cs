@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Google.Apis.Auth.OAuth2;
@@ -17,6 +18,7 @@ using Google.Apis.Util.Store;
 using M2MqttUnity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SandolkakosDigital.EditorUtils;
 using Siccity.GLTFUtility;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -24,7 +26,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt.Messages;
-using SandolkakosDigital.EditorUtils;
 
 namespace ArenaUnity
 {
@@ -100,6 +101,8 @@ namespace ArenaUnity
         const string userSubDirUnity = "unity";
         static readonly string userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
         public static string importPath = "Assets/ArenaUnity/import";
+        static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl" };
+        static readonly string[] gltfUriTags = { "uri" };
 
         static readonly string[] Scopes = {
             Oauth2Service.Scope.UserinfoProfile,
@@ -296,11 +299,16 @@ namespace ArenaUnity
             {
                 DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)msg.object_id}", objects_num / (float)jsonVal.Count);
                 string localPath = null;
-                if (isElement(msg.attributes) && isElement(msg.attributes.url) && !isElementEmpty(msg.attributes.url))
+                IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
+                foreach (var uri in uris)
                 {
-                    cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, msg.attributes));
-                    yield return cd.coroutine;
-                    localPath = cd.result.ToString();
+                    if (!string.IsNullOrWhiteSpace(uri))
+                    {
+                        cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
+                        yield return cd.coroutine;
+                        if (msg.attributes.url != null)
+                            localPath = cd.result.ToString();
+                    }
                 }
                 CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.attributes, localPath);
                 objects_num++;
@@ -320,6 +328,14 @@ namespace ArenaUnity
             }
         }
 
+        private static IEnumerable<string> ExtractAssetUris(dynamic data, string[] urlTags)
+        {
+            List<string> tagList = new List<string>(urlTags);
+            var root = (JContainer)JToken.Parse(JsonConvert.SerializeObject(data));
+            var uris = root.DescendantsAndSelf().OfType<JProperty>().Where(p => tagList.Contains(p.Name)).Select(p => p.Value.Value<string>());
+            return uris;
+        }
+
         private bool isElement(dynamic el)
         {
             return el != null;
@@ -330,22 +346,22 @@ namespace ArenaUnity
             return string.IsNullOrWhiteSpace((string)el);
         }
 
-        private IEnumerator DownloadAssets(string messageType, dynamic data)
+        private IEnumerator DownloadAssets(string messageType, string msgUrl)
         {
             string objUrl = null;
             string localPath = null;
             // update urls, if any
             if (messageType == "object")
-            {
-                objUrl = ((string)data.url).TrimStart('/');
-                if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
-                else if (objUrl.StartsWith("models/")) objUrl = $"https://{brokerAddress}/store/{objUrl}";
-                else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
-            }
+                objUrl = ConstructRemoteUrl(msgUrl);
             // load remote assets
-            if (objUrl != null)
+            if (!Uri.IsWellFormedUriString(objUrl, UriKind.Absolute))
             {
-                Uri baseUri = new Uri(objUrl);
+                Debug.LogWarning($"Invalid Uri: '{objUrl}'");
+                yield break;
+            }
+            Uri baseUri = new Uri(objUrl);
+            if (baseUri != null)
+            {
                 string url2Path = baseUri.Host + baseUri.AbsolutePath;
                 string objFileName = string.Join("/", url2Path.Split(Path.GetInvalidFileNameChars()));
                 localPath = importPath + "/" + objFileName;
@@ -366,19 +382,18 @@ namespace ArenaUnity
                             {
                                 json = r.ReadToEnd();
                             }
-                            JObject jData = JObject.Parse(json);
-                            foreach (JToken child in jData.SelectTokens("$.*[*].uri"))
+                            IEnumerable<string> uris = ExtractAssetUris(JsonConvert.DeserializeObject(json), gltfUriTags);
+                            foreach (var uri in uris)
                             {
-                                string relativeUri = (string)child;
-                                if (relativeUri != null)
+                                if (!string.IsNullOrWhiteSpace(uri))
                                 {
-                                    Uri subUrl = new Uri(baseUri, relativeUri);
+                                    Uri subUrl = new Uri(baseUri, uri);
                                     cd = new CoroutineWithData(this, HttpRequestRaw(subUrl.AbsoluteUri));
                                     yield return cd.coroutine;
                                     if (isCrdSuccess(cd.result))
                                     {
                                         byte[] urlSubData = (byte[])cd.result;
-                                        string localSubPath = Path.Combine(Path.GetDirectoryName(localPath), relativeUri);
+                                        string localSubPath = Path.Combine(Path.GetDirectoryName(localPath), uri);
                                         SaveAsset(urlSubData, localSubPath);
                                         // import each sub-file for a deterministic reference
                                         AssetDatabase.ImportAsset(localSubPath);
@@ -393,6 +408,15 @@ namespace ArenaUnity
                 }
             }
             yield return localPath;
+        }
+
+        private string ConstructRemoteUrl(string srcUrl)
+        {
+            string objUrl = srcUrl.TrimStart('/');
+            if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
+            else if (objUrl.StartsWith("models/")) objUrl = $"https://{brokerAddress}/store/{objUrl}";
+            else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
+            return objUrl;
         }
 
         private static void SaveAsset(byte[] data, string path)
@@ -598,7 +622,7 @@ namespace ArenaUnity
             if (www.isNetworkError || www.isHttpError)
 #endif
             {
-                Debug.LogError($"{www.error}: {www.url}");
+                Debug.LogWarning($"{www.error}: {www.url}");
                 yield break;
             }
             else
@@ -627,7 +651,7 @@ namespace ArenaUnity
             if (www.isNetworkError || www.isHttpError)
 #endif
             {
-                Debug.LogError($"{www.error}: {www.url}");
+                Debug.LogWarning($"{www.error}: {www.url}");
                 yield break;
             }
             else
@@ -694,7 +718,7 @@ namespace ArenaUnity
 
         protected override void OnConnectionFailed(string errorMessage)
         {
-            Debug.LogError($"CONNECTION FAILED! {errorMessage}");
+            Debug.LogWarning($"CONNECTION FAILED! {errorMessage}");
         }
 
         protected override void OnDisconnected()
@@ -740,15 +764,20 @@ namespace ArenaUnity
                     case "update":
                         if (Convert.ToBoolean(msg.persist))
                         {
+                            DisplayCancelableProgressBar("ARENA Message", $"Loading object-id: {(string)msg.object_id}", 0f);
                             string localPath = null;
-                            if (isElement(msg.data) && isElement(msg.data.url) && !isElementEmpty(msg.data.url))
+                            IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
+                            foreach (var uri in uris)
                             {
-                                DisplayCancelableProgressBar("ARENA Message", $"Loading object-id: {(string)msg.object_id}", 0f);
-                                CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, msg.data));
-                                yield return cd.coroutine;
-                                localPath = cd.result.ToString();
-                                ClearProgressBar();
+                                if (!string.IsNullOrWhiteSpace(uri))
+                                {
+                                    CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
+                                    yield return cd.coroutine;
+                                    if (msg.data.url != null)
+                                        localPath = cd.result.ToString();
+                                }
                             }
+                            ClearProgressBar();
                             CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.data, localPath, menuCommand);
                         }
                         else if (msg.data.object_type == "camera") // try to manage camera
