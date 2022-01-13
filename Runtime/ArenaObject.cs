@@ -3,16 +3,12 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
-using System;
 using System.Dynamic;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-using UnityEngine;
 using PrettyHierarchy;
+using UnityEngine;
 
 namespace ArenaUnity
 {

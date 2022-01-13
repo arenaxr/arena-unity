@@ -58,15 +58,6 @@ namespace ArenaUnity
                     return GameObject.CreatePrimitive(PrimitiveType.Quad);
                 case "capsule":
                     return GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                case "light":
-                    if (data.type == null || (string)data.type == "ambient")
-                        return new GameObject();
-                    else
-                    {
-                        GameObject lgobj = new GameObject();
-                        lgobj.transform.gameObject.AddComponent<Light>();
-                        return lgobj;
-                    }
                 case "camera":
                     GameObject cgobj = new GameObject();
                     Camera camera = cgobj.transform.gameObject.AddComponent<Camera>();
@@ -230,7 +221,7 @@ namespace ArenaUnity
         // light
         public static void ToArenaLight(GameObject gobj, ref dynamic data)
         {
-            // TODO: translate from RenderSettings.ambientMode, made need centralized one-time publish
+            // TODO: translate from RenderSettings.ambientMode, may need centralized one-time publish
 
             Light light = gobj.GetComponent<Light>();
             switch (light.type)
@@ -254,42 +245,44 @@ namespace ArenaUnity
         }
         public static void ToUnityLight(dynamic data, ref GameObject gobj)
         {
-            if (data.type != null)
+            // support legacy lights
+            dynamic ldata = data.light ?? data;
+            if (ldata.type != null)
             {
-                if ((string)data.type == "ambient")
+                if ((string)ldata.type == "ambient")
                 {
                     RenderSettings.ambientMode = AmbientMode.Flat;
-                    if (data.intensity != null)
-                        RenderSettings.ambientIntensity = (float)data.intensity;
-                    if (data.color != null)
-                        RenderSettings.ambientLight = ToUnityColor((string)data.color);
+                    if (ldata.intensity != null)
+                        RenderSettings.ambientIntensity = (float)ldata.intensity;
+                    if (ldata.color != null)
+                        RenderSettings.ambientLight = ToUnityColor((string)ldata.color);
                 }
                 else
                 {
-                    Light light = gobj.GetComponent<Light>();
-                    switch ((string)data.type)
+                    Light light = gobj.AddComponent<Light>();
+                    switch ((string)ldata.type)
                     {
                         case "directional":
                             light.type = LightType.Directional;
                             break;
                         case "point":
                             light.type = LightType.Point;
-                            if (data.distance != null)
-                                light.range = (float)data.distance;
+                            if (ldata.distance != null)
+                                light.range = (float)ldata.distance;
                             break;
                         case "spot":
                             light.type = LightType.Spot;
-                            if (data.distance != null)
-                                light.range = (float)data.distance;
-                            if (data.angle != null)
-                                light.spotAngle = (float)data.angle;
+                            if (ldata.distance != null)
+                                light.range = (float)ldata.distance;
+                            if (ldata.angle != null)
+                                light.spotAngle = (float)ldata.angle;
                             break;
                     }
-                    if (data.intensity != null)
-                        light.intensity = (float)data.intensity;
-                    if (data.color != null)
-                        light.color = ToUnityColor((string)data.color);
-                    light.shadows = data.castShadow == null ? LightShadows.None : LightShadows.Hard;
+                    if (ldata.intensity != null)
+                        light.intensity = (float)ldata.intensity;
+                    if (ldata.color != null)
+                        light.color = ToUnityColor((string)ldata.color);
+                    light.shadows = ldata.castShadow == null ? LightShadows.None : LightShadows.Hard;
                 }
             }
         }
