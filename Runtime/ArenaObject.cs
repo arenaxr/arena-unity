@@ -40,7 +40,7 @@ namespace ArenaUnity
 
         internal string oldName; // test for rename
         internal bool externalDelete = false;
-        //private string lastValidJsonData = null;
+        internal bool isJsonValidated = false;
 
         public void OnEnable()
         {
@@ -52,6 +52,7 @@ namespace ArenaUnity
 
         void Start()
         {
+            isJsonValidated = jsonData != null;
         }
 
         void Update()
@@ -159,14 +160,21 @@ namespace ArenaUnity
             return true;
         }
 
+        internal void PublishJsonData()
+        {
+            dynamic msg = new ExpandoObject();
+            msg.object_id = name;
+            msg.action = "update";
+            msg.type = messageType;
+            msg.persist = persist;
+            msg.data = JsonConvert.DeserializeObject(jsonData);
+            string payload = JsonConvert.SerializeObject(msg);
+            ArenaClient.Instance.Publish(msg.object_id, payload); // remote
+            ArenaClient.Instance.ProcessMessage(payload); // local
+        }
+
         public void OnValidate()
         {
-            if (EditorWindow.focusedWindow != null)
-            {
-                string winName = EditorWindow.focusedWindow.ToString();
-                Debug.Log(winName + "" + jsonData);
-            }
-
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
                 return;
             if (ArenaClient.Instance.IsShuttingDown) return;
@@ -179,29 +187,15 @@ namespace ArenaUnity
                 {   // test for valid json
                     parsed = JToken.Parse(jsonData);
                 }
-                catch (Exception ex) //some other exception
+                catch { }
+                finally
                 {
-                    Debug.LogError($"Invalid Json Data: {ex}");
-                }
-                if (parsed != null)
-                {
-                    // TODO: publish internal
-                    data = JsonConvert.DeserializeObject(jsonData);
-                    PublishCreateUpdate();
-
-                    // publish external
-                    dynamic msg = new ExpandoObject();
-                    msg.object_id = name;
-                    msg.action = "update";
-                    msg.type = messageType;
-                    msg.persist = persist;
-                    msg.data = JsonConvert.DeserializeObject(jsonData);
-                    string payload = JsonConvert.SerializeObject(msg);
-                    ArenaClient.Instance.Publish(msg.object_id, payload);
+                    // notify GUI to allow publish
+                    isJsonValidated = parsed != null;
                 }
             }
-            // TODO: color/material change?
 
+            // TODO: color/material change?
         }
 
         public void OnDestroy()
