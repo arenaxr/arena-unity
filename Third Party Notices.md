@@ -7,6 +7,7 @@ ARENA-unity uses some third-party libraries in its package. Some have been modif
 - https://github.com/Siccity/GLTFUtility
 - https://github.com/primaryobjects/unity-to-aframe
 - https://github.com/NCEEGEE/PrettyHierarchy
+- https://github.com/mattatz/unity-mesh-builder
 
 ## NuGet
 - https://www.nuget.org/packages/Google.Apis
