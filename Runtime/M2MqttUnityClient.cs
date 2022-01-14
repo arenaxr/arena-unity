@@ -232,20 +232,19 @@ namespace M2MqttUnity
         private void ProcessMqttMessageBackgroundQueue()
         {
             if (backMessageQueue == null) return;
-            //InvalidOperationException: Collection was modified; enumeration operation may not execute.
-            //System.ThrowHelper.ThrowInvalidOperationException(System.ExceptionResource resource)(at < 695d1cc93cca45069c528c15c9fdd749 >:0)
-            //System.Collections.Generic.List`1 + Enumerator[T].MoveNextRare()(at < 695d1cc93cca45069c528c15c9fdd749 >:0)
-            //System.Collections.Generic.List`1 + Enumerator[T].MoveNext()(at < 695d1cc93cca45069c528c15c9fdd749 >:0)
-            //M2MqttUnity.M2MqttUnityClient.ProcessMqttMessageBackgroundQueue()(at / Users / mwfarb / git / arena - unity / Runtime / M2MqttUnityClient.cs:235)
-            //M2MqttUnity.M2MqttUnityClient.ProcessMqttEvents()(at / Users / mwfarb / git / arena - unity / Runtime / M2MqttUnityClient.cs:223)
-            //M2MqttUnity.M2MqttUnityClient.Update()(at / Users / mwfarb / git / arena - unity / Runtime / M2MqttUnityClient.cs:213)
-            //ArenaUnity.ArenaClient.Update()(at / Users / mwfarb / git / arena - unity / Runtime / ArenaClient.cs:142)
-            foreach (MqttMsgPublishEventArgs msg in backMessageQueue)
+            try
             {
-                if (msg == null) continue;
-                DecodeMessage(msg.Topic, msg.Message);
+                foreach (MqttMsgPublishEventArgs msg in backMessageQueue)
+                {
+                    if (msg == null) continue;
+                    DecodeMessage(msg.Topic, msg.Message);
+                }
+                backMessageQueue.Clear();
             }
-            backMessageQueue.Clear();
+            catch (InvalidOperationException ex)
+            {
+                Debug.LogWarning(ex.Message);
+            }
         }
 
         /// <summary>
