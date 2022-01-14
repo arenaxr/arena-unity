@@ -306,11 +306,9 @@ namespace ArenaUnity
                     {
                         cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
                         yield return cd.coroutine;
-                        if (msg.attributes.url != null)
-                            localPath = cd.result.ToString();
                     }
                 }
-                CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.attributes, localPath);
+                CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.attributes);
                 objects_num++;
             }
             ClearProgressBar();
@@ -346,77 +344,83 @@ namespace ArenaUnity
             return string.IsNullOrWhiteSpace((string)el);
         }
 
-        private IEnumerator DownloadAssets(string messageType, string msgUrl)
-        {
-            string objUrl = null;
-            string localPath = null;
-            // update urls, if any
-            if (messageType == "object")
-                objUrl = ConstructRemoteUrl(msgUrl);
-            // load remote assets
-            if (!Uri.IsWellFormedUriString(objUrl, UriKind.Absolute))
-            {
-                Debug.LogWarning($"Invalid Uri: '{objUrl}'");
-                yield break;
-            }
-            Uri baseUri = new Uri(objUrl);
-            if (baseUri != null)
-            {
-                string url2Path = baseUri.Host + baseUri.AbsolutePath;
-                string objFileName = string.Join("/", url2Path.Split(Path.GetInvalidFileNameChars()));
-                localPath = importPath + "/" + objFileName;
-                if (!File.Exists(localPath))
-                {
-                    // get main url src
-                    CoroutineWithData cd = new CoroutineWithData(this, HttpRequestRaw(objUrl));
-                    yield return cd.coroutine;
-                    if (isCrdSuccess(cd.result))
-                    {
-                        byte[] urlData = (byte[])cd.result;
-                        SaveAsset(urlData, localPath);
-                        // get gltf sub-assets
-                        if (".gltf" == Path.GetExtension(localPath).ToLower())
-                        {
-                            string json;
-                            using (StreamReader r = new StreamReader(localPath))
-                            {
-                                json = r.ReadToEnd();
-                            }
-                            IEnumerable<string> uris = ExtractAssetUris(JsonConvert.DeserializeObject(json), gltfUriTags);
-                            foreach (var uri in uris)
-                            {
-                                if (!string.IsNullOrWhiteSpace(uri))
-                                {
-                                    Uri subUrl = new Uri(baseUri, uri);
-                                    cd = new CoroutineWithData(this, HttpRequestRaw(subUrl.AbsoluteUri));
-                                    yield return cd.coroutine;
-                                    if (isCrdSuccess(cd.result))
-                                    {
-                                        byte[] urlSubData = (byte[])cd.result;
-                                        string localSubPath = Path.Combine(Path.GetDirectoryName(localPath), uri);
-                                        SaveAsset(urlSubData, localSubPath);
-                                        // import each sub-file for a deterministic reference
-                                        AssetDatabase.ImportAsset(localSubPath);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    // import master-file to link to the rest
-                    AssetDatabase.ImportAsset(localPath);
-                    AssetDatabase.Refresh();
-                }
-            }
-            yield return localPath;
-        }
-
-        private string ConstructRemoteUrl(string srcUrl)
+        internal Uri ConstructRemoteUrl(string srcUrl)
         {
             string objUrl = srcUrl.TrimStart('/');
             if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
             else if (objUrl.StartsWith("models/")) objUrl = $"https://{brokerAddress}/store/{objUrl}";
             else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
-            return objUrl;
+
+            if (!Uri.IsWellFormedUriString(objUrl, UriKind.Absolute))
+            {
+                Debug.LogWarning($"Invalid Uri: '{objUrl}'");
+                return null;
+            }
+            return new Uri(objUrl);
+        }
+
+        internal string ConstructLocalPath(Uri uri)
+        {
+            string url2Path = uri.Host + uri.AbsolutePath;
+            string objFileName = string.Join("/", url2Path.Split(Path.GetInvalidFileNameChars()));
+            return importPath + "/" + objFileName;
+        }
+
+        private IEnumerator DownloadAssets(string messageType, string msgUrl)
+        {
+            if (messageType != "object")
+                yield break;
+            Uri remoteUri = ConstructRemoteUrl(msgUrl);
+            if (remoteUri == null)
+                yield break;
+            // load remote assets
+            string localPath = ConstructLocalPath(remoteUri);
+            if (localPath == null)
+                yield break;
+
+            if (!File.Exists(localPath))
+            {
+                // get main url src
+                CoroutineWithData cd = new CoroutineWithData(this, HttpRequestRaw(remoteUri.AbsoluteUri));
+                yield return cd.coroutine;
+                if (isCrdSuccess(cd.result))
+                {
+                    byte[] urlData = (byte[])cd.result;
+                    SaveAsset(urlData, localPath);
+                    // get gltf sub-assets
+                    if (".gltf" == Path.GetExtension(localPath).ToLower())
+                    {
+                        string json;
+                        using (StreamReader r = new StreamReader(localPath))
+                        {
+                            json = r.ReadToEnd();
+                        }
+                        IEnumerable<string> uris = ExtractAssetUris(JsonConvert.DeserializeObject(json), gltfUriTags);
+                        foreach (var uri in uris)
+                        {
+                            if (!string.IsNullOrWhiteSpace(uri))
+                            {
+                                Uri subUrl = new Uri(remoteUri, uri);
+                                cd = new CoroutineWithData(this, HttpRequestRaw(subUrl.AbsoluteUri));
+                                yield return cd.coroutine;
+                                if (isCrdSuccess(cd.result))
+                                {
+                                    byte[] urlSubData = (byte[])cd.result;
+                                    string localSubPath = Path.Combine(Path.GetDirectoryName(localPath), uri);
+                                    SaveAsset(urlSubData, localSubPath);
+                                    // import each sub-file for a deterministic reference
+                                    AssetDatabase.ImportAsset(localSubPath);
+                                }
+                            }
+                        }
+                    }
+                }
+                // import master-file to link to the rest
+                AssetDatabase.ImportAsset(localPath);
+                AssetDatabase.Refresh();
+            }
+
+            yield return localPath;
         }
 
         private static void SaveAsset(byte[] data, string path)
@@ -475,7 +479,7 @@ namespace ArenaUnity
         }
 #endif
 
-        private void CreateUpdateObject(string object_id, string storeType, dynamic data, string assetPath = null, MenuCommand menuCommand = null)
+        private void CreateUpdateObject(string object_id, string storeType, dynamic data, MenuCommand menuCommand = null)
         {
             ArenaObject aobj = null;
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
@@ -486,32 +490,22 @@ namespace ArenaUnity
             else
             {   // create local
                 gobj = ArenaUnity.ToUnityObjectType(data);
-                if (assetPath != null)
+                switch ((string)data.object_type)
                 {
-                    switch ((string)data.object_type)
-                    {
-                        case "gltf-model":
-                            GameObject mobj = Importer.LoadFromFile(assetPath);
-                            if (mobj != null)
-                            {
-                                mobj.transform.parent = gobj.transform;
-                                foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
-                                {   // prevent inadvertent editing of gltf elements
-                                    child.gameObject.isStatic = true;
-                                }
-                            }
-                            break;
-                        case "image":
-                            Sprite sprite = LoadSpriteFromFile(assetPath);
-                            if (sprite != null)
-                            {
-                                SpriteRenderer spriteRenderer = gobj.AddComponent<SpriteRenderer>();
-                                spriteRenderer.GetComponent<SpriteRenderer>().sprite = sprite;
-                                spriteRenderer.drawMode = SpriteDrawMode.Sliced;
-                                spriteRenderer.size = Vector2.one;
-                            }
-                            break;
-                    }
+                    case "gltf-model":
+                        // load main model
+                        if (data.url != null)
+                            AttachGltf((string)data.url, gobj);
+                        // load on-demand-model (LOD) as well
+                        JObject d = JObject.Parse(JsonConvert.SerializeObject(data));
+                        foreach (string detailedUrl in d.SelectTokens("gltf-model-lod.detailedUrl"))
+                            AttachGltf(detailedUrl, gobj);
+                        break;
+                    case "image":
+                        // load image file
+                        if (data.url != null)
+                            AttachImage((string)data.url, gobj);
+                        break;
                 }
                 gobj.transform.parent = ArenaClientTransform;
                 gobj.name = object_id;
@@ -573,6 +567,33 @@ namespace ArenaUnity
             {
                 aobj.data = data;
                 aobj.jsonData = JsonConvert.SerializeObject(aobj.data, Formatting.Indented);
+            }
+        }
+
+        private void AttachGltf(string msgUrl, GameObject gobj)
+        {
+            string assetPath = ConstructLocalPath(ConstructRemoteUrl(msgUrl));
+            GameObject mobj = Importer.LoadFromFile(assetPath);
+            if (mobj != null)
+            {
+                mobj.transform.parent = gobj.transform;
+                foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
+                {   // prevent inadvertent editing of gltf elements
+                    child.gameObject.isStatic = true;
+                }
+            }
+        }
+
+        private void AttachImage(string msgUrl, GameObject gobj)
+        {
+            string assetPath = ConstructLocalPath(ConstructRemoteUrl(msgUrl));
+            Sprite sprite = LoadSpriteFromFile(assetPath);
+            if (sprite != null)
+            {
+                SpriteRenderer spriteRenderer = gobj.AddComponent<SpriteRenderer>();
+                spriteRenderer.GetComponent<SpriteRenderer>().sprite = sprite;
+                spriteRenderer.drawMode = SpriteDrawMode.Sliced;
+                spriteRenderer.size = Vector2.one;
             }
         }
 
@@ -773,12 +794,10 @@ namespace ArenaUnity
                                 {
                                     CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
                                     yield return cd.coroutine;
-                                    if (msg.data.url != null)
-                                        localPath = cd.result.ToString();
                                 }
                             }
                             ClearProgressBar();
-                            CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.data, localPath, menuCommand);
+                            CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.data, menuCommand);
                         }
                         else if (msg.data.object_type == "camera") // try to manage camera
                         {
