@@ -208,65 +208,27 @@ namespace ArenaUnity
         // size dimensions
         public static void ToArenaDimensions(GameObject gobj, ref dynamic data)
         {
-            // always publish unity render dimensions for consistency
+            // used to collect unity-default render sizes
             string collider = gobj.GetComponent<Collider>().GetType().ToString();
             switch (collider)
             {
-                case "BoxCollider":
+                case "UnityEngine.BoxCollider":
                     BoxCollider bc = gobj.GetComponent<BoxCollider>();
                     data.width = ArenaFloat(bc.size.x);
                     data.height = ArenaFloat(bc.size.y);
                     data.depth = ArenaFloat(bc.size.z);
                     break;
-                case "SphereCollider":
+                case "UnityEngine.SphereCollider":
                     SphereCollider sc = gobj.GetComponent<SphereCollider>();
                     data.radius = ArenaFloat(sc.radius);
                     break;
-                case "CapsuleCollider":
+                case "UnityEngine.CapsuleCollider":
                     CapsuleCollider cc = gobj.GetComponent<CapsuleCollider>();
                     data.height = ArenaFloat(cc.height);
                     data.radius = ArenaFloat(cc.radius);
                     break;
                 default:
                     break;
-            }
-        }
-        public static void ToUnityDimensions(dynamic data, ref GameObject gobj)
-        {
-            if (data.object_type != null)
-            {
-                bool defaultScaled = gobj.transform.localScale == Vector3.one;
-                // use arena defaults if missing for consistency
-                switch ((string)data.object_type)
-                {
-                    case "box":
-                    case "cube":
-                        BoxCollider bc = gobj.GetComponent<BoxCollider>();
-                        if (bc != null)
-                        {
-                            bc.size = new Vector3(
-                            data.width != null ? (float)data.width : 1f,
-                            data.height != null ? (float)data.height : 1f,
-                            data.depth != null ? (float)data.depth : 1f);
-                        }
-                        break;
-                    case "cylinder":
-                    case "capsule":
-                        CapsuleCollider cc = gobj.GetComponent<CapsuleCollider>();
-                        if (cc != null)
-                        {
-                            cc.height = data.height != null ? (float)data.height : 1f;
-                            cc.radius = data.radius != null ? (float)data.radius : 1f;
-                        }
-                        break;
-                    case "sphere":
-                        SphereCollider sc = gobj.GetComponent<SphereCollider>();
-                        if (sc != null)
-                        {
-                            sc.radius = data.radius != null ? (float)data.radius : 1f;
-                        }
-                        break;
-                }
             }
         }
         // color

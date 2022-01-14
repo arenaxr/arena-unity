@@ -536,7 +536,6 @@ namespace ArenaUnity
                 ArenaUnity.ToUnityMaterial(data, ref gobj);
             if (isElement(data.material) && isElement(data.material.src))
                 AttachMaterialTexture((string)data.material.src, gobj);
-            ArenaUnity.ToUnityDimensions(data, ref gobj);
             if ((string)data.object_type == "light")
                 ArenaUnity.ToUnityLight(data, ref gobj);
             gobj.transform.hasChanged = false;
