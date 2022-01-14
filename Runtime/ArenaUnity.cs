@@ -52,15 +52,17 @@ namespace ArenaUnity
                     return GenerateMeshObject(CubeBuilder.Build(
                         data.width != null ? (float)data.width : 1f,
                         data.height != null ? (float)data.height : 1f,
-                        data.depth != null ? (float)data.depth : 1f));
+                        data.depth != null ? (float)data.depth : 1f,
+                        2, 2, 2));
                 case "cylinder":
                     return GenerateMeshObject(CylinderBuilder.Build(
                         data.radius != null ? (float)data.radius : 1f,
-                        data.height != null ? (float)data.height : 1f,
-                        24));
+                        data.height != null ? (float)data.height : 2f,
+                        36, 18));
                 case "sphere":
                     return GenerateMeshObject(SphereBuilder.Build(
-                        data.radius != null ? (float)data.radius : 1f));
+                        data.radius != null ? (float)data.radius : 1f,
+                        36, 18));
                 case "plane":
                     return GenerateMeshObject(PlaneBuilder.Build(
                         data.width != null ? (float)data.width : 1f,
@@ -73,9 +75,9 @@ namespace ArenaUnity
                 // build your own meshes
                 case "cone": // TODO: fix orgin offset from this primitive
                     return GenerateMeshObject(ConeBuilder.Build(
-                        24,
+                        36,
                         data.radiusBottom != null ? (float)data.radiusBottom : 1f,
-                        data.height != null ? (float)data.height : 1f));
+                        data.height != null ? (float)data.height : 2f));
                 case "icosahedron":
                     return GenerateMeshObject(IcosahedronBuilder.Build(
                         data.radius != null ? (float)data.radius : 1f,
@@ -88,13 +90,13 @@ namespace ArenaUnity
                     return GenerateMeshObject(RingBuilder.Build(
                         data.radiusInner != null ? (float)data.radiusInner : 1f,
                         data.radiusOuter != null ? (float)data.radiusOuter : 1f,
-                        24, 24));
+                        32, 8));
                 case "torus":
                     const float torFact = .4f;
                     return GenerateMeshObject(TorusBuilder.Build(
                         data.radius != null ? (float)data.radius : 1f,
                         data.radius != null ? (float)data.radius * torFact : 1f * torFact,
-                        24, 24));
+                        36, 32));
                 // camera
                 case "camera":
                     GameObject cgobj = new GameObject();
