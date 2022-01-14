@@ -88,7 +88,7 @@ namespace ArenaUnity
                         0));
                 case "ring":
                     return GenerateMeshObject(RingBuilder.Build(
-                        data.radiusInner != null ? (float)data.radiusInner : 1f,
+                        data.radiusInner != null ? (float)data.radiusInner : .5f,
                         data.radiusOuter != null ? (float)data.radiusOuter : 1f,
                         32, 8));
                 case "torus":

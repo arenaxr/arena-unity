@@ -16,6 +16,7 @@ using Google.Apis.Oauth2.v2;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using M2MqttUnity;
+using MimeMapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SandolkakosDigital.EditorUtils;
@@ -103,6 +104,7 @@ namespace ArenaUnity
         public static string importPath = "Assets/ArenaUnity/import";
         static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl" };
         static readonly string[] gltfUriTags = { "uri" };
+        static readonly string[] skipMimeClasses = { "video", "audio" };
 
         static readonly string[] Scopes = {
             Oauth2Service.Scope.UserinfoProfile,
@@ -368,15 +370,17 @@ namespace ArenaUnity
 
         private IEnumerator DownloadAssets(string messageType, string msgUrl)
         {
-            if (messageType != "object")
-                yield break;
+            if (messageType != "object") yield break;
             Uri remoteUri = ConstructRemoteUrl(msgUrl);
-            if (remoteUri == null)
-                yield break;
+            if (remoteUri == null) yield break;
+            if (!Path.HasExtension(remoteUri.AbsoluteUri)) yield break;
+            string mimeType = MimeUtility.GetMimeMapping(remoteUri.GetLeftPart(UriPartial.Path));
+            Debug.LogWarning($"{mimeType} {msgUrl}");
+            if (mimeType == null) yield break;
+            if (skipMimeClasses.ToList().Contains(mimeType.Split('/')[0])) yield break;
             // load remote assets
             string localPath = ConstructLocalPath(remoteUri);
-            if (localPath == null)
-                yield break;
+            if (localPath == null) yield break;
 
             if (!File.Exists(localPath))
             {

@@ -18,5 +18,6 @@ ARENA-unity uses some third-party libraries in its package. Some have been modif
 - https://www.nuget.org/packages/Microsoft.IdentityModel.JsonWebTokens
 - https://www.nuget.org/packages/Microsoft.IdentityModel.Logging
 - https://www.nuget.org/packages/Microsoft.IdentityModel.Tokens
+- https://www.nuget.org/packages/MimeMapping
 - https://www.nuget.org/packages/Newtonsoft.Json
 - https://www.nuget.org/packages/System.IdentityModel.Tokens.Jwt
