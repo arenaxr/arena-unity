@@ -298,7 +298,6 @@ namespace ArenaUnity
             foreach (dynamic msg in persistMessages)
             {
                 DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)msg.object_id}", objects_num / (float)jsonVal.Count);
-                string localPath = null;
                 IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
                 foreach (var uri in uris)
                 {
@@ -559,6 +558,8 @@ namespace ArenaUnity
                 gobj.transform.localScale = Vector3.one;
             if (isElement(data.material) || isElement(data.color))
                 ArenaUnity.ToUnityMaterial(data, ref gobj);
+            if (isElement(data.material) && isElement(data.material.src))
+                AttachMaterialTexture((string)data.material.src, gobj);
             ArenaUnity.ToUnityDimensions(data, ref gobj);
             if ((string)data.object_type == "light")
                 ArenaUnity.ToUnityLight(data, ref gobj);
@@ -570,9 +571,28 @@ namespace ArenaUnity
             }
         }
 
+        private void AttachMaterialTexture(string msgUrl, GameObject gobj)
+        {
+            Uri uri = ConstructRemoteUrl(msgUrl);
+            if (uri == null) return;
+            string assetPath = ConstructLocalPath(uri);
+            if (assetPath == null) return;
+            if (File.Exists(assetPath))
+            {
+                var bytes = File.ReadAllBytes(assetPath);
+                var tex = new Texture2D(1, 1);
+                tex.LoadImage(bytes);
+                var renderer = gobj.GetComponent<Renderer>();
+                renderer.material.mainTexture = tex;
+            }
+        }
+
         private void AttachGltf(string msgUrl, GameObject gobj)
         {
-            string assetPath = ConstructLocalPath(ConstructRemoteUrl(msgUrl));
+            Uri uri = ConstructRemoteUrl(msgUrl);
+            if (uri == null) return;
+            string assetPath = ConstructLocalPath(uri);
+            if (assetPath == null) return;
             GameObject mobj = Importer.LoadFromFile(assetPath);
             if (mobj != null)
             {
@@ -586,7 +606,10 @@ namespace ArenaUnity
 
         private void AttachImage(string msgUrl, GameObject gobj)
         {
-            string assetPath = ConstructLocalPath(ConstructRemoteUrl(msgUrl));
+            Uri uri = ConstructRemoteUrl(msgUrl);
+            if (uri == null) return;
+            string assetPath = ConstructLocalPath(uri);
+            if (assetPath == null) return;
             Sprite sprite = LoadSpriteFromFile(assetPath);
             if (sprite != null)
             {
@@ -786,7 +809,6 @@ namespace ArenaUnity
                         if (Convert.ToBoolean(msg.persist))
                         {
                             DisplayCancelableProgressBar("ARENA Message", $"Loading object-id: {(string)msg.object_id}", 0f);
-                            string localPath = null;
                             IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
                             foreach (var uri in uris)
                             {
