@@ -49,11 +49,18 @@ namespace ArenaUnity
                 // unity primitives
                 case "cube": // support legacy arena 'cube' == 'box'
                 case "box":
-                    return GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    return GenerateMeshObject(CubeBuilder.Build(
+                        data.width != null ? (float)data.width : 1f,
+                        data.height != null ? (float)data.height : 1f,
+                        data.depth != null ? (float)data.depth : 1f));
                 case "cylinder":
-                    return GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    return GenerateMeshObject(CylinderBuilder.Build(
+                        data.radius != null ? (float)data.radius : 1f,
+                        data.height != null ? (float)data.height : 1f,
+                        24));
                 case "sphere":
-                    return GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    return GenerateMeshObject(SphereBuilder.Build(
+                        data.radiusBottom != null ? (float)data.radiusBottom : 1f));
                 case "plane":
                     return GameObject.CreatePrimitive(PrimitiveType.Plane);
                 case "quad":
@@ -61,16 +68,28 @@ namespace ArenaUnity
                 case "capsule":
                     return GameObject.CreatePrimitive(PrimitiveType.Capsule);
                 // build your own meshes
-                case "cone":
-                    return GenerateMeshObject(ConeBuilder.Build(10, 1f, 1f));
+                case "cone": // TODO: fix orgin offset from this primitive
+                    return GenerateMeshObject(ConeBuilder.Build(
+                        24,
+                        data.radiusBottom != null ? (float)data.radiusBottom : 1f,
+                        data.height != null ? (float)data.height : 1f));
                 case "icosahedron":
-                    return GenerateMeshObject(IcosahedronBuilder.Build(1f, 0));
+                    return GenerateMeshObject(IcosahedronBuilder.Build(
+                        data.radius != null ? (float)data.radius : 1f,
+                        0));
                 case "octahedron":
-                    return GenerateMeshObject(OctahedronBuilder.Build(1f, 0));
+                    return GenerateMeshObject(OctahedronBuilder.Build(
+                        data.radius != null ? (float)data.radius : 1f,
+                        0));
                 case "ring":
-                    return GenerateMeshObject(RingBuilder.Build(.5f, 1f, 16, 16));
+                    return GenerateMeshObject(RingBuilder.Build(
+                        data.radiusInner != null ? (float)data.radiusInner : 1f,
+                        data.radiusOuter != null ? (float)data.radiusOuter : 1f,
+                        16, 16));
                 case "torus":
-                    return GenerateMeshObject(TorusBuilder.Build(1f, .5f));
+                    return GenerateMeshObject(TorusBuilder.Build(
+                        data.radius != null ? (float)data.radius : 1f,
+                        .5f, 24, 24));
                 // camera
                 case "camera":
                     GameObject cgobj = new GameObject();
@@ -217,21 +236,29 @@ namespace ArenaUnity
                     case "box":
                     case "cube":
                         BoxCollider bc = gobj.GetComponent<BoxCollider>();
-                        bc.size = new Vector3(
+                        if (bc != null)
+                        {
+                            bc.size = new Vector3(
                             data.width != null ? (float)data.width : 1f,
                             data.height != null ? (float)data.height : 1f,
-                            data.depth != null ? (float)data.depth : 1f
-                        );
+                            data.depth != null ? (float)data.depth : 1f);
+                        }
                         break;
                     case "cylinder":
                     case "capsule":
                         CapsuleCollider cc = gobj.GetComponent<CapsuleCollider>();
-                        cc.height = data.height != null ? (float)data.height : 1f;
-                        cc.radius = data.radius != null ? (float)data.radius : 1f;
+                        if (cc != null)
+                        {
+                            cc.height = data.height != null ? (float)data.height : 1f;
+                            cc.radius = data.radius != null ? (float)data.radius : 1f;
+                        }
                         break;
                     case "sphere":
                         SphereCollider sc = gobj.GetComponent<SphereCollider>();
-                        sc.radius = data.radius != null ? (float)data.radius : 1f;
+                        if (sc != null)
+                        {
+                            sc.radius = data.radius != null ? (float)data.radius : 1f;
+                        }
                         break;
                 }
             }
