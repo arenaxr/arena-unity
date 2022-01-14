@@ -2,6 +2,23 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.0.10] - 2022-01-14
+### Added
+- Prevent inadvertent edits of GLTF sub-components with `Static`.
+- Improved accuracy of `Json Data` in realtime.
+- Highlight ARENA objects in `Hierarchy View` in green.
+- Expand and focus `ArenaClient` component and objects list on start.
+- Made `Json Data` validated on realtime edits, publish with `Publish Json Data` button.
+- Support loading material textures.
+- Support separate `Scale` vs `Renderer` dimensions via manual `Mesh` calculations.
+- Support geometries: `Ring, Torus, Plane, Icosahedron, Octahedron, Cone`.
+- Added geometries to `GameObject > ARENA`.
+- Support GLTF Load on Demand (LOD), loading both models.
+### Changed
+- Import only visual ARENA assets, no audio or video.
+- Check for `GameObject > ARENA` menu item name conflicts.
+- Prevent TRS publish of objects without TRS (`scene-options, program`).
+
 ## [0.0.9] - 2022-01-06
 ### Added
 - Live import of models/images from MQTT messages.
