@@ -46,38 +46,26 @@ namespace ArenaUnity
         {
             switch ((string)data.object_type)
             {
-                // unity primitives
-                case "cube": // support legacy arena 'cube' == 'box'
+                // build your own meshes
                 case "box":
+                case "cube": // support legacy arena 'cube' == 'box'
                     return GenerateMeshObject(CubeBuilder.Build(
                         data.width != null ? (float)data.width : 1f,
                         data.height != null ? (float)data.height : 1f,
                         data.depth != null ? (float)data.depth : 1f,
                         2, 2, 2));
-                case "cylinder":
-                    return GenerateMeshObject(CylinderBuilder.Build(
-                        data.radius != null ? (float)data.radius : 1f,
-                        data.height != null ? (float)data.height : 2f,
-                        36, 18));
-                case "sphere":
-                    return GenerateMeshObject(SphereBuilder.Build(
-                        data.radius != null ? (float)data.radius : 1f,
-                        36, 18));
-                case "plane":
-                    return GenerateMeshObject(PlaneBuilder.Build(
-                        data.width != null ? (float)data.width : 1f,
-                        data.height != null ? (float)data.height : 1f,
-                        2, 2));
-                case "quad":
-                    return GameObject.CreatePrimitive(PrimitiveType.Quad);
                 case "capsule":
                     return GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                // build your own meshes
                 case "cone": // TODO: fix orgin offset from this primitive
                     return GenerateMeshObject(ConeBuilder.Build(
                         36,
                         data.radiusBottom != null ? (float)data.radiusBottom : 1f,
                         data.height != null ? (float)data.height : 2f));
+                case "cylinder":
+                    return GenerateMeshObject(CylinderBuilder.Build(
+                        data.radius != null ? (float)data.radius : 1f,
+                        data.height != null ? (float)data.height : 2f,
+                        36, 18));
                 case "icosahedron":
                     return GenerateMeshObject(IcosahedronBuilder.Build(
                         data.radius != null ? (float)data.radius : 1f,
@@ -86,11 +74,22 @@ namespace ArenaUnity
                     return GenerateMeshObject(OctahedronBuilder.Build(
                         data.radius != null ? (float)data.radius : 1f,
                         0));
+                case "plane":
+                    return GenerateMeshObject(PlaneBuilder.Build(
+                        data.width != null ? (float)data.width : 1f,
+                        data.height != null ? (float)data.height : 1f,
+                        2, 2));
+                case "quad":
+                    return GameObject.CreatePrimitive(PrimitiveType.Quad);
                 case "ring":
                     return GenerateMeshObject(RingBuilder.Build(
                         data.radiusInner != null ? (float)data.radiusInner : .5f,
                         data.radiusOuter != null ? (float)data.radiusOuter : 1f,
                         32, 8));
+                case "sphere":
+                    return GenerateMeshObject(SphereBuilder.Build(
+                        data.radius != null ? (float)data.radius : 1f,
+                        36, 18));
                 case "torus":
                     const float torFact = .4f;
                     return GenerateMeshObject(TorusBuilder.Build(

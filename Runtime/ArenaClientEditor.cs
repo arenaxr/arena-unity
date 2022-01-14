@@ -10,7 +10,7 @@ namespace ArenaUnity
         {
             if (GUILayout.Button("Signout"))
             {
-                ArenaClient.SceneSignout();
+                ArenaMenuCreate.SceneSignout();
             }
 
             DrawDefaultInspector();

@@ -38,6 +38,12 @@ namespace ArenaUnity
                     Debug.LogError($"Badly-formed Uri: '{object_url}'.");
                     return;
                 }
+
+                // Set a position in front of the camera
+                float distance = 2f;
+                Camera cam = Camera.current ?? Camera.main;
+                Vector3 cameraPoint = cam.transform.position + cam.transform.forward * distance;
+
                 dynamic msg = new ExpandoObject();
                 msg.object_id = Regex.Replace(object_id, ArenaUnity.regexArenaObjectId, "-");
                 msg.action = "create";
@@ -48,6 +54,7 @@ namespace ArenaUnity
                 data.url = object_url;
                 Quaternion rotOut = object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(Quaternion.identity) : Quaternion.identity;
                 data.rotation = ArenaUnity.ToArenaRotationEuler(rotOut.eulerAngles);
+                data.position = ArenaUnity.ToArenaPosition(cameraPoint);
                 msg.data = data;
                 string payload = JsonConvert.SerializeObject(msg);
                 ArenaClient.Instance.Publish(object_id, payload); // remote

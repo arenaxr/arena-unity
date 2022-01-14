@@ -375,7 +375,6 @@ namespace ArenaUnity
             if (remoteUri == null) yield break;
             if (!Path.HasExtension(remoteUri.AbsoluteUri)) yield break;
             string mimeType = MimeUtility.GetMimeMapping(remoteUri.GetLeftPart(UriPartial.Path));
-            Debug.LogWarning($"{mimeType} {msgUrl}");
             if (mimeType == null) yield break;
             if (skipMimeClasses.ToList().Contains(mimeType.Split('/')[0])) yield break;
             // load remote assets
@@ -444,34 +443,6 @@ namespace ArenaUnity
 
         // methods for the editor
 #if UNITY_EDITOR
-        [MenuItem("ARENA/Signout")]
-        internal static void SceneSignout()
-        {
-            EditorApplication.ExitPlaymode();
-            if (Directory.Exists(GoogleWebAuthorizationBroker.Folder))
-                Directory.Delete(GoogleWebAuthorizationBroker.Folder, true);
-            Debug.Log("Logged out of the ARENA");
-        }
-
-        // Add a menu item to create custom GameObjects.
-        // Priority 1 ensures it is grouped with the other menu items of the same kind
-        // and propagated to the hierarchy dropdown and hierarchy context menus.
-        [MenuItem("GameObject/ARENA/GLTF Model", false, 10)]
-        internal static void CreateArenaGltfModel(MenuCommand menuCommand)
-        {
-            ArenaObjectAddUrlWindow window = (ArenaObjectAddUrlWindow)EditorWindow.GetWindow(typeof(ArenaObjectAddUrlWindow));
-            window.Init("gltf-model", menuCommand);
-            window.Show();
-        }
-
-        [MenuItem("GameObject/ARENA/Image", false, 10)]
-        internal static void CreateArenaImage(MenuCommand menuCommand)
-        {
-            ArenaObjectAddUrlWindow window = (ArenaObjectAddUrlWindow)EditorWindow.GetWindow(typeof(ArenaObjectAddUrlWindow));
-            window.Init("image", menuCommand);
-            window.Show();
-        }
-
         private void DisplayCancelableProgressBar(string title, string info, float progress)
         {
             EditorUtility.DisplayCancelableProgressBar(title, info, progress);
