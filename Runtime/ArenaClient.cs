@@ -88,7 +88,7 @@ namespace ArenaUnity
         private string csrfToken = null;
         private List<string> eventMessages = new List<string>();
         private string sceneTopic = null;
-        private Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
+        internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
         private static readonly string ClientName = "ARENA Client Runtime";
         private static UserCredential credential;
         private Transform ArenaClientTransform;

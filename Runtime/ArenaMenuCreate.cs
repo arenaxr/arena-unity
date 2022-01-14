@@ -112,6 +112,8 @@ namespace ArenaUnity
 
             dynamic msg = new ExpandoObject();
             msg.object_id = Regex.Replace(object_id, ArenaUnity.regexArenaObjectId, "-");
+            if (ArenaClient.Instance.arenaObjs.ContainsKey(msg.object_id))
+                msg.object_id = $"{msg.object_id}-{UnityEngine.Random.Range(0, 1000000)}";
             msg.action = "create";
             msg.type = "object";
             msg.persist = true;
