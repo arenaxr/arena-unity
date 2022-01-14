@@ -60,9 +60,12 @@ namespace ArenaUnity
                         24));
                 case "sphere":
                     return GenerateMeshObject(SphereBuilder.Build(
-                        data.radiusBottom != null ? (float)data.radiusBottom : 1f));
+                        data.radius != null ? (float)data.radius : 1f));
                 case "plane":
-                    return GameObject.CreatePrimitive(PrimitiveType.Plane);
+                    return GenerateMeshObject(PlaneBuilder.Build(
+                        data.width != null ? (float)data.width : 1f,
+                        data.height != null ? (float)data.height : 1f,
+                        2, 2));
                 case "quad":
                     return GameObject.CreatePrimitive(PrimitiveType.Quad);
                 case "capsule":
@@ -85,11 +88,13 @@ namespace ArenaUnity
                     return GenerateMeshObject(RingBuilder.Build(
                         data.radiusInner != null ? (float)data.radiusInner : 1f,
                         data.radiusOuter != null ? (float)data.radiusOuter : 1f,
-                        16, 16));
+                        24, 24));
                 case "torus":
+                    const float torFact = .4f;
                     return GenerateMeshObject(TorusBuilder.Build(
                         data.radius != null ? (float)data.radius : 1f,
-                        .5f, 24, 24));
+                        data.radius != null ? (float)data.radius * torFact : 1f * torFact,
+                        24, 24));
                 // camera
                 case "camera":
                     GameObject cgobj = new GameObject();

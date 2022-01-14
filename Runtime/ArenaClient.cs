@@ -660,6 +660,8 @@ namespace ArenaUnity
             www.SendWebRequest();
             while (!www.isDone)
             {
+                if (www.GetResponseHeaders() != null)
+                    Debug.LogWarning(string.Join(Environment.NewLine, www.GetResponseHeaders()));
                 DisplayCancelableProgressBar("ARENA URL", $"{url} downloading...", www.downloadProgress);
                 yield return null;
             }
