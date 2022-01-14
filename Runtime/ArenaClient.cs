@@ -349,7 +349,7 @@ namespace ArenaUnity
             if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
             else if (objUrl.StartsWith("models/")) objUrl = $"https://{brokerAddress}/store/{objUrl}";
             else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
-
+            if (string.IsNullOrWhiteSpace(objUrl)) return null;
             if (!Uri.IsWellFormedUriString(objUrl, UriKind.Absolute))
             {
                 Debug.LogWarning($"Invalid Uri: '{objUrl}'");
@@ -360,6 +360,7 @@ namespace ArenaUnity
 
         internal string ConstructLocalPath(Uri uri)
         {
+            if (uri == null) return null;
             string url2Path = uri.Host + uri.AbsolutePath;
             string objFileName = string.Join("/", url2Path.Split(Path.GetInvalidFileNameChars()));
             return importPath + "/" + objFileName;
@@ -413,10 +414,10 @@ namespace ArenaUnity
                             }
                         }
                     }
+                    // import master-file to link to the rest
+                    AssetDatabase.ImportAsset(localPath);
+                    AssetDatabase.Refresh();
                 }
-                // import master-file to link to the rest
-                AssetDatabase.ImportAsset(localPath);
-                AssetDatabase.Refresh();
             }
 
             yield return localPath;
@@ -654,6 +655,7 @@ namespace ArenaUnity
         {
             UnityWebRequest www = UnityWebRequest.Get(url);
             www.downloadHandler = new DownloadHandlerBuffer();
+            www.timeout = 5; // TODO: when fails like 443 hang, need to prevent curl 28 crash, this should just skip 
             www.SendWebRequest();
             while (!www.isDone)
             {
@@ -717,7 +719,7 @@ namespace ArenaUnity
 
         private bool isCrdSuccess(object result)
         {
-            return result.ToString() != "UnityEngine.Networking.UnityWebRequestAsyncOperation";
+            return result != null && result.ToString() != "UnityEngine.Networking.UnityWebRequestAsyncOperation";
         }
 
         private string GetCookie(string SetCookie, string csrftag)
