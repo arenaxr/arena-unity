@@ -96,6 +96,7 @@ namespace ArenaUnity
             if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
                 return false;
             if (ArenaClient.Instance.IsShuttingDown) return false;
+            if (messageType != "object") return false;
 
             // message type information
             dynamic msg = new ExpandoObject();

@@ -11,10 +11,12 @@ namespace ArenaUnity
             ArenaObject script = (ArenaObject)target;
 
             // add button to publish unity changes
+            GUI.enabled = script.messageType == "object";
             if (GUILayout.Button("Publish Unity Data"))
             {
                 script.PublishCreateUpdate();
             }
+            GUI.enabled = true;
 
             DrawDefaultInspector();
 
@@ -24,6 +26,7 @@ namespace ArenaUnity
             {
                 script.PublishJsonData();
             }
+            GUI.enabled = true;
         }
     }
 }
