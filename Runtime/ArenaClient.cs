@@ -576,6 +576,7 @@ namespace ArenaUnity
 
         private void AttachMaterialTexture(string assetPath, GameObject gobj)
         {
+            if (assetPath == null) return;
             if (File.Exists(assetPath))
             {
                 var bytes = File.ReadAllBytes(assetPath);
@@ -589,6 +590,7 @@ namespace ArenaUnity
 
         private void AttachGltf(string assetPath, GameObject gobj)
         {
+            if (assetPath == null) return;
             AnimationClip[] clips;
             GameObject mobj = Importer.LoadFromFile(assetPath, new ImportSettings(), out clips);
             AssignAnimations(mobj, clips);
@@ -619,6 +621,7 @@ namespace ArenaUnity
 
         private void AttachImage(string assetPath, GameObject gobj)
         {
+            if (assetPath == null) return;
             Sprite sprite = LoadSpriteFromFile(assetPath);
             if (sprite != null)
             {
@@ -631,6 +634,7 @@ namespace ArenaUnity
 
         private static Sprite LoadSpriteFromFile(string assetPath)
         {
+            if (assetPath == null) return null;
             Texture2D tex = new Texture2D(2, 2, TextureFormat.RGB24, false);
             tex.filterMode = FilterMode.Trilinear;
             var imgdata = File.ReadAllBytes(assetPath);

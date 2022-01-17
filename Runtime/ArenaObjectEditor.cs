@@ -31,19 +31,29 @@ namespace ArenaUnity
             // add any animation buttons
             if (script.animations != null)
             {
+                GUILayout.Space(5f);
+                EditorGUILayout.LabelField("Animations", EditorStyles.boldLabel);
                 foreach (string animation in script.animations)
                 {
                     Animation anim = script.GetComponentInChildren<Animation>(true);
-                    if (GUILayout.Button($"Play {animation}"))
+                    GUILayout.BeginHorizontal("Box");
+                    GUILayout.Label(animation);
+                    if (GUILayout.Button($"Play", GUILayout.Width(40)))
                     {
                         anim.Play(animation);
                     }
-                    if (GUILayout.Button($"Stop {animation}"))
+                    if (GUILayout.Button($"Stop", GUILayout.Width(40)))
                     {
                         anim.Stop(animation);
                     }
+                    if (GUILayout.Button($"Rewind", GUILayout.Width(60)))
+                    {
+                        anim.Rewind(animation);
+                    }
+                    GUILayout.EndHorizontal();
                 }
             }
+
 
         }
     }
