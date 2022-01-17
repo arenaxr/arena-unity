@@ -539,31 +539,29 @@ namespace ArenaUnity
                 AttachMaterialTexture(formLocalPath((string)data.material.src), gobj);
             if ((string)data.object_type == "light")
                 ArenaUnity.ToUnityLight(data, ref gobj);
-
             if ((string)data.object_type == "gltf-model")
-            {
-                // check for animations
-                var assetRepresentationsAtPath = AssetDatabase.LoadAllAssetRepresentationsAtPath(formLocalPath((string)data.url));
-                foreach (var assetRepresentation in assetRepresentationsAtPath)
-                {
-                    var animationClip = assetRepresentation as AnimationClip;
-                    if (animationClip != null)
-                    {
-                        Debug.Log($"Found animation clip {animationClip.name}: {aobj.name}");
-                        if (aobj.animations == null)
-                        {
-                            aobj.animations = new List<string>();
-                        }
-                        aobj.animations.Add(animationClip.name);
-                    }
-                }
-            }
-
+                FindAnimations(data, aobj);
             gobj.transform.hasChanged = false;
             if (aobj != null)
             {
                 aobj.data = data;
                 aobj.jsonData = JsonConvert.SerializeObject(aobj.data, Formatting.Indented);
+            }
+        }
+
+        private void FindAnimations(dynamic data, ArenaObject aobj)
+        {
+            // check for animations
+            var assetRepresentationsAtPath = AssetDatabase.LoadAllAssetRepresentationsAtPath(formLocalPath((string)data.url));
+            foreach (var assetRepresentation in assetRepresentationsAtPath)
+            {
+                var animationClip = assetRepresentation as AnimationClip;
+                if (animationClip != null)
+                {
+                    if (aobj.animations == null)
+                        aobj.animations = new List<string>();
+                    aobj.animations.Add(animationClip.name);
+                }
             }
         }
 
