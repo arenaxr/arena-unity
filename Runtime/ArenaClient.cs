@@ -90,7 +90,6 @@ namespace ArenaUnity
         private List<string> eventMessages = new List<string>();
         private string sceneTopic = null;
         internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
-        private static readonly string ClientName = "ARENA Client Runtime";
         private static UserCredential credential;
         private Transform ArenaClientTransform;
 
@@ -133,7 +132,6 @@ namespace ArenaUnity
             cameraForDisplay = Camera.main;
 
             // ensure consistant name and transform
-            name = ClientName;
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
             transform.localScale = Vector3.one;
@@ -284,6 +282,9 @@ namespace ArenaUnity
             sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
             base.Start(); // background mqtt connect
 
+            // show address at root as well
+            name = $"ARENA Client ({brokerAddress}/{namespaceName}/{sceneName})";
+
             // get persistence objects
             cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
             yield return cd.coroutine;
@@ -381,7 +382,7 @@ namespace ArenaUnity
             // load remote assets
             string localPath = ConstructLocalPath(remoteUri);
             if (localPath == null) yield break;
-
+            bool allPathsValid = true;
             if (!File.Exists(localPath))
             {
                 // get main url src
@@ -415,9 +416,11 @@ namespace ArenaUnity
                                     // import each sub-file for a deterministic reference
                                     AssetDatabase.ImportAsset(localSubPath);
                                 }
+                                else allPathsValid = false;
                             }
                         }
                     }
+                    if (!allPathsValid) yield break;
                     // import master-file to link to the rest
                     AssetDatabase.ImportAsset(localPath);
                     AssetDatabase.Refresh();
@@ -471,16 +474,16 @@ namespace ArenaUnity
                     case "gltf-model":
                         // load main model
                         if (data.url != null)
-                            AttachGltf(formLocalPath((string)data.url), gobj);
+                            AttachGltf(checkLocalAsset((string)data.url), gobj);
                         // load on-demand-model (LOD) as well
                         JObject d = JObject.Parse(JsonConvert.SerializeObject(data));
                         foreach (string detailedUrl in d.SelectTokens("gltf-model-lod.detailedUrl"))
-                            AttachGltf(formLocalPath(detailedUrl), gobj);
+                            AttachGltf(checkLocalAsset(detailedUrl), gobj);
                         break;
                     case "image":
                         // load image file
                         if (data.url != null)
-                            AttachImage(formLocalPath((string)data.url), gobj);
+                            AttachImage(checkLocalAsset((string)data.url), gobj);
                         break;
                 }
                 gobj.transform.parent = ArenaClientTransform;
@@ -536,7 +539,7 @@ namespace ArenaUnity
             if (isElement(data.material) || isElement(data.color))
                 ArenaUnity.ToUnityMaterial(data, ref gobj);
             if (isElement(data.material) && isElement(data.material.src))
-                AttachMaterialTexture(formLocalPath((string)data.material.src), gobj);
+                AttachMaterialTexture(checkLocalAsset((string)data.material.src), gobj);
             if ((string)data.object_type == "light")
                 ArenaUnity.ToUnityLight(data, ref gobj);
             if ((string)data.object_type == "gltf-model")
@@ -552,7 +555,7 @@ namespace ArenaUnity
         private void FindAnimations(dynamic data, ArenaObject aobj)
         {
             // check for animations
-            var assetRepresentationsAtPath = AssetDatabase.LoadAllAssetRepresentationsAtPath(formLocalPath((string)data.url));
+            var assetRepresentationsAtPath = AssetDatabase.LoadAllAssetRepresentationsAtPath(checkLocalAsset((string)data.url));
             foreach (var assetRepresentation in assetRepresentationsAtPath)
             {
                 var animationClip = assetRepresentation as AnimationClip;
@@ -565,11 +568,13 @@ namespace ArenaUnity
             }
         }
 
-        private string formLocalPath(string msgUrl)
+        private string checkLocalAsset(string msgUrl)
         {
             Uri uri = ConstructRemoteUrl(msgUrl);
             if (uri == null) return null;
-            return ConstructLocalPath(uri);
+            string assetPath = ConstructLocalPath(uri);
+            if (!File.Exists(assetPath)) return null;
+            return assetPath;
         }
 
         private void AttachMaterialTexture(string assetPath, GameObject gobj)
@@ -589,8 +594,16 @@ namespace ArenaUnity
         private void AttachGltf(string assetPath, GameObject gobj)
         {
             if (assetPath == null) return;
-            AnimationClip[] clips;
-            GameObject mobj = Importer.LoadFromFile(assetPath, new ImportSettings(), out clips);
+            AnimationClip[] clips = null;
+            GameObject mobj = null;
+            try
+            {
+                mobj = Importer.LoadFromFile(assetPath, new ImportSettings(), out clips);
+            }
+            catch
+            {
+                Debug.LogWarning($"Unable to load GTLF at {assetPath}");
+            }
             AssignAnimations(mobj, clips);
             if (mobj != null)
             {
