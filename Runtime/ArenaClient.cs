@@ -23,6 +23,7 @@ using SandolkakosDigital.EditorUtils;
 using Siccity.GLTFUtility;
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.AssetImporters;
 #endif
 using UnityEngine;
 using UnityEngine.Networking;
@@ -470,16 +471,16 @@ namespace ArenaUnity
                     case "gltf-model":
                         // load main model
                         if (data.url != null)
-                            AttachGltf((string)data.url, gobj);
+                            AttachGltf(formLocalPath((string)data.url), gobj);
                         // load on-demand-model (LOD) as well
                         JObject d = JObject.Parse(JsonConvert.SerializeObject(data));
                         foreach (string detailedUrl in d.SelectTokens("gltf-model-lod.detailedUrl"))
-                            AttachGltf(detailedUrl, gobj);
+                            AttachGltf(formLocalPath(detailedUrl), gobj);
                         break;
                     case "image":
                         // load image file
                         if (data.url != null)
-                            AttachImage((string)data.url, gobj);
+                            AttachImage(formLocalPath((string)data.url), gobj);
                         break;
                 }
                 gobj.transform.parent = ArenaClientTransform;
@@ -535,9 +536,29 @@ namespace ArenaUnity
             if (isElement(data.material) || isElement(data.color))
                 ArenaUnity.ToUnityMaterial(data, ref gobj);
             if (isElement(data.material) && isElement(data.material.src))
-                AttachMaterialTexture((string)data.material.src, gobj);
+                AttachMaterialTexture(formLocalPath((string)data.material.src), gobj);
             if ((string)data.object_type == "light")
                 ArenaUnity.ToUnityLight(data, ref gobj);
+
+            if ((string)data.object_type == "gltf-model")
+            {
+                // check for animations
+                var assetRepresentationsAtPath = AssetDatabase.LoadAllAssetRepresentationsAtPath(formLocalPath((string)data.url));
+                foreach (var assetRepresentation in assetRepresentationsAtPath)
+                {
+                    var animationClip = assetRepresentation as AnimationClip;
+                    if (animationClip != null)
+                    {
+                        Debug.Log($"Found animation clip {animationClip.name}: {aobj.name}");
+                        if (aobj.animations == null)
+                        {
+                            aobj.animations = new List<string>();
+                        }
+                        aobj.animations.Add(animationClip.name);
+                    }
+                }
+            }
+
             gobj.transform.hasChanged = false;
             if (aobj != null)
             {
@@ -546,12 +567,15 @@ namespace ArenaUnity
             }
         }
 
-        private void AttachMaterialTexture(string msgUrl, GameObject gobj)
+        private string formLocalPath(string msgUrl)
         {
             Uri uri = ConstructRemoteUrl(msgUrl);
-            if (uri == null) return;
-            string assetPath = ConstructLocalPath(uri);
-            if (assetPath == null) return;
+            if (uri == null) return null;
+            return ConstructLocalPath(uri);
+        }
+
+        private void AttachMaterialTexture(string assetPath, GameObject gobj)
+        {
             if (File.Exists(assetPath))
             {
                 var bytes = File.ReadAllBytes(assetPath);
@@ -563,13 +587,11 @@ namespace ArenaUnity
             }
         }
 
-        private void AttachGltf(string msgUrl, GameObject gobj)
+        private void AttachGltf(string assetPath, GameObject gobj)
         {
-            Uri uri = ConstructRemoteUrl(msgUrl);
-            if (uri == null) return;
-            string assetPath = ConstructLocalPath(uri);
-            if (assetPath == null) return;
-            GameObject mobj = Importer.LoadFromFile(assetPath);
+            AnimationClip[] clips;
+            GameObject mobj = Importer.LoadFromFile(assetPath, new ImportSettings(), out clips);
+            AssignAnimations(mobj, clips);
             if (mobj != null)
             {
                 mobj.transform.parent = gobj.transform;
@@ -580,12 +602,23 @@ namespace ArenaUnity
             }
         }
 
-        private void AttachImage(string msgUrl, GameObject gobj)
+        private void AssignAnimations(GameObject mobj, AnimationClip[] clips)
         {
-            Uri uri = ConstructRemoteUrl(msgUrl);
-            if (uri == null) return;
-            string assetPath = ConstructLocalPath(uri);
-            if (assetPath == null) return;
+            if (clips != null && clips.Length > 0)
+            {
+                Animation anim = mobj.AddComponent<Animation>();
+                foreach (AnimationClip clip in clips)
+                {
+                    clip.legacy = true;
+                    anim.AddClip(clip, clip.name);
+                    anim.clip = anim.GetClip(clip.name);
+                    anim.wrapMode = WrapMode.Loop;
+                }
+            }
+        }
+
+        private void AttachImage(string assetPath, GameObject gobj)
+        {
             Sprite sprite = LoadSpriteFromFile(assetPath);
             if (sprite != null)
             {

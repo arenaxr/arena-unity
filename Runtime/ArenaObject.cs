@@ -3,6 +3,7 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
@@ -37,6 +38,7 @@ namespace ArenaUnity
         internal string oldName; // test for rename
         internal bool externalDelete = false;
         internal bool isJsonValidated = false;
+        internal List<string> animations = null;
 
         public void OnEnable()
         {

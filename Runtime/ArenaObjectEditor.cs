@@ -27,6 +27,24 @@ namespace ArenaUnity
                 script.PublishJsonData();
             }
             GUI.enabled = true;
+
+            // add any animation buttons
+            if (script.animations != null)
+            {
+                foreach (string animation in script.animations)
+                {
+                    Animation anim = script.GetComponentInChildren<Animation>(true);
+                    if (GUILayout.Button($"Play {animation}"))
+                    {
+                        anim.Play(animation);
+                    }
+                    if (GUILayout.Button($"Stop {animation}"))
+                    {
+                        anim.Stop(animation);
+                    }
+                }
+            }
+
         }
     }
 }
