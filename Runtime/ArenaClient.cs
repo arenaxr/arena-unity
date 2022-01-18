@@ -465,7 +465,6 @@ namespace ArenaUnity
             }
             else
             {   // create local
-                gobj = ArenaUnity.ToUnityObjectType(data);
                 switch ((string)data.object_type)
                 {
                     case "gltf-model":
@@ -512,6 +511,7 @@ namespace ArenaUnity
                 }
             }
             // modify Unity attributes
+            gobj = ArenaUnity.ToUnityObjectType(data);
             if (isElement(data.position))
                 gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
             else
