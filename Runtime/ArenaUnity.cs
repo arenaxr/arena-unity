@@ -63,7 +63,8 @@ namespace ArenaUnity
                     return GenerateMeshObject(CylinderBuilder.Build(
                         data.radius != null ? (float)data.radius : 1f,
                         data.height != null ? (float)data.height : 2f,
-                        36, 18, Convert.ToBoolean(data.openEnded)));
+                        36, 18,
+                        data.openEnded != null ? !Convert.ToBoolean(data.openEnded) : true));
                 case "icosahedron":
                     return GenerateMeshObject(IcosahedronBuilder.Build(
                         data.radius != null ? (float)data.radius : 1f,
