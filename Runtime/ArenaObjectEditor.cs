@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -37,6 +38,11 @@ namespace ArenaUnity
                 {
                     Animation anim = script.GetComponentInChildren<Animation>(true);
                     GUILayout.BeginHorizontal("Box");
+                    //float seconds = anim[animation].length;
+                    //string timespan = seconds > 0 ? TimeSpan.FromSeconds(seconds).ToString(@"(mm\:ss)") : "";
+                    //GUIStyle style = new GUIStyle();
+                    //style.richText = true;
+                    //GUILayout.Label($"<b>{animation}</b> ({timespan})", style);
                     GUILayout.Label(animation);
                     if (GUILayout.Button($"Play", GUILayout.Width(40)))
                     {
