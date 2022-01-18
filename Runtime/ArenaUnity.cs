@@ -42,9 +42,22 @@ namespace ArenaUnity
                 objectType = "light";
             return objectType;
         }
-        public static GameObject ToUnityObjectType(dynamic data)
+        public static GameObject ToUnityObjectType(dynamic indata)
         {
-            switch ((string)data.object_type)
+            dynamic data;
+            string type;
+            if ((string)indata.object_type == "entity" && indata.geometry != null && indata.geometry.primitive != null)
+            {
+                // handle raw geometry
+                data = indata.geometry;
+                type = (string)indata.geometry.primitive;
+            }
+            else
+            {  
+                data = indata;
+                type = (string)indata.object_type;
+            }
+            switch (type)
             {
                 // build your own meshes
                 case "box":
