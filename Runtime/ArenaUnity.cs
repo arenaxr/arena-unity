@@ -54,9 +54,7 @@ namespace ArenaUnity
                         data.height != null ? (float)data.height : 1f,
                         data.depth != null ? (float)data.depth : 1f,
                         2, 2, 2));
-                case "capsule":
-                    return GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                case "cone": // TODO: fix orgin offset from this primitive
+                case "cone":
                     return GenerateMeshObject(ConeBuilder.Build(
                         36,
                         data.radiusBottom != null ? (float)data.radiusBottom : 1f,
@@ -65,7 +63,7 @@ namespace ArenaUnity
                     return GenerateMeshObject(CylinderBuilder.Build(
                         data.radius != null ? (float)data.radius : 1f,
                         data.height != null ? (float)data.height : 2f,
-                        36, 18));
+                        36, 18, Convert.ToBoolean(data.openEnded)));
                 case "icosahedron":
                     return GenerateMeshObject(IcosahedronBuilder.Build(
                         data.radius != null ? (float)data.radius : 1f,
@@ -79,8 +77,6 @@ namespace ArenaUnity
                         data.width != null ? (float)data.width : 1f,
                         data.height != null ? (float)data.height : 1f,
                         2, 2));
-                case "quad":
-                    return GameObject.CreatePrimitive(PrimitiveType.Quad);
                 case "ring":
                     return GenerateMeshObject(RingBuilder.Build(
                         data.radiusInner != null ? (float)data.radiusInner : .5f,
@@ -229,6 +225,29 @@ namespace ArenaUnity
                     break;
                 default:
                     break;
+            }
+            MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
+            if (meshFilter && meshFilter.sharedMesh)
+            {
+                switch (meshFilter.sharedMesh.name)
+                {
+                    case "Capsule": // TODO: determine if a-frame has an easy capsule mod
+                        data.object_type = "cylinder";
+                        break;
+                    case "Quad":
+                        data.object_type = "plane";
+                        data.width = 1f;
+                        data.height = 1f;
+                        break;
+                    case "Plane":
+                        data.object_type = "plane";
+                        Quaternion rotOut = gobj.transform.localRotation;
+                        rotOut *= Quaternion.Euler(-90, 0, 0);
+                        data.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
+                        data.width = 10f;
+                        data.height = 10f;
+                        break;
+                }
             }
         }
         // color
