@@ -54,10 +54,6 @@ namespace ArenaUnity
         public string namespaceName = null;
         [Tooltip("Name of the scene, without namespace ('example', not 'username/example'")]
         public string sceneName = "example";
-        [Space()]
-        [Tooltip("Browser URL for the scene.")]
-        [TextArea(minLines: 1, maxLines: 2)]
-        public string sceneUrl = null;
 
         [Header("Performance & Control")]
         [Tooltip("Cameras for Display 1")]
@@ -85,6 +81,7 @@ namespace ArenaUnity
         public string permissions;
 
         // internal variables
+        internal string sceneUrl = null;
         private string idToken = null;
         private string csrfToken = null;
         private List<string> eventMessages = new List<string>();
