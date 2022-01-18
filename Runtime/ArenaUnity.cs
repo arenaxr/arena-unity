@@ -242,7 +242,7 @@ namespace ArenaUnity
                     case "Plane":
                         data.object_type = "plane";
                         Quaternion rotOut = gobj.transform.localRotation;
-                        rotOut *= Quaternion.Euler(-90, 0, 0);
+                        rotOut *= Quaternion.Euler(90, 0, 0);
                         data.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
                         data.width = 10f;
                         data.height = 10f;
