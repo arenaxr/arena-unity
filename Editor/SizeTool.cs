@@ -2,27 +2,26 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.EditorTools;
-using System.IO;
 
 namespace ArenaUnity
 {
     // Tagging a class with the EditorTool attribute and no target type registers a global tool. Global tools are valid for any selection, and are accessible through the top left toolbar in the editor.
-    [EditorTool("ARENA Size Tool")]
+    [EditorTool("Size Tool")]
     class SizeTool : EditorTool
     {
         // Serialize this value to set a default value in the Inspector.
         [SerializeField]
         Texture2D m_ToolIcon;
+
         GUIContent m_IconContent;
 
         void OnEnable()
         {
-            m_ToolIcon = (Texture2D)AssetDatabase.LoadAssetAtPath("Packages/io.conix.arena.unity/Editor/Resources/Images/xr-logo.png", typeof(Texture2D));
             m_IconContent = new GUIContent()
             {
                 image = m_ToolIcon,
-                text = "ARENA Size Tool",
-                tooltip = "ARENA Size Tool"
+                text = "Platform Tool",
+                tooltip = "Platform Tool"
             };
         }
 
