@@ -465,23 +465,7 @@ namespace ArenaUnity
             }
             else
             {   // create local
-                switch ((string)data.object_type)
-                {
-                    case "gltf-model":
-                        // load main model
-                        if (data.url != null)
-                            AttachGltf(checkLocalAsset((string)data.url), gobj);
-                        // load on-demand-model (LOD) as well
-                        JObject d = JObject.Parse(JsonConvert.SerializeObject(data));
-                        foreach (string detailedUrl in d.SelectTokens("gltf-model-lod.detailedUrl"))
-                            AttachGltf(checkLocalAsset(detailedUrl), gobj);
-                        break;
-                    case "image":
-                        // load image file
-                        if (data.url != null)
-                            AttachImage(checkLocalAsset((string)data.url), gobj);
-                        break;
-                }
+                gobj = new GameObject();
                 gobj.transform.parent = ArenaClientTransform;
                 gobj.name = object_id;
                 arenaObjs.Add(object_id, gobj);
@@ -490,18 +474,6 @@ namespace ArenaUnity
                 aobj.messageType = storeType;
                 aobj.parentId = (string)data.parent;
                 aobj.persist = true;
-                // camera
-                if ((string)data.object_type == "camera")
-                {   // sync camera to main display if requested
-                    Camera cam = gobj.GetComponent<Camera>();
-                    if (cameraAutoSync && !cameraForDisplay.name.StartsWith("camera_"))
-                    {
-                        cam.targetDisplay = ArenaUnity.mainDisplay;
-                        cameraForDisplay = cam;
-                    }
-                    else
-                        cam.targetDisplay = ArenaUnity.secondDisplay;
-                }
                 // local create context auto-select
                 if (menuCommand != null)
                 {
@@ -511,7 +483,47 @@ namespace ArenaUnity
                 }
             }
             // modify Unity attributes
-            gobj = ArenaUnity.ToUnityObjectType(data);
+            switch ((string)data.object_type)
+            {
+                case "gltf-model":
+                    // load main model
+                    if (data.url != null)
+                        AttachGltf(checkLocalAsset((string)data.url), gobj);
+                    // load on-demand-model (LOD) as well
+                    JObject d = JObject.Parse(JsonConvert.SerializeObject(data));
+                    foreach (string detailedUrl in d.SelectTokens("gltf-model-lod.detailedUrl"))
+                        AttachGltf(checkLocalAsset(detailedUrl), gobj);
+                    FindAnimations(data, aobj);
+                    break;
+                case "image":
+                    // load image file
+                    if (data.url != null)
+                        AttachImage(checkLocalAsset((string)data.url), gobj);
+                    break;
+                case "camera":
+                    // sync camera to main display if requested
+                    Camera cam = gobj.GetComponent<Camera>();
+                    if (cam == null)
+                    {
+                        cam = gobj.transform.gameObject.AddComponent<Camera>();
+                        cam.nearClipPlane = 0.1f; // match arena
+                        cam.farClipPlane = 10000f; // match arena
+                        cam.fieldOfView = 80f; // match arena
+
+                        if (cameraAutoSync && !cameraForDisplay.name.StartsWith("camera_"))
+                        {
+                            cam.targetDisplay = ArenaUnity.mainDisplay;
+                            cameraForDisplay = cam;
+                        }
+                        else
+                            cam.targetDisplay = ArenaUnity.secondDisplay;
+                    }
+                    break;
+                case "light":
+                    ArenaUnity.ToUnityLight(data, ref gobj);
+                    break;
+            }
+
             if (isElement(data.position))
                 gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
             else
@@ -533,14 +545,14 @@ namespace ArenaUnity
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
             else
                 gobj.transform.localScale = Vector3.one;
+
+            ArenaUnity.ToUnityObjectType(data, ref gobj);
+
             if (isElement(data.material) || isElement(data.color))
                 ArenaUnity.ToUnityMaterial(data, ref gobj);
             if (isElement(data.material) && isElement(data.material.src))
                 AttachMaterialTexture(checkLocalAsset((string)data.material.src), gobj);
-            if ((string)data.object_type == "light")
-                ArenaUnity.ToUnityLight(data, ref gobj);
-            if ((string)data.object_type == "gltf-model")
-                FindAnimations(data, aobj);
+
             gobj.transform.hasChanged = false;
             if (aobj != null)
             {

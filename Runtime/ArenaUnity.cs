@@ -30,96 +30,100 @@ namespace ArenaUnity
             Light light = gobj.GetComponent<Light>();
             SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
             if (meshFilter && meshFilter.sharedMesh)
-            {
-                if (meshFilter.sharedMesh.name == "Cube")
-                    objectType = "box";
-                else
-                    objectType = meshFilter.sharedMesh.name.ToLower();
-            }
+                objectType = meshFilter.sharedMesh.name.ToLower();
             else if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0f)
                 objectType = "image";
             else if (light)
                 objectType = "light";
             return objectType;
         }
-        public static GameObject ToUnityObjectType(dynamic data)
+        public static void ToUnityObjectType(dynamic indata, ref GameObject gobj)
         {
-            switch ((string)data.object_type)
+            dynamic data;
+            string type;
+            if ((string)indata.object_type == "entity" && indata.geometry != null && indata.geometry.primitive != null)
+            {
+                // handle raw geometry
+                data = indata.geometry;
+                type = (string)indata.geometry.primitive;
+            }
+            else
+            {
+                data = indata;
+                type = (string)indata.object_type;
+            }
+            switch (type)
             {
                 // build your own meshes
                 case "box":
                 case "cube": // support legacy arena 'cube' == 'box'
-                    return GenerateMeshObject(CubeBuilder.Build(
-                        data.width != null ? (float)data.width : 1f,
-                        data.height != null ? (float)data.height : 1f,
-                        data.depth != null ? (float)data.depth : 1f,
-                        2, 2, 2));
-                case "capsule":
-                    return GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                case "cone": // TODO: fix orgin offset from this primitive
-                    return GenerateMeshObject(ConeBuilder.Build(
-                        36,
-                        data.radiusBottom != null ? (float)data.radiusBottom : 1f,
-                        data.height != null ? (float)data.height : 2f));
+                    GenerateMeshObject(ref gobj, CubeBuilder.Build(
+                       data.width != null ? (float)data.width : 1f,
+                       data.height != null ? (float)data.height : 1f,
+                       data.depth != null ? (float)data.depth : 1f,
+                       2, 2, 2));
+                    break;
+                case "cone":
+                    GenerateMeshObject(ref gobj, ConeBuilder.Build(
+                       36,
+                       data.radiusBottom != null ? (float)data.radiusBottom : 1f,
+                       data.height != null ? (float)data.height : 2f));
+                    break;
                 case "cylinder":
-                    return GenerateMeshObject(CylinderBuilder.Build(
-                        data.radius != null ? (float)data.radius : 1f,
-                        data.height != null ? (float)data.height : 2f,
-                        36, 18));
+                    GenerateMeshObject(ref gobj, CylinderBuilder.Build(
+                       data.radius != null ? (float)data.radius : 1f,
+                       data.height != null ? (float)data.height : 2f,
+                       36, 18,
+                       data.openEnded != null ? !Convert.ToBoolean(data.openEnded) : true));
+                    break;
                 case "icosahedron":
-                    return GenerateMeshObject(IcosahedronBuilder.Build(
-                        data.radius != null ? (float)data.radius : 1f,
-                        0));
+                    GenerateMeshObject(ref gobj, IcosahedronBuilder.Build(
+                       data.radius != null ? (float)data.radius : 1f,
+                       0));
+                    break;
                 case "octahedron":
-                    return GenerateMeshObject(OctahedronBuilder.Build(
-                        data.radius != null ? (float)data.radius : 1f,
-                        0));
+                    GenerateMeshObject(ref gobj, OctahedronBuilder.Build(
+                       data.radius != null ? (float)data.radius : 1f,
+                       0));
+                    break;
                 case "plane":
-                    return GenerateMeshObject(PlaneBuilder.Build(
-                        data.width != null ? (float)data.width : 1f,
-                        data.height != null ? (float)data.height : 1f,
-                        2, 2));
-                case "quad":
-                    return GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    GenerateMeshObject(ref gobj, PlaneBuilder.Build(
+                       data.width != null ? (float)data.width : 1f,
+                       data.height != null ? (float)data.height : 1f,
+                       2, 2));
+                    break;
                 case "ring":
-                    return GenerateMeshObject(RingBuilder.Build(
-                        data.radiusInner != null ? (float)data.radiusInner : .5f,
-                        data.radiusOuter != null ? (float)data.radiusOuter : 1f,
-                        32, 8));
+                    GenerateMeshObject(ref gobj, RingBuilder.Build(
+                       data.radiusInner != null ? (float)data.radiusInner : .5f,
+                       data.radiusOuter != null ? (float)data.radiusOuter : 1f,
+                       32, 8));
+                    break;
                 case "sphere":
-                    return GenerateMeshObject(SphereBuilder.Build(
-                        data.radius != null ? (float)data.radius : 1f,
-                        36, 18));
+                    GenerateMeshObject(ref gobj, SphereBuilder.Build(
+                       data.radius != null ? (float)data.radius : 1f,
+                       36, 18));
+                    break;
                 case "torus":
                     const float torFact = .4f;
-                    return GenerateMeshObject(TorusBuilder.Build(
-                        data.radius != null ? (float)data.radius : 1f,
-                        data.radius != null ? (float)data.radius * torFact : 1f * torFact,
-                        36, 32));
-                // camera
-                case "camera":
-                    GameObject cgobj = new GameObject();
-                    Camera camera = cgobj.transform.gameObject.AddComponent<Camera>();
-                    camera.nearClipPlane = 0.1f; // match arena
-                    camera.farClipPlane = 10000f; // match arena
-                    camera.fieldOfView = 80f; // match arena
-                    return cgobj;
+                    GenerateMeshObject(ref gobj, TorusBuilder.Build(
+                       data.radius != null ? (float)data.radius : 1f,
+                       data.radius != null ? (float)data.radius * torFact : 1f * torFact,
+                       36, 32));
+                    break;
                 default:
-                    return new GameObject();
+                    break;
             };
         }
 
-        private static GameObject GenerateMeshObject(Mesh mesh)
+        private static void GenerateMeshObject(ref GameObject gobj, Mesh mesh)
         {
-            GameObject mobj = new GameObject();
-            mobj.transform.GetComponent<MeshFilter>();
-            if (!mobj.transform.GetComponent<MeshFilter>() || !mobj.transform.GetComponent<MeshRenderer>())
+            gobj.transform.GetComponent<MeshFilter>();
+            if (!gobj.transform.GetComponent<MeshFilter>() || !gobj.transform.GetComponent<MeshRenderer>())
             {
-                mobj.transform.gameObject.AddComponent<MeshFilter>();
-                mobj.transform.gameObject.AddComponent<MeshRenderer>();
+                gobj.transform.gameObject.AddComponent<MeshFilter>();
+                gobj.transform.gameObject.AddComponent<MeshRenderer>();
             }
-            mobj.transform.GetComponent<MeshFilter>().mesh = mesh;
-            return mobj;
+            gobj.transform.GetComponent<MeshFilter>().mesh = mesh;
         }
 
         // position
@@ -229,6 +233,31 @@ namespace ArenaUnity
                     break;
                 default:
                     break;
+            }
+            MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
+            if (meshFilter && meshFilter.sharedMesh)
+            {
+                switch (meshFilter.sharedMesh.name)
+                {
+                    case "Cube":
+                        data.object_type = "box";
+                        break;
+                    case "Capsule": // TODO: determine if a-frame has an easy capsule mod
+                        data.object_type = "cylinder";
+                        break;
+                    case "Quad":
+                        data.object_type = "plane";
+                        data.width = 1f;
+                        data.height = 1f;
+                        break;
+                    case "Plane":
+                        Quaternion rotOut = gobj.transform.localRotation;
+                        rotOut *= Quaternion.Euler(90, 0, 0);
+                        data.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
+                        data.width = 10f;
+                        data.height = 10f;
+                        break;
+                }
             }
         }
         // color
