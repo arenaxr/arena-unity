@@ -72,45 +72,53 @@ namespace ArenaUnity
                     cone.subdivision = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     break;
                 case "cylinder":
-                    GenerateMeshObject(ref gobj, CylinderBuilder.Build(
-                       data.radius != null ? (float)data.radius : 1f,
-                       data.height != null ? (float)data.height : 2f,
-                       36, 18,
-                       data.openEnded != null ? !Convert.ToBoolean(data.openEnded) : true));
+                    ArenaMeshCylinder cylinder = gobj.AddComponent<ArenaMeshCylinder>();
+                    cylinder.radius = data.radius != null ? (float)data.radius : 1f;
+                    cylinder.height = data.height != null ? (float)data.height : 2f;
+                    cylinder.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
+                    cylinder.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
+                    cylinder.openEnded = data.openEnded != null ? !Convert.ToBoolean(data.openEnded) : true;
                     break;
                 case "icosahedron":
-                    GenerateMeshObject(ref gobj, IcosahedronBuilder.Build(
-                       data.radius != null ? (float)data.radius : 1f,
-                       0));
+                    ArenaMeshIcosahedron icosahedron = gobj.AddComponent<ArenaMeshIcosahedron>();
+                    icosahedron.radius = data.radius != null ? (float)data.radius : 1f;
+                    icosahedron.details = 0;
                     break;
                 case "octahedron":
-                    GenerateMeshObject(ref gobj, OctahedronBuilder.Build(
-                       data.radius != null ? (float)data.radius : 1f,
-                       0));
+                    ArenaMeshOctahedron octahedron = gobj.AddComponent<ArenaMeshOctahedron>();
+                    octahedron.radius = data.radius != null ? (float)data.radius : 1f;
+                    octahedron.details = 0;
                     break;
                 case "plane":
-                    GenerateMeshObject(ref gobj, PlaneBuilder.Build(
-                       data.width != null ? (float)data.width : 1f,
-                       data.height != null ? (float)data.height : 1f,
-                       2, 2));
+                    ArenaMeshPlane plane = gobj.AddComponent<ArenaMeshPlane>();
+                    plane.width = data.width != null ? (float)data.width : 1f;
+                    plane.height = data.height != null ? (float)data.height : 1f;
+                    plane.wSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 2;
+                    plane.hSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 2;
                     break;
                 case "ring":
-                    GenerateMeshObject(ref gobj, RingBuilder.Build(
-                       data.radiusInner != null ? (float)data.radiusInner : .5f,
-                       data.radiusOuter != null ? (float)data.radiusOuter : 1f,
-                       32, 8));
+                    ArenaMeshRing ring = gobj.AddComponent<ArenaMeshRing>();
+                    ring.outerRadius = data.radiusOuter != null ? (float)data.radiusOuter : 1f;
+                    ring.innerRadius = data.radiusInner != null ? (float)data.radiusInner : 1f;
+                    ring.phiSegments = data.segmentsPhi != null ? (int)data.segmentsPhi : 8;
+                    ring.thetaSegments = data.segmentsTheta != null ? (int)data.segmentsTheta : 32;
+                    ring.thetaStart = data.thetaStart != null ? (float)data.thetaStart : 0f;
+                    ring.thetaLength = (float)(data.thetaLength != null ? Math.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
                     break;
                 case "sphere":
-                    GenerateMeshObject(ref gobj, SphereBuilder.Build(
-                       data.radius != null ? (float)data.radius : 1f,
-                       36, 18));
+                    ArenaMeshSphere sphere = gobj.AddComponent<ArenaMeshSphere>();
+                    sphere.radius = data.radius != null ? (float)data.radius : 1f;
+                    sphere.lonSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 18;
+                    sphere.latSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 36;
                     break;
                 case "torus":
-                    const float torFact = .4f;
-                    GenerateMeshObject(ref gobj, TorusBuilder.Build(
-                       data.radius != null ? (float)data.radius : 1f,
-                       data.radius != null ? (float)data.radius * torFact : 1f * torFact,
-                       36, 32));
+                    ArenaMeshTorus torus = gobj.AddComponent<ArenaMeshTorus>();
+                    torus.radius = data.radius != null ? (float)data.radius : 1f;
+                    torus.thickness = data.radiusTubular != null ? (float)data.radiusTubular : 0.2f;
+                    torus.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
+                    torus.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 32;
+                    torus.thetaStart = 0f;
+                    torus.thetaEnd = (float)(data.arc != null ? Math.PI / 180 * (float)data.arc : Mathf.PI * 2f);
                     break;
                 default:
                     break;
