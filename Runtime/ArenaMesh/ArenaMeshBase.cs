@@ -9,7 +9,7 @@ namespace ArenaUnity
     public abstract class ArenaMeshBase : MonoBehaviour
     {
         protected MeshFilter filter;
-        private bool rebuild = false;
+        internal bool rebuild = false;
 
         protected virtual void Start()
         {

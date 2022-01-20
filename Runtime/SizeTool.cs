@@ -38,28 +38,46 @@ namespace ArenaUnity
             if (go == null) return;
             ArenaObject aobj = go.GetComponent<ArenaObject>();
             if (aobj == null) return;
-            //ArenaObject aobj = aobj.
-            //if (aobj == null) return;
-
-
-            EditorGUI.BeginChangeCheck();
-
-            Vector3 position = Tools.handlePosition;
-
-            using (new Handles.DrawingScope(Color.green))
+            ArenaMeshCube cube = go.GetComponent<ArenaMeshCube>();
+            if (cube != null)
             {
-                position = Handles.Slider(position, Vector3.right);
+                float size = HandleUtility.GetHandleSize(cube.transform.position) * 1f;
+                float snap = 0.5f;
+
+                EditorGUI.BeginChangeCheck();
+
+                float width = cube.width;
+                float height = cube.height;
+                float depth = cube.depth;
+                using (new Handles.DrawingScope(Color.magenta))
+                {
+                    width = Handles.ScaleSlider(cube.width, cube.transform.position, cube.transform.right, cube.transform.rotation, size, snap);
+                }
+                using (new Handles.DrawingScope(Color.green))
+                {
+                    height = Handles.ScaleSlider(cube.height, cube.transform.position, cube.transform.up, cube.transform.rotation, size, snap);
+                }
+                using (new Handles.DrawingScope(Color.cyan))
+                {
+                    depth = Handles.ScaleSlider(cube.depth, cube.transform.position, cube.transform.forward, cube.transform.rotation, size, snap);
+                }
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    //Undo.RecordObjects(Selection.transforms, "Size Arena Object");
+                    foreach (var o in Selection.gameObjects)
+                    {
+                        var arena = o.GetComponent<ArenaMeshCube>();
+                        arena.width = width;
+                        arena.height = height;
+                        arena.depth = depth;
+                        arena.rebuild = true;
+                    }
+                }
+
             }
 
-            if (EditorGUI.EndChangeCheck())
-            {
-                Vector3 delta = position - Tools.handlePosition;
 
-                Undo.RecordObjects(Selection.transforms, "Move Platform");
-
-                foreach (var transform in Selection.transforms)
-                    transform.position += delta;
-            }
         }
     }
 }
