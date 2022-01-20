@@ -9,8 +9,8 @@ namespace ArenaUnity
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class ArenaMeshCylinder : ArenaMeshBase
     {
-        [SerializeField] internal float radius = 1f;
-        [SerializeField] internal float height = 4f;
+        [SerializeField, Range(0.5f, 10f)] internal float radius = 1f;
+        [SerializeField, Range(0.5f, 10f)] internal float height = 4f;
         [SerializeField, Range(3, 16)] internal int radialSegments = 8, heightSegments = 4;
         [SerializeField] internal bool openEnded = false;
 

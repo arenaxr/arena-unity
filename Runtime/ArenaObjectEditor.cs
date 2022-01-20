@@ -30,7 +30,7 @@ namespace ArenaUnity
             GUI.enabled = true;
 
             // add any animation buttons
-            if (script.animations != null)
+            if (script.animations != null && script.animations.Count > 0)
             {
                 GUILayout.Space(5f);
                 EditorGUILayout.LabelField("Animations", EditorStyles.boldLabel);

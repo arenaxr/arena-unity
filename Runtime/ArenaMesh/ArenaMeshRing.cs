@@ -7,7 +7,7 @@ namespace ArenaUnity
 {
     public class ArenaMeshRing : ArenaMeshBase
     {
-        [SerializeField, Range(0f, 1f)] internal float innerRadius = 0.1f, outerRadius = 1f;
+        [SerializeField, Range(0f, 10f)] internal float innerRadius = 0.1f, outerRadius = 1f;
         [SerializeField, Range(2, 64)] internal int thetaSegments = 16, phiSegments = 16;
         [SerializeField, Range(0f, Mathf.PI * 2f)] internal float thetaStart = 0f, thetaLength = Mathf.PI * 2f;
 
