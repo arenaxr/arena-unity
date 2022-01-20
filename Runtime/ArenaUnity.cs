@@ -57,17 +57,19 @@ namespace ArenaUnity
                 // build your own meshes
                 case "box":
                 case "cube": // support legacy arena 'cube' == 'box'
-                    GenerateMeshObject(ref gobj, CubeBuilder.Build(
-                       data.width != null ? (float)data.width : 1f,
-                       data.height != null ? (float)data.height : 1f,
-                       data.depth != null ? (float)data.depth : 1f,
-                       2, 2, 2));
+                    ArenaMeshCube cube = gobj.AddComponent<ArenaMeshCube>();
+                    cube.width = data.width != null ? (float)data.width : 1f;
+                    cube.height = data.height != null ? (float)data.height : 1f;
+                    cube.depth = data.depth != null ? (float)data.depth : 1f;
+                    cube.widthSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 2;
+                    cube.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 2;
+                    cube.depthSegments = data.segmentsDepth != null ? (int)data.segmentsDepth : 2;
                     break;
                 case "cone":
-                    GenerateMeshObject(ref gobj, ConeBuilder.Build(
-                       36,
-                       data.radiusBottom != null ? (float)data.radiusBottom : 1f,
-                       data.height != null ? (float)data.height : 2f));
+                    ArenaMeshCone cone = gobj.AddComponent<ArenaMeshCone>();
+                    cone.radius = data.radiusBottom != null ? (float)data.radiusBottom : 1f;
+                    cone.height = data.height != null ? (float)data.height : 2f;
+                    cone.subdivision = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     break;
                 case "cylinder":
                     GenerateMeshObject(ref gobj, CylinderBuilder.Build(
