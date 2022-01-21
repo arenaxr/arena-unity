@@ -42,39 +42,39 @@ namespace ArenaUnity
             switch (am.GetType().ToString())
             {
                 case "ArenaUnity.ArenaMeshCube":
-                    HandleSizeCube(go.GetComponent<ArenaMeshCube>());
+                    HandleSizeCube(aobj, go.GetComponent<ArenaMeshCube>());
                     break;
                 case "ArenaUnity.ArenaMeshCone":
-                    HandleSizeCone(go.GetComponent<ArenaMeshCone>());
+                    HandleSizeCone(aobj, go.GetComponent<ArenaMeshCone>());
                     break;
                 case "ArenaUnity.ArenaMeshCylinder":
-                    HandleSizeCylinder(go.GetComponent<ArenaMeshCylinder>());
+                    HandleSizeCylinder(aobj, go.GetComponent<ArenaMeshCylinder>());
                     break;
                 case "ArenaUnity.ArenaMeshIcosahedron":
-                    HandleSizeIcosahedron(go.GetComponent<ArenaMeshIcosahedron>());
+                    HandleSizeIcosahedron(aobj, go.GetComponent<ArenaMeshIcosahedron>());
                     break;
                 case "ArenaUnity.ArenaMeshOctahedron":
-                    HandleSizeOctahedron(go.GetComponent<ArenaMeshOctahedron>());
+                    HandleSizeOctahedron(aobj, go.GetComponent<ArenaMeshOctahedron>());
                     break;
                 case "ArenaUnity.ArenaMeshPlane":
-                    HandleSizePlane(go.GetComponent<ArenaMeshPlane>());
+                    HandleSizePlane(aobj, go.GetComponent<ArenaMeshPlane>());
                     break;
                 case "ArenaUnity.ArenaMeshSphere":
-                    HandleSizeSphere(go.GetComponent<ArenaMeshSphere>());
+                    HandleSizeSphere(aobj, go.GetComponent<ArenaMeshSphere>());
                     break;
                 case "ArenaUnity.ArenaMeshCircle":
-                    HandleSizeCircle(go.GetComponent<ArenaMeshCircle>());
+                    HandleSizeCircle(aobj, go.GetComponent<ArenaMeshCircle>());
                     break;
                 case "ArenaUnity.ArenaMeshRing":
-                    HandleSizeRing(go.GetComponent<ArenaMeshRing>());
+                    HandleSizeRing(aobj, go.GetComponent<ArenaMeshRing>());
                     break;
                 case "ArenaUnity.ArenaMeshTorus":
-                    HandleSizeTorus(go.GetComponent<ArenaMeshTorus>());
+                    HandleSizeTorus(aobj, go.GetComponent<ArenaMeshTorus>());
                     break;
             }
         }
 
-        private static void HandleSizeCube(ArenaMeshCube cube)
+        private static void HandleSizeCube(ArenaObject aobj, ArenaMeshCube cube)
         {
             float size = HandleUtility.GetHandleSize(cube.transform.position) * 1f;
             float snap = 0.5f;
@@ -105,11 +105,12 @@ namespace ArenaUnity
                     amesh.height = height;
                     amesh.depth = depth;
                     amesh.rebuild = true;
+                    aobj.meshChanged = true;
                 }
             }
         }
 
-        private static void HandleSizePlane(ArenaMeshPlane plane)
+        private static void HandleSizePlane(ArenaObject aobj, ArenaMeshPlane plane)
         {
             float size = HandleUtility.GetHandleSize(plane.transform.position) * 1f;
             float snap = 0.5f;
@@ -134,11 +135,12 @@ namespace ArenaUnity
                     amesh.width = width;
                     amesh.height = height;
                     amesh.rebuild = true;
+                    aobj.meshChanged = true;
                 }
             }
         }
 
-        private static void HandleSizeCylinder(ArenaMeshCylinder cylinder)
+        private static void HandleSizeCylinder(ArenaObject aobj, ArenaMeshCylinder cylinder)
         {
             float size = HandleUtility.GetHandleSize(cylinder.transform.position) * 1f;
             float snap = 0.5f;
@@ -163,11 +165,12 @@ namespace ArenaUnity
                     amesh.radius = radius;
                     amesh.height = height;
                     amesh.rebuild = true;
+                    aobj.meshChanged = true;
                 }
             }
         }
 
-        private static void HandleSizeCone(ArenaMeshCone cone)
+        private static void HandleSizeCone(ArenaObject aobj, ArenaMeshCone cone)
         {
             float size = HandleUtility.GetHandleSize(cone.transform.position) * 1f;
             float snap = 0.5f;
@@ -192,11 +195,12 @@ namespace ArenaUnity
                     amesh.radius = radius;
                     amesh.height = height;
                     amesh.rebuild = true;
+                    aobj.meshChanged = true;
                 }
             }
         }
 
-        private static void HandleSizeSphere(ArenaMeshSphere sphere)
+        private static void HandleSizeSphere(ArenaObject aobj, ArenaMeshSphere sphere)
         {
             float size = HandleUtility.GetHandleSize(sphere.transform.position) * 1f;
             float snap = 0.5f;
@@ -215,11 +219,12 @@ namespace ArenaUnity
                     var amesh = o.GetComponent<ArenaMeshSphere>();
                     amesh.radius = radius;
                     amesh.rebuild = true;
+                    aobj.meshChanged = true;
                 }
             }
         }
 
-        private static void HandleSizeIcosahedron(ArenaMeshIcosahedron icosahedron)
+        private static void HandleSizeIcosahedron(ArenaObject aobj, ArenaMeshIcosahedron icosahedron)
         {
             float size = HandleUtility.GetHandleSize(icosahedron.transform.position) * 1f;
             float snap = 0.5f;
@@ -238,11 +243,12 @@ namespace ArenaUnity
                     var amesh = o.GetComponent<ArenaMeshIcosahedron>();
                     amesh.radius = radius;
                     amesh.rebuild = true;
+                    aobj.meshChanged = true;
                 }
             }
         }
 
-        private static void HandleSizeOctahedron(ArenaMeshOctahedron octahedron)
+        private static void HandleSizeOctahedron(ArenaObject aobj, ArenaMeshOctahedron octahedron)
         {
             float size = HandleUtility.GetHandleSize(octahedron.transform.position) * 1f;
             float snap = 0.5f;
@@ -261,11 +267,12 @@ namespace ArenaUnity
                     var amesh = o.GetComponent<ArenaMeshOctahedron>();
                     amesh.radius = radius;
                     amesh.rebuild = true;
+                    aobj.meshChanged = true;
                 }
             }
         }
 
-        private static void HandleSizeRing(ArenaMeshRing ring)
+        private static void HandleSizeRing(ArenaObject aobj, ArenaMeshRing ring)
         {
             float size = HandleUtility.GetHandleSize(ring.transform.position) * 1f;
             float snap = 0.5f;
@@ -301,11 +308,12 @@ namespace ArenaUnity
                     amesh.innerRadius = innerRadius;
                     amesh.thetaLength = thetaLength;
                     amesh.rebuild = true;
+                    aobj.meshChanged = true;
                 }
             }
         }
 
-        private static void HandleSizeCircle(ArenaMeshCircle circle)
+        private static void HandleSizeCircle(ArenaObject aobj, ArenaMeshCircle circle)
         {
             float size = HandleUtility.GetHandleSize(circle.transform.position) * 1f;
             float snap = 0.5f;
@@ -324,11 +332,12 @@ namespace ArenaUnity
                     var amesh = o.GetComponent<ArenaMeshCircle>();
                     amesh.radius = radius;
                     amesh.rebuild = true;
+                    aobj.meshChanged = true;
                 }
             }
         }
 
-        private static void HandleSizeTorus(ArenaMeshTorus torus)
+        private static void HandleSizeTorus(ArenaObject aobj, ArenaMeshTorus torus)
         {
             float size = HandleUtility.GetHandleSize(torus.transform.position) * 1f;
             float snap = 0.5f;
@@ -353,6 +362,7 @@ namespace ArenaUnity
                     amesh.radius = radius;
                     amesh.thickness = thickness;
                     amesh.rebuild = true;
+                    aobj.meshChanged = true;
                 }
             }
         }
