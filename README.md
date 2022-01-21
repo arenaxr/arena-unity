@@ -10,7 +10,7 @@ Unity C# library for editing scenes and creating applications for the ARENA.
 1. Change `Api Compatibility Level` to: `.NET 4.x`.
 1. Open `Window > Package Manager` and `+ > Add package from git URL...`, use this link:
     ```
-    https://github.com/conix-center/ARENA-unity.git#0.0.10
+    https://github.com/conix-center/ARENA-unity.git#0.0.11
     ```
 1. Create an empty GameObject to use as ARENA client root, rename it to something meaningful, like: `ARENA`.
 1. Select the `ARENA` GameObject and press `Add Component` to add the `ArenaClient` script.

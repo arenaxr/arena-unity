@@ -2,6 +2,18 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.0.11] - 2022-01-21
+### Added
+- `ARENA Mesh Tool` to add 3D control handles for primitive meshes.
+- `ArenaMesh` components for all primitives, to edit render dimensions.
+- Automatic publish updates for all primitive mesh changes.
+- Animation test `Play/Stop/Rewind` buttons for all GLTF animations.
+- Clickable scene URL on `ArenaCLient` component.
+### Changed
+- Improved error handling for missing GTLF sub-files.
+- Fixed cone mesh origin.
+- Resolved Unity Quad/Plane/Capsule primitives.
+
 ## [0.0.10] - 2022-01-14
 ### Added
 - Prevent inadvertent edits of GLTF sub-components with `Static`.
