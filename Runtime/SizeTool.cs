@@ -6,7 +6,6 @@ namespace ArenaUnity
 {
     // Tagging a class with the EditorTool attribute and no target type registers a global tool. Global tools are valid for any selection, and are accessible through the top left toolbar in the editor.
     [EditorTool("ARENA Size Tool")]
-    [RequireComponent(typeof(ArenaObject))]
     class SizeTool : EditorTool
     {
         // Serialize this value to set a default value in the Inspector.
@@ -38,15 +37,20 @@ namespace ArenaUnity
             if (go == null) return;
             ArenaObject aobj = go.GetComponent<ArenaObject>();
             if (aobj == null) return;
-            ArenaMeshCube cube = go.GetComponent<ArenaMeshCube>();
-            if (cube != null)
-                HandleSizeCube(cube);
-            ArenaMeshSphere sphere = go.GetComponent<ArenaMeshSphere>();
-            if (sphere != null)
-                HandleSizeSphere(sphere);
-            ArenaMeshCylinder cylinder = go.GetComponent<ArenaMeshCylinder>();
-            if (cylinder != null)
-                HandleSizeCylinder(cylinder);
+            ArenaMeshBase am = aobj.GetComponent<ArenaMeshBase>();
+            if (am == null) return;
+            switch (am.GetType().ToString())
+            {
+                case "ArenaUnity.ArenaMeshCube":
+                    HandleSizeCube(go.GetComponent<ArenaMeshCube>());
+                    break;
+                case "ArenaUnity.ArenaMeshSphere":
+                    HandleSizeSphere(go.GetComponent<ArenaMeshSphere>());
+                    break;
+                case "ArenaUnity.ArenaMeshCylinder":
+                    HandleSizeCylinder(go.GetComponent<ArenaMeshCylinder>());
+                    break;
+            }
         }
 
         private static void HandleSizeCube(ArenaMeshCube cube)
