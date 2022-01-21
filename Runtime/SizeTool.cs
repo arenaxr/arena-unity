@@ -47,6 +47,12 @@ namespace ArenaUnity
                 case "ArenaUnity.ArenaMeshSphere":
                     HandleSizeSphere(go.GetComponent<ArenaMeshSphere>());
                     break;
+                case "ArenaUnity.ArenaMeshIcosahedron":
+                    HandleSizeIcosahedron(go.GetComponent<ArenaMeshIcosahedron>());
+                    break;
+                case "ArenaUnity.ArenaMeshOctahedron":
+                    HandleSizeOctahedron(go.GetComponent<ArenaMeshOctahedron>());
+                    break;
                 case "ArenaUnity.ArenaMeshCylinder":
                     HandleSizeCylinder(go.GetComponent<ArenaMeshCylinder>());
                     break;
@@ -134,6 +140,52 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshSphere>();
+                    amesh.radius = radius;
+                    amesh.rebuild = true;
+                }
+            }
+        }
+
+        private static void HandleSizeIcosahedron(ArenaMeshIcosahedron icosahedron)
+        {
+            float size = HandleUtility.GetHandleSize(icosahedron.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float radius = icosahedron.radius;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                radius = Handles.ScaleSlider(icosahedron.radius, icosahedron.transform.position, icosahedron.transform.right, icosahedron.transform.rotation, size, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Icosahedron");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshIcosahedron>();
+                    amesh.radius = radius;
+                    amesh.rebuild = true;
+                }
+            }
+        }
+
+        private static void HandleSizeOctahedron(ArenaMeshOctahedron octahedron)
+        {
+            float size = HandleUtility.GetHandleSize(octahedron.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float radius = octahedron.radius;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                radius = Handles.ScaleSlider(octahedron.radius, octahedron.transform.position, octahedron.transform.right, octahedron.transform.rotation, size, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Octahedron");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshOctahedron>();
                     amesh.radius = radius;
                     amesh.rebuild = true;
                 }
