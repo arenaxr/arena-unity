@@ -101,15 +101,15 @@ namespace ArenaUnity
                     ring.innerRadius = data.radiusInner != null ? (float)data.radiusInner : 1f;
                     ring.phiSegments = data.segmentsPhi != null ? (int)data.segmentsPhi : 8;
                     ring.thetaSegments = data.segmentsTheta != null ? (int)data.segmentsTheta : 32;
-                    ring.thetaStart = (float)(data.thetaStart != null ? Math.PI / 180 * (float)data.thetaStart : 0f);
-                    ring.thetaLength = (float)(data.thetaLength != null ? Math.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
+                    ring.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
+                    ring.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
                     break;
                 case "circle":
                     ArenaMeshCircle circle = gobj.GetComponent<ArenaMeshCircle>() ?? gobj.AddComponent<ArenaMeshCircle>();
                     circle.radius = data.radius != null ? (float)data.radius : 1f;
                     circle.segments = data.segments != null ? (int)data.segments : 32;
-                    circle.thetaStart = (float)(data.thetaStart != null ? Math.PI / 180 * (float)data.thetaStart : 0f);
-                    circle.thetaLength = (float)(data.thetaLength != null ? Math.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
+                    circle.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
+                    circle.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
                     break;
                 case "sphere":
                     ArenaMeshSphere sphere = gobj.GetComponent<ArenaMeshSphere>() ?? gobj.AddComponent<ArenaMeshSphere>();
@@ -124,7 +124,7 @@ namespace ArenaUnity
                     torus.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     torus.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 32;
                     torus.thetaStart = 0f;
-                    torus.thetaEnd = (float)(data.arc != null ? Math.PI / 180 * (float)data.arc : Mathf.PI * 2f);
+                    torus.thetaEnd = (float)(data.arc != null ? Mathf.PI / 180 * (float)data.arc : Mathf.PI * 2f);
                     break;
                 default:
                     break;
