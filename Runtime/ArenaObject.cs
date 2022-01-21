@@ -39,6 +39,7 @@ namespace ArenaUnity
         internal bool externalDelete = false;
         internal bool isJsonValidated = false;
         internal List<string> animations = null;
+        internal bool meshChanged = false;
 
         public void OnEnable()
         {
@@ -59,11 +60,12 @@ namespace ArenaUnity
             if (!ArenaClient.Instance || ArenaClient.Instance.transformPublishInterval == 0 ||
             Time.frameCount % ArenaClient.Instance.transformPublishInterval != 0)
                 return;
-            if (transform.hasChanged)
+            if (transform.hasChanged || meshChanged)
             {
                 if (PublishCreateUpdate(true))
                 {
                     transform.hasChanged = false;
+                    meshChanged = false;
                 }
             }
             else if (oldName != null && name != oldName)
@@ -133,6 +135,18 @@ namespace ArenaUnity
                 parentId = null;
             }
 
+            if (meshChanged)
+            {
+                if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
+                {
+                    dataUnity.geometry = new ExpandoObject();
+                    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity.geometry);
+                }
+                else
+                {
+                    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity);
+                }
+            }
             // other attributes information
             if (!transformOnly)
             {
