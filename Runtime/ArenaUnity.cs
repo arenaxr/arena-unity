@@ -102,7 +102,7 @@ namespace ArenaUnity
                     ring.innerRadius = data.radiusInner != null ? (float)data.radiusInner : 1f;
                     ring.phiSegments = data.segmentsPhi != null ? (int)data.segmentsPhi : 8;
                     ring.thetaSegments = data.segmentsTheta != null ? (int)data.segmentsTheta : 32;
-                    ring.thetaStart = (float)(data.thetaStart != null ? Math.PI / 180 * (float)data.thetaStart : Mathf.PI * 2f);
+                    ring.thetaStart = (float)(data.thetaStart != null ? Math.PI / 180 * (float)data.thetaStart : 0f);
                     ring.thetaLength = (float)(data.thetaLength != null ? Math.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
                     break;
                 case "sphere":
