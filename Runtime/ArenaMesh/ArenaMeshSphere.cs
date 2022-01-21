@@ -7,7 +7,7 @@ namespace ArenaUnity
 {
     [ExecuteInEditMode]
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-    public class ArenaMeshSphere : ArenaMeshBase
+    public class ArenaMeshSphere : ArenaMesh
     {
         [SerializeField, Range(0.5f, 10f)] internal float radius = 1f;
         [SerializeField, Range(8, 20)] internal int lonSegments = 10;

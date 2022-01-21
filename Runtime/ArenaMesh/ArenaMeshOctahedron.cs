@@ -7,7 +7,7 @@ namespace ArenaUnity
 {
     [ExecuteInEditMode]
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-    public class ArenaMeshOctahedron : ArenaMeshBase
+    public class ArenaMeshOctahedron : ArenaMesh
     {
         [SerializeField, Range(0.5f, 10f)] internal float radius = 1f;
         [SerializeField, Range(0, 5)] internal int details = 1;

@@ -130,18 +130,72 @@ namespace ArenaUnity
                     break;
             };
         }
-
-        private static void GenerateMeshObject(ref GameObject gobj, Mesh mesh)
+        public static void ToArenaMesh(GameObject gobj, ref dynamic data)
         {
-            gobj.transform.GetComponent<MeshFilter>();
-            if (!gobj.transform.GetComponent<MeshFilter>() || !gobj.transform.GetComponent<MeshRenderer>())
+            ArenaMesh am = gobj.GetComponent<ArenaMesh>();
+            if (am == null) return;
+            dynamic odata = new ExpandoObject();
+            switch (am.GetType().ToString())
             {
-                gobj.transform.gameObject.AddComponent<MeshFilter>();
-                gobj.transform.gameObject.AddComponent<MeshRenderer>();
+                case "ArenaUnity.ArenaMeshCube":
+                    var cube = gobj.GetComponent<ArenaMeshCube>();
+                    odata.width = cube.width;
+                    odata.height = cube.height;
+                    odata.depth = cube.depth;
+                    break;
+                case "ArenaUnity.ArenaMeshCone":
+                    var cone = gobj.GetComponent<ArenaMeshCone>();
+                    odata.radiusBottom = cone.radius;
+                    odata.height = cone.height;
+                    break;
+                case "ArenaUnity.ArenaMeshCylinder":
+                    var cylinder = gobj.GetComponent<ArenaMeshCylinder>();
+                    odata.radius = cylinder.radius;
+                    odata.height = cylinder.height;
+                    odata.openEnded = cylinder.openEnded;
+                    break;
+                case "ArenaUnity.ArenaMeshIcosahedron":
+                    var icosahedron = gobj.GetComponent<ArenaMeshIcosahedron>();
+                    odata.radius = icosahedron.radius;
+                    break;
+                case "ArenaUnity.ArenaMeshOctahedron":
+                    var octahedron = gobj.GetComponent<ArenaMeshOctahedron>();
+                    odata.radius = octahedron.radius;
+                    break;
+                case "ArenaUnity.ArenaMeshPlane":
+                    var plane = gobj.GetComponent<ArenaMeshPlane>();
+                    odata.width = plane.width;
+                    odata.height = plane.height;
+                    break;
+                case "ArenaUnity.ArenaMeshSphere":
+                    var sphere = gobj.GetComponent<ArenaMeshSphere>();
+                    odata.radius = sphere.radius;
+                    break;
+                case "ArenaUnity.ArenaMeshCircle":
+                    var circle = gobj.GetComponent<ArenaMeshCircle>();
+                    odata.radius = circle.radius;
+                    odata.thetaStart = circle.thetaStart * 180 / Mathf.PI;
+                    odata.thetaLength = circle.thetaLength * 180 / Mathf.PI;
+                    break;
+                case "ArenaUnity.ArenaMeshRing":
+                    var ring = gobj.GetComponent<ArenaMeshRing>();
+                    odata.radiusOuter = ring.outerRadius;
+                    odata.radiusInner = ring.innerRadius;
+                    odata.thetaStart = ring.thetaStart * 180 / Mathf.PI;
+                    odata.thetaLength = ring.thetaLength * 180 / Mathf.PI;
+                    break;
+                case "ArenaUnity.ArenaMeshTorus":
+                    var torus = gobj.GetComponent<ArenaMeshTorus>();
+                    odata.radius = torus.radius;
+                    odata.radiusTubular = torus.thickness / 2f;
+                    odata.arc = torus.thetaEnd * 180 / Mathf.PI;
+                    break;
             }
-            gobj.transform.GetComponent<MeshFilter>().mesh = mesh;
+            if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
+                data.geometry = odata;
+            else
+                data = odata;
         }
-
         // position
         public static dynamic ToArenaPosition(Vector3 position)
         {

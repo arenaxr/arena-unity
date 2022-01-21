@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
-    public class ArenaMeshCircle : ArenaMeshBase
+    public class ArenaMeshCircle : ArenaMesh
     {
         [SerializeField, Range(0f, 10f)] internal float radius = 1f;
         [SerializeField, Range(2, 64)] internal int segments = 16;

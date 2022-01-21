@@ -37,7 +37,7 @@ namespace ArenaUnity
             if (go == null) return;
             ArenaObject aobj = go.GetComponent<ArenaObject>();
             if (aobj == null) return;
-            ArenaMeshBase am = aobj.GetComponent<ArenaMeshBase>();
+            ArenaMesh am = aobj.GetComponent<ArenaMesh>();
             if (am == null) return;
             switch (am.GetType().ToString())
             {
@@ -291,7 +291,7 @@ namespace ArenaUnity
             //    Handles.DrawSolidArc(ring.transform.position, ring.transform.forward, -ring.transform.right, thetaLength, size / 2);
             //    //myObj.shieldArea = (float)Handles.ScaleValueHandle(myObj.shieldArea, myObj.transform.position + myObj.transform.forward * myObj.shieldArea, myObj.transform.rotation, 1, Handles.ConeHandleCap, 1);
             //}
-            //if (EditorGUI.EndChangeCheck())
+            if (EditorGUI.EndChangeCheck())
             {
                 //Undo.RecordObjects(Selection.gameObjects, "Size Arena Ring");
                 foreach (var o in Selection.gameObjects)

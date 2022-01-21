@@ -7,7 +7,7 @@ namespace ArenaUnity
 {
     [ExecuteInEditMode]
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-    public class ArenaMeshCylinder : ArenaMeshBase
+    public class ArenaMeshCylinder : ArenaMesh
     {
         [SerializeField, Range(0.5f, 10f)] internal float radius = 1f;
         [SerializeField, Range(0.5f, 10f)] internal float height = 4f;

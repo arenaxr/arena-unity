@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
-    public class ArenaMeshRing : ArenaMeshBase
+    public class ArenaMeshRing : ArenaMesh
     {
         [SerializeField, Range(0f, 10f)] internal float innerRadius = 0.1f, outerRadius = 1f;
         [SerializeField, Range(2, 64)] internal int thetaSegments = 16, phiSegments = 16;

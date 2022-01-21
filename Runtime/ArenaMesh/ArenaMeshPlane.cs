@@ -8,7 +8,7 @@ namespace ArenaUnity
     [ExecuteInEditMode]
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 
-    public class ArenaMeshPlane : ArenaMeshBase
+    public class ArenaMeshPlane : ArenaMesh
     {
         public enum PlaneType
         {

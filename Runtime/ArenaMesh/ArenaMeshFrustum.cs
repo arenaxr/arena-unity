@@ -7,7 +7,7 @@ namespace ArenaUnity
 {
     [ExecuteInEditMode]
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-    public class ArenaMeshFrustum : ArenaMeshBase
+    public class ArenaMeshFrustum : ArenaMesh
     {
         [SerializeField, Range(0.1f, 1f)] internal float nearClip = 0.1f;
         [SerializeField, Range(1f, 5f)] internal float farClip = 1f;

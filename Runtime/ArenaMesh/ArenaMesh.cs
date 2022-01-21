@@ -6,7 +6,7 @@ namespace ArenaUnity
 {
     [ExecuteInEditMode]
     [RequireComponent(typeof(ArenaObject), typeof(MeshFilter), typeof(MeshRenderer))]
-    public abstract class ArenaMeshBase : MonoBehaviour
+    public abstract class ArenaMesh : MonoBehaviour
     {
         protected MeshFilter filter;
         internal bool rebuild = false;
@@ -21,6 +21,8 @@ namespace ArenaUnity
         protected void OnValidate()
         {
             if (filter == null) filter = GetComponent<MeshFilter>();
+            var aobj = GetComponent<ArenaObject>();
+            if (aobj != null) aobj.meshChanged = true;
             rebuild = true;
         }
 

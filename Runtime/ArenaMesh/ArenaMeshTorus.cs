@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
-    public class ArenaMeshTorus : ArenaMeshBase
+    public class ArenaMeshTorus : ArenaMesh
     {
         [SerializeField, Range(0.1f, 10f)] internal float radius = 0.5f;
         [SerializeField, Range(0.05f, 10f)] internal float thickness = 0.1f;
