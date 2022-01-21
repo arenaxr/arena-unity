@@ -40,44 +40,101 @@ namespace ArenaUnity
             if (aobj == null) return;
             ArenaMeshCube cube = go.GetComponent<ArenaMeshCube>();
             if (cube != null)
-            {
-                float size = HandleUtility.GetHandleSize(cube.transform.position) * 1f;
-                float snap = 0.5f;
-
-                EditorGUI.BeginChangeCheck();
-
-                float width = cube.width;
-                float height = cube.height;
-                float depth = cube.depth;
-                using (new Handles.DrawingScope(Color.magenta))
-                {
-                    width = Handles.ScaleSlider(cube.width, cube.transform.position, cube.transform.right, cube.transform.rotation, size, snap);
-                }
-                using (new Handles.DrawingScope(Color.green))
-                {
-                    height = Handles.ScaleSlider(cube.height, cube.transform.position, cube.transform.up, cube.transform.rotation, size, snap);
-                }
-                using (new Handles.DrawingScope(Color.cyan))
-                {
-                    depth = Handles.ScaleSlider(cube.depth, cube.transform.position, cube.transform.forward, cube.transform.rotation, size, snap);
-                }
-
-                if (EditorGUI.EndChangeCheck())
-                {
-                    //Undo.RecordObjects(Selection.transforms, "Size Arena Object");
-                    foreach (var o in Selection.gameObjects)
-                    {
-                        var arena = o.GetComponent<ArenaMeshCube>();
-                        arena.width = width;
-                        arena.height = height;
-                        arena.depth = depth;
-                        arena.rebuild = true;
-                    }
-                }
-
-            }
-
-
+                HandleSizeCube(cube);
+            ArenaMeshSphere sphere = go.GetComponent<ArenaMeshSphere>();
+            if (sphere != null)
+                HandleSizeSphere(sphere);
+            ArenaMeshCylinder cylinder = go.GetComponent<ArenaMeshCylinder>();
+            if (cylinder != null)
+                HandleSizeCylinder(cylinder);
         }
+
+        private static void HandleSizeCube(ArenaMeshCube cube)
+        {
+            float size = HandleUtility.GetHandleSize(cube.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float width = cube.width;
+            float height = cube.height;
+            float depth = cube.depth;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                width = Handles.ScaleSlider(cube.width, cube.transform.position, cube.transform.right, cube.transform.rotation, size, snap);
+            }
+            using (new Handles.DrawingScope(Color.green))
+            {
+                height = Handles.ScaleSlider(cube.height, cube.transform.position, cube.transform.up, cube.transform.rotation, size, snap);
+            }
+            using (new Handles.DrawingScope(Color.cyan))
+            {
+                depth = Handles.ScaleSlider(cube.depth, cube.transform.position, cube.transform.forward, cube.transform.rotation, size, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Cube");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshCube>();
+                    amesh.width = width;
+                    amesh.height = height;
+                    amesh.depth = depth;
+                    amesh.rebuild = true;
+                }
+            }
+        }
+
+        private static void HandleSizeCylinder(ArenaMeshCylinder cylinder)
+        {
+            float size = HandleUtility.GetHandleSize(cylinder.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float radius = cylinder.radius;
+            float height = cylinder.height;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                radius = Handles.ScaleSlider(cylinder.radius, cylinder.transform.position, cylinder.transform.right, cylinder.transform.rotation, size, snap);
+            }
+            using (new Handles.DrawingScope(Color.green))
+            {
+                height = Handles.ScaleSlider(cylinder.height, cylinder.transform.position, cylinder.transform.up, cylinder.transform.rotation, size, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Cylinder");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshCylinder>();
+                    amesh.radius = radius;
+                    amesh.height = height;
+                    amesh.rebuild = true;
+                }
+            }
+        }
+
+        private static void HandleSizeSphere(ArenaMeshSphere sphere)
+        {
+            float size = HandleUtility.GetHandleSize(sphere.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float radius = sphere.radius;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                radius = Handles.ScaleSlider(sphere.radius, sphere.transform.position, sphere.transform.right, sphere.transform.rotation, size, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Sphere");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshSphere>();
+                    amesh.radius = radius;
+                    amesh.rebuild = true;
+                }
+            }
+        }
+
     }
 }

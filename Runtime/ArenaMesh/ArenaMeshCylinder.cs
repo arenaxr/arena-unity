@@ -16,7 +16,8 @@ namespace ArenaUnity
 
         protected override void Build(MeshFilter filter)
         {
-            filter.sharedMesh = CylinderBuilder.Build(radius, height, radialSegments, heightSegments, openEnded);
+            // mwfarb: for some reason openEnded is inverted
+            filter.sharedMesh = CylinderBuilder.Build(radius, height, radialSegments, heightSegments, !openEnded);
         }
     }
 }

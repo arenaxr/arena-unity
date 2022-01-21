@@ -5,7 +5,6 @@
 
 using System;
 using System.Dynamic;
-using MeshBuilder;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -77,7 +76,7 @@ namespace ArenaUnity
                     cylinder.height = data.height != null ? (float)data.height : 2f;
                     cylinder.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     cylinder.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
-                    cylinder.openEnded = data.openEnded != null ? !Convert.ToBoolean(data.openEnded) : true;
+                    cylinder.openEnded = data.openEnded != null ? Convert.ToBoolean(data.openEnded) : false;
                     break;
                 case "icosahedron":
                     ArenaMeshIcosahedron icosahedron = gobj.AddComponent<ArenaMeshIcosahedron>();
