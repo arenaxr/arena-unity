@@ -136,8 +136,17 @@ namespace ArenaUnity
             }
 
             if (meshChanged)
-                ArenaUnity.ToArenaMesh(gameObject, ref dataUnity);
-
+            {
+                if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
+                {
+                    dataUnity.geometry = new ExpandoObject();
+                    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity.geometry);
+                }
+                else
+                {
+                    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity);
+                }
+            }
             // other attributes information
             if (!transformOnly)
             {

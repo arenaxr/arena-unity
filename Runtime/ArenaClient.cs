@@ -546,7 +546,7 @@ namespace ArenaUnity
             else
                 gobj.transform.localScale = Vector3.one;
 
-            ArenaUnity.ToUnityObjectType(data, ref gobj);
+            ArenaUnity.ToUnityMesh(data, ref gobj);
 
             if (isElement(data.material) || isElement(data.color))
                 ArenaUnity.ToUnityMaterial(data, ref gobj);

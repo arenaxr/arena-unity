@@ -9,7 +9,8 @@ namespace ArenaUnity
     public abstract class ArenaMesh : MonoBehaviour
     {
         protected MeshFilter filter;
-        internal bool rebuild = false;
+        internal bool build = false;
+        internal bool scriptLoaded = false;
 
         protected virtual void Start()
         {
@@ -21,17 +22,25 @@ namespace ArenaUnity
         protected void OnValidate()
         {
             if (filter == null) filter = GetComponent<MeshFilter>();
-            var aobj = GetComponent<ArenaObject>();
-            if (aobj != null) aobj.meshChanged = true;
-            rebuild = true;
+            build = true;
+
+            if (!scriptLoaded)
+            {
+                scriptLoaded = true;
+            }
+            else
+            {   // do not publish mesh update on sciript load
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null) aobj.meshChanged = true;
+            }
         }
 
         protected void Update()
         {
-            if (rebuild)
+            if (build)
             {
                 Build(filter);
-                rebuild = false;
+                build = false;
             }
         }
     }

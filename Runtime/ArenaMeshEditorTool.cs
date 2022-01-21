@@ -104,7 +104,7 @@ namespace ArenaUnity
                     amesh.width = width;
                     amesh.height = height;
                     amesh.depth = depth;
-                    amesh.rebuild = true;
+                    amesh.build = true;
                     aobj.meshChanged = true;
                 }
             }
@@ -134,7 +134,7 @@ namespace ArenaUnity
                     var amesh = o.GetComponent<ArenaMeshPlane>();
                     amesh.width = width;
                     amesh.height = height;
-                    amesh.rebuild = true;
+                    amesh.build = true;
                     aobj.meshChanged = true;
                 }
             }
@@ -164,7 +164,7 @@ namespace ArenaUnity
                     var amesh = o.GetComponent<ArenaMeshCylinder>();
                     amesh.radius = radius;
                     amesh.height = height;
-                    amesh.rebuild = true;
+                    amesh.build = true;
                     aobj.meshChanged = true;
                 }
             }
@@ -194,7 +194,7 @@ namespace ArenaUnity
                     var amesh = o.GetComponent<ArenaMeshCone>();
                     amesh.radius = radius;
                     amesh.height = height;
-                    amesh.rebuild = true;
+                    amesh.build = true;
                     aobj.meshChanged = true;
                 }
             }
@@ -218,7 +218,7 @@ namespace ArenaUnity
                 {
                     var amesh = o.GetComponent<ArenaMeshSphere>();
                     amesh.radius = radius;
-                    amesh.rebuild = true;
+                    amesh.build = true;
                     aobj.meshChanged = true;
                 }
             }
@@ -242,7 +242,7 @@ namespace ArenaUnity
                 {
                     var amesh = o.GetComponent<ArenaMeshIcosahedron>();
                     amesh.radius = radius;
-                    amesh.rebuild = true;
+                    amesh.build = true;
                     aobj.meshChanged = true;
                 }
             }
@@ -266,7 +266,7 @@ namespace ArenaUnity
                 {
                     var amesh = o.GetComponent<ArenaMeshOctahedron>();
                     amesh.radius = radius;
-                    amesh.rebuild = true;
+                    amesh.build = true;
                     aobj.meshChanged = true;
                 }
             }
@@ -307,7 +307,7 @@ namespace ArenaUnity
                     amesh.outerRadius = outerRadius;
                     amesh.innerRadius = innerRadius;
                     amesh.thetaLength = thetaLength;
-                    amesh.rebuild = true;
+                    amesh.build = true;
                     aobj.meshChanged = true;
                 }
             }
@@ -331,7 +331,7 @@ namespace ArenaUnity
                 {
                     var amesh = o.GetComponent<ArenaMeshCircle>();
                     amesh.radius = radius;
-                    amesh.rebuild = true;
+                    amesh.build = true;
                     aobj.meshChanged = true;
                 }
             }
@@ -361,7 +361,7 @@ namespace ArenaUnity
                     var amesh = o.GetComponent<ArenaMeshTorus>();
                     amesh.radius = radius;
                     amesh.thickness = thickness;
-                    amesh.rebuild = true;
+                    amesh.build = true;
                     aobj.meshChanged = true;
                 }
             }
