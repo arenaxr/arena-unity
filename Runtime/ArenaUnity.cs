@@ -5,6 +5,8 @@
 
 using System;
 using System.Dynamic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -192,9 +194,16 @@ namespace ArenaUnity
                     break;
             }
             if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
+            {
                 data.geometry = odata;
+            }
             else
-                data = odata;
+            {
+                var updatedData = new JObject();
+                updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(data)));
+                updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(odata)));
+                data = updatedData;
+            }
         }
         // position
         public static dynamic ToArenaPosition(Vector3 position)
