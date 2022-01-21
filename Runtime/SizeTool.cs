@@ -44,8 +44,11 @@ namespace ArenaUnity
                 case "ArenaUnity.ArenaMeshCube":
                     HandleSizeCube(go.GetComponent<ArenaMeshCube>());
                     break;
-                case "ArenaUnity.ArenaMeshSphere":
-                    HandleSizeSphere(go.GetComponent<ArenaMeshSphere>());
+                case "ArenaUnity.ArenaMeshCone":
+                    HandleSizeCone(go.GetComponent<ArenaMeshCone>());
+                    break;
+                case "ArenaUnity.ArenaMeshCylinder":
+                    HandleSizeCylinder(go.GetComponent<ArenaMeshCylinder>());
                     break;
                 case "ArenaUnity.ArenaMeshIcosahedron":
                     HandleSizeIcosahedron(go.GetComponent<ArenaMeshIcosahedron>());
@@ -53,8 +56,11 @@ namespace ArenaUnity
                 case "ArenaUnity.ArenaMeshOctahedron":
                     HandleSizeOctahedron(go.GetComponent<ArenaMeshOctahedron>());
                     break;
-                case "ArenaUnity.ArenaMeshCylinder":
-                    HandleSizeCylinder(go.GetComponent<ArenaMeshCylinder>());
+                case "ArenaUnity.ArenaMeshPlane":
+                    HandleSizePlane(go.GetComponent<ArenaMeshPlane>());
+                    break;
+                case "ArenaUnity.ArenaMeshSphere":
+                    HandleSizeSphere(go.GetComponent<ArenaMeshSphere>());
                     break;
             }
         }
@@ -94,6 +100,35 @@ namespace ArenaUnity
             }
         }
 
+        private static void HandleSizePlane(ArenaMeshPlane plane)
+        {
+            float size = HandleUtility.GetHandleSize(plane.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float width = plane.width;
+            float height = plane.height;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                width = Handles.ScaleSlider(plane.width, plane.transform.position, plane.transform.right, plane.transform.rotation, size, snap);
+            }
+            using (new Handles.DrawingScope(Color.cyan))
+            {
+                height = Handles.ScaleSlider(plane.height, plane.transform.position, plane.transform.up, plane.transform.rotation, size, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Plane");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshPlane>();
+                    amesh.width = width;
+                    amesh.height = height;
+                    amesh.rebuild = true;
+                }
+            }
+        }
+
         private static void HandleSizeCylinder(ArenaMeshCylinder cylinder)
         {
             float size = HandleUtility.GetHandleSize(cylinder.transform.position) * 1f;
@@ -116,6 +151,35 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshCylinder>();
+                    amesh.radius = radius;
+                    amesh.height = height;
+                    amesh.rebuild = true;
+                }
+            }
+        }
+
+        private static void HandleSizeCone(ArenaMeshCone cone)
+        {
+            float size = HandleUtility.GetHandleSize(cone.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float radius = cone.radius;
+            float height = cone.height;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                radius = Handles.ScaleSlider(cone.radius, cone.transform.position, cone.transform.right, cone.transform.rotation, size, snap);
+            }
+            using (new Handles.DrawingScope(Color.green))
+            {
+                height = Handles.ScaleSlider(cone.height, cone.transform.position, cone.transform.up, cone.transform.rotation, size, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Cone");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshCone>();
                     amesh.radius = radius;
                     amesh.height = height;
                     amesh.rebuild = true;
