@@ -6,7 +6,7 @@ namespace ArenaUnity
 {
     // Tagging a class with the EditorTool attribute and no target type registers a global tool. Global tools are valid for any selection, and are accessible through the top left toolbar in the editor.
     [EditorTool("ARENA Mesh Tool")]
-    class SizeTool : EditorTool
+    class ArenaMeshEditorTool : EditorTool
     {
         // Serialize this value to set a default value in the Inspector.
         [SerializeField]
@@ -273,6 +273,7 @@ namespace ArenaUnity
             EditorGUI.BeginChangeCheck();
             float outerRadius = ring.outerRadius;
             float innerRadius = ring.innerRadius;
+            float thetaLength = ring.thetaLength;
             using (new Handles.DrawingScope(Color.magenta))
             {
                 outerRadius = Handles.ScaleSlider(ring.outerRadius, ring.transform.position, ring.transform.right, ring.transform.rotation, size, snap);
@@ -281,7 +282,16 @@ namespace ArenaUnity
             {
                 innerRadius = Handles.ScaleSlider(ring.innerRadius, ring.transform.position, ring.transform.right, ring.transform.rotation, size / 2, snap);
             }
-            if (EditorGUI.EndChangeCheck())
+            //using (new Handles.DrawingScope(Color.yellow))
+            //{
+            //    float thetaDeg = ring.thetaLength * 180 / Mathf.PI;
+            //    thetaDeg = Handles.FreeRotateHandle(Quaternion.Euler(0, thetaDeg, 0), ring.transform.position, size).eulerAngles.y;
+            //    //thetaDeg = Handles.RotationHandle(Quaternion.Euler(0, thetaDeg, 0), ring.transform.position).eulerAngles.y;
+            //    thetaLength = thetaDeg * 180 / Mathf.PI;
+            //    Handles.DrawSolidArc(ring.transform.position, ring.transform.forward, -ring.transform.right, thetaLength, size / 2);
+            //    //myObj.shieldArea = (float)Handles.ScaleValueHandle(myObj.shieldArea, myObj.transform.position + myObj.transform.forward * myObj.shieldArea, myObj.transform.rotation, 1, Handles.ConeHandleCap, 1);
+            //}
+            //if (EditorGUI.EndChangeCheck())
             {
                 //Undo.RecordObjects(Selection.gameObjects, "Size Arena Ring");
                 foreach (var o in Selection.gameObjects)
@@ -289,6 +299,7 @@ namespace ArenaUnity
                     var amesh = o.GetComponent<ArenaMeshRing>();
                     amesh.outerRadius = outerRadius;
                     amesh.innerRadius = innerRadius;
+                    amesh.thetaLength = thetaLength;
                     amesh.rebuild = true;
                 }
             }

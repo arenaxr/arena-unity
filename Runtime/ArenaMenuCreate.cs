@@ -30,6 +30,12 @@ namespace ArenaUnity
             PublishPrimitive(menuCommand, "box");
         }
 
+        [MenuItem("GameObject/ARENA/Circle", false, 10)]
+        internal static void CreateArenaCircle(MenuCommand menuCommand)
+        {
+            PublishPrimitive(menuCommand, "circle");
+        }
+
         [MenuItem("GameObject/ARENA/Cone", false, 10)]
         internal static void CreateArenaCone(MenuCommand menuCommand)
         {
