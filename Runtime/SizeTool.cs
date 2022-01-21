@@ -5,7 +5,7 @@ using UnityEngine;
 namespace ArenaUnity
 {
     // Tagging a class with the EditorTool attribute and no target type registers a global tool. Global tools are valid for any selection, and are accessible through the top left toolbar in the editor.
-    [EditorTool("ARENA Size Tool")]
+    [EditorTool("ARENA Mesh Tool")]
     class SizeTool : EditorTool
     {
         // Serialize this value to set a default value in the Inspector.
@@ -19,8 +19,8 @@ namespace ArenaUnity
             m_IconContent = new GUIContent()
             {
                 image = m_ToolIcon,
-                text = "ARENA Size Tool",
-                tooltip = "ARENA Size Tool"
+                text = "ARENA Mesh Tool",
+                tooltip = "ARENA Mesh Tool"
             };
         }
 
@@ -61,6 +61,15 @@ namespace ArenaUnity
                     break;
                 case "ArenaUnity.ArenaMeshSphere":
                     HandleSizeSphere(go.GetComponent<ArenaMeshSphere>());
+                    break;
+                case "ArenaUnity.ArenaMeshCircle":
+                    HandleSizeCircle(go.GetComponent<ArenaMeshCircle>());
+                    break;
+                case "ArenaUnity.ArenaMeshRing":
+                    HandleSizeRing(go.GetComponent<ArenaMeshRing>());
+                    break;
+                case "ArenaUnity.ArenaMeshTorus":
+                    HandleSizeTorus(go.GetComponent<ArenaMeshTorus>());
                     break;
             }
         }
@@ -251,6 +260,87 @@ namespace ArenaUnity
                 {
                     var amesh = o.GetComponent<ArenaMeshOctahedron>();
                     amesh.radius = radius;
+                    amesh.rebuild = true;
+                }
+            }
+        }
+
+        private static void HandleSizeRing(ArenaMeshRing ring)
+        {
+            float size = HandleUtility.GetHandleSize(ring.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float outerRadius = ring.outerRadius;
+            float innerRadius = ring.innerRadius;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                outerRadius = Handles.ScaleSlider(ring.outerRadius, ring.transform.position, ring.transform.right, ring.transform.rotation, size, snap);
+            }
+            using (new Handles.DrawingScope(Color.cyan))
+            {
+                innerRadius = Handles.ScaleSlider(ring.innerRadius, ring.transform.position, ring.transform.right, ring.transform.rotation, size / 2, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Ring");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshRing>();
+                    amesh.outerRadius = outerRadius;
+                    amesh.innerRadius = innerRadius;
+                    amesh.rebuild = true;
+                }
+            }
+        }
+
+        private static void HandleSizeCircle(ArenaMeshCircle circle)
+        {
+            float size = HandleUtility.GetHandleSize(circle.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float radius = circle.radius;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                radius = Handles.ScaleSlider(circle.radius, circle.transform.position, circle.transform.right, circle.transform.rotation, size, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Circle");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshCircle>();
+                    amesh.radius = radius;
+                    amesh.rebuild = true;
+                }
+            }
+        }
+
+        private static void HandleSizeTorus(ArenaMeshTorus torus)
+        {
+            float size = HandleUtility.GetHandleSize(torus.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float radius = torus.radius;
+            float thickness = torus.thickness;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                radius = Handles.ScaleSlider(torus.radius, torus.transform.position, torus.transform.right, torus.transform.rotation, size, snap);
+            }
+            using (new Handles.DrawingScope(Color.cyan))
+            {
+                thickness = Handles.ScaleSlider(torus.thickness, torus.transform.position, torus.transform.right, torus.transform.rotation, size / 2, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Torus");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshTorus>();
+                    amesh.radius = radius;
+                    amesh.thickness = thickness;
                     amesh.rebuild = true;
                 }
             }

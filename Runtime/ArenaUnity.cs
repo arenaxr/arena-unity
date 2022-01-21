@@ -104,6 +104,13 @@ namespace ArenaUnity
                     ring.thetaStart = (float)(data.thetaStart != null ? Math.PI / 180 * (float)data.thetaStart : 0f);
                     ring.thetaLength = (float)(data.thetaLength != null ? Math.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
                     break;
+                case "circle":
+                    ArenaMeshCircle circle = gobj.AddComponent<ArenaMeshCircle>();
+                    circle.radius = data.radius != null ? (float)data.radius : 1f;
+                    circle.segments = data.segments != null ? (int)data.segments : 32;
+                    circle.thetaStart = (float)(data.thetaStart != null ? Math.PI / 180 * (float)data.thetaStart : 0f);
+                    circle.thetaLength = (float)(data.thetaLength != null ? Math.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
+                    break;
                 case "sphere":
                     ArenaMeshSphere sphere = gobj.AddComponent<ArenaMeshSphere>();
                     sphere.radius = data.radius != null ? (float)data.radius : 1f;
@@ -113,7 +120,7 @@ namespace ArenaUnity
                 case "torus":
                     ArenaMeshTorus torus = gobj.AddComponent<ArenaMeshTorus>();
                     torus.radius = data.radius != null ? (float)data.radius : 1f;
-                    torus.thickness = data.radiusTubular != null ? (float)data.radiusTubular : 0.2f;
+                    torus.thickness = data.radiusTubular != null ? (float)data.radiusTubular * 2 : 0.2f * 2;
                     torus.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     torus.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 32;
                     torus.thetaStart = 0f;
