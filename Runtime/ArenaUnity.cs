@@ -54,6 +54,13 @@ namespace ArenaUnity
             switch (type)
             {
                 // build your own meshes
+                case "capsule":
+                    ArenaMeshCapsule capsule = gobj.GetComponent<ArenaMeshCapsule>() ?? gobj.AddComponent<ArenaMeshCapsule>();
+                    capsule.radius = data.radius != null ? (float)data.radius : 1f;
+                    capsule.height = data.height != null ? (float)data.height : 2f;
+                    capsule.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
+                    capsule.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
+                    break;
                 case "box":
                 case "cube": // support legacy arena 'cube' == 'box'
                     ArenaMeshCube cube = gobj.GetComponent<ArenaMeshCube>() ?? gobj.AddComponent<ArenaMeshCube>();
@@ -77,6 +84,16 @@ namespace ArenaUnity
                     cylinder.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     cylinder.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
                     cylinder.openEnded = data.openEnded != null ? Convert.ToBoolean(data.openEnded) : false;
+                    break;
+                case "dodecahedron":
+                    ArenaMeshDodecahedron dodecahedron = gobj.GetComponent<ArenaMeshDodecahedron>() ?? gobj.AddComponent<ArenaMeshDodecahedron>();
+                    dodecahedron.radius = data.radius != null ? (float)data.radius : 1f;
+                    dodecahedron.details = 0;
+                    break;
+                case "tetrahedron":
+                    ArenaMeshTetrahedron tetrahedron = gobj.GetComponent<ArenaMeshTetrahedron>() ?? gobj.AddComponent<ArenaMeshTetrahedron>();
+                    tetrahedron.radius = data.radius != null ? (float)data.radius : 1f;
+                    tetrahedron.details = 0;
                     break;
                 case "icosahedron":
                     ArenaMeshIcosahedron icosahedron = gobj.GetComponent<ArenaMeshIcosahedron>() ?? gobj.AddComponent<ArenaMeshIcosahedron>();
@@ -126,6 +143,21 @@ namespace ArenaUnity
                     torus.thetaStart = 0f;
                     torus.thetaEnd = (float)(data.arc != null ? Mathf.PI / 180 * (float)data.arc : Mathf.PI * 2f);
                     break;
+                case "torusKnot":
+                    ArenaMeshTorusKnot torusKnot = gobj.GetComponent<ArenaMeshTorusKnot>() ?? gobj.AddComponent<ArenaMeshTorusKnot>();
+                    torusKnot.radius = data.radius != null ? (float)data.radius : 1f;
+                    torusKnot.thickness = data.radiusTubular != null ? (float)data.radiusTubular * 2 : 0.2f * 2;
+                    torusKnot.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
+                    torusKnot.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 32;
+                    torusKnot.p = data.p != null ? (int)data.p : 2;
+                    torusKnot.q = data.q != null ? (int)data.q : 3;
+                    break;
+                case "triangle":
+                    ArenaMeshTriangle triangle = gobj.GetComponent<ArenaMeshTriangle>() ?? gobj.AddComponent<ArenaMeshTriangle>();
+                    triangle.vertexA = data.vertexA != null ? ToUnityPosition(data.vertexA) : new Vector3(0f, 0.5f, 0f);
+                    triangle.vertexB = data.vertexB != null ? ToUnityPosition(data.vertexB) : new Vector3(-0.5f, -0.5f, 0f);
+                    triangle.vertexC = data.vertexC != null ? ToUnityPosition(data.vertexC) : new Vector3(0.5f, -0.5f, 0f);
+                    break;
                 default:
                     break;
             };
@@ -136,6 +168,11 @@ namespace ArenaUnity
             if (am == null) return;
             switch (am.GetType().ToString())
             {
+                case "ArenaUnity.ArenaMeshCapsule":
+                    var capsule = gobj.GetComponent<ArenaMeshCapsule>();
+                    data.radius = ArenaFloat(capsule.radius);
+                    data.height = ArenaFloat(capsule.height);
+                    break;
                 case "ArenaUnity.ArenaMeshCube":
                     var cube = gobj.GetComponent<ArenaMeshCube>();
                     data.width = ArenaFloat(cube.width);
@@ -152,6 +189,14 @@ namespace ArenaUnity
                     data.radius = ArenaFloat(cylinder.radius);
                     data.height = ArenaFloat(cylinder.height);
                     data.openEnded = cylinder.openEnded;
+                    break;
+                case "ArenaUnity.ArenaMeshDodecahedron":
+                    var dodecahedron = gobj.GetComponent<ArenaMeshDodecahedron>();
+                    data.radius = ArenaFloat(dodecahedron.radius);
+                    break;
+                case "ArenaUnity.ArenaMeshTetrahedron":
+                    var tetrahedron = gobj.GetComponent<ArenaMeshTetrahedron>();
+                    data.radius = ArenaFloat(tetrahedron.radius);
                     break;
                 case "ArenaUnity.ArenaMeshIcosahedron":
                     var icosahedron = gobj.GetComponent<ArenaMeshIcosahedron>();
@@ -189,7 +234,29 @@ namespace ArenaUnity
                     data.radiusTubular = ArenaFloat(torus.thickness / 2f);
                     data.arc = ArenaFloat(torus.thetaEnd * 180 / Mathf.PI);
                     break;
+                case "ArenaUnity.ArenaMeshTorusKnot":
+                    var torusKnot = gobj.GetComponent<ArenaMeshTorusKnot>();
+                    data.radius = ArenaFloat(torusKnot.radius);
+                    data.radiusTubular = ArenaFloat(torusKnot.thickness / 2f);
+                    data.p = torusKnot.p;
+                    data.q = torusKnot.q;
+                    break;
+                case "ArenaUnity.ArenaMeshTriangle":
+                    var triangle = gobj.GetComponent<ArenaMeshTriangle>();
+                    data.vertexA = ToArenaPosition(triangle.vertexA);
+                    data.vertexB = ToArenaPosition(triangle.vertexB);
+                    data.vertexC = ToArenaPosition(triangle.vertexC);
+                    break;
             }
+        }
+        private static Vector3 StrPositionToVector3(string strPos)
+        {
+            string[] axis = strPos.Split(' ');
+            return new Vector3(float.Parse(axis[0]), float.Parse(axis[1]), float.Parse(axis[2]));
+        }
+        private static string Vector3ToStrPosition(Vector3 position)
+        {
+            return $"{ArenaFloat(position.x)} {ArenaFloat(position.y)} {ArenaFloat(position.z)}";
         }
         // position
         public static dynamic ToArenaPosition(Vector3 position)
@@ -306,9 +373,6 @@ namespace ArenaUnity
                 {
                     case "Cube":
                         data.object_type = "box";
-                        break;
-                    case "Capsule": // TODO: determine if a-frame has an easy capsule mod
-                        data.object_type = "cylinder";
                         break;
                     case "Quad":
                         data.object_type = "plane";

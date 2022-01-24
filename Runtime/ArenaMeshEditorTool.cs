@@ -47,6 +47,9 @@ namespace ArenaUnity
                 case "ArenaUnity.ArenaMeshCone":
                     HandleSizeCone(aobj, go.GetComponent<ArenaMeshCone>());
                     break;
+                case "ArenaUnity.ArenaMeshCapsule":
+                    HandleSizeCapsule(aobj, go.GetComponent<ArenaMeshCapsule>());
+                    break;
                 case "ArenaUnity.ArenaMeshCylinder":
                     HandleSizeCylinder(aobj, go.GetComponent<ArenaMeshCylinder>());
                     break;
@@ -70,6 +73,9 @@ namespace ArenaUnity
                     break;
                 case "ArenaUnity.ArenaMeshTorus":
                     HandleSizeTorus(aobj, go.GetComponent<ArenaMeshTorus>());
+                    break;
+                case "ArenaUnity.ArenaMeshTorusKnot":
+                    HandleSizeTorusKnot(aobj, go.GetComponent<ArenaMeshTorusKnot>());
                     break;
             }
         }
@@ -133,6 +139,36 @@ namespace ArenaUnity
                 {
                     var amesh = o.GetComponent<ArenaMeshPlane>();
                     amesh.width = width;
+                    amesh.height = height;
+                    amesh.build = true;
+                    aobj.meshChanged = true;
+                }
+            }
+        }
+
+        private static void HandleSizeCapsule(ArenaObject aobj, ArenaMeshCapsule capsule)
+        {
+            float size = HandleUtility.GetHandleSize(capsule.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float radius = capsule.radius;
+            float height = capsule.height;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                radius = Handles.ScaleSlider(capsule.radius, capsule.transform.position, capsule.transform.right, capsule.transform.rotation, size, snap);
+            }
+            using (new Handles.DrawingScope(Color.green))
+            {
+                height = Handles.ScaleSlider(capsule.height, capsule.transform.position, capsule.transform.up, capsule.transform.rotation, size, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Capsule");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshCapsule>();
+                    amesh.radius = radius;
                     amesh.height = height;
                     amesh.build = true;
                     aobj.meshChanged = true;
@@ -306,7 +342,7 @@ namespace ArenaUnity
                     var amesh = o.GetComponent<ArenaMeshRing>();
                     amesh.outerRadius = outerRadius;
                     amesh.innerRadius = innerRadius;
-                    amesh.thetaLength = thetaLength;
+                    //amesh.thetaLength = thetaLength;
                     amesh.build = true;
                     aobj.meshChanged = true;
                 }
@@ -359,6 +395,36 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshTorus>();
+                    amesh.radius = radius;
+                    amesh.thickness = thickness;
+                    amesh.build = true;
+                    aobj.meshChanged = true;
+                }
+            }
+        }
+
+        private static void HandleSizeTorusKnot(ArenaObject aobj, ArenaMeshTorusKnot torusKnot)
+        {
+            float size = HandleUtility.GetHandleSize(torusKnot.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float radius = torusKnot.radius;
+            float thickness = torusKnot.thickness;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                radius = Handles.ScaleSlider(torusKnot.radius, torusKnot.transform.position, torusKnot.transform.right, torusKnot.transform.rotation, size, snap);
+            }
+            using (new Handles.DrawingScope(Color.cyan))
+            {
+                thickness = Handles.ScaleSlider(torusKnot.thickness, torusKnot.transform.position, torusKnot.transform.right, torusKnot.transform.rotation, size / 2, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena TorusKnot");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshTorusKnot>();
                     amesh.radius = radius;
                     amesh.thickness = thickness;
                     amesh.build = true;
