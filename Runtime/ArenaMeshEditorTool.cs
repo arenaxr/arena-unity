@@ -77,6 +77,9 @@ namespace ArenaUnity
                 case "ArenaUnity.ArenaMeshTorusKnot":
                     HandleSizeTorusKnot(aobj, go.GetComponent<ArenaMeshTorusKnot>());
                     break;
+                case "ArenaUnity.ArenaMeshTriangle":
+                    HandleSizeTriangle(aobj, go.GetComponent<ArenaMeshTriangle>());
+                    break;
             }
         }
 
@@ -427,6 +430,54 @@ namespace ArenaUnity
                     var amesh = o.GetComponent<ArenaMeshTorusKnot>();
                     amesh.radius = radius;
                     amesh.thickness = thickness;
+                    amesh.build = true;
+                    aobj.meshChanged = true;
+                }
+            }
+        }
+
+        private static void HandleSizeTriangle(ArenaObject aobj, ArenaMeshTriangle triangle)
+        {
+            float size = HandleUtility.GetHandleSize(triangle.transform.position) * .5f;
+            Vector3 snap = new Vector3(0.5f, 0.5f);
+            Vector3 handleDirection = Vector3.forward;
+
+            EditorGUI.BeginChangeCheck();
+            Vector3 vertexA = triangle.vertexA;
+            Vector3 vertexB = triangle.vertexB;
+            Vector3 vertexC = triangle.vertexC;
+            using (new Handles.DrawingScope(Color.red))
+            {
+                Handles.DrawWireDisc(triangle.transform.position, handleDirection, size / 10f);
+            }
+            using (new Handles.DrawingScope(Color.green))
+            {
+                //Handles.CapFunction capFunction = (id, position, rotation, size, type) => Handles.CircleHandleCap(
+                //  id,
+                //  triangle.transform.position + vertexA,
+                //  triangle.transform.rotation * Quaternion.LookRotation(handleDirection),
+                //  size,
+                //  EventType.Repaint);
+                //vertexA = Handles.Slider2D(0, triangle.transform.position, vertexA, handleDirection, Vector3.right, Vector3.up, size, capFunction, snap);
+                vertexA = Handles.Slider2D(triangle.transform.position + vertexA, handleDirection, Vector3.right, Vector3.up, size, Handles.CircleHandleCap, snap);
+            }
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                vertexB = Handles.Slider2D(triangle.transform.position + vertexB, handleDirection, Vector3.right, Vector3.up, size, Handles.CircleHandleCap, snap);
+            }
+            using (new Handles.DrawingScope(Color.cyan))
+            {
+                vertexC = Handles.Slider2D(triangle.transform.position + vertexC, handleDirection, Vector3.right, Vector3.up, size, Handles.CircleHandleCap, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Triangle");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshTriangle>();
+                    amesh.vertexA = vertexA - triangle.transform.localPosition;
+                    amesh.vertexB = vertexB - triangle.transform.localPosition;
+                    amesh.vertexC = vertexC - triangle.transform.localPosition;
                     amesh.build = true;
                     aobj.meshChanged = true;
                 }
