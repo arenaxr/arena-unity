@@ -92,6 +92,7 @@ namespace ArenaUnity
             float width = cube.width;
             float height = cube.height;
             float depth = cube.depth;
+            Handles.Label(cube.transform.position + Vector3.up + Vector3.forward * size, $"W {cube.width}\nH {cube.height}\nD {cube.depth}");
             using (new Handles.DrawingScope(Color.magenta))
             {
                 width = Handles.ScaleSlider(cube.width, cube.transform.position, cube.transform.right, cube.transform.rotation, size, snap);
@@ -127,6 +128,7 @@ namespace ArenaUnity
             EditorGUI.BeginChangeCheck();
             float width = plane.width;
             float height = plane.height;
+            Handles.Label(plane.transform.position + Vector3.up + Vector3.forward * size, $"W {plane.width}\nH {plane.height}");
             using (new Handles.DrawingScope(Color.magenta))
             {
                 width = Handles.ScaleSlider(plane.width, plane.transform.position, plane.transform.right, plane.transform.rotation, size, snap);
@@ -157,6 +159,7 @@ namespace ArenaUnity
             EditorGUI.BeginChangeCheck();
             float radius = capsule.radius;
             float height = capsule.height;
+            Handles.Label(capsule.transform.position + Vector3.up + Vector3.forward * size, $"R {capsule.radius}\nH {capsule.height}");
             using (new Handles.DrawingScope(Color.magenta))
             {
                 radius = Handles.ScaleSlider(capsule.radius, capsule.transform.position, capsule.transform.right, capsule.transform.rotation, size, snap);
@@ -187,6 +190,7 @@ namespace ArenaUnity
             EditorGUI.BeginChangeCheck();
             float radius = cylinder.radius;
             float height = cylinder.height;
+            Handles.Label(cylinder.transform.position + Vector3.up + Vector3.forward * size, $"R {cylinder.radius}\nH {cylinder.height}");
             using (new Handles.DrawingScope(Color.magenta))
             {
                 radius = Handles.ScaleSlider(cylinder.radius, cylinder.transform.position, cylinder.transform.right, cylinder.transform.rotation, size, snap);
@@ -217,6 +221,7 @@ namespace ArenaUnity
             EditorGUI.BeginChangeCheck();
             float radius = cone.radius;
             float height = cone.height;
+            Handles.Label(cone.transform.position + Vector3.up + Vector3.forward * size, $"R {cone.radius}\nH {cone.height}");
             using (new Handles.DrawingScope(Color.magenta))
             {
                 radius = Handles.ScaleSlider(cone.radius, cone.transform.position, cone.transform.right, cone.transform.rotation, size, snap);
@@ -246,6 +251,7 @@ namespace ArenaUnity
 
             EditorGUI.BeginChangeCheck();
             float radius = sphere.radius;
+            Handles.Label(sphere.transform.position + Vector3.up + Vector3.forward * size, $"R {sphere.radius}");
             using (new Handles.DrawingScope(Color.magenta))
             {
                 radius = Handles.ScaleSlider(sphere.radius, sphere.transform.position, sphere.transform.right, sphere.transform.rotation, size, snap);
@@ -270,6 +276,7 @@ namespace ArenaUnity
 
             EditorGUI.BeginChangeCheck();
             float radius = icosahedron.radius;
+            Handles.Label(icosahedron.transform.position + Vector3.up + Vector3.forward * size, $"R {icosahedron.radius}");
             using (new Handles.DrawingScope(Color.magenta))
             {
                 radius = Handles.ScaleSlider(icosahedron.radius, icosahedron.transform.position, icosahedron.transform.right, icosahedron.transform.rotation, size, snap);
@@ -294,6 +301,7 @@ namespace ArenaUnity
 
             EditorGUI.BeginChangeCheck();
             float radius = octahedron.radius;
+            Handles.Label(octahedron.transform.position + Vector3.up + Vector3.forward * size, $"R {octahedron.radius}");
             using (new Handles.DrawingScope(Color.magenta))
             {
                 radius = Handles.ScaleSlider(octahedron.radius, octahedron.transform.position, octahedron.transform.right, octahedron.transform.rotation, size, snap);
@@ -320,6 +328,7 @@ namespace ArenaUnity
             float outerRadius = ring.outerRadius;
             float innerRadius = ring.innerRadius;
             float thetaLength = ring.thetaLength;
+            Handles.Label(ring.transform.position + Vector3.up + Vector3.forward * size, $"OR {ring.outerRadius}\nIR {ring.innerRadius}");
             using (new Handles.DrawingScope(Color.magenta))
             {
                 outerRadius = Handles.ScaleSlider(ring.outerRadius, ring.transform.position, ring.transform.right, ring.transform.rotation, size, snap);
@@ -359,6 +368,7 @@ namespace ArenaUnity
 
             EditorGUI.BeginChangeCheck();
             float radius = circle.radius;
+            Handles.Label(circle.transform.position + Vector3.up + Vector3.forward * size, $"R {circle.radius}");
             using (new Handles.DrawingScope(Color.magenta))
             {
                 radius = Handles.ScaleSlider(circle.radius, circle.transform.position, circle.transform.right, circle.transform.rotation, size, snap);
@@ -384,6 +394,7 @@ namespace ArenaUnity
             EditorGUI.BeginChangeCheck();
             float radius = torus.radius;
             float thickness = torus.thickness;
+            Handles.Label(torus.transform.position + Vector3.up + Vector3.forward * size, $"R {torus.radius}\nT {torus.thickness}");
             using (new Handles.DrawingScope(Color.magenta))
             {
                 radius = Handles.ScaleSlider(torus.radius, torus.transform.position, torus.transform.right, torus.transform.rotation, size, snap);
@@ -414,6 +425,7 @@ namespace ArenaUnity
             EditorGUI.BeginChangeCheck();
             float radius = torusKnot.radius;
             float thickness = torusKnot.thickness;
+            Handles.Label(torusKnot.transform.position + Vector3.up + Vector3.forward * size, $"R {torusKnot.radius}\nT {torusKnot.thickness}");
             using (new Handles.DrawingScope(Color.magenta))
             {
                 radius = Handles.ScaleSlider(torusKnot.radius, torusKnot.transform.position, torusKnot.transform.right, torusKnot.transform.rotation, size, snap);
@@ -446,6 +458,7 @@ namespace ArenaUnity
             Vector3 vertexA = triangle.vertexA;
             Vector3 vertexB = triangle.vertexB;
             Vector3 vertexC = triangle.vertexC;
+            Handles.Label(triangle.vertexA + Vector3.up * 1f, $"A {triangle.vertexA}\nB {triangle.vertexB}\nC {triangle.vertexC}");
             using (new Handles.DrawingScope(Color.red))
             {
                 Handles.DrawWireDisc(triangle.transform.position, handleDirection, size / 10f);
