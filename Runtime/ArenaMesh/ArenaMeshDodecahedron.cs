@@ -14,7 +14,7 @@ namespace ArenaUnity
 
         protected override void Build(MeshFilter filter)
         {
-            // TODO: filter.sharedMesh = DodecahedronBuilder.Build(radius, details);
+            filter.sharedMesh = DodecahedronBuilder.Build(radius, details);
         }
     }
 }
