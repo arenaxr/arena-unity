@@ -14,7 +14,7 @@ namespace ArenaUnity
 
         protected override void Build(MeshFilter filter)
         {
-            // TODO: filter.sharedMesh = TetrahedronBuilder.Build(radius, details);
+            filter.sharedMesh = TetrahedronBuilder.Build(radius, details);
         }
     }
 }

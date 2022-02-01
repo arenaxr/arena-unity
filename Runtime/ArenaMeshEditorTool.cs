@@ -59,6 +59,12 @@ namespace ArenaUnity
                 case "ArenaUnity.ArenaMeshOctahedron":
                     HandleSizeOctahedron(aobj, go.GetComponent<ArenaMeshOctahedron>());
                     break;
+                case "ArenaUnity.ArenaMeshTetrahedron":
+                    HandleSizeTetrahedron(aobj, go.GetComponent<ArenaMeshTetrahedron>());
+                    break;
+                case "ArenaUnity.ArenaMeshDodecahedron":
+                    HandleSizeDodecahedron(aobj, go.GetComponent<ArenaMeshDodecahedron>());
+                    break;
                 case "ArenaUnity.ArenaMeshPlane":
                     HandleSizePlane(aobj, go.GetComponent<ArenaMeshPlane>());
                     break;
@@ -304,6 +310,54 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshOctahedron>();
+                    amesh.radius = radius;
+                    amesh.build = true;
+                    aobj.meshChanged = true;
+                }
+            }
+        }
+
+        private static void HandleSizeDodecahedron(ArenaObject aobj, ArenaMeshDodecahedron dodecahedron)
+        {
+            float size = HandleUtility.GetHandleSize(dodecahedron.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float radius = dodecahedron.radius;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                radius = Handles.ScaleSlider(dodecahedron.radius, dodecahedron.transform.position, dodecahedron.transform.right, dodecahedron.transform.rotation, size, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Dodecahedron");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshDodecahedron>();
+                    amesh.radius = radius;
+                    amesh.build = true;
+                    aobj.meshChanged = true;
+                }
+            }
+        }
+
+        private static void HandleSizeTetrahedron(ArenaObject aobj, ArenaMeshTetrahedron tetrahedron)
+        {
+            float size = HandleUtility.GetHandleSize(tetrahedron.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float radius = tetrahedron.radius;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                radius = Handles.ScaleSlider(tetrahedron.radius, tetrahedron.transform.position, tetrahedron.transform.right, tetrahedron.transform.rotation, size, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Tetrahedron");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshTetrahedron>();
                     amesh.radius = radius;
                     amesh.build = true;
                     aobj.meshChanged = true;

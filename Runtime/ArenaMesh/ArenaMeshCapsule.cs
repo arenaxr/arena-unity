@@ -12,6 +12,8 @@ namespace ArenaUnity
 
         protected override void Build(MeshFilter filter)
         {
+            if (height < (radius * 2))
+                height = radius * 2;
             filter.sharedMesh = CapsuleBuilder.CapsuleData(radius, height - (radius * 2), radialSegments, heightSegments);
         }
 
