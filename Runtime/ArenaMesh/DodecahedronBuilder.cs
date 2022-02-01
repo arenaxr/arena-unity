@@ -1,71 +1,55 @@
-﻿//http://csharphelper.com/blog/2015/12/platonic-solids-part-7-the-dodecahedron/
+﻿//https://github.com/mrdoob/three.js/blob/dev/src/geometries/DodecahedronGeometry.js
 
 using System.Collections.Generic;
 using MeshBuilder;
 using UnityEngine;
 
-// TODO: fix to render mesh with position at center
 namespace ArenaUnity
 {
     internal class DodecahedronBuilder
     {
         internal static Mesh Build(float radius, int details)
         {
-            var side_length = 1;
+            var t = (1 + Mathf.Sqrt(5)) / 2;
+            var r = 1 / t;
 
-            // Value t1 is actually never used.
-            float s = side_length;
-            //double t1 = 2.0 * Mathf.PI / 5.0;
-            float t2 = (float)(Mathf.PI / 10.0);
-            float t3 = (float)(3.0 * Mathf.PI / 10.0);
-            float t4 = (float)(Mathf.PI / 5.0);
-            float d1 = (float)(s / 2.0 / Mathf.Sin(t4));
-            float d2 = d1 * Mathf.Cos(t4);
-            float d3 = d1 * Mathf.Cos(t2);
-            float d4 = d1 * Mathf.Sin(t2);
-            float Fx =
-                (float)((s * s - (2.0 * d3) * (2.0 * d3) -
-                    (d1 * d1 - d3 * d3 - d4 * d4)) /
-                        (2.0 * (d4 - d1)));
-            float d5 = Mathf.Sqrt((float)(0.5 *
-                (s * s + (2.0 * d3) * (2.0 * d3) -
-                    (d1 - Fx) * (d1 - Fx) -
-                        (d4 - Fx) * (d4 - Fx) - d3 * d3)));
-            float Fy = (float)((Fx * Fx - d1 * d1 - d5 * d5) / (2.0 * d5));
-            float Ay = d5 + Fy;
+            List<Vector3> vertices = new List<Vector3>{
 
-            Vector3 A = new Vector3(d1, Ay, 0);
-            Vector3 B = new Vector3(d4, Ay, d3);
-            Vector3 C = new Vector3(-d2, Ay, s / 2);
-            Vector3 D = new Vector3(-d2, Ay, -s / 2);
-            Vector3 E = new Vector3(d4, Ay, -d3);
-            Vector3 F = new Vector3(Fx, Fy, 0);
-            Vector3 G = new Vector3(Fx * Mathf.Sin(t2), Fy,
-                Fx * Mathf.Cos(t2));
-            Vector3 H = new Vector3(-Fx * Mathf.Sin(t3), Fy,
-                Fx * Mathf.Cos(t3));
-            Vector3 I = new Vector3(-Fx * Mathf.Sin(t3), Fy,
-                -Fx * Mathf.Cos(t3));
-            Vector3 J = new Vector3(Fx * Mathf.Sin(t2), Fy,
-                -Fx * Mathf.Cos(t2));
-            Vector3 K = new Vector3(Fx * Mathf.Sin(t3), -Fy,
-                Fx * Mathf.Cos(t3));
-            Vector3 L = new Vector3(-Fx * Mathf.Sin(t2), -Fy,
-                Fx * Mathf.Cos(t2));
-            Vector3 M = new Vector3(-Fx, -Fy, 0);
-            Vector3 N = new Vector3(-Fx * Mathf.Sin(t2), -Fy,
-                -Fx * Mathf.Cos(t2));
-            Vector3 O = new Vector3(Fx * Mathf.Sin(t3), -Fy,
-                -Fx * Mathf.Cos(t3));
-            Vector3 P = new Vector3(d2, -Ay, s / 2);
-            Vector3 Q = new Vector3(-d4, -Ay, d3);
-            Vector3 R = new Vector3(-d1, -Ay, 0);
-            Vector3 S = new Vector3(-d4, -Ay, -d3);
-            Vector3 T = new Vector3(d2, -Ay, -s / 2);
+                // (±1, ±1, ±1)
+                new Vector3(-1, -1, -1), new Vector3(-1, -1,  1),
+                new Vector3(-1,  1, -1), new Vector3(-1,  1,  1),
+                new Vector3( 1, -1, -1), new Vector3( 1, -1,  1),
+                new Vector3( 1,  1, -1), new Vector3( 1,  1,  1),
 
-            var vertices = new List<Vector3>() { A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T };
-            var indices = new List<int>() { };
-            return PolyhedronBuilder.Build(vertices, indices, radius, details);
+                // (0, ±1/φ, ±φ)
+                new Vector3(0, -r, -t), new Vector3(0, -r, t),
+                new Vector3(0, r, -t), new Vector3(0, r, t),
+
+                // (±1/φ, ±φ, 0)
+                new Vector3(-r, -t, 0), new Vector3(-r, t, 0),
+                new Vector3(r, -t, 0), new Vector3(r, t, 0),
+
+                // (±φ, 0, ±1/φ)
+                new Vector3(-t, 0, -r), new Vector3(t, 0, -r),
+                new Vector3(-t, 0, r), new Vector3(t, 0, r)
+            };
+
+            List<int> indices = new List<int> {
+                3, 11, 7,   3, 7, 15,   3, 15, 13,
+                7, 19, 17,  7, 17, 6,   7, 6, 15,
+                17, 4, 8,   17, 8, 10,  17, 10, 6,
+                8, 0, 16,   8, 16, 2,   8, 2, 10,
+                0, 12, 1,   0, 1, 18,   0, 18, 16,
+                6, 10, 2,   6, 2, 13,   6, 13, 15,
+                2, 16, 18,  2, 18, 3,   2, 3, 13,
+                18, 1, 9,   18, 9, 11,  18, 11, 3,
+                4, 14, 12,  4, 12, 0,   4, 0, 8,
+                11, 9, 5,   11, 5, 19,  11, 19, 7,
+                19, 5, 14,  19, 14, 4,  19, 4, 17,
+                1, 12, 14,  1, 14, 5,   1, 5, 9
+            };
+
+            return PolyhedronBuilder.Build(vertices, indices, radius/2, details);
         }
     }
 }
