@@ -28,6 +28,7 @@ namespace MeshBuilder
                 return idx;
             };
 
+            // smooth normals
             for (int i = 0; i < details; i++)
             {
                 int n = indices.Count;
@@ -44,6 +45,11 @@ namespace MeshBuilder
                     indices.Add(c); indices.Add(b); indices.Add(i2);
                     indices.Add(a); indices.Add(b); indices.Add(c);
                 }
+            }
+            // flat normals
+            if (details == 0)
+            {
+                // TODO: add method for computing vertex normals for flat shading
             }
 
             var mesh = new Mesh();
