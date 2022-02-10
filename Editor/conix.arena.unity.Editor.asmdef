@@ -3,7 +3,8 @@
     "rootNamespace": "",
     "references": [
         "Unity.EditorCoroutines.Editor",
-        "Siccity.GLTFUtility.Editor"
+        "Siccity.GLTFUtility.Editor",
+        "PrettyHierarchy"
     ],
     "includePlatforms": [
         "Editor"

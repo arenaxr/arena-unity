@@ -1,5 +1,3 @@
-// From: https://github.com/NCEEGEE/PrettyHierarchy
-
 using UnityEditor;
 using UnityEngine;
 

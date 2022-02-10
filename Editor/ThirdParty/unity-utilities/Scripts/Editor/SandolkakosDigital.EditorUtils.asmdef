@@ -1,11 +1,8 @@
 {
-    "name": "conix.arena.unity",
-    "references": [
-        "Siccity.GLTFUtility",
-        "PrettyHierarchy",
-        "SandolkakosDigital.EditorUtils"
+    "name": "SandolkakosDigital.EditorUtils",
+    "includePlatforms": [
+        "Editor"
     ],
-    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

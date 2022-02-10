@@ -19,7 +19,9 @@ using M2MqttUnity;
 using MimeMapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+#if UNITY_EDITOR
 using SandolkakosDigital.EditorUtils;
+#endif
 using Siccity.GLTFUtility;
 using UnityEditor;
 using UnityEngine;
@@ -140,9 +142,10 @@ namespace ArenaUnity
         protected override void Start()
         {
             StartCoroutine(SceneSignin());
-
+#if UNITY_EDITOR
             Selection.activeGameObject = gameObject; // client focus at runtime starts
             SceneHierarchyUtility.SetExpanded(gameObject, true); // expand arena list
+#endif
         }
 
         // Update is called once per frame
@@ -407,17 +410,21 @@ namespace ArenaUnity
                                     byte[] urlSubData = (byte[])cd.result;
                                     string localSubPath = Path.Combine(Path.GetDirectoryName(localPath), uri);
                                     SaveAsset(urlSubData, localSubPath);
+#if UNITY_EDITOR
                                     // import each sub-file for a deterministic reference
                                     AssetDatabase.ImportAsset(localSubPath);
+#endif
                                 }
                                 else allPathsValid = false;
                             }
                         }
                     }
                     if (!allPathsValid) yield break;
+#if UNITY_EDITOR
                     // import master-file to link to the rest
                     AssetDatabase.ImportAsset(localPath);
                     AssetDatabase.Refresh();
+#endif
                 }
             }
 
@@ -440,19 +447,21 @@ namespace ArenaUnity
         }
 
         // methods for the editor
-//#if UNITY_EDITOR
         private void DisplayCancelableProgressBar(string title, string info, float progress)
         {
+#if UNITY_EDITOR
             EditorUtility.DisplayCancelableProgressBar(title, info, progress);
+#endif
         }
 
         private void ClearProgressBar()
         {
+#if UNITY_EDITOR
             EditorUtility.ClearProgressBar();
+#endif
         }
-//#endif
 
-        private void CreateUpdateObject(string object_id, string storeType, dynamic data, MenuCommand menuCommand = null)
+        private void CreateUpdateObject(string object_id, string storeType, dynamic data, object menuCommand = null)
         {
             ArenaObject aobj = null;
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
@@ -471,6 +480,7 @@ namespace ArenaUnity
                 aobj.messageType = storeType;
                 aobj.parentId = (string)data.parent;
                 aobj.persist = true;
+#if UNITY_EDITOR
                 // local create context auto-select
                 if (menuCommand != null)
                 {
@@ -478,6 +488,7 @@ namespace ArenaUnity
                     Undo.RegisterCreatedObjectUndo(gobj, "Create " + gobj.name);
                     Selection.activeObject = gobj;
                 }
+#endif
             }
             // modify Unity attributes
             switch ((string)data.object_type)
@@ -560,6 +571,7 @@ namespace ArenaUnity
 
         private void FindAnimations(dynamic data, ArenaObject aobj)
         {
+#if UNITY_EDITOR
             // check for animations
             var assetRepresentationsAtPath = AssetDatabase.LoadAllAssetRepresentationsAtPath(checkLocalAsset((string)data.url));
             foreach (var assetRepresentation in assetRepresentationsAtPath)
@@ -572,6 +584,7 @@ namespace ArenaUnity
                     aobj.animations.Add(animationClip.name);
                 }
             }
+#endif
         }
 
         private string checkLocalAsset(string msgUrl)
@@ -821,14 +834,14 @@ namespace ArenaUnity
             eventMessages.Add(eventMsg);
         }
 
-        internal void ProcessMessage(string msgJson, MenuCommand menuCommand = null)
+        internal void ProcessMessage(string msgJson, object menuCommand = null)
         {
             dynamic msg = JsonConvert.DeserializeObject(msgJson);
             LogMessage("Received", msg);
             StartCoroutine(ProcessArenaMessage(msg, menuCommand));
         }
 
-        private IEnumerator ProcessArenaMessage(dynamic msg, MenuCommand menuCommand = null)
+        private IEnumerator ProcessArenaMessage(dynamic msg, object menuCommand = null)
         {
             // consume object updates
             if (msg.type == "object")
