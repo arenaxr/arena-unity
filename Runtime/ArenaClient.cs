@@ -21,10 +21,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SandolkakosDigital.EditorUtils;
 using Siccity.GLTFUtility;
-#if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.AssetImporters;
-#endif
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt.Messages;
@@ -443,7 +440,7 @@ namespace ArenaUnity
         }
 
         // methods for the editor
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
         private void DisplayCancelableProgressBar(string title, string info, float progress)
         {
             EditorUtility.DisplayCancelableProgressBar(title, info, progress);
@@ -453,7 +450,7 @@ namespace ArenaUnity
         {
             EditorUtility.ClearProgressBar();
         }
-#endif
+//#endif
 
         private void CreateUpdateObject(string object_id, string storeType, dynamic data, MenuCommand menuCommand = null)
         {

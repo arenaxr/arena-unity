@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
+#if UNITY_EDITOR
     [CustomEditor(typeof(ArenaClient))]
     public class ArenaClientEditor : Editor
     {
@@ -32,4 +33,5 @@ namespace ArenaUnity
             DrawDefaultInspector();
         }
     }
+#endif
 }

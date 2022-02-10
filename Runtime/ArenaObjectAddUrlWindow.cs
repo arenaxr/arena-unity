@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
+#if UNITY_EDITOR
     public class ArenaObjectAddUrlWindow : EditorWindow
     {
         private MenuCommand menuCommand;
@@ -68,4 +69,5 @@ namespace ArenaUnity
                 Close();
         }
     }
+#endif
 }

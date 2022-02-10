@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
+#if UNITY_EDITOR
     public static class ArenaMenuCreate
     {
         [MenuItem("ARENA/Signout")]
@@ -136,5 +137,5 @@ namespace ArenaUnity
             ArenaClient.Instance.ProcessMessage(payload, menuCommand); // local
         }
     }
-
+#endif
 }
