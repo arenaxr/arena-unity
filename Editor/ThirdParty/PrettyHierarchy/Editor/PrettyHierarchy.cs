@@ -1,6 +1,4 @@
-﻿// From: https://github.com/NCEEGEE/PrettyHierarchy
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
@@ -127,7 +125,7 @@ namespace PrettyHierarchy
 
             // Alpha of the icon is affected by the object's active/inactive state
             Color color = item.GameObject.activeInHierarchy ? Color.white : new Color(1f, 1f, 1f, 0.5f);
-            
+
             //GUI.DrawTexture(item.PrefabIconRect, tex, ScaleMode.StretchToFill, true, 0f, color, 0f, 0f);
             GUI.DrawTexture(item.PrefabIconRect, icon, ScaleMode.StretchToFill, true, 0f, color, 0f, 0f);
         }

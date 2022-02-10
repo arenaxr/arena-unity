@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
+#if UNITY_EDITOR
     [CustomEditor(typeof(ArenaObject))]
     public class ArenaObjectEditor : Editor
     {
@@ -60,7 +61,7 @@ namespace ArenaUnity
                 }
             }
 
-
         }
     }
+#endif
 }
