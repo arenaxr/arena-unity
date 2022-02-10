@@ -209,93 +209,129 @@ namespace ArenaUnity
         private IEnumerator SceneSignin()
         {
             string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, brokerAddress, "s");
-            string gAuthPath = sceneAuthDir;
-            string mqttTokenPath = Path.Combine(sceneAuthDir, mqttTokenFile);
+            string userGAuthPath = sceneAuthDir;
+            string userMqttPath = Path.Combine(sceneAuthDir, mqttTokenFile);
+            string mqttToken = null;
 
-            // get app credentials
-            CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/conf/gauth.json"));
-            yield return cd.coroutine;
-            if (!isCrdSuccess(cd.result)) yield break;
-            string gauthId = cd.result.ToString();
-
-            // request user auth
-            using (var stream = ToStream(gauthId))
+            // check for local mqtt auth
+            string localMqttPath = Path.Combine(Application.persistentDataPath, mqttTokenFile);
+            Debug.LogWarning(localMqttPath);
+            if (File.Exists(localMqttPath))
             {
-                string applicationName = "ArenaClientCSharp";
-                IDataStore ds;
-                if (Application.isMobilePlatform) ds = new NullDataStore();
-                else ds = new FileDataStore(gAuthPath, true);
-                GoogleWebAuthorizationBroker.Folder = gAuthPath;
-                // GoogleWebAuthorizationBroker.AuthorizeAsync for "installed" creds only
-                credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                        GoogleClientSecrets.FromStream(stream).Secrets,
-                        Scopes,
-                        "user",
-                        CancellationToken.None,
-                        ds).Result;
-                if (ds.GetType() == typeof(FileDataStore))
-                    Debug.Log($"Credential file saved to: {gAuthPath}");
-
-                var oauthService = new Oauth2Service(new BaseClientService.Initializer()
+                Debug.LogWarning("Using local MQTT token.");
+                try
                 {
-                    HttpClientInitializer = credential,
-                    ApplicationName = applicationName,
-                });
+                    using (var sr = new StreamReader(localMqttPath))
+                    {
+                        mqttToken = sr.ReadToEnd();
+                    }
+                }
+                catch (IOException e)
+                {
+                    Debug.LogError(e.Message);
+                }
+            }
+            else
+            {
+                Debug.Log("Using remote-authenticated MQTT token.");
+                // get oauth app credentials
+                CoroutineWithData cda = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/conf/gauth.json"));
+                yield return cda.coroutine;
+                if (!isCrdSuccess(cda.result)) yield break;
+                string gauthId = cda.result.ToString();
 
-                var userInfo = oauthService.Userinfo.Get().Execute();
+                // request user auth
+                using (var stream = ToStream(gauthId))
+                {
+                    string applicationName = "ArenaClientCSharp";
+                    IDataStore ds;
+                    if (Application.isMobilePlatform) ds = new NullDataStore();
+                    else ds = new FileDataStore(userGAuthPath, true);
+                    GoogleWebAuthorizationBroker.Folder = userGAuthPath;
+                    // GoogleWebAuthorizationBroker.AuthorizeAsync for "installed" creds only
+                    credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                            GoogleClientSecrets.FromStream(stream).Secrets,
+                            Scopes,
+                            "user",
+                            CancellationToken.None,
+                            ds).Result;
+                    if (ds.GetType() == typeof(FileDataStore))
+                        Debug.Log($"Credential file saved to: {userGAuthPath}");
 
-                email = userInfo.Email;
-                idToken = credential.Token.IdToken;
+                    var oauthService = new Oauth2Service(new BaseClientService.Initializer()
+                    {
+                        HttpClientInitializer = credential,
+                        ApplicationName = applicationName,
+                    });
+
+                    var userInfo = oauthService.Userinfo.Get().Execute();
+
+                    email = userInfo.Email;
+                    idToken = credential.Token.IdToken;
+                }
+
+                // get arena web login token
+                yield return HttpRequestAuth($"https://{brokerAddress}/user/login");
+
+                // get arena user account state
+                WWWForm form = new WWWForm();
+                form.AddField("id_token", idToken);
+                cda = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/user_state", csrfToken, form));
+                yield return cda.coroutine;
+                if (!isCrdSuccess(cda.result)) yield break;
+                var user = JsonConvert.DeserializeObject<UserState>(cda.result.ToString());
+                if (user.authenticated && (namespaceName == null || namespaceName.Trim() == ""))
+                    namespaceName = user.username;
+
+                // get arena user mqtt token
+                form.AddField("id_auth", "google-installed");
+                form.AddField("username", user.username);
+                form.AddField("realm", realm);
+                form.AddField("scene", $"{namespaceName}/{sceneName}");
+                cda = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/mqtt_auth", csrfToken, form));
+                yield return cda.coroutine;
+                if (!isCrdSuccess(cda.result)) yield break;
+                mqttToken = cda.result.ToString();
+
+                StreamWriter writer = new StreamWriter(userMqttPath);
+                writer.Write(mqttToken);
+                writer.Close();
+                Debug.Log($"Mqtt file saved to: {userMqttPath}");
             }
 
-            // get arena web login token
-            yield return HttpRequestAuth($"https://{brokerAddress}/user/login");
-
-            // get arena user account state
-            WWWForm form = new WWWForm();
-            form.AddField("id_token", idToken);
-            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/user_state", csrfToken, form));
-            yield return cd.coroutine;
-            if (!isCrdSuccess(cd.result)) yield break;
-            var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
-            if (user.authenticated && (namespaceName == null || namespaceName.Trim() == ""))
-                namespaceName = user.username;
-
-            // get arena user mqtt token
-            form.AddField("id_auth", "google-installed");
-            form.AddField("username", user.username);
-            form.AddField("realm", realm);
-            form.AddField("scene", $"{namespaceName}/{sceneName}");
-            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/mqtt_auth", csrfToken, form));
-            yield return cd.coroutine;
-            if (!isCrdSuccess(cd.result)) yield break;
-            var auth = JsonConvert.DeserializeObject<MqttAuth>(cd.result.ToString());
+            var auth = JsonConvert.DeserializeObject<MqttAuth>(mqttToken);
             mqttUserName = auth.username;
             mqttPassword = auth.token;
             var handler = new JwtSecurityTokenHandler();
             JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
             permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
+            if (string.IsNullOrWhiteSpace(namespaceName))
+                namespaceName = payloadJson.Sub;
             sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
             sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
-            base.Start(); // background mqtt connect
+
+            // TODO: add expired clock to client component, log an error (once) in realtime when expired
+
+            // background mqtt connect
+            base.Start();
 
             // show address at root as well
             name = $"ARENA Client ({brokerAddress}/{namespaceName}/{sceneName})";
 
             // get persistence objects
-            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
-            yield return cd.coroutine;
-            if (!isCrdSuccess(cd.result)) yield break;
+            CoroutineWithData cdp = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
+            yield return cdp.coroutine;
+            if (!isCrdSuccess(cdp.result)) yield break;
             ArenaClientTransform = FindObjectOfType<ArenaClient>().transform;
-            string jsonString = cd.result.ToString();
+            string jsonString = cdp.result.ToString();
             JArray jsonVal = JArray.Parse(jsonString);
             dynamic persistMessages = jsonVal;
             // establish objects
             int objects_num = 1;
-            if (Directory.Exists(Application.dataPath + "/ArenaUnity"))
-                Directory.Delete(Application.dataPath + "/ArenaUnity", true);
-            if (File.Exists(Application.dataPath + "/ArenaUnity.meta"))
-                File.Delete(Application.dataPath + "/ArenaUnity.meta");
+            if (Directory.Exists(Path.Combine(Application.persistentDataPath, "ArenaUnity")))
+                Directory.Delete(Path.Combine(Application.persistentDataPath, "ArenaUnity"), true);
+            if (File.Exists(Path.Combine(Application.persistentDataPath, "ArenaUnity.meta")))
+                File.Delete(Path.Combine(Application.persistentDataPath, "ArenaUnity.meta"));
             foreach (dynamic msg in persistMessages)
             {
                 DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)msg.object_id}", objects_num / (float)jsonVal.Count);
@@ -304,8 +340,8 @@ namespace ArenaUnity
                 {
                     if (!string.IsNullOrWhiteSpace(uri))
                     {
-                        cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
-                        yield return cd.coroutine;
+                        cdp = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
+                        yield return cdp.coroutine;
                     }
                 }
                 CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.attributes);
@@ -363,8 +399,8 @@ namespace ArenaUnity
         {
             if (uri == null) return null;
             string url2Path = uri.Host + uri.AbsolutePath;
-            string objFileName = string.Join("/", url2Path.Split(Path.GetInvalidFileNameChars()));
-            return importPath + "/" + objFileName;
+            string objFileName = string.Join(Path.DirectorySeparatorChar.ToString(), url2Path.Split(Path.GetInvalidFileNameChars()));
+            return Path.Combine(importPath, objFileName);
         }
 
         private IEnumerator DownloadAssets(string messageType, string msgUrl)
