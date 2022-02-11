@@ -772,6 +772,8 @@ namespace ArenaUnity
                 www.SetRequestHeader("Cookie", $"csrftoken={csrf}");
                 www.SetRequestHeader("X-CSRFToken", csrf);
             }
+            if (mqttPassword != null)
+                www.SetRequestHeader("Cookie", $"mqtt_token={mqttPassword}");
             yield return www.SendWebRequest();
 #if UNITY_2020_1_OR_NEWER
             if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
