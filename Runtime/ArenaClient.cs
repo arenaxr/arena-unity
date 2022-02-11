@@ -98,7 +98,9 @@ namespace ArenaUnity
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
         static readonly string userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-        public static string importPath = "Assets/ArenaUnity/import";
+        static readonly string appFilesPath = Application.isMobilePlatform ? Application.persistentDataPath : "";
+
+        public static string importPath = Path.Combine(appFilesPath, "Assets", "ArenaUnity", "import");
         static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
@@ -215,7 +217,7 @@ namespace ArenaUnity
             string mqttToken = null;
             CoroutineWithData cd;
 
-            string localMqttPath = Path.Combine(Application.persistentDataPath, mqttTokenFile);
+            string localMqttPath = Path.Combine(appFilesPath, mqttTokenFile);
             if (File.Exists(localMqttPath))
             {
                 // check for local mqtt auth
@@ -332,10 +334,10 @@ namespace ArenaUnity
             dynamic persistMessages = jsonVal;
             // establish objects
             int objects_num = 1;
-            if (Directory.Exists(Path.Combine(Application.persistentDataPath, "ArenaUnity")))
-                Directory.Delete(Path.Combine(Application.persistentDataPath, "ArenaUnity"), true);
-            if (File.Exists(Path.Combine(Application.persistentDataPath, "ArenaUnity.meta")))
-                File.Delete(Path.Combine(Application.persistentDataPath, "ArenaUnity.meta"));
+            if (Directory.Exists(importPath))
+                Directory.Delete(importPath, true);
+            if (File.Exists($"{importPath}.meta"))
+                File.Delete($"{importPath}.meta");
             foreach (dynamic msg in persistMessages)
             {
                 DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)msg.object_id}", objects_num / (float)jsonVal.Count);
