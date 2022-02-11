@@ -38,7 +38,7 @@ namespace ArenaUnity
                 GUIStyle style = new GUIStyle(GUI.skin.label);
                 style.richText = true;
                 DateTimeOffset dateTimeOffSet = DateTimeOffset.FromUnixTimeSeconds(script.mqttExpires);
-                TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now);
+                TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now.ToUniversalTime());
                 GUILayout.Label($"Expires in {ArenaUnity.TimeSpanToString(duration)}", style);
             }
 

@@ -213,6 +213,7 @@ namespace ArenaUnity
             string userGAuthPath = sceneAuthDir;
             string userMqttPath = Path.Combine(sceneAuthDir, mqttTokenFile);
             string mqttToken = null;
+            CoroutineWithData cd;
 
             string localMqttPath = Path.Combine(Application.persistentDataPath, mqttTokenFile);
             if (File.Exists(localMqttPath))
@@ -235,10 +236,10 @@ namespace ArenaUnity
             {
                 // get oauth app credentials
                 Debug.Log("Using remote-authenticated MQTT token.");
-                CoroutineWithData cda = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/conf/gauth.json"));
-                yield return cda.coroutine;
-                if (!isCrdSuccess(cda.result)) yield break;
-                string gauthId = cda.result.ToString();
+                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/conf/gauth.json"));
+                yield return cd.coroutine;
+                if (!isCrdSuccess(cd.result)) yield break;
+                string gauthId = cd.result.ToString();
 
                 // request user auth
                 using (var stream = ToStream(gauthId))
@@ -276,10 +277,10 @@ namespace ArenaUnity
                 // get arena user account state
                 WWWForm form = new WWWForm();
                 form.AddField("id_token", idToken);
-                cda = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/user_state", csrfToken, form));
-                yield return cda.coroutine;
-                if (!isCrdSuccess(cda.result)) yield break;
-                var user = JsonConvert.DeserializeObject<UserState>(cda.result.ToString());
+                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/user_state", csrfToken, form));
+                yield return cd.coroutine;
+                if (!isCrdSuccess(cd.result)) yield break;
+                var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
                 if (user.authenticated && (namespaceName == null || namespaceName.Trim() == ""))
                     namespaceName = user.username;
 
@@ -288,10 +289,10 @@ namespace ArenaUnity
                 form.AddField("username", user.username);
                 form.AddField("realm", realm);
                 form.AddField("scene", $"{namespaceName}/{sceneName}");
-                cda = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/mqtt_auth", csrfToken, form));
-                yield return cda.coroutine;
-                if (!isCrdSuccess(cda.result)) yield break;
-                mqttToken = cda.result.ToString();
+                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/mqtt_auth", csrfToken, form));
+                yield return cd.coroutine;
+                if (!isCrdSuccess(cd.result)) yield break;
+                mqttToken = cd.result.ToString();
 
                 StreamWriter writer = new StreamWriter(userMqttPath);
                 writer.Write(mqttToken);
@@ -309,7 +310,7 @@ namespace ArenaUnity
                 namespaceName = payloadJson.Sub;
             mqttExpires = (long)payloadJson.Exp;
             DateTimeOffset dateTimeOffSet = DateTimeOffset.FromUnixTimeSeconds(mqttExpires);
-            TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now);
+            TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now.ToUniversalTime());
             Debug.Log($"MQTT Token expires in {ArenaUnity.TimeSpanToString(duration)}");
 
             sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
@@ -322,11 +323,11 @@ namespace ArenaUnity
             name = $"ARENA Client ({brokerAddress}/{namespaceName}/{sceneName})";
 
             // get persistence objects
-            CoroutineWithData cdp = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
-            yield return cdp.coroutine;
-            if (!isCrdSuccess(cdp.result)) yield break;
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
+            yield return cd.coroutine;
+            if (!isCrdSuccess(cd.result)) yield break;
             ArenaClientTransform = FindObjectOfType<ArenaClient>().transform;
-            string jsonString = cdp.result.ToString();
+            string jsonString = cd.result.ToString();
             JArray jsonVal = JArray.Parse(jsonString);
             dynamic persistMessages = jsonVal;
             // establish objects
@@ -343,8 +344,8 @@ namespace ArenaUnity
                 {
                     if (!string.IsNullOrWhiteSpace(uri))
                     {
-                        cdp = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
-                        yield return cdp.coroutine;
+                        cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
+                        yield return cd.coroutine;
                     }
                 }
                 CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.attributes);
