@@ -80,6 +80,7 @@ namespace ArenaUnity
         public string permissions;
 
         // internal variables
+        internal long mqttExpires = 0;
         internal string sceneUrl = null;
         private string idToken = null;
         private string csrfToken = null;
@@ -213,11 +214,10 @@ namespace ArenaUnity
             string userMqttPath = Path.Combine(sceneAuthDir, mqttTokenFile);
             string mqttToken = null;
 
-            // check for local mqtt auth
             string localMqttPath = Path.Combine(Application.persistentDataPath, mqttTokenFile);
-            Debug.LogWarning(localMqttPath);
             if (File.Exists(localMqttPath))
             {
+                // check for local mqtt auth
                 Debug.LogWarning("Using local MQTT token.");
                 try
                 {
@@ -233,8 +233,8 @@ namespace ArenaUnity
             }
             else
             {
-                Debug.Log("Using remote-authenticated MQTT token.");
                 // get oauth app credentials
+                Debug.Log("Using remote-authenticated MQTT token.");
                 CoroutineWithData cda = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/conf/gauth.json"));
                 yield return cda.coroutine;
                 if (!isCrdSuccess(cda.result)) yield break;
@@ -307,10 +307,13 @@ namespace ArenaUnity
             permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
             if (string.IsNullOrWhiteSpace(namespaceName))
                 namespaceName = payloadJson.Sub;
+            mqttExpires = (long)payloadJson.Exp;
+            DateTimeOffset dateTimeOffSet = DateTimeOffset.FromUnixTimeSeconds(mqttExpires);
+            TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now);
+            Debug.Log($"MQTT Token expires in {ArenaUnity.TimeSpanToString(duration)}");
+
             sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
             sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
-
-            // TODO: add expired clock to client component, log an error (once) in realtime when expired
 
             // background mqtt connect
             base.Start();

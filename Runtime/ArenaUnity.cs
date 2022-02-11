@@ -21,6 +21,19 @@ namespace ArenaUnity
 
         private static float ArenaFloat(float n) { return (float)Math.Round(n, 3); }
 
+        // time
+        public static string TimeSpanToString(TimeSpan span)
+        {
+            string spanString = string.Format("{0}{1}{2}{3}",
+                span.Duration().Days > 0 ? string.Format("{0:0} day{1}, ", span.Days, span.Days == 1 ? string.Empty : "s") : string.Empty,
+                span.Duration().Hours > 0 ? string.Format("{0:0} hour{1}, ", span.Hours, span.Hours == 1 ? string.Empty : "s") : string.Empty,
+                span.Duration().Minutes > 0 ? string.Format("{0:0} minute{1}, ", span.Minutes, span.Minutes == 1 ? string.Empty : "s") : string.Empty,
+                span.Duration().Seconds > 0 ? string.Format("{0:0} second{1}", span.Seconds, span.Seconds == 1 ? string.Empty : "s") : string.Empty);
+            if (spanString.EndsWith(", ")) spanString = spanString.Substring(0, spanString.Length - 2);
+            if (string.IsNullOrEmpty(spanString)) spanString = "0 seconds";
+            return spanString;
+        }
+
         // object type
         public static string ToArenaObjectType(GameObject gobj)
         {

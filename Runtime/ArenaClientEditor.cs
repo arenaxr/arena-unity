@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -31,6 +32,16 @@ namespace ArenaUnity
             }
 
             DrawDefaultInspector();
+
+            if (script.mqttExpires > 0)
+            {
+                GUIStyle style = new GUIStyle(GUI.skin.label);
+                style.richText = true;
+                DateTimeOffset dateTimeOffSet = DateTimeOffset.FromUnixTimeSeconds(script.mqttExpires);
+                TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now);
+                GUILayout.Label($"Expires in {ArenaUnity.TimeSpanToString(duration)}", style);
+            }
+
         }
     }
 #endif
