@@ -97,10 +97,10 @@ namespace ArenaUnity
         const string mqttTokenFile = ".arena_mqtt_auth";
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
-        static readonly string userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-        static readonly string appFilesPath = Application.isMobilePlatform ? Application.persistentDataPath : "";
+        static string userHomePath = null;
+        static string appFilesPath = null;
+        static string importPath = null;
 
-        public static string importPath = Path.Combine(appFilesPath, "Assets", "ArenaUnity", "import");
         static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
@@ -128,6 +128,10 @@ namespace ArenaUnity
 
         protected void OnEnable()
         {
+            userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+            appFilesPath = Application.isMobilePlatform ? Application.persistentDataPath : "";
+            importPath = Path.Combine(appFilesPath, "Assets", "ArenaUnity", "import");
+
             cameraForDisplay = Camera.main;
 
             // ensure consistant name and transform
