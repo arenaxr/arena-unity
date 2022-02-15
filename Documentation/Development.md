@@ -5,7 +5,26 @@ Tested on Android 10 (API 29).
 
 1. Create a Unity project.
 1. Add the ARENA-Unity package.
-1. Create a meaningful Package Name like `com.company.appname` in project settings: `Edit > Project Settings > Player > Package Name`.
+1. Create a meaningful Package Name like `com.company.appname` in project settings: `Edit > Project Settings > Player > PC > Package Name`.
+1. `Edit > Project Settings > Player > Android > Other Settings > Identification`:
+    - `Minimum API Level`: at least API 24 (for XR/ARCore).
+1. `Edit > Project Settings > Player > Android > Other Settings > Configuration:`:
+    - `Scripting Backend` to: `Mono`.
+    - `Api Compatibility Level` to: `.NET 4.x`.
+    - `Install Location` to: `Automatic` or `Force Internal`.
+    - `Internet Access` to: `Require`.
+    - `Write Permission` to: `Internal`.
+1. `Edit > Project Settings > Player > Android > Other Settings > Script Compilation`:
+    - `Scripted Define Symbols` to include:
+        - `SSL`
+1. `Edit > Project Settings > Player > Graphics > Video`:
+    - `Always Included Shaders` to include:
+        - `Standard`
+        - `Unlit/Color`
+        - `GLTFUtility/Standard (Metallic)`
+        - `GLTFUtility/Standard Transparent (Metallic)`
+        - `GLTFUtility/Standard (Specular)`
+        - `GLTFUtility/Standard Transparent (Specular)`
 1. Install a good device debugging package to your project like [LunarConsole](https://assetstore.unity.com/packages/tools/gui/lunar-mobile-console-free-82881).
 1. Switch platform to `Android` and `Build and Run` the app to generate the proper Android app data files folder.
 1. **[Daily Temporary]**: Switch platform to `PC, Mac & Linux Standalone`.

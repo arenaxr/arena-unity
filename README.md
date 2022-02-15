@@ -4,7 +4,7 @@ Unity C# library for editing scenes and creating applications for the ARENA.
 <img alt="" src="Documentation/arena-unity-demo.gif">
 
 ## Library Usage:
-1. Open a new or existing Unity project. **Unity 2019.1+ supported.**
+1. Open a new or existing Unity project. **Unity 2019.4+ supported.**
 1. Open `Edit > Project Settings > Player > Other Settings`.
 1. Change `Scripted Define Symbols` to include: `SSL`.
 1. Change `Api Compatibility Level` to: `.NET 4.x`.
