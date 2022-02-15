@@ -665,9 +665,9 @@ namespace ArenaUnity
             {
                 mobj = Importer.LoadFromFile(assetPath, new ImportSettings(), out clips);
             }
-            catch
+            catch (Exception err)
             {
-                Debug.LogWarning($"Unable to load GTLF at {assetPath}");
+                Debug.LogWarning($"Unable to load GTLF at {assetPath}. {err.Message}");
             }
             AssignAnimations(mobj, clips);
             if (mobj != null)
