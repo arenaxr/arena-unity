@@ -2,6 +2,16 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.0.12] - 2022-02-15
+### Added
+- Local MQTT token auth option.
+- UI/console MQTT expiration clock.
+- Added meshes for dodecahedron, tetrahedron, capsule, triangle.
+- Added triangle Mesh Tool editor.
+### Changed
+- Removed Editor features from mobile Runtime.
+- Fixed application paths for Windows.
+
 ## [0.0.11] - 2022-01-21
 ### Added
 - `ARENA Mesh Tool` to add 3D control handles for primitive meshes.

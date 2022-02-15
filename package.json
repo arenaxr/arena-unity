@@ -1,9 +1,9 @@
 {
   "name": "io.conix.arena.unity",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "displayName": "ARENA Library for Unity",
   "description": "Enables control of ARENA assets through Unity.",
-  "unity": "2019.1",
+  "unity": "2019.4",
   "unityRelease": "0b5",
   "documentationUrl": "https://github.com/conix-center/ARENA-unity/blob/main/README.md",
   "changelogUrl": "https://github.com/conix-center/ARENA-unity/blob/main/CHANGELOG.md",

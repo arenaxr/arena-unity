@@ -11,7 +11,6 @@ Tested on Android 10 (API 29).
 1. `Edit > Project Settings > Player > Android > Other Settings > Identification`:
     - `Minimum API Level`: at least API 24 (for XR/ARCore).
 1. `Edit > Project Settings > Player > Android > Other Settings > Configuration:`:
-    - `Scripting Backend` to: `Mono`.
     - `Api Compatibility Level` to: `.NET 4.x`.
     - `Install Location` to: `Automatic` or `Force Internal`.
     - `Internet Access` to: `Require`.
