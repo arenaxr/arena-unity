@@ -49,6 +49,12 @@ namespace ArenaUnity
             PublishPrimitive(menuCommand, "cylinder");
         }
 
+        [MenuItem("GameObject/ARENA/Dodecahedron", false, 10)]
+        internal static void CreateArenaDodecahedron(MenuCommand menuCommand)
+        {
+            PublishPrimitive(menuCommand, "dodecahedron");
+        }
+
         [MenuItem("GameObject/ARENA/GLTF Model", false, 10)]
         internal static void CreateArenaGltfModel(MenuCommand menuCommand)
         {
@@ -93,6 +99,12 @@ namespace ArenaUnity
         internal static void CreateArenaSphere(MenuCommand menuCommand)
         {
             PublishPrimitive(menuCommand, "sphere");
+        }
+
+        [MenuItem("GameObject/ARENA/Tetrahedron", false, 10)]
+        internal static void CreateArenaTetrahedron(MenuCommand menuCommand)
+        {
+            PublishPrimitive(menuCommand, "tetrahedron");
         }
 
         [MenuItem("GameObject/ARENA/Torus", false, 10)]

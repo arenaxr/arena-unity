@@ -3,8 +3,7 @@
 ## Android Debug Flow
 Tested on Android 10 (API 29).
 
-1. Create a Unity project.
-1. Add the ARENA-Unity package.
+1. Follow the [startup project setup](https://github.com/conix-center/ARENA-unity#library-usage).
 1. Create a meaningful Package Name like `com.company.appname` in project settings: `Edit > Project Settings > Player > PC > Package Name`.
 1. `Edit > Project Settings > Player > Android > Other Settings > Identification`:
     - `Minimum API Level`: at least API 24 (for XR/ARCore).

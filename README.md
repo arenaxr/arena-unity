@@ -5,9 +5,12 @@ Unity C# library for editing scenes and creating applications for the ARENA.
 
 ## Library Usage:
 1. Open a new or existing Unity project. **Unity 2019.4+ supported.**
-1. Open `Edit > Project Settings > Player > Other Settings`.
-1. Change `Scripted Define Symbols` to include: `SSL`.
-1. Change `Api Compatibility Level` to: `.NET 4.x`.
+1. `Edit > Project Settings > Player > Android > Other Settings > Configuration`:
+    - `Scripting Backend` to: `Mono`.
+    - `Api Compatibility Level` to: `.NET 4.x`.
+1. `Edit > Project Settings > Player > Android > Other Settings > Script Compilation`:
+    - `Scripted Define Symbols` to include:
+        - `SSL`
 1. Open `Window > Package Manager` and `+ > Add package from git URL...`, use this link:
     ```
     https://github.com/conix-center/ARENA-unity.git#0.0.11
