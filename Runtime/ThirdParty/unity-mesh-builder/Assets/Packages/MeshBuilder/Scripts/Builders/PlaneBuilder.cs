@@ -7,16 +7,21 @@ namespace MeshBuilder {
 
     public class PlaneBuilder : MeshBuilderBase {
 
+        public static Mesh sameMesh { get; private set; }
+
         public static Mesh Build (float width = 1f, float height = 1f, int wSegments = 1, int hSegments = 1) {
             return Build(new ParametricPlaneDefault(), width, height, wSegments, hSegments);
         }
 
         public static Mesh Build(ParametricPlane param, float width = 1f, float height = 1f, int wSegments = 1, int hSegments = 1) {
+            if (sameMesh != null) return sameMesh;
+
             wSegments = Mathf.Max(1, wSegments);
             hSegments = Mathf.Max(1, hSegments);
 
-            var mesh = new Mesh();
-
+            var mesh = new Mesh {
+                name = "Plane1"
+            };
             var vertices = new List<Vector3>();
             var triangles = new List<int>();
             var uvs = new List<Vector2>();
@@ -50,12 +55,11 @@ namespace MeshBuilder {
             mesh.SetTriangles(triangles.ToArray(), 0);
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
+            sameMesh = mesh;
 
-            return mesh;
+            return sameMesh;
         }
 
     }
 
 }
-
-
