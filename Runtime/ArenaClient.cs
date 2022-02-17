@@ -517,6 +517,9 @@ namespace ArenaUnity
             }
             else
             {   // create local
+#if !UNITY_EDITOR
+                Debug.Log($"Loading object '{object_id}'..."); // show new objects in log
+#endif
                 gobj = new GameObject();
                 gobj.transform.parent = ArenaClientTransform;
                 gobj.name = object_id;
