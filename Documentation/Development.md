@@ -43,7 +43,7 @@ Tested on Android 10 (API 29).
 
 
 ## iOS Debug Flow
-Tested on iOS 15.
+Tested on iOS 15. **NOTE: iOS builds are currently non-functional at runtime due to use of `dynamic` objects as they won't cross-compile. Status: https://github.com/conix-center/ARENA-unity/issues/22.**
 
 1. `Edit > Project Settings > Player > iOS > Identification`: Override default if desired:
     - `Bundle Identifier`: `com.companyname.appname` (sample)
