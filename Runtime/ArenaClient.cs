@@ -148,12 +148,34 @@ namespace ArenaUnity
         // Start is called before the first frame update
         protected override void Start()
         {
-            StartCoroutine(SceneSignin());
 #if UNITY_EDITOR
+            ConnectArena();
             Selection.activeGameObject = gameObject; // client focus at runtime starts
             SceneHierarchyUtility.SetExpanded(gameObject, true); // expand arena list
 #endif
         }
+
+        /// <summary>
+        /// Authenticate, MQTT connect, and add ARENA objects from Persistance DB to local app.
+        /// </summary>
+        public void ConnectArena()
+        {
+            StartCoroutine(SceneSignin());
+        }
+
+        /// <summary>
+        /// Disconnect MQTT and remove ARENA objects from local app.
+        /// </summary>
+        public void DisconnectArena()
+        {
+            Disconnect();
+            foreach (var aobj in arenaObjs.Values)
+            {
+                Destroy(aobj);
+            }
+            arenaObjs.Clear();
+        }
+
 
         // Update is called once per frame
         protected override void Update()
