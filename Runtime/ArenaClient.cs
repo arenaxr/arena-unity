@@ -72,16 +72,11 @@ namespace ArenaUnity
         [Range(0, 60)]
         public int transformPublishInterval = 30; // in publish per frames
 
-        [Header("Authentication")]
-        [Tooltip("Authenticated user email account.")]
-        public string email = null;
-        [Tooltip("MQTT JWT Auth Payload and Claims")]
-        [TextArea(10, 15)]
-        public string permissions;
-
         // internal variables
-        internal long mqttExpires = 0;
-        internal string sceneUrl = null;
+        internal string email { get; private set; }
+        internal string permissions { get; private set; }
+        internal long mqttExpires { get; private set; }
+        internal string sceneUrl { get; private set; }
         private string idToken = null;
         private string csrfToken = null;
         private List<string> eventMessages = new List<string>();
@@ -175,7 +170,6 @@ namespace ArenaUnity
             }
             arenaObjs.Clear();
         }
-
 
         // Update is called once per frame
         protected override void Update()
