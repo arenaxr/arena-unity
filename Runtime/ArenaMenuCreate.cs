@@ -1,4 +1,9 @@
-﻿using System.Dynamic;
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ */
+
+using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;

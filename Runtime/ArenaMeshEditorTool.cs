@@ -1,4 +1,9 @@
-﻿using UnityEditor;
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ */
+
+using UnityEditor;
 #if UNITY_EDITOR
 using UnityEditor.EditorTools;
 #endif
