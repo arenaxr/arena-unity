@@ -189,7 +189,7 @@ namespace ArenaUnity
         /// </summary>
         public void SignoutArena()
         {
-            ArenaMenuCreate.SignoutArena();
+            ArenaMenu.SignoutArena();
         }
 
         // Update is called once per frame

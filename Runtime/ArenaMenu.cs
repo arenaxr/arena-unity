@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
-    public static class ArenaMenuCreate
+    public static class ArenaMenu
     {
 #if UNITY_EDITOR
         [MenuItem("ARENA/Signout")]
