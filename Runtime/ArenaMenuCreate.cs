@@ -14,15 +14,23 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
-#if UNITY_EDITOR
     public static class ArenaMenuCreate
     {
+#if UNITY_EDITOR
         [MenuItem("ARENA/Signout")]
-        internal static void MenuSignoutArena()
+#endif
+        internal static void SignoutArena()
         {
-            ArenaClient.Instance.SignoutArena();
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+                EditorApplication.ExitPlaymode();
+#endif
+            if (Directory.Exists(GoogleWebAuthorizationBroker.Folder))
+                Directory.Delete(GoogleWebAuthorizationBroker.Folder, true);
+            Debug.Log("Logged out of the ARENA");
         }
 
+#if UNITY_EDITOR
         // Add a menu item to create custom GameObjects.
         // Priority 1 ensures it is grouped with the other menu items of the same kind
         // and propagated to the hierarchy dropdown and hierarchy context menus.
@@ -150,6 +158,6 @@ namespace ArenaUnity
             ArenaClient.Instance.Publish(object_id, payload); // remote
             ArenaClient.Instance.ProcessMessage(payload, menuCommand); // local
         }
-    }
 #endif
+    }
 }

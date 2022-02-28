@@ -189,12 +189,7 @@ namespace ArenaUnity
         /// </summary>
         public void SignoutArena()
         {
-#if UNITY_EDITOR
-            EditorApplication.ExitPlaymode();
-#endif
-            if (Directory.Exists(GoogleWebAuthorizationBroker.Folder))
-                Directory.Delete(GoogleWebAuthorizationBroker.Folder, true);
-            Debug.Log("Logged out of the ARENA");
+            ArenaMenuCreate.SignoutArena();
         }
 
         // Update is called once per frame
