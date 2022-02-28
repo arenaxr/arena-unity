@@ -17,7 +17,7 @@ namespace ArenaUnity
             // signout button
             if (GUILayout.Button("Signout"))
             {
-                ArenaMenuCreate.SceneSignout();
+                ArenaClient.Instance.SignoutArena();
             }
 
             // clickable scene url

@@ -13,12 +13,9 @@ namespace ArenaUnity
     public static class ArenaMenuCreate
     {
         [MenuItem("ARENA/Signout")]
-        internal static void SceneSignout()
+        internal static void MenuSignoutArena()
         {
-            EditorApplication.ExitPlaymode();
-            if (Directory.Exists(GoogleWebAuthorizationBroker.Folder))
-                Directory.Delete(GoogleWebAuthorizationBroker.Folder, true);
-            Debug.Log("Logged out of the ARENA");
+            ArenaClient.Instance.SignoutArena();
         }
 
         // Add a menu item to create custom GameObjects.

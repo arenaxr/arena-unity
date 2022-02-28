@@ -72,11 +72,24 @@ namespace ArenaUnity
         [Range(0, 60)]
         public int transformPublishInterval = 30; // in publish per frames
 
+        /// <summary>
+        /// Authenticated user email account.
+        /// </summary>
+        public string email { get; private set; }
+        /// <summary>
+        /// MQTT JWT Auth Payload and Claims.
+        /// </summary>
+        public string permissions { get; private set; }
+        /// <summary>
+        /// MQTT JWT expiration epoch.
+        /// </summary>
+        public long mqttExpires { get; private set; }
+        /// <summary>
+        /// Browser URL for the scene.
+        /// </summary>
+        public string sceneUrl { get; private set; }
+
         // internal variables
-        internal string email { get; private set; }
-        internal string permissions { get; private set; }
-        internal long mqttExpires { get; private set; }
-        internal string sceneUrl { get; private set; }
         private string idToken = null;
         private string csrfToken = null;
         private List<string> eventMessages = new List<string>();
@@ -169,6 +182,19 @@ namespace ArenaUnity
                 Destroy(aobj);
             }
             arenaObjs.Clear();
+        }
+
+        /// <summary>
+        /// Remove ARENA authentication.
+        /// </summary>
+        public void SignoutArena()
+        {
+#if UNITY_EDITOR
+            EditorApplication.ExitPlaymode();
+#endif
+            if (Directory.Exists(GoogleWebAuthorizationBroker.Folder))
+                Directory.Delete(GoogleWebAuthorizationBroker.Folder, true);
+            Debug.Log("Logged out of the ARENA");
         }
 
         // Update is called once per frame
