@@ -2,6 +2,15 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.0.13] - 2022-02-28
+### Added
+- Mobile logging of persistence download objects.
+- iOS builds enable file-sharing post-build.
+### Changed
+- Reworked `ArenaClient` APIs for improved connect/disconnect/status.
+- Made `ArenaClient` permission variables read-only.
+- Mobile builds no longer automatically connect in Play mode.
+
 ## [0.0.12] - 2022-02-15
 ### Added
 - Local MQTT token auth option.
