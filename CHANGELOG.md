@@ -122,7 +122,7 @@ ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 ### Added
 - M2MqttUnity for ARENA TLS auth.
 - Google auth for account ACL links.
-- Load objects from persistance database.
+- Load objects from persistence database.
 - Publish transform changes as updates to ARENA.
 - Handle updates from subscription updates to ARENA.
 - Converted to Unity Package Manager format.

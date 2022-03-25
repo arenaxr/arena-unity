@@ -20,7 +20,7 @@ namespace ArenaUnity
     [DisallowMultipleComponent]
     public class ArenaObject : PrettyObject
     {
-        [Tooltip("Message type in persistance storage schema")]
+        [Tooltip("Message type in persistence storage schema")]
         public string messageType = "object"; // default to object
         [Tooltip("Persist this object in the ARENA server database (default true = persist on server)")]
         public bool persist = true;

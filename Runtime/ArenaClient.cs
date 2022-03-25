@@ -164,7 +164,7 @@ namespace ArenaUnity
         }
 
         /// <summary>
-        /// Authenticate, MQTT connect, and add ARENA objects from Persistance DB to local app.
+        /// Authenticate, MQTT connect, and add ARENA objects from Persistence DB to local app.
         /// </summary>
         public void ConnectArena()
         {
@@ -381,7 +381,7 @@ namespace ArenaUnity
                 File.Delete($"{importPath}.meta");
             foreach (dynamic msg in persistMessages)
             {
-                DisplayCancelableProgressBar("ARENA Persistance", $"Loading object-id: {(string)msg.object_id}", objects_num / (float)jsonVal.Count);
+                DisplayCancelableProgressBar("ARENA Persistence", $"Loading object-id: {(string)msg.object_id}", objects_num / (float)jsonVal.Count);
                 IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
                 foreach (var uri in uris)
                 {
