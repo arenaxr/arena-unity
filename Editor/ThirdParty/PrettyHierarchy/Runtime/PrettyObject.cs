@@ -1,7 +1,7 @@
 ﻿// Modified from: https://github.com/NCEEGEE/PrettyHierarchy
 
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 namespace PrettyHierarchy
 {
@@ -18,7 +18,7 @@ namespace PrettyHierarchy
         //[SerializeField]
         private bool useDefaultTextColor = false;
         //[SerializeField]
-        private Color32 textColor = Color.green;
+        private Color32 textColor = new Color32(0, 0, 0, 255);
         //[SerializeField]
         private Font font;
         //[SerializeField]
@@ -40,6 +40,14 @@ namespace PrettyHierarchy
         public FontStyle FontStyle { get { return fontStyle; } }
         public TextAnchor Alignment { get { return alignment; } }
         public bool TextDropShadow { get { return textDropShadow; } }
+
+        private void Awake()
+        {
+            if (EditorGUIUtility.isProSkin)
+                textColor = new Color32(0, 255, 0, 255); //dark theme=light green
+            else
+                textColor = new Color32(0, 128, 0, 255); //light theme=dark green
+        }
 
         private void OnValidate()
         {
