@@ -157,7 +157,7 @@
             "sound": {
                 "positional": true,
                 "poolSize": 8,
-                "src": "https://xr.andrew.cmu.edu/audio/bark.ogg",
+                "src": "store/audio/bark.ogg",
                 "on": "mousedown"
             },
             "click-listener": "",
@@ -198,7 +198,7 @@
             "sound": {
                 "positional": true,
                 "poolSize": 8,
-                "src": "https://xr.andrew.cmu.edu/audio/glass.ogg",
+                "src": "store/audio/glass.ogg",
                 "on": "mousedown"
             },
             "click-listener": "",
@@ -268,7 +268,7 @@
             "sound": {
                 "positional": true,
                 "poolSize": 8,
-                "src": "https://xr.andrew.cmu.edu/audio/boing.wav",
+                "src": "store/audio/boing.wav",
                 "on": "mousedown"
             },
             "click-listener": "",

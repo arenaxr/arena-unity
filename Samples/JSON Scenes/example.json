@@ -2,7 +2,7 @@
     "object_id": "anothercube",
     "createdAt": "2022-01-05T16:18:08.768Z",
     "updatedAt": "2022-01-05T16:18:08.792Z",
-    "attributes": {
+    "data": {
         "object_type": "box",
         "width": 1,
         "height": 1,
@@ -35,7 +35,7 @@
     "object_id": "cube2",
     "createdAt": "2022-01-05T16:18:08.784Z",
     "updatedAt": "2022-01-05T16:18:08.793Z",
-    "attributes": {
+    "data": {
         "object_type": "box",
         "depth": 1,
         "height": 1,
@@ -74,7 +74,7 @@
     "object_id": "newbox",
     "createdAt": "2022-01-05T16:18:08.788Z",
     "updatedAt": "2022-01-05T16:18:08.811Z",
-    "attributes": {
+    "data": {
         "object_type": "cube",
         "width": 1,
         "height": 1,
@@ -115,7 +115,7 @@
     "object_id": "thisisatest",
     "createdAt": "2022-01-05T16:18:08.799Z",
     "updatedAt": "2022-01-05T16:18:08.811Z",
-    "attributes": {
+    "data": {
         "object_type": "entity",
         "geometry": {
             "primitive": "box",
@@ -127,7 +127,7 @@
     "object_id": "anothernewline",
     "createdAt": "2022-01-05T16:18:08.807Z",
     "updatedAt": "2022-01-05T16:18:08.817Z",
-    "attributes": {
+    "data": {
         "object_type": "thickline",
         "path": "-2 -1 0, 0 20 0, 10 -1 10",
         "lineWidth": 5,
@@ -139,7 +139,7 @@
     "object_id": "pinata",
     "createdAt": "2022-01-05T16:18:08.815Z",
     "updatedAt": "2022-01-05T16:18:08.824Z",
-    "attributes": {
+    "data": {
         "object_type": "gltf-model",
         "url": "https://arena-cdn.conix.io/store/users/wiselab/models/fortnite_llama/scene.gltf",
         "position": {
@@ -163,7 +163,7 @@
     "object_id": "move-controls",
     "createdAt": "2022-01-05T16:18:08.819Z",
     "updatedAt": "2022-01-05T16:18:08.832Z",
-    "attributes": {
+    "data": {
         "object_type": "image",
         "position": {
             "x": -10,
@@ -192,7 +192,7 @@
     "object_id": "sometext",
     "createdAt": "2022-01-05T16:18:08.821Z",
     "updatedAt": "2022-01-05T16:18:08.832Z",
-    "attributes": {
+    "data": {
         "object_type": "text",
         "value": "This is some text!",
         "font": "roboto",
@@ -215,7 +215,7 @@
     "object_id": "move-controls-no encoding",
     "createdAt": "2022-01-05T16:18:08.823Z",
     "updatedAt": "2022-01-05T16:18:08.839Z",
-    "attributes": {
+    "data": {
         "object_type": "image",
         "url": "https://arena-cdn.conix.io/store/users/wiselab/images/move-controls.png",
         "position": {
@@ -239,7 +239,7 @@
     "object_id": "test-scene",
     "createdAt": "2022-01-05T16:18:08.825Z",
     "updatedAt": "2022-01-05T16:18:08.847Z",
-    "attributes": {
+    "data": {
         "object_type": "threejs-scene",
         "url": "/store/users/wiselab/threejs-scenes/simple_scene.json",
         "position": {
@@ -263,7 +263,7 @@
     "object_id": "xrlogo",
     "createdAt": "2022-01-05T16:18:08.827Z",
     "updatedAt": "2022-01-05T16:18:08.857Z",
-    "attributes": {
+    "data": {
         "object_type": "gltf-model",
         "url": "https://www.dropbox.com/s/lt6g57wjk744q0i/XR-logo.glb?dl=0",
         "position": {
@@ -296,7 +296,7 @@
     "object_id": "boardwalkSign",
     "createdAt": "2022-01-05T16:18:08.842Z",
     "updatedAt": "2022-01-05T16:18:08.862Z",
-    "attributes": {
+    "data": {
         "object_type": "gltf-model",
         "url": "https://arena-cdn.conix.io/store/users/wiselab/models/harbourwalk_sign/scene.gltf",
         "position": {
@@ -323,7 +323,7 @@
     "object_id": "acrate",
     "createdAt": "2022-01-05T16:18:08.853Z",
     "updatedAt": "2022-01-05T16:18:08.865Z",
-    "attributes": {
+    "data": {
         "object_type": "box",
         "depth": 1,
         "height": 1,
@@ -356,7 +356,7 @@
     "object_id": "particletest",
     "createdAt": "2022-01-05T16:18:08.861Z",
     "updatedAt": "2022-01-05T16:18:08.870Z",
-    "attributes": {
+    "data": {
         "object_type": "entity",
         "position": {
             "x": 0,
@@ -369,7 +369,7 @@
     "object_id": "arobothead",
     "createdAt": "2022-01-05T16:18:08.864Z",
     "updatedAt": "2022-01-05T16:18:08.874Z",
-    "attributes": {
+    "data": {
         "object_type": "gltf-model",
         "url": "/store/models/robobit.glb",
         "position": {
@@ -398,7 +398,7 @@
     "object_id": "scene-options",
     "createdAt": "2022-01-05T16:18:08.868Z",
     "updatedAt": "2022-01-05T16:18:08.879Z",
-    "attributes": {
+    "data": {
         "env-presets": {
             "active": true,
             "preset": "default"
@@ -415,7 +415,7 @@
     "object_id": "bunny_pcd",
     "createdAt": "2022-01-05T16:18:08.874Z",
     "updatedAt": "2022-01-05T16:18:08.885Z",
-    "attributes": {
+    "data": {
         "object_type": "pcd-model",
         "url": "/store/users/wiselab/pcd-models/bunny.pcd",
         "position": {
@@ -440,7 +440,7 @@
     "object_id": "Pumpkin",
     "createdAt": "2022-01-05T16:18:08.877Z",
     "updatedAt": "2022-01-05T16:18:08.894Z",
-    "attributes": {
+    "data": {
         "object_type": "gltf-model",
         "url": "/store/users/nuno/Pumpkin/Pumpkin.gltf",
         "position": {
@@ -471,7 +471,7 @@
     "object_id": "bunny_pcd_dropbox",
     "createdAt": "2022-01-05T16:18:08.883Z",
     "updatedAt": "2022-01-05T16:18:08.928Z",
-    "attributes": {
+    "data": {
         "object_type": "pcd-model",
         "url": "https://www.dropbox.com/s/feczlszprqnvehv/bunny.pcd?dl=0",
         "pointSize": 0.01,
