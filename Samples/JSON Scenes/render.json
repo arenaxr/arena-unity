@@ -10,7 +10,7 @@
                 "y": 0.4,
                 "z": -9
             },
-            "url": "models/helios/scene.gltf",
+            "url": "store/models/helios/scene.gltf",
             "scale": {
                 "x": 0.13,
                 "y": 0.13,
@@ -26,7 +26,7 @@
         "data": {
             "parent": "camera_er_er",
             "object_type": "gltf-model",
-            "url": "models/hat2.glb",
+            "url": "store/models/hat2.glb",
             "position": {
                 "x": 0,
                 "y": 0.8,
@@ -47,7 +47,7 @@
         "data": {
             "parent": "camera_er1k_er1k",
             "object_type": "gltf-model",
-            "url": "models/hat2.glb",
+            "url": "store/models/hat2.glb",
             "position": {
                 "x": 0,
                 "y": 0.8,
@@ -72,7 +72,7 @@
                 "y": 0,
                 "z": -5
             },
-            "url": "models/monkey/scene.gltf",
+            "url": "store/models/monkey/scene.gltf",
             "rotation": {
                 "x": 0,
                 "y": 1,
@@ -104,7 +104,7 @@
                 "z": 0.102,
                 "w": 0.985
             },
-            "url": "models/Shuttle.glb",
+            "url": "store/models/Shuttle.glb",
             "click-listener": "",
             "scale": {
                 "x": 12,
@@ -228,7 +228,7 @@
         "persist": true,
         "data": {
             "object_type": "gltf-model",
-            "url": "models/cybertruck/scene.gltf",
+            "url": "store/models/cybertruck/scene.gltf",
             "position": {
                 "x": -5,
                 "y": 0,
@@ -306,7 +306,7 @@
                 "y": 1.8,
                 "z": -8
             },
-            "url": "models/cow2/scene.gltf",
+            "url": "store/models/cow2/scene.gltf",
             "scale": {
                 "x": 0.02,
                 "y": 0.02,
@@ -364,7 +364,7 @@
                 "z": 10
             },
             "color": "#ffffff",
-            "url": "models/Avocado.glb"
+            "url": "store/models/Avocado.glb"
         }
     },
     {
@@ -391,7 +391,7 @@
                 "z": 0.0035
             },
             "color": "#ffffff",
-            "url": "models/mask/scene.gltf"
+            "url": "store/models/mask/scene.gltf"
         }
     },
     {
