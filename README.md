@@ -23,6 +23,6 @@ Unity C# library for editing scenes and creating applications for the ARENA.
 
 ## Documentation
 - [Runtime Usage](https://arena.conix.io/content/unity/runtime)
-- [Developers Notes](https://arena.conix.io/content/unity/developers)
+- [Developers Notes](https://github.com/conix-center/ARENA-unity/blob/main/Documentation/Development.md)
 - [Changelog](https://github.com/conix-center/ARENA-unity/blob/main/CHANGELOG.md)
 - [Open Source](https://github.com/conix-center/ARENA-unity/blob/main/Third%20Party%20Notices.md) used and inspired from
