@@ -2852,7 +2852,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab85a5933c23e4f10b6bb8a372fa1ffd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brokerAddress: arenaxr.org
+  brokerAddress: mqtt.arenaxr.org
   namespaceName: 
   sceneName: example
   sceneUrl: 

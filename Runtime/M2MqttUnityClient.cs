@@ -42,7 +42,7 @@ namespace M2MqttUnity
     {
         [Header("MQTT broker configuration")]
         [Tooltip("IP address or URL of the host running the broker")]
-        public string brokerAddress = "arenaxr.org";
+        public string brokerAddress = "mqtt.arenaxr.org";
         [Tooltip("Port where the broker accepts connections")]
         protected int brokerPort = 8883;
         [Tooltip("Use encrypted connection")]
