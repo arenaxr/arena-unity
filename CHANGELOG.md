@@ -2,6 +2,14 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.0.14](https://github.com/conix-center/ARENA-unity/compare/0.0.13...v0.0.14) (2022-07-14)
+
+
+### Bug Fixes
+
+* **editor:** improve arena object inspector color light theme ([213f263](https://github.com/conix-center/ARENA-unity/commit/213f2636fe7ad876bb98bf2b7300fd0ee869d53c))
+* spelling ([c8d364f](https://github.com/conix-center/ARENA-unity/commit/c8d364fcae08dfd6100ef622ab6f8cabbef02743))
+
 ## [0.0.13] - 2022-02-28
 ### Added
 - Mobile logging of persistence download objects.
