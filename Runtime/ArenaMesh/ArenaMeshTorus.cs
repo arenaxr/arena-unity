@@ -8,7 +8,7 @@ namespace ArenaUnity
     public class ArenaMeshTorus : ArenaMesh
     {
         [SerializeField, Range(0.1f, 10f)] internal float radius = 0.5f;
-        [SerializeField, Range(0.05f, 10f)] internal float thickness = 0.1f;
+        [SerializeField, Range(0.05f, 10f)] internal float radiusTubular = 0.1f;
         [SerializeField, Range(2, 64)] internal int radialSegments = 16;
         [SerializeField, Range(3, 64)] internal int thetaSegments = 8;
         [SerializeField, Range(0f, Mathf.PI * 2f)] internal float thetaStart = 0f;
@@ -16,6 +16,7 @@ namespace ArenaUnity
 
         protected override void Build(MeshFilter filter)
         {
+            float thickness = radiusTubular * 2;
             filter.sharedMesh = TorusBuilder.Build(radius, thickness, radialSegments, thetaSegments, thetaStart, thetaEnd);
         }
     }

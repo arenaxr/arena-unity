@@ -7,14 +7,12 @@ namespace ArenaUnity
     public class ArenaMeshCapsule : ArenaMesh
     {
         [SerializeField, Range(0.5f, 10f)] internal float radius = 1f;
-        [SerializeField, Range(0.5f, 10f)] internal float height = 4f;
+        [SerializeField, Range(0.5f, 10f)] internal float length = 2f;
         [SerializeField, Range(3, 16)] internal int radialSegments = 8, heightSegments = 4;
 
         protected override void Build(MeshFilter filter)
         {
-            if (height < (radius * 2))
-                height = radius * 2;
-            filter.sharedMesh = CapsuleBuilder.CapsuleData(radius, height - (radius * 2), radialSegments, heightSegments);
+            filter.sharedMesh = CapsuleBuilder.CapsuleData(radius, length, radialSegments, heightSegments);
         }
 
     }

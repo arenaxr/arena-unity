@@ -66,11 +66,11 @@ namespace ArenaUnity
             }
             switch (type)
             {
-                // build your own meshes
+                // build your own meshes, defaults here should reflect ARENA/AFRAME/THREE defaults
                 case "capsule":
                     ArenaMeshCapsule capsule = gobj.GetComponent<ArenaMeshCapsule>() ?? gobj.AddComponent<ArenaMeshCapsule>();
                     capsule.radius = data.radius != null ? (float)data.radius : 1f;
-                    capsule.height = data.height != null ? (float)data.height : 2f;
+                    capsule.length = data.length != null ? (float)data.length : 1f;
                     capsule.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     capsule.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
                     break;
@@ -87,13 +87,13 @@ namespace ArenaUnity
                 case "cone":
                     ArenaMeshCone cone = gobj.GetComponent<ArenaMeshCone>() ?? gobj.AddComponent<ArenaMeshCone>();
                     cone.radius = data.radiusBottom != null ? (float)data.radiusBottom : 1f;
-                    cone.height = data.height != null ? (float)data.height : 2f;
+                    cone.height = data.height != null ? (float)data.height : 1f;
                     cone.subdivision = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     break;
                 case "cylinder":
                     ArenaMeshCylinder cylinder = gobj.GetComponent<ArenaMeshCylinder>() ?? gobj.AddComponent<ArenaMeshCylinder>();
                     cylinder.radius = data.radius != null ? (float)data.radius : 1f;
-                    cylinder.height = data.height != null ? (float)data.height : 2f;
+                    cylinder.height = data.height != null ? (float)data.height : 1f;
                     cylinder.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     cylinder.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
                     cylinder.openEnded = data.openEnded != null ? Convert.ToBoolean(data.openEnded) : false;
@@ -125,10 +125,16 @@ namespace ArenaUnity
                     plane.wSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 2;
                     plane.hSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 2;
                     break;
+                case "prism":
+                    ArenaMeshPrism prism = gobj.GetComponent<ArenaMeshPrism>() ?? gobj.AddComponent<ArenaMeshPrism>();
+                    prism.width = data.width != null ? (float)data.width : 1f;
+                    prism.height = data.height != null ? (float)data.height : 1f;
+                    prism.depth = data.depth != null ? (float)data.depth : 1f;
+                    break;
                 case "ring":
                     ArenaMeshRing ring = gobj.GetComponent<ArenaMeshRing>() ?? gobj.AddComponent<ArenaMeshRing>();
                     ring.outerRadius = data.radiusOuter != null ? (float)data.radiusOuter : 1f;
-                    ring.innerRadius = data.radiusInner != null ? (float)data.radiusInner : 1f;
+                    ring.innerRadius = data.radiusInner != null ? (float)data.radiusInner : 0.5f;
                     ring.phiSegments = data.segmentsPhi != null ? (int)data.segmentsPhi : 8;
                     ring.thetaSegments = data.segmentsTheta != null ? (int)data.segmentsTheta : 32;
                     ring.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
@@ -150,7 +156,7 @@ namespace ArenaUnity
                 case "torus":
                     ArenaMeshTorus torus = gobj.GetComponent<ArenaMeshTorus>() ?? gobj.AddComponent<ArenaMeshTorus>();
                     torus.radius = data.radius != null ? (float)data.radius : 1f;
-                    torus.thickness = data.radiusTubular != null ? (float)data.radiusTubular * 2 : 0.2f * 2;
+                    torus.radiusTubular = data.radiusTubular != null ? (float)data.radiusTubular : 0.4f;
                     torus.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     torus.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 32;
                     torus.thetaStart = 0f;
@@ -159,7 +165,7 @@ namespace ArenaUnity
                 case "torusKnot":
                     ArenaMeshTorusKnot torusKnot = gobj.GetComponent<ArenaMeshTorusKnot>() ?? gobj.AddComponent<ArenaMeshTorusKnot>();
                     torusKnot.radius = data.radius != null ? (float)data.radius : 1f;
-                    torusKnot.thickness = data.radiusTubular != null ? (float)data.radiusTubular * 2 : 0.2f * 2;
+                    torusKnot.radiusTubular = data.radiusTubular != null ? (float)data.radiusTubular : 0.4f;
                     torusKnot.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     torusKnot.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 32;
                     torusKnot.p = data.p != null ? (int)data.p : 2;
@@ -184,7 +190,7 @@ namespace ArenaUnity
                 case "ArenaUnity.ArenaMeshCapsule":
                     var capsule = gobj.GetComponent<ArenaMeshCapsule>();
                     data.radius = ArenaFloat(capsule.radius);
-                    data.height = ArenaFloat(capsule.height);
+                    data.length = ArenaFloat(capsule.length);
                     break;
                 case "ArenaUnity.ArenaMeshCube":
                     var cube = gobj.GetComponent<ArenaMeshCube>();
@@ -224,6 +230,12 @@ namespace ArenaUnity
                     data.width = ArenaFloat(plane.width);
                     data.height = ArenaFloat(plane.height);
                     break;
+                case "ArenaUnity.ArenaMeshPrism":
+                    var prism = gobj.GetComponent<ArenaMeshPrism>();
+                    data.width = ArenaFloat(prism.width);
+                    data.height = ArenaFloat(prism.height);
+                    data.depth = ArenaFloat(prism.depth);
+                    break;
                 case "ArenaUnity.ArenaMeshSphere":
                     var sphere = gobj.GetComponent<ArenaMeshSphere>();
                     data.radius = ArenaFloat(sphere.radius);
@@ -244,13 +256,13 @@ namespace ArenaUnity
                 case "ArenaUnity.ArenaMeshTorus":
                     var torus = gobj.GetComponent<ArenaMeshTorus>();
                     data.radius = ArenaFloat(torus.radius);
-                    data.radiusTubular = ArenaFloat(torus.thickness / 2f);
+                    data.radiusTubular = ArenaFloat(torus.radiusTubular);
                     data.arc = ArenaFloat(torus.thetaEnd * 180 / Mathf.PI);
                     break;
                 case "ArenaUnity.ArenaMeshTorusKnot":
                     var torusKnot = gobj.GetComponent<ArenaMeshTorusKnot>();
                     data.radius = ArenaFloat(torusKnot.radius);
-                    data.radiusTubular = ArenaFloat(torusKnot.thickness / 2f);
+                    data.radiusTubular = ArenaFloat(torusKnot.radiusTubular);
                     data.p = torusKnot.p;
                     data.q = torusKnot.q;
                     break;
@@ -359,6 +371,12 @@ namespace ArenaUnity
         {
             // used to collect unity-default render sizes
             string collider = gobj.GetComponent<Collider>().GetType().ToString();
+            string mesh = null;
+            MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
+            if (meshFilter && meshFilter.sharedMesh)
+            {
+                mesh = meshFilter.sharedMesh.name;
+            }
             switch (collider)
             {
                 case "UnityEngine.BoxCollider":
@@ -373,33 +391,39 @@ namespace ArenaUnity
                     break;
                 case "UnityEngine.CapsuleCollider":
                     CapsuleCollider cc = gobj.GetComponent<CapsuleCollider>();
-                    data.height = ArenaFloat(cc.height);
+                    switch (mesh)
+                    {
+                        case "Cylinder":
+                            data.height = ArenaFloat(cc.height);
+                            break;
+                        case "Capsule":
+                            data.height = ArenaFloat(cc.height - (cc.radius * 2));
+                            break;
+                    }
                     data.radius = ArenaFloat(cc.radius);
                     break;
                 default:
                     break;
             }
-            MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
-            if (meshFilter && meshFilter.sharedMesh)
+            switch (mesh)
             {
-                switch (meshFilter.sharedMesh.name)
-                {
-                    case "Cube":
-                        data.object_type = "box";
-                        break;
-                    case "Quad":
-                        data.object_type = "plane";
-                        data.width = 1f;
-                        data.height = 1f;
-                        break;
-                    case "Plane":
-                        Quaternion rotOut = gobj.transform.localRotation;
-                        rotOut *= Quaternion.Euler(90, 0, 0);
-                        data.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
-                        data.width = 10f;
-                        data.height = 10f;
-                        break;
-                }
+                case "Cube":
+                    data.object_type = "box";
+                    break;
+                case "Quad":
+                    data.object_type = "plane";
+                    data.width = 1f;
+                    data.height = 1f;
+                    break;
+                case "Plane":
+                    Quaternion rotOut = gobj.transform.localRotation;
+                    rotOut *= Quaternion.Euler(90, 0, 0);
+                    data.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
+                    data.width = 10f;
+                    data.height = 10f;
+                    break;
+                default:
+                    break;
             }
         }
         // color

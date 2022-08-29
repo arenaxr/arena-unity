@@ -170,14 +170,14 @@ namespace ArenaUnity
 
             EditorGUI.BeginChangeCheck();
             float radius = capsule.radius;
-            float height = capsule.height;
+            float length = capsule.length;
             using (new Handles.DrawingScope(Color.magenta))
             {
                 radius = Handles.ScaleSlider(capsule.radius, capsule.transform.position, capsule.transform.right, capsule.transform.rotation, size, snap);
             }
             using (new Handles.DrawingScope(Color.green))
             {
-                height = Handles.ScaleSlider(capsule.height, capsule.transform.position, capsule.transform.up, capsule.transform.rotation, size, snap);
+                length = Handles.ScaleSlider(capsule.length, capsule.transform.position, capsule.transform.up, capsule.transform.rotation, size, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -186,7 +186,7 @@ namespace ArenaUnity
                 {
                     var amesh = o.GetComponent<ArenaMeshCapsule>();
                     amesh.radius = radius;
-                    amesh.height = height;
+                    amesh.length = length;
                     amesh.build = true;
                     aobj.meshChanged = true;
                 }
@@ -445,14 +445,14 @@ namespace ArenaUnity
 
             EditorGUI.BeginChangeCheck();
             float radius = torus.radius;
-            float thickness = torus.thickness;
+            float radiusTubular = torus.radiusTubular;
             using (new Handles.DrawingScope(Color.magenta))
             {
                 radius = Handles.ScaleSlider(torus.radius, torus.transform.position, torus.transform.right, torus.transform.rotation, size, snap);
             }
             using (new Handles.DrawingScope(Color.cyan))
             {
-                thickness = Handles.ScaleSlider(torus.thickness, torus.transform.position, torus.transform.right, torus.transform.rotation, size / 2, snap);
+                radiusTubular = Handles.ScaleSlider(torus.radiusTubular, torus.transform.position, torus.transform.right, torus.transform.rotation, size / 2, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -461,7 +461,7 @@ namespace ArenaUnity
                 {
                     var amesh = o.GetComponent<ArenaMeshTorus>();
                     amesh.radius = radius;
-                    amesh.thickness = thickness;
+                    amesh.radiusTubular = radiusTubular;
                     amesh.build = true;
                     aobj.meshChanged = true;
                 }
@@ -475,14 +475,14 @@ namespace ArenaUnity
 
             EditorGUI.BeginChangeCheck();
             float radius = torusKnot.radius;
-            float thickness = torusKnot.thickness;
+            float radiusTubular = torusKnot.radiusTubular;
             using (new Handles.DrawingScope(Color.magenta))
             {
                 radius = Handles.ScaleSlider(torusKnot.radius, torusKnot.transform.position, torusKnot.transform.right, torusKnot.transform.rotation, size, snap);
             }
             using (new Handles.DrawingScope(Color.cyan))
             {
-                thickness = Handles.ScaleSlider(torusKnot.thickness, torusKnot.transform.position, torusKnot.transform.right, torusKnot.transform.rotation, size / 2, snap);
+                radiusTubular = Handles.ScaleSlider(torusKnot.radiusTubular, torusKnot.transform.position, torusKnot.transform.right, torusKnot.transform.rotation, size / 2, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -491,7 +491,7 @@ namespace ArenaUnity
                 {
                     var amesh = o.GetComponent<ArenaMeshTorusKnot>();
                     amesh.radius = radius;
-                    amesh.thickness = thickness;
+                    amesh.radiusTubular = radiusTubular;
                     amesh.build = true;
                     aobj.meshChanged = true;
                 }
