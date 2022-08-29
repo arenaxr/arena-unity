@@ -76,7 +76,7 @@ namespace ArenaUnity
 
         [Header("Authentication")]
         [Tooltip("Connect as Anonymous user, or Google authenticated user.")]
-        public Auth authType = Auth.Anonymous;
+        public Auth tokenType = Auth.Google;
 
         /// <summary>
         /// Authenticated user email account.
@@ -283,11 +283,14 @@ namespace ArenaUnity
             }
             else
             {
-                string tokenType = "";
-                switch (authType)
+                string authType = "";
+                string mqttUsername = "";
+                switch (tokenType)
                 {
                     case Auth.Anonymous:
-                        tokenType = "anonymous";
+                        // prefix all anon users with "anonymous-"
+                        authType = "anonymous";
+                        mqttUsername =  $"anonymous-UnityClient-{UnityEngine.Random.Range(0, 1000000)}";
                         break;
                     case Auth.Google:
                         // get oauth app credentials
@@ -326,10 +329,11 @@ namespace ArenaUnity
                             email = userInfo.Email;
                             idToken = credential.Token.IdToken;
                         }
-                        tokenType = "google-installed";
+                        authType = "google-installed";
                         break;
                     default:
-                        break;
+                        Debug.LogWarning($"Invalid ARENA authentication type: '{authType}'");
+                        yield break;
                 }
 
                 // get arena CSRF token
@@ -342,14 +346,20 @@ namespace ArenaUnity
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
                 var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
-                if (user.authenticated && (namespaceName == null || namespaceName.Trim() == ""))
+                if (user.authenticated && (namespaceName == null || namespaceName.Trim() == "")){
                     namespaceName = user.username;
-
+                    mqttUsername = user.username;
+                }
                 // get arena user mqtt token
-                form.AddField("id_auth", tokenType);
-                form.AddField("username", user.username);
+                form.AddField("id_auth", authType);
+                form.AddField("username", mqttUsername);
                 form.AddField("realm", realm);
+                // handle full ARENA scene
                 form.AddField("scene", $"{namespaceName}/{sceneName}");
+                form.AddField("userid", "true");
+                form.AddField("camid", "true");
+                //form.AddField("handleftid", "true");
+                //form.AddField("handrightid", "true");
                 cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/mqtt_auth", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
