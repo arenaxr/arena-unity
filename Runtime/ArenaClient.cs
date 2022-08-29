@@ -42,6 +42,8 @@ namespace ArenaUnity
         public static ArenaClient Instance { get; private set; }
         public bool IsShuttingDown { get; internal set; }
 
+        public enum Auth { Anonymous, Google };
+
         protected override void Awake()
         {
             Instance = this;
@@ -71,6 +73,10 @@ namespace ArenaUnity
         [Tooltip("Publish per frames frequency to publish detected transform changes (0 to stop)")]
         [Range(0, 60)]
         public int transformPublishInterval = 30; // in publish per frames
+
+        [Header("Authentication")]
+        [Tooltip("Connect as Anonymous user, or Google authenticated user.")]
+        public Auth authType = Auth.Anonymous;
 
         /// <summary>
         /// Authenticated user email account.
@@ -277,49 +283,61 @@ namespace ArenaUnity
             }
             else
             {
-                // get oauth app credentials
-                Debug.Log("Using remote-authenticated MQTT token.");
-                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/conf/gauth.json"));
-                yield return cd.coroutine;
-                if (!isCrdSuccess(cd.result)) yield break;
-                string gauthId = cd.result.ToString();
-
-                // request user auth
-                using (var stream = ToStream(gauthId))
+                string tokenType = "";
+                switch (authType)
                 {
-                    string applicationName = "ArenaClientCSharp";
-                    IDataStore ds;
-                    if (Application.isMobilePlatform) ds = new NullDataStore();
-                    else ds = new FileDataStore(userGAuthPath, true);
-                    GoogleWebAuthorizationBroker.Folder = userGAuthPath;
-                    // GoogleWebAuthorizationBroker.AuthorizeAsync for "installed" creds only
-                    credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                            GoogleClientSecrets.FromStream(stream).Secrets,
-                            Scopes,
-                            "user",
-                            CancellationToken.None,
-                            ds).Result;
-                    if (ds.GetType() == typeof(FileDataStore))
-                        Debug.Log($"Credential file saved to: {userGAuthPath}");
+                    case Auth.Anonymous:
+                        tokenType = "anonymous";
+                        break;
+                    case Auth.Google:
+                        // get oauth app credentials
+                        Debug.Log("Using remote-authenticated MQTT token.");
+                        cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/conf/gauth.json"));
+                        yield return cd.coroutine;
+                        if (!isCrdSuccess(cd.result)) yield break;
+                        string gauthId = cd.result.ToString();
 
-                    var oauthService = new Oauth2Service(new BaseClientService.Initializer()
-                    {
-                        HttpClientInitializer = credential,
-                        ApplicationName = applicationName,
-                    });
+                        // request user auth
+                        using (var stream = ToStream(gauthId))
+                        {
+                            string applicationName = "ArenaClientCSharp";
+                            IDataStore ds;
+                            if (Application.isMobilePlatform) ds = new NullDataStore();
+                            else ds = new FileDataStore(userGAuthPath, true);
+                            GoogleWebAuthorizationBroker.Folder = userGAuthPath;
+                            // GoogleWebAuthorizationBroker.AuthorizeAsync for "installed" creds only
+                            credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                                    GoogleClientSecrets.FromStream(stream).Secrets,
+                                    Scopes,
+                                    "user",
+                                    CancellationToken.None,
+                                    ds).Result;
+                            if (ds.GetType() == typeof(FileDataStore))
+                                Debug.Log($"Credential file saved to: {userGAuthPath}");
 
-                    var userInfo = oauthService.Userinfo.Get().Execute();
+                            var oauthService = new Oauth2Service(new BaseClientService.Initializer()
+                            {
+                                HttpClientInitializer = credential,
+                                ApplicationName = applicationName,
+                            });
 
-                    email = userInfo.Email;
-                    idToken = credential.Token.IdToken;
+                            var userInfo = oauthService.Userinfo.Get().Execute();
+
+                            email = userInfo.Email;
+                            idToken = credential.Token.IdToken;
+                        }
+                        tokenType = "google-installed";
+                        break;
+                    default:
+                        break;
                 }
 
-                // get arena web login token
+                // get arena CSRF token
                 yield return HttpRequestAuth($"https://{brokerAddress}/user/login");
 
                 // get arena user account state
                 WWWForm form = new WWWForm();
-                form.AddField("id_token", idToken);
+                if (idToken != null) form.AddField("id_token", idToken);
                 cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/user_state", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
@@ -328,7 +346,7 @@ namespace ArenaUnity
                     namespaceName = user.username;
 
                 // get arena user mqtt token
-                form.AddField("id_auth", "google-installed");
+                form.AddField("id_auth", tokenType);
                 form.AddField("username", user.username);
                 form.AddField("realm", realm);
                 form.AddField("scene", $"{namespaceName}/{sceneName}");

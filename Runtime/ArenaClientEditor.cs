@@ -43,8 +43,6 @@ namespace ArenaUnity
             // add readonly auth results
             if (!string.IsNullOrWhiteSpace(script.permissions))
             {
-                GUILayout.Space(5f);
-                EditorGUILayout.LabelField("Authentication", EditorStyles.boldLabel);
                 if (!string.IsNullOrWhiteSpace(script.email))
                 {
                     GUILayout.BeginHorizontal("Box");
