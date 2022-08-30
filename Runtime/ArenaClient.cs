@@ -223,7 +223,7 @@ namespace ArenaUnity
                         aobj.created = false;
                         aobj.messageType = "object";
                         child.gameObject.transform.hasChanged = true;
-                        child.name = Regex.Replace(child.name, ArenaUnity.regexArenaObjectId, "-");
+                        child.name = Regex.Replace(child.name, ArenaUnity.regexObjId, ArenaUnity.replaceCharObjId);
                         if (arenaObjs.ContainsKey(child.name))
                             child.name = $"{child.name}-{UnityEngine.Random.Range(0, 1000000)}";
                         arenaObjs.Add(child.name, child.gameObject);

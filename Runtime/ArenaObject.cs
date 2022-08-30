@@ -71,7 +71,7 @@ namespace ArenaUnity
             else if (oldName != null && name != oldName)
             {
                 // Ensure arena-compatible naming
-                name = Regex.Replace(name, ArenaUnity.regexArenaObjectId, "-");
+                name = Regex.Replace(name, ArenaUnity.regexObjId, ArenaUnity.replaceCharObjId);
                 HandleRename();
             }
             oldName = name;
