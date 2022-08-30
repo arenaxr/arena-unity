@@ -397,7 +397,7 @@ namespace ArenaUnity
                             data.height = ArenaFloat(cc.height);
                             break;
                         case "Capsule":
-                            data.height = ArenaFloat(cc.height - (cc.radius * 2));
+                            data.length = ArenaFloat(cc.height - (cc.radius * 2));
                             break;
                     }
                     data.radius = ArenaFloat(cc.radius);

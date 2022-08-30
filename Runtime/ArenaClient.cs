@@ -358,8 +358,6 @@ namespace ArenaUnity
                 form.AddField("scene", $"{namespaceName}/{sceneName}");
                 form.AddField("userid", "true");
                 form.AddField("camid", "true");
-                //form.AddField("handleftid", "true");
-                //form.AddField("handrightid", "true");
                 cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/mqtt_auth", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
