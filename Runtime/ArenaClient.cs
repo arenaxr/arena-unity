@@ -904,11 +904,6 @@ namespace ArenaUnity
             name = $"ARENA (MQTT Connected)";
         }
 
-        protected override void OnConnectionFailed(string errorMessage)
-        {
-            Debug.LogWarning($"CONNECTION FAILED! {errorMessage}");
-        }
-
         protected override void OnDisconnected()
         {
             base.OnDisconnected();
