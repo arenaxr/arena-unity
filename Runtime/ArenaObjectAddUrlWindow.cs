@@ -65,7 +65,7 @@ namespace ArenaUnity
                 data.position = ArenaUnity.ToArenaPosition(cameraPoint);
                 msg.data = data;
                 string payload = JsonConvert.SerializeObject(msg);
-                ArenaClient.Instance.Publish(msg.object_id, payload); // remote
+                ArenaClient.Instance.PublishObject(msg.object_id, payload); // remote
                 ArenaClient.Instance.ProcessMessage(payload, menuCommand); // local
                 Close();
             }

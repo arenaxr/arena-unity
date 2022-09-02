@@ -89,7 +89,7 @@ namespace ArenaUnity
                 persist = persist,
             };
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.Publish(msg.object_id, payload);
+            ArenaClient.Instance.PublishObject(msg.object_id, payload);
             // add new object with new name, it pubs
             created = false;
             transform.hasChanged = true;
@@ -124,7 +124,7 @@ namespace ArenaUnity
                 dataUnity.rotation = ArenaUnity.ToArenaRotationEuler(rotOut.eulerAngles);
             dataUnity.scale = ArenaUnity.ToArenaScale(transform.localScale);
             ArenaUnity.ToArenaDimensions(gameObject, ref dataUnity);
-            if (transform.parent.gameObject.GetComponent<ArenaObject>() != null)
+            if (transform.parent && transform.parent.gameObject.GetComponent<ArenaObject>() != null)
             {   // parent
                 dataUnity.parent = transform.parent.name;
                 parentId = transform.parent.name;
@@ -166,7 +166,7 @@ namespace ArenaUnity
             msg.data = transformOnly ? dataUnity : updatedData;
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.Publish(msg.object_id, payload);
+            ArenaClient.Instance.PublishObject(msg.object_id, payload);
             if (!created)
                 created = true;
 
@@ -182,7 +182,7 @@ namespace ArenaUnity
             msg.persist = persist;
             msg.data = JsonConvert.DeserializeObject(jsonData);
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.Publish(msg.object_id, payload); // remote
+            ArenaClient.Instance.PublishObject(msg.object_id, payload); // remote
             ArenaClient.Instance.ProcessMessage(payload); // local
         }
 

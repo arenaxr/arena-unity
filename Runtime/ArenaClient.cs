@@ -46,8 +46,11 @@ namespace ArenaUnity
 
         protected override void Awake()
         {
+            base.Awake();
             Instance = this;
+            name = $"ARENA (MQTT Disconnected)";
         }
+
         [Header("ARENA Connection")]
         [Tooltip("Name of the topic realm for the scene.")]
         private string realm = "realm";
@@ -148,7 +151,7 @@ namespace ArenaUnity
 
             cameraForDisplay = Camera.main;
 
-            // ensure consistant name and transform
+            // ensure consistent name and transform
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
             transform.localScale = Vector3.one;
@@ -248,7 +251,7 @@ namespace ArenaUnity
                             persist = true,
                         };
                         string payload = JsonConvert.SerializeObject(msg);
-                        Publish(msg.object_id, payload);
+                        PublishObject(msg.object_id, payload);
                     }
                 }
 #endif
@@ -290,7 +293,7 @@ namespace ArenaUnity
                     case Auth.Anonymous:
                         // prefix all anon users with "anonymous-"
                         authType = "anonymous";
-                        mqttUsername =  $"anonymous-UnityClient-{UnityEngine.Random.Range(0, 1000000)}";
+                        mqttUsername = $"anonymous-UnityClient-{UnityEngine.Random.Range(0, 1000000)}";
                         break;
                     case Auth.Google:
                         // get oauth app credentials
@@ -346,7 +349,8 @@ namespace ArenaUnity
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
                 var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
-                if (user.authenticated && (namespaceName == null || namespaceName.Trim() == "")){
+                if (user.authenticated && (namespaceName == null || namespaceName.Trim() == ""))
+                {
                     namespaceName = user.username;
                     mqttUsername = user.username;
                 }
@@ -387,9 +391,6 @@ namespace ArenaUnity
 
             // background mqtt connect
             base.Start();
-
-            // show address at root as well
-            name = $"ARENA Client ({brokerAddress}/{namespaceName}/{sceneName})";
 
             // get persistence objects
             cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
@@ -888,7 +889,7 @@ namespace ArenaUnity
             return csrfCookie;
         }
 
-        internal void Publish(string object_id, string msgJson)
+        internal void PublishObject(string object_id, string msgJson)
         {
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(msgJson);
             client.Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
@@ -896,26 +897,11 @@ namespace ArenaUnity
             LogMessage("Sent", msg);
         }
 
-        protected override void OnConnecting()
-        {
-            base.OnConnecting();
-            Debug.Log($"Connecting to broker on {brokerAddress}:{brokerPort}...");
-        }
-
         protected override void OnConnected()
         {
             base.OnConnected();
-            Debug.Log($"Connected to broker on {brokerAddress}");
-        }
-
-        protected override void SubscribeTopics()
-        {
             client.Subscribe(new string[] { $"{sceneTopic}/#" }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
-        }
-
-        protected override void UnsubscribeTopics()
-        {
-            client.Unsubscribe(new string[] { $"{sceneTopic}/#" });
+            name = $"ARENA (MQTT Connected)";
         }
 
         protected override void OnConnectionFailed(string errorMessage)
@@ -925,12 +911,8 @@ namespace ArenaUnity
 
         protected override void OnDisconnected()
         {
-            Debug.Log("Disconnected.");
-        }
-
-        protected override void OnConnectionLost()
-        {
-            Debug.LogWarning("CONNECTION LOST!");
+            base.OnDisconnected();
+            name = $"ARENA (MQTT Disconnected)";
         }
 
         protected override void DecodeMessage(string topic, byte[] message)

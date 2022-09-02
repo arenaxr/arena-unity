@@ -117,8 +117,6 @@ namespace M2MqttUnity
         {
             Debug.LogFormat("Connected to {0}:{1}...\n", brokerAddress, brokerPort.ToString());
 
-            SubscribeTopics();
-
             if (ConnectionSucceeded != null)
             {
                 ConnectionSucceeded();
@@ -351,7 +349,6 @@ namespace M2MqttUnity
             {
                 if (client.IsConnected)
                 {
-                    UnsubscribeTopics();
                     client.Disconnect();
                 }
                 client.MqttMsgPublishReceived -= OnMqttMessageReceived;
