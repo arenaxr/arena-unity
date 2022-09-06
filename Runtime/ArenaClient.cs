@@ -893,7 +893,7 @@ namespace ArenaUnity
         {
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(msgJson);
             dynamic msg = JsonConvert.DeserializeObject(msgJson);
-            client.Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
+            Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload);
             LogMessage("Sent", msg);
         }
 
@@ -902,9 +902,9 @@ namespace ArenaUnity
             client.Publish(topic, payload);
         }
 
-        public void Subscribe(string[] topics, byte[] qosLevels)
+        public void Subscribe(string[] topics)
         {
-            client.Subscribe(topics, qosLevels);
+            client.Subscribe(topics, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
         }
 
         public void Unsubscribe(string[] topics)
@@ -915,7 +915,7 @@ namespace ArenaUnity
         protected override void OnConnected()
         {
             base.OnConnected();
-            client.Subscribe(new string[] { $"{sceneTopic}/#" }, new byte[] { MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE });
+            Subscribe(new string[] { $"{sceneTopic}/#" });
             name = $"ARENA (MQTT Connected)";
         }
 
