@@ -173,7 +173,7 @@ namespace ArenaUnity
             return true;
         }
 
-        internal void PublishJsonData()
+        internal void PublishJson()
         {
             dynamic msg = new ExpandoObject();
             msg.object_id = name;

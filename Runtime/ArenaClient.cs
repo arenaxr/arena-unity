@@ -892,9 +892,24 @@ namespace ArenaUnity
         internal void PublishObject(string object_id, string msgJson)
         {
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(msgJson);
-            client.Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
             dynamic msg = JsonConvert.DeserializeObject(msgJson);
+            client.Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
             LogMessage("Sent", msg);
+        }
+
+        public void Publish(string topic, byte[] payload)
+        {
+            client.Publish(topic, payload);
+        }
+
+        public void Subscribe(string[] topics, byte[] qosLevels)
+        {
+            client.Subscribe(topics, qosLevels);
+        }
+
+        public void Unsubscribe(string[] topics)
+        {
+            client.Unsubscribe(topics);
         }
 
         protected override void OnConnected()

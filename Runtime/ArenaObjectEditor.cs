@@ -15,34 +15,34 @@ namespace ArenaUnity
     {
         public override void OnInspectorGUI()
         {
-            ArenaObject script = (ArenaObject)target;
+            ArenaObject aobj = (ArenaObject)target;
 
             // add button to publish unity changes
-            GUI.enabled = script.messageType == "object";
+            GUI.enabled = aobj.messageType == "object";
             if (GUILayout.Button("Publish Unity Data"))
             {
-                script.PublishCreateUpdate();
+                aobj.PublishCreateUpdate();
             }
             GUI.enabled = true;
 
             DrawDefaultInspector();
 
             // add button to publish manual json data changes if valid
-            GUI.enabled = script.isJsonValidated;
+            GUI.enabled = aobj.isJsonValidated;
             if (GUILayout.Button("Publish Json Data"))
             {
-                script.PublishJsonData();
+                aobj.PublishJson();
             }
             GUI.enabled = true;
 
             // add any animation buttons
-            if (script.animations != null && script.animations.Count > 0)
+            if (aobj.animations != null && aobj.animations.Count > 0)
             {
                 GUILayout.Space(5f);
                 EditorGUILayout.LabelField("Animations", EditorStyles.boldLabel);
-                foreach (string animation in script.animations)
+                foreach (string animation in aobj.animations)
                 {
-                    Animation anim = script.GetComponentInChildren<Animation>(true);
+                    Animation anim = aobj.GetComponentInChildren<Animation>(true);
                     GUILayout.BeginHorizontal("Box");
                     //float seconds = anim[animation].length;
                     //string timespan = seconds > 0 ? TimeSpan.FromSeconds(seconds).ToString(@"(mm\:ss)") : "";
