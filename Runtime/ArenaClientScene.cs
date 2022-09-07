@@ -72,7 +72,6 @@ namespace ArenaUnity
 
         private string sceneTopic = null;
         internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
-        private Transform ArenaClientTransform;
 
         internal List<string> pendingDelete = new List<string>();
 
@@ -205,7 +204,6 @@ namespace ArenaUnity
             cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
             yield return cd.coroutine;
             if (!isCrdSuccess(cd.result)) yield break;
-            ArenaClientTransform = FindObjectOfType<ArenaClientScene>().transform;
             string jsonString = cd.result.ToString();
             JArray jsonVal = JArray.Parse(jsonString);
             dynamic persistMessages = jsonVal;
@@ -395,7 +393,6 @@ namespace ArenaUnity
                 Debug.Log($"Loading object '{object_id}'..."); // show new objects in log
 #endif
                 gobj = new GameObject();
-                gobj.transform.parent = ArenaClientTransform;
                 gobj.name = object_id;
                 arenaObjs.Add(object_id, gobj);
                 aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
