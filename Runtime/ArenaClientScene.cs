@@ -390,6 +390,7 @@ namespace ArenaUnity
                 Directory.Delete(importPath, true);
             if (File.Exists($"{importPath}.meta"))
                 File.Delete($"{importPath}.meta");
+            bool persist = true;
             foreach (dynamic msg in persistMessages)
             {
                 DisplayCancelableProgressBar("ARENA Persistence", $"Loading object-id: {(string)msg.object_id}", objects_num / (float)jsonVal.Count);
@@ -402,7 +403,7 @@ namespace ArenaUnity
                         yield return cd.coroutine;
                     }
                 }
-                CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.attributes);
+                CreateUpdateObject((string)msg.object_id, (string)msg.type, persist, msg.attributes);
                 objects_num++;
             }
             ClearProgressBar();
@@ -555,7 +556,7 @@ namespace ArenaUnity
 #endif
         }
 
-        private void CreateUpdateObject(string object_id, string storeType, dynamic data, object menuCommand = null)
+        private void CreateUpdateObject(string object_id, string storeType, bool persist, dynamic data, object menuCommand = null)
         {
             ArenaObject aobj = null;
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
@@ -574,9 +575,9 @@ namespace ArenaUnity
                 arenaObjs.Add(object_id, gobj);
                 aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
                 aobj.created = true;
+                aobj.persist = persist;
                 aobj.messageType = storeType;
                 aobj.parentId = (string)data.parent;
-                aobj.persist = true;
 #if UNITY_EDITOR
                 // local create context auto-select
                 if (menuCommand != null)
@@ -926,10 +927,10 @@ namespace ArenaUnity
                 {
                     case "create":
                     case "update":
-                        if (Convert.ToBoolean(msg.persist))
+                        IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
+                        if (uris.Count() > 0)
                         {
                             DisplayCancelableProgressBar("ARENA Message", $"Loading object-id: {(string)msg.object_id}", 0f);
-                            IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
                             foreach (var uri in uris)
                             {
                                 if (!string.IsNullOrWhiteSpace(uri))
@@ -939,12 +940,8 @@ namespace ArenaUnity
                                 }
                             }
                             ClearProgressBar();
-                            CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.data, menuCommand);
                         }
-                        else if (msg.data.object_type == "camera") // try to manage camera
-                        {
-                            CreateUpdateObject((string)msg.object_id, (string)msg.type, msg.data);
-                        }
+                        CreateUpdateObject((string)msg.object_id, (string)msg.type, Convert.ToBoolean(msg.persist), msg.data, menuCommand);
                         break;
                     case "delete":
                         RemoveObject((string)msg.object_id);
