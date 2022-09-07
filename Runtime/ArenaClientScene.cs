@@ -8,7 +8,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using MimeMapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -115,9 +114,33 @@ namespace ArenaUnity
         /// </summary>
         public IEnumerator ConnectArena()
         {
+            // prevent name collisions before MQTT
+            List<string> projectArenaObjects = new List<string>();
+            bool nameSafe = true;
+            foreach (var aobj in FindObjectsOfType<ArenaObject>())
+            {
+                if (!projectArenaObjects.Contains(aobj.name))
+                {
+                    projectArenaObjects.Add(aobj.name);
+                }
+                else
+                {
+                    nameSafe = false;
+                    Debug.LogError($"More than one ArenaObject is named '{aobj.name}'. All ArenaObjects must have unique names.");
+                }
+            }
+            if (!nameSafe)
+            {
+#if UNITY_EDITOR
+                if (Application.isPlaying)
+                    EditorApplication.ExitPlaymode();
+#endif
+                yield break;
+            }
+
+            // start auth flow and MQTT connection
             CoroutineWithData cd = new CoroutineWithData(this, SceneSignin(sceneName, namespaceName, realm));
             yield return cd.coroutine;
-            if (!isCrdSuccess(cd.result)) yield break;
             if (cd.result != null)
             {
                 namespaceName = cd.result.ToString();
@@ -154,25 +177,6 @@ namespace ArenaUnity
         protected override void Update()
         {
             base.Update();
-
-            if (arenaObjs.Count != transform.childCount)
-            { // discover new objects created in Unity as relatives of our client
-                foreach (Transform child in transform)
-                {
-                    ArenaObject aobj = child.gameObject.GetComponent<ArenaObject>();
-                    if (aobj == null)
-                    {
-                        aobj = child.gameObject.AddComponent(typeof(ArenaObject)) as ArenaObject;
-                        aobj.created = false;
-                        aobj.messageType = "object";
-                        child.gameObject.transform.hasChanged = true;
-                        child.name = Regex.Replace(child.name, ArenaUnity.regexObjId, ArenaUnity.replaceCharObjId);
-                        if (arenaObjs.ContainsKey(child.name))
-                            child.name = $"{child.name}-{UnityEngine.Random.Range(0, 1000000)}";
-                        arenaObjs.Add(child.name, child.gameObject);
-                    }
-                }
-            }
 
             if (pendingDelete.Count > 0)
             {   // confirm for any deletes requested

@@ -102,6 +102,12 @@ namespace ArenaUnity
             if (ArenaClientScene.Instance.IsShuttingDown) return false;
             if (messageType != "object") return false;
 
+            name = Regex.Replace(name, ArenaUnity.regexObjId, ArenaUnity.replaceCharObjId);
+            if (ArenaClientScene.Instance.arenaObjs.ContainsKey(name))
+                name = $"{name}-{UnityEngine.Random.Range(0, 1000000)}";
+            if (!ArenaClientScene.Instance.arenaObjs.ContainsKey(name))
+                ArenaClientScene.Instance.arenaObjs.Add(name, gameObject);
+
             // message type information
             dynamic msg = new ExpandoObject();
             msg.object_id = name;
