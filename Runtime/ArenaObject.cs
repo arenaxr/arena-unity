@@ -16,7 +16,7 @@ namespace ArenaUnity
     /// <summary>
     /// Class to manage an ARENA object, publishing, and its properties.
     /// </summary>
-    [HelpURL("https://arena.conix.io/content/messaging/definitions.html")]
+    [HelpURL("https://docs.arenaxr.org/content/messaging/definitions.html")]
     [DisallowMultipleComponent]
     public class ArenaObject : PrettyObject
     {

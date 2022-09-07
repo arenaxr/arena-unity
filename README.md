@@ -25,7 +25,7 @@ Unity C# library for editing scenes and creating applications for the ARENA.
 1. The auth flow will open a web browser page for you to login, if you haven't yet.
 
 ## Documentation
-- [Runtime Usage](https://arena.conix.io/content/unity/runtime)
+- [Runtime Usage](https://docs.arenaxr.org/content/unity/runtime)
 - [Developers Notes](https://github.com/conix-center/ARENA-unity/blob/main/Documentation/Development.md)
 - [Changelog](https://github.com/conix-center/ARENA-unity/blob/main/CHANGELOG.md)
 - [Open Source](https://github.com/conix-center/ARENA-unity/blob/main/Third%20Party%20Notices.md) used and inspired from
