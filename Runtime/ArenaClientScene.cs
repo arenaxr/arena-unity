@@ -15,7 +15,6 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Oauth2.v2;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
-using M2MqttUnity;
 using MimeMapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -26,23 +25,19 @@ using Siccity.GLTFUtility;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
-using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace ArenaUnity
 {
     /// <summary>
     /// Class to manage a singleton instance of the ARENA client connection.
     /// </summary>
-    [HelpURL("https://arena.conix.io")]
+    [HelpURL("https://docs.arenaxr.org")]
     [DisallowMultipleComponent]
-    [AddComponentMenu("ArenaClient", 0)]
-    public class ArenaClient : M2MqttUnityClient
+    [AddComponentMenu("ArenaClientScene", 0)]
+    public class ArenaClientScene : ArenaMqttClient
     {
         // Singleton instance of this connection object
-        public static ArenaClient Instance { get; private set; }
-        public bool IsShuttingDown { get; internal set; }
-
-        public enum Auth { Anonymous, Google };
+        public static ArenaClientScene Instance { get; private set; }
 
         protected override void Awake()
         {
@@ -51,7 +46,6 @@ namespace ArenaUnity
             name = $"ARENA (MQTT Disconnected)";
         }
 
-        [Header("ARENA Connection")]
         [Tooltip("Name of the topic realm for the scene.")]
         private string realm = "realm";
         [Tooltip("Namespace (automated with username), but can be overridden")]
@@ -79,7 +73,7 @@ namespace ArenaUnity
 
         [Header("Authentication")]
         [Tooltip("Connect as Anonymous user, or Google authenticated user.")]
-        public Auth tokenType = Auth.Google;
+        public Auth authType = Auth.Google;
 
         /// <summary>
         /// Authenticated user email account.
@@ -101,7 +95,6 @@ namespace ArenaUnity
         // internal variables
         private string idToken = null;
         private string csrfToken = null;
-        private List<string> eventMessages = new List<string>();
         private string sceneTopic = null;
         internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
         private static UserCredential credential;
@@ -204,16 +197,7 @@ namespace ArenaUnity
         // Update is called once per frame
         protected override void Update()
         {
-            base.Update(); // call ProcessMqttEvents()
-
-            if (eventMessages.Count > 0)
-            {
-                foreach (string msg in eventMessages)
-                {
-                    ProcessMessage(msg);
-                }
-                eventMessages.Clear();
-            }
+            base.Update();
 
             if (arenaObjs.Count != transform.childCount)
             { // discover new objects created in Unity as relatives of our client
@@ -286,14 +270,14 @@ namespace ArenaUnity
             }
             else
             {
-                string authType = "";
-                string mqttUsername = "";
-                switch (tokenType)
+                string tokenType = "";
+                string userName = "";
+                switch (authType)
                 {
                     case Auth.Anonymous:
                         // prefix all anon users with "anonymous-"
-                        authType = "anonymous";
-                        mqttUsername = $"anonymous-UnityClient-{UnityEngine.Random.Range(0, 1000000)}";
+                        tokenType = "anonymous";
+                        userName = $"anonymous-unity-{UnityEngine.Random.Range(0, 1000000)}";
                         break;
                     case Auth.Google:
                         // get oauth app credentials
@@ -332,10 +316,10 @@ namespace ArenaUnity
                             email = userInfo.Email;
                             idToken = credential.Token.IdToken;
                         }
-                        authType = "google-installed";
+                        tokenType = "google-installed";
                         break;
                     default:
-                        Debug.LogWarning($"Invalid ARENA authentication type: '{authType}'");
+                        Debug.LogWarning($"Invalid ARENA authentication type: '{tokenType}'");
                         yield break;
                 }
 
@@ -352,11 +336,11 @@ namespace ArenaUnity
                 if (user.authenticated && (namespaceName == null || namespaceName.Trim() == ""))
                 {
                     namespaceName = user.username;
-                    mqttUsername = user.username;
+                    userName = user.username;
                 }
                 // get arena user mqtt token
-                form.AddField("id_auth", authType);
-                form.AddField("username", mqttUsername);
+                form.AddField("id_auth", tokenType);
+                form.AddField("username", userName);
                 form.AddField("realm", realm);
                 // handle full ARENA scene
                 form.AddField("scene", $"{namespaceName}/{sceneName}");
@@ -390,13 +374,13 @@ namespace ArenaUnity
             sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
 
             // background mqtt connect
-            base.Start();
+            Connect();
 
             // get persistence objects
             cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
             yield return cd.coroutine;
             if (!isCrdSuccess(cd.result)) yield break;
-            ArenaClientTransform = FindObjectOfType<ArenaClient>().transform;
+            ArenaClientTransform = FindObjectOfType<ArenaClientScene>().transform;
             string jsonString = cd.result.ToString();
             JArray jsonVal = JArray.Parse(jsonString);
             dynamic persistMessages = jsonVal;
@@ -897,21 +881,6 @@ namespace ArenaUnity
             LogMessage("Sent", msg);
         }
 
-        public void Publish(string topic, byte[] payload)
-        {
-            client.Publish(topic, payload);
-        }
-
-        public void Subscribe(string[] topics)
-        {
-            client.Subscribe(topics, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
-        }
-
-        public void Unsubscribe(string[] topics)
-        {
-            client.Unsubscribe(topics);
-        }
-
         protected override void OnConnected()
         {
             base.OnConnected();
@@ -930,18 +899,19 @@ namespace ArenaUnity
             // ignore this client's messages
             if (!topic.Contains(client.ClientId))
             {
-                string msg = System.Text.Encoding.UTF8.GetString(message);
-                StoreMessage(msg);
+                ProcessMessage(message);
             }
         }
 
-        private void StoreMessage(string eventMsg)
+        internal void ProcessMessage(string message, object menuCommand = null)
         {
-            eventMessages.Add(eventMsg);
+            byte[] payload = System.Text.Encoding.UTF8.GetBytes(message);
+            ProcessMessage(payload);
         }
 
-        internal void ProcessMessage(string msgJson, object menuCommand = null)
+        internal void ProcessMessage(byte[] message, object menuCommand = null)
         {
+            string msgJson = System.Text.Encoding.UTF8.GetString(message);
             dynamic msg = JsonConvert.DeserializeObject(msgJson);
             LogMessage("Received", msg);
             StartCoroutine(ProcessArenaMessage(msg, menuCommand));
@@ -999,11 +969,6 @@ namespace ArenaUnity
             Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
         }
 
-        protected void OnDestroy()
-        {
-            Disconnect();
-        }
-
         protected void OnValidate()
         {
             // camera change?
@@ -1022,12 +987,6 @@ namespace ArenaUnity
                     }
                 }
             }
-        }
-
-        protected new void OnApplicationQuit()
-        {
-            IsShuttingDown = true;
-            base.OnApplicationQuit();
         }
     }
 }

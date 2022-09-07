@@ -22,7 +22,7 @@ namespace ArenaLogger.Example
         {
             if (addressInputField && !updateUI)
             {
-                ArenaClient.Instance.brokerAddress = brokerAddress;
+                ArenaClientScene.Instance.brokerAddress = brokerAddress;
             }
         }
 
@@ -30,13 +30,13 @@ namespace ArenaLogger.Example
         {
             if (sceneInputField && !updateUI)
             {
-                ArenaClient.Instance.sceneName = scene;
+                ArenaClientScene.Instance.sceneName = scene;
             }
         }
 
         public void SetObjectLogs(bool isObjectLogs)
         {
-            ArenaClient.Instance.logMqttObjects = isObjectLogs;
+            ArenaClientScene.Instance.logMqttObjects = isObjectLogs;
         }
 
         public void SetUiMessage(string msg)
@@ -59,7 +59,7 @@ namespace ArenaLogger.Example
 
         private void UpdateUI()
         {
-            if (ArenaClient.Instance == null)
+            if (ArenaClientScene.Instance == null)
             {
                 if (connectButton != null)
                 {
@@ -72,31 +72,31 @@ namespace ArenaLogger.Example
             {
                 if (logoutButton != null)
                 {
-                    logoutButton.interactable = ArenaClient.Instance.mqttClientConnected;
+                    logoutButton.interactable = ArenaClientScene.Instance.mqttClientConnected;
                 }
                 if (disconnectButton != null)
                 {
-                    disconnectButton.interactable = ArenaClient.Instance.mqttClientConnected;
+                    disconnectButton.interactable = ArenaClientScene.Instance.mqttClientConnected;
                 }
                 if (connectButton != null)
                 {
-                    connectButton.interactable = !ArenaClient.Instance.mqttClientConnected;
+                    connectButton.interactable = !ArenaClientScene.Instance.mqttClientConnected;
                 }
             }
             if (addressInputField != null && connectButton != null)
             {
                 addressInputField.interactable = connectButton.interactable;
-                addressInputField.text = ArenaClient.Instance.brokerAddress;
+                addressInputField.text = ArenaClientScene.Instance.brokerAddress;
             }
             if (sceneInputField != null && connectButton != null)
             {
                 sceneInputField.interactable = connectButton.interactable;
-                sceneInputField.text = ArenaClient.Instance.sceneName;
+                sceneInputField.text = ArenaClientScene.Instance.sceneName;
             }
             if (objectLogsToggle != null && connectButton != null)
             {
                 objectLogsToggle.interactable = connectButton.interactable;
-                objectLogsToggle.isOn = ArenaClient.Instance.logMqttObjects;
+                objectLogsToggle.isOn = ArenaClientScene.Instance.logMqttObjects;
             }
             if (clearButton != null && connectButton != null)
             {

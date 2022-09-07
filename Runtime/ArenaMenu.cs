@@ -134,7 +134,7 @@ namespace ArenaUnity
             TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
             string object_id = ti.ToTitleCase(object_type);
 
-            if (ArenaClient.Instance == null)
+            if (ArenaClientScene.Instance == null)
             {
                 Debug.LogError($"Failed to create object '{object_id}', press Play before creating an ARENA {object_type}.");
                 return;
@@ -147,7 +147,7 @@ namespace ArenaUnity
 
             dynamic msg = new ExpandoObject();
             msg.object_id = Regex.Replace(object_id, ArenaUnity.regexObjId, ArenaUnity.replaceCharObjId);
-            if (ArenaClient.Instance.arenaObjs.ContainsKey(msg.object_id))
+            if (ArenaClientScene.Instance.arenaObjs.ContainsKey(msg.object_id))
                 msg.object_id = $"{msg.object_id}-{UnityEngine.Random.Range(0, 1000000)}";
             msg.action = "create";
             msg.type = "object";
@@ -161,8 +161,8 @@ namespace ArenaUnity
             data.material = material;
             msg.data = data;
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.PublishObject(msg.object_id, payload); // remote
-            ArenaClient.Instance.ProcessMessage(payload, menuCommand); // local
+            ArenaClientScene.Instance.PublishObject(msg.object_id, payload); // remote
+            ArenaClientScene.Instance.ProcessMessage(payload, menuCommand); // local
         }
 #endif
     }

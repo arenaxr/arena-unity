@@ -19,8 +19,8 @@ Unity C# library for editing scenes and creating applications for the ARENA.
     https://github.com/arenaxr/arena-unity.git#v0.0.14
     ```
 1. Create an empty GameObject to use as ARENA client root, rename it to something meaningful, like: `ARENA`.
-1. Select the `ARENA` GameObject and press `Add Component` to add the `ArenaClient` script.
-1. Modify the the inspector variables for the `ArenaClient` script to change **host, scene, namespace** as you wish.
+1. Select the `ARENA` GameObject and press `Add Component` to add the `ArenaClientScene` script.
+1. Modify the the inspector variables for the `ArenaClientScene` script to change **host, scene, namespace** as you wish.
 1. Press **Play**.
 1. The auth flow will open a web browser page for you to login, if you haven't yet.
 

@@ -42,18 +42,20 @@ namespace M2MqttUnity
     {
         [Header("MQTT broker configuration")]
         [Tooltip("IP address or URL of the host running the broker")]
-        public string brokerAddress = "mqtt.arenaxr.org";
+        protected string brokerAddress = null;
         [Tooltip("Port where the broker accepts connections")]
-        protected int brokerPort = 8883;
+        protected int brokerPort = 1883;
         [Tooltip("Use encrypted connection")]
-        private bool isEncrypted = true;
+        protected bool isEncrypted = false;
+        [Tooltip("SSL protocol to use when isEncrypted is true.")]
+        protected MqttSslProtocols sslProtocol = MqttSslProtocols.TLSv1_0;
         [Header("Connection parameters")]
         [Tooltip("Connection to the broker is delayed by the the given milliseconds")]
-        private int connectionDelay = 500;
+        protected int connectionDelay = 500;
         [Tooltip("Connection timeout in milliseconds")]
-        private int timeoutOnConnection = MqttSettings.MQTT_CONNECT_TIMEOUT;
+        protected int timeoutOnConnection = MqttSettings.MQTT_CONNECT_TIMEOUT;
         [Tooltip("Connect on startup")]
-        private bool autoConnect = true;
+        protected bool autoConnect = false;
         [Tooltip("UserName for the MQTT broker. Keep blank if no user name is required.")]
         protected string mqttUserName = null;
         [Tooltip("Password for the MQTT broker. Keep blank if no password is required.")]
@@ -283,11 +285,11 @@ namespace M2MqttUnity
                 try
                 {
 #if (!UNITY_EDITOR && UNITY_WSA_10_0 && !ENABLE_IL2CPP)
-                    client = new MqttClient(brokerAddress,brokerPort,isEncrypted, isEncrypted ? MqttSslProtocols.TLSv1_2 : MqttSslProtocols.None);
+                    client = new MqttClient(brokerAddress, brokerPort, isEncrypted, isEncrypted ? sslProtocol: MqttSslProtocols.None);
 #else
-                    client = new MqttClient(brokerAddress, brokerPort, isEncrypted, null, null, isEncrypted ? MqttSslProtocols.TLSv1_2 : MqttSslProtocols.None);
+                    client = new MqttClient(brokerAddress, brokerPort, isEncrypted, null, null, isEncrypted ? sslProtocol : MqttSslProtocols.None);
                     //System.Security.Cryptography.X509Certificates.X509Certificate cert = new System.Security.Cryptography.X509Certificates.X509Certificate();
-                    //client = new MqttClient(brokerAddress, brokerPort, isEncrypted, cert, null, MqttSslProtocols.TLSv1_2, MyRemoteCertificateValidationCallback);
+                    //client = new MqttClient(brokerAddress, brokerPort, isEncrypted, cert, null, sslProtocol, MyRemoteCertificateValidationCallback);
 #endif
                 }
                 catch (Exception e)

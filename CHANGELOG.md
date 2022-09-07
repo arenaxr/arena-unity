@@ -15,8 +15,8 @@ ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 - Mobile logging of persistence download objects.
 - iOS builds enable file-sharing post-build.
 ### Changed
-- Reworked `ArenaClient` APIs for improved connect/disconnect/status.
-- Made `ArenaClient` permission variables read-only.
+- Reworked `ArenaClientScene` APIs for improved connect/disconnect/status.
+- Made `ArenaClientScene` permission variables read-only.
 - Mobile builds no longer automatically connect in Play mode.
 
 ## [0.0.12] - 2022-02-15
@@ -46,7 +46,7 @@ ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 - Prevent inadvertent edits of GLTF sub-components with `Static`.
 - Improved accuracy of `Json Data` in realtime.
 - Highlight ARENA objects in `Hierarchy View` in green.
-- Expand and focus `ArenaClient` component and objects list on start.
+- Expand and focus `ArenaClientScene` component and objects list on start.
 - Made `Json Data` validated on realtime edits, publish with `Publish Json Data` button.
 - Support loading material textures.
 - Support separate `Scale` vs `Renderer` dimensions via manual `Mesh` calculations.
@@ -72,7 +72,7 @@ ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 - Consolidated delete conformation.
 - Transform-only object updates.
 - Sort ARENA Components to top of inspector.
-- Signout button on ArenaClient component.
+- Signout button on ArenaClientScene component.
 ### Changed
 - Fixed inaccurate merge of json data.
 - Minor updates to rename, parenting.

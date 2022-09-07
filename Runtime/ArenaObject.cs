@@ -57,8 +57,8 @@ namespace ArenaUnity
         void Update()
         {
             // send only when changed, each publishInterval frames, or stop at 0 frames
-            if (!ArenaClient.Instance || ArenaClient.Instance.transformPublishInterval == 0 ||
-            Time.frameCount % ArenaClient.Instance.transformPublishInterval != 0)
+            if (!ArenaClientScene.Instance || ArenaClientScene.Instance.transformPublishInterval == 0 ||
+            Time.frameCount % ArenaClientScene.Instance.transformPublishInterval != 0)
                 return;
             if (transform.hasChanged || meshChanged)
             {
@@ -79,7 +79,7 @@ namespace ArenaUnity
 
         private void HandleRename()
         {
-            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+            if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return;
             // pub delete old
             dynamic msg = new
@@ -89,7 +89,7 @@ namespace ArenaUnity
                 persist = persist,
             };
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.PublishObject(msg.object_id, payload);
+            ArenaClientScene.Instance.PublishObject(msg.object_id, payload);
             // add new object with new name, it pubs
             created = false;
             transform.hasChanged = true;
@@ -97,9 +97,9 @@ namespace ArenaUnity
 
         public bool PublishCreateUpdate(bool transformOnly = false)
         {
-            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+            if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return false;
-            if (ArenaClient.Instance.IsShuttingDown) return false;
+            if (ArenaClientScene.Instance.IsShuttingDown) return false;
             if (messageType != "object") return false;
 
             // message type information
@@ -166,7 +166,7 @@ namespace ArenaUnity
             msg.data = transformOnly ? dataUnity : updatedData;
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.PublishObject(msg.object_id, payload);
+            ArenaClientScene.Instance.PublishObject(msg.object_id, payload);
             if (!created)
                 created = true;
 
@@ -182,15 +182,15 @@ namespace ArenaUnity
             msg.persist = persist;
             msg.data = JsonConvert.DeserializeObject(jsonData);
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.PublishObject(msg.object_id, payload); // remote
-            ArenaClient.Instance.ProcessMessage(payload); // local
+            ArenaClientScene.Instance.PublishObject(msg.object_id, payload); // remote
+            ArenaClientScene.Instance.ProcessMessage(payload); // local
         }
 
         public void OnValidate()
         {
-            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+            if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return;
-            if (ArenaClient.Instance.IsShuttingDown) return;
+            if (ArenaClientScene.Instance.IsShuttingDown) return;
 
             // jsonData edited manually by user?
             if (jsonData != null)
@@ -213,18 +213,18 @@ namespace ArenaUnity
 
         public void OnDestroy()
         {
-            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+            if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return;
-            if (ArenaClient.Instance.IsShuttingDown) return;
+            if (ArenaClientScene.Instance.IsShuttingDown) return;
 
             if (!externalDelete)
-                ArenaClient.Instance.pendingDelete.Add(name);
+                ArenaClientScene.Instance.pendingDelete.Add(name);
         }
 
         public void OnApplicationQuit()
         {
-            if (ArenaClient.Instance != null)
-                ArenaClient.Instance.IsShuttingDown = true;
+            if (ArenaClientScene.Instance != null)
+                ArenaClientScene.Instance.IsShuttingDown = true;
         }
     }
 }

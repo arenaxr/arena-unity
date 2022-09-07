@@ -10,14 +10,14 @@ using UnityEngine;
 namespace ArenaUnity
 {
 #if UNITY_EDITOR
-    [CustomEditor(typeof(ArenaClient))]
+    [CustomEditor(typeof(ArenaClientScene))]
     public class ArenaClientEditor : Editor
     {
         Vector2 scrollPos = Vector2.zero;
 
         public override void OnInspectorGUI()
         {
-            ArenaClient script = (ArenaClient)target;
+            ArenaClientScene script = (ArenaClientScene)target;
 
             // signout button
             if (GUILayout.Button("Signout"))
