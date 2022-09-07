@@ -192,6 +192,8 @@ namespace ArenaUnity
                         // prefix all anon users with "anonymous-"
                         tokenType = "anonymous";
                         userName = $"anonymous-unity-{UnityEngine.Random.Range(0, 1000000)}";
+                        if (string.IsNullOrWhiteSpace(namespaceName))
+                            namespaceName = "public";
                         break;
                     case Auth.Google:
                         // get oauth app credentials
@@ -361,4 +363,3 @@ namespace ArenaUnity
     }
 
 }
-

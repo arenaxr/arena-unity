@@ -117,6 +117,7 @@ namespace ArenaUnity
         {
             CoroutineWithData cd = new CoroutineWithData(this, SceneSignin(sceneName, namespaceName, realm));
             yield return cd.coroutine;
+            if (!isCrdSuccess(cd.result)) yield break;
             if (cd.result != null)
             {
                 namespaceName = cd.result.ToString();
@@ -602,8 +603,6 @@ namespace ArenaUnity
             }
             arenaObjs.Remove(object_id);
         }
-
-
 
         private IEnumerator HttpRequestRaw(string url)
         {
