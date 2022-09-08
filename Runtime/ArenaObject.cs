@@ -100,8 +100,6 @@ namespace ArenaUnity
             if (ArenaClientScene.Instance.IsShuttingDown) return false;
             if (messageType != "object") return false;
 
-            if (ArenaClientScene.Instance.arenaObjs.ContainsKey(name))
-                name = $"{name}-{UnityEngine.Random.Range(0, 1000000)}";
             if (!ArenaClientScene.Instance.arenaObjs.ContainsKey(name))
                 ArenaClientScene.Instance.arenaObjs.Add(name, gameObject);
 
