@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿// Modified from: https://github.com/NCEEGEE/PrettyHierarchy
+
+using UnityEditor;
 using UnityEngine;
 
 namespace PrettyHierarchy
@@ -11,7 +13,7 @@ namespace PrettyHierarchy
         private static Color32 darkObjectSelectedWindowFocusedBackground = new Color32(44, 93, 134, 255);
         private static Color32 darkOverOverlay = new Color32(255, 255, 255, 15);
         // DARK THEME - Text
-        private static Color32 darkText = new Color32(210, 210, 210, 255);
+        private static Color32 darkText = new Color32(0, 255, 0, 255); // arena object dark theme=light green
         private static Color32 darkTextHighlighted = new Color32(255, 255, 255, 255);
         private static byte darkTextAlphaObjectEnabled = 255;
         private static byte darkTextAlphaObjectDisabled = 103;
@@ -22,7 +24,7 @@ namespace PrettyHierarchy
         private static Color32 lightObjectSelectedWindowFocusedBackground = new Color32(58, 114, 176, 255);
         private static Color32 lightHoverOverlay = new Color32(0, 0, 0, 21);
         // LIGHT THEME - Text
-        private static Color32 lightText = new Color32(2, 2, 2, 255);
+        private static Color32 lightText = new Color32(0, 128, 0, 255); //light theme=dark green
         private static Color32 lightTextHighlighted = new Color32(255, 255, 255, 255);
         private static byte lightTextAlphaObjectEnabled = 255;
         private static byte lightTextAlphaObjectDisabled = 95;

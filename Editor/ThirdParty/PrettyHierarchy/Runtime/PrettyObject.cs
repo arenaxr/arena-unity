@@ -16,7 +16,7 @@ namespace PrettyHierarchy
         private Color32 backgroundColor = new Color32(255, 255, 255, 255);
         //[Header("Text")]
         //[SerializeField]
-        private bool useDefaultTextColor = false;
+        private bool useDefaultTextColor = true;
         //[SerializeField]
         private Color32 textColor = new Color32(0, 0, 0, 255);
         //[SerializeField]
@@ -43,10 +43,11 @@ namespace PrettyHierarchy
 
         private void Awake()
         {
-            if (EditorGUIUtility.isProSkin)
-                textColor = new Color32(0, 255, 0, 255); //dark theme=light green
-            else
-                textColor = new Color32(0, 128, 0, 255); //light theme=dark green
+            // for now, arena objects colored text consistently in Editor/ThirdParty/PrettyHierarchy/Editor/Utils/EditorColors.cs
+            // if (EditorGUIUtility.isProSkin)
+            //     textColor = new Color32(0, 255, 0, 255); //dark theme=light green
+            // else
+            //     textColor = new Color32(0, 128, 0, 255); //light theme=dark green
         }
 
         private void OnValidate()
