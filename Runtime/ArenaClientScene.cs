@@ -36,7 +36,7 @@ namespace ArenaUnity
         {
             base.Awake();
             Instance = this;
-            name = $"ARENA (MQTT Disconnected)";
+            name = "ARENA (Starting...)";
         }
 
         [Tooltip("Name of the topic realm for the scene.")]
@@ -139,6 +139,7 @@ namespace ArenaUnity
             }
 
             // start auth flow and MQTT connection
+            name = "ARENA (Authenticating...)";
             CoroutineWithData cd = new CoroutineWithData(this, SceneSignin(sceneName, namespaceName, realm));
             yield return cd.coroutine;
             if (cd.result != null)
@@ -147,6 +148,7 @@ namespace ArenaUnity
                 sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
                 sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
             }
+            name = "ARENA (MQTT Connecting...)";
 
             // get persistence objects
             StartCoroutine(SceneLoadPersist());
@@ -647,13 +649,13 @@ namespace ArenaUnity
         {
             base.OnConnected();
             Subscribe(new string[] { $"{sceneTopic}/#" });
-            name = $"ARENA (MQTT Connected)";
+            name = "ARENA (MQTT Connected)";
         }
 
         protected override void OnDisconnected()
         {
             base.OnDisconnected();
-            name = $"ARENA (MQTT Disconnected)";
+            name = "ARENA (MQTT Disconnected)";
         }
 
         protected override void DecodeMessage(string topic, byte[] message)

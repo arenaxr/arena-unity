@@ -6,7 +6,6 @@
 using System.Dynamic;
 using System.Globalization;
 using System.IO;
-using System.Text.RegularExpressions;
 using Google.Apis.Auth.OAuth2;
 using Newtonsoft.Json;
 using UnityEditor;
@@ -129,16 +128,30 @@ namespace ArenaUnity
             PublishPrimitive(menuCommand, "torus");
         }
 
+        [MenuItem("GameObject/ARENA/Box", true)]
+        [MenuItem("GameObject/ARENA/Capsule", true)]
+        [MenuItem("GameObject/ARENA/Circle", true)]
+        [MenuItem("GameObject/ARENA/Cone", true)]
+        [MenuItem("GameObject/ARENA/Cylinder", true)]
+        [MenuItem("GameObject/ARENA/Dodecahedron", true)]
+        [MenuItem("GameObject/ARENA/GLTF Model", true)]
+        [MenuItem("GameObject/ARENA/Icosahedron", true)]
+        [MenuItem("GameObject/ARENA/Image", true)]
+        [MenuItem("GameObject/ARENA/Octahedron", true)]
+        [MenuItem("GameObject/ARENA/Plane", true)]
+        [MenuItem("GameObject/ARENA/Ring", true)]
+        [MenuItem("GameObject/ARENA/Sphere", true)]
+        [MenuItem("GameObject/ARENA/Tetrahedron", true)]
+        [MenuItem("GameObject/ARENA/Torus", true)]
+        static bool ValidateCreateArenaObject()
+        {
+            return ArenaClientScene.Instance != null && ArenaClientScene.Instance.mqttClientConnected;
+        }
+
         private static void PublishPrimitive(MenuCommand menuCommand, string object_type)
         {
             TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
             string object_id = ti.ToTitleCase(object_type);
-
-            if (ArenaClientScene.Instance == null)
-            {
-                Debug.LogError($"Failed to create object '{object_id}', press Play before creating an ARENA {object_type}.");
-                return;
-            }
 
             // Set a position in front of the camera
             float distance = 2f;

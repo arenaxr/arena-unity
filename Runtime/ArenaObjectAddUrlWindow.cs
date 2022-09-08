@@ -33,11 +33,6 @@ namespace ArenaUnity
 
             if (GUILayout.Button($"Create new {object_type}"))
             {
-                if (ArenaClientScene.Instance == null)
-                {
-                    Debug.LogError($"Failed to create object '{object_id}', press Play before creating an ARENA {object_type}.");
-                    return;
-                }
                 // validate uri
                 if (!Uri.IsWellFormedUriString(object_url, UriKind.RelativeOrAbsolute))
                 {
