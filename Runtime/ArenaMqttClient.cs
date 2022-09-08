@@ -55,8 +55,10 @@ namespace ArenaUnity
         const string mqttTokenFile = ".arena_mqtt_auth";
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
-        protected string userHomePath = null;
-        protected string appFilesPath = null;
+        protected string userHomePath { get; private set; }
+        protected string appFilesPath { get; private set; }
+        protected string userid { get; private set; }
+        protected string camid { get; private set; }
 
         static readonly string[] Scopes = {
             Oauth2Service.Scope.UserinfoProfile,
@@ -77,9 +79,19 @@ namespace ArenaUnity
         {
             public string username { get; set; }
             public string token { get; set; }
+            public MqttAuthIds ids { get; set; }
         }
+
+        public class MqttAuthIds
+        {
+            public string userid { get; set; }
+            public string camid { get; set; }
+        }
+
         public enum Auth { Anonymous, Google };
         public bool IsShuttingDown { get; internal set; }
+
+
         private List<byte[]> eventMessages = new List<byte[]>();
 
         // MQTT methods
@@ -258,12 +270,12 @@ namespace ArenaUnity
                 form.AddField("id_auth", tokenType);
                 form.AddField("username", userName);
                 form.AddField("realm", realm);
+                form.AddField("userid", "true");
+                form.AddField("camid", "true");
                 // handle full ARENA scene
                 if (namespaceName != null && sceneName != null)
                 {
                     form.AddField("scene", $"{namespaceName}/{sceneName}");
-                    form.AddField("userid", "true");
-                    form.AddField("camid", "true");
                 }
                 cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/mqtt_auth", csrfToken, form));
                 yield return cd.coroutine;
@@ -279,6 +291,8 @@ namespace ArenaUnity
             var auth = JsonConvert.DeserializeObject<MqttAuth>(mqttToken);
             mqttUserName = auth.username;
             mqttPassword = auth.token;
+            userid = auth.ids.userid;
+            camid = auth.ids.camid;
             var handler = new JwtSecurityTokenHandler();
             JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
             permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);

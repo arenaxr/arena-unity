@@ -6,6 +6,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using MimeMapping;
@@ -636,14 +638,25 @@ namespace ArenaUnity
             }
         }
 
-        internal void PublishObject(string object_id, string msgJson)
+        public void PublishObject(string object_id, string msgJson)
         {
-            //TODO: prevent publish, throw errors on publishing without rights
+            //TODO: prevent publish and throw errors on publishing without rights
 
-            byte[] payload = System.Text.Encoding.UTF8.GetBytes(msgJson);
             dynamic msg = JsonConvert.DeserializeObject(msgJson);
+            msg.timestamp = DateTime.Now.ToString("yyyy-MM-dd' 'HH:mm:ss.fffZ", CultureInfo.InvariantCulture);
+            byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
             Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload);
             LogMessage("Sent", msg);
+        }
+
+        public void PublishEvent(string msgJsonData)
+        {
+            dynamic msgData = JsonConvert.DeserializeObject(msgJsonData);
+            dynamic msg = new ExpandoObject();
+            msg.object_id = camid;
+            msg.action = "clientEvent";
+            msg.data = msgData;
+            PublishObject(camid, JsonConvert.SerializeObject(msg));
         }
 
         protected override void OnConnected()
