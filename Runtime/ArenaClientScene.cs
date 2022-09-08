@@ -11,9 +11,6 @@ using System.Linq;
 using MimeMapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-#if UNITY_EDITOR
-using SandolkakosDigital.EditorUtils;
-#endif
 using Siccity.GLTFUtility;
 using UnityEditor;
 using UnityEngine;
@@ -26,7 +23,6 @@ namespace ArenaUnity
     /// </summary>
     [HelpURL("https://docs.arenaxr.org")]
     [DisallowMultipleComponent]
-    [AddComponentMenu("ArenaClientScene", 0)]
     public class ArenaClientScene : ArenaMqttClient
     {
         // Singleton instance of this connection object
@@ -104,8 +100,6 @@ namespace ArenaUnity
         {
 #if UNITY_EDITOR
             StartCoroutine(ConnectArena());
-            Selection.activeGameObject = gameObject; // client focus at runtime starts
-            SceneHierarchyUtility.SetExpanded(gameObject, true); // expand arena list
 #endif
         }
 
@@ -644,6 +638,8 @@ namespace ArenaUnity
 
         internal void PublishObject(string object_id, string msgJson)
         {
+            //TODO: prevent publish, throw errors on publishing without rights
+
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(msgJson);
             dynamic msg = JsonConvert.DeserializeObject(msgJson);
             Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload);

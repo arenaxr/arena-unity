@@ -1,5 +1,5 @@
 # Third Party Notices
-ARENA-unity uses some third-party libraries in its package. Some have been modified slightly to work better for Unity and the ARENA.
+ARENA-unity uses some third-party libraries in its package. Some have been modified slightly to work better for Unity and the ARENA. Also, some are not used but we wish to acknowledge the inspiration provided to our project.
 
 ## GitHub
 - https://github.com/OliviaLynn/Unity-UDP-ARENA-Demo
@@ -8,7 +8,6 @@ ARENA-unity uses some third-party libraries in its package. Some have been modif
 - https://github.com/primaryobjects/unity-to-aframe
 - https://github.com/NCEEGEE/PrettyHierarchy
 - https://github.com/mattatz/unity-mesh-builder
-- https://github.com/sandolkakos/unity-utilities
 
 ## NuGet
 - https://www.nuget.org/packages/Google.Apis

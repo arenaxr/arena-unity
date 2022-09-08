@@ -62,6 +62,8 @@ namespace ArenaUnity
                 return;
             if (transform.hasChanged || meshChanged)
             {
+                //TODO: prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
+
                 if (PublishCreateUpdate(true))
                 {
                     transform.hasChanged = false;
@@ -189,6 +191,8 @@ namespace ArenaUnity
 
         public void OnValidate()
         {
+            // TODO: handle problematic offline name change
+
             if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return;
             if (ArenaClientScene.Instance.IsShuttingDown) return;

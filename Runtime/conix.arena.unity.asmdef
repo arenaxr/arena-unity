@@ -2,8 +2,7 @@
     "name": "conix.arena.unity",
     "references": [
         "Siccity.GLTFUtility",
-        "PrettyHierarchy",
-        "SandolkakosDigital.EditorUtils"
+        "PrettyHierarchy"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
