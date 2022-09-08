@@ -70,8 +70,6 @@ namespace ArenaUnity
             }
             else if (oldName != null && name != oldName)
             {
-                // Ensure arena-compatible naming
-                name = Regex.Replace(name, ArenaUnity.regexObjId, ArenaUnity.replaceCharObjId);
                 HandleRename();
             }
             oldName = name;
@@ -102,7 +100,6 @@ namespace ArenaUnity
             if (ArenaClientScene.Instance.IsShuttingDown) return false;
             if (messageType != "object") return false;
 
-            name = Regex.Replace(name, ArenaUnity.regexObjId, ArenaUnity.replaceCharObjId);
             if (ArenaClientScene.Instance.arenaObjs.ContainsKey(name))
                 name = $"{name}-{UnityEngine.Random.Range(0, 1000000)}";
             if (!ArenaClientScene.Instance.arenaObjs.ContainsKey(name))

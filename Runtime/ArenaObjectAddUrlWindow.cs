@@ -51,7 +51,6 @@ namespace ArenaUnity
                 Vector3 cameraPoint = cam.transform.position + cam.transform.forward * distance;
 
                 dynamic msg = new ExpandoObject();
-                msg.object_id = Regex.Replace(object_id, ArenaUnity.regexObjId, ArenaUnity.replaceCharObjId);
                 if (ArenaClientScene.Instance.arenaObjs.ContainsKey(msg.object_id))
                     msg.object_id = $"{msg.object_id}-{UnityEngine.Random.Range(0, 1000000)}";
                 msg.action = "create";

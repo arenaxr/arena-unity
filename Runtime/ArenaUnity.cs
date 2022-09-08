@@ -17,8 +17,6 @@ namespace ArenaUnity
     {
         public static int mainDisplay = 0;
         public static int secondDisplay = 1;
-        public const string regexObjId = @"[ ]";
-        public const string replaceCharObjId = "-";
 
         private static float ArenaFloat(float n) { return (float)Math.Round(n, 3); }
 

@@ -125,7 +125,7 @@ namespace ArenaUnity
                 }
                 else
                 {
-                    nameSafe = false;
+                    nameSafe = false; // critical error, arena objects must have unique names
                     Debug.LogError($"More than one ArenaObject is named '{aobj.name}'. All ArenaObjects must have unique names.");
                 }
             }
