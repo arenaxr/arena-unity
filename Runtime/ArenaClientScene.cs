@@ -114,17 +114,17 @@ namespace ArenaUnity
         /// </summary>
         public IEnumerator ConnectArena()
         {
-            // prevent name collisions before MQTT
-            List<string> projectArenaObjects = new List<string>();
             bool nameSafe = true;
+            // local inventory before MQTT
             foreach (var aobj in FindObjectsOfType<ArenaObject>())
             {
-                if (!projectArenaObjects.Contains(aobj.name))
+                if (!arenaObjs.ContainsKey(aobj.name))
                 {
-                    projectArenaObjects.Add(aobj.name);
+                    arenaObjs.Add(aobj.name, aobj.gameObject);
                 }
                 else
                 {
+                    // prevent name collisions before MQTT
                     nameSafe = false; // critical error, arena objects must have unique names
                     Debug.LogError($"More than one ArenaObject is named '{aobj.name}'. All ArenaObjects must have unique names.");
                 }
@@ -223,17 +223,22 @@ namespace ArenaUnity
             bool persist = true;
             foreach (dynamic msg in persistMessages)
             {
-                DisplayCancelableProgressBar("ARENA Persistence", $"Loading object-id: {(string)msg.object_id}", objects_num / (float)jsonVal.Count);
-                IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
-                foreach (var uri in uris)
+                string object_id = (string)msg.object_id;
+                string msg_type = (string)msg.type;
+                DisplayCancelableProgressBar("ARENA Persistence", $"Loading object-id: {object_id}", objects_num / (float)jsonVal.Count);
+                if (!arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
                 {
-                    if (!string.IsNullOrWhiteSpace(uri))
+                    IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
+                    foreach (var uri in uris)
                     {
-                        cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
-                        yield return cd.coroutine;
+                        if (!string.IsNullOrWhiteSpace(uri))
+                        {
+                            cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
+                            yield return cd.coroutine;
+                        }
                     }
+                    CreateUpdateObject(object_id, msg_type, persist, msg.attributes);
                 }
-                CreateUpdateObject((string)msg.object_id, (string)msg.type, persist, msg.attributes);
                 objects_num++;
             }
             ClearProgressBar();
