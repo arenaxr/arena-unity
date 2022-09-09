@@ -2,6 +2,30 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.1.0](https://github.com/arenaxr/arena-unity/compare/v0.0.14...v0.1.0) (2022-09-09)
+
+
+### Features
+
+* **auth:** add anonymous login type ([a497327](https://github.com/arenaxr/arena-unity/commit/a4973276b159ae9b99884f3c69fe17de717ab79f))
+* **auth:** migrate auth flow to ArenaMqttClient ([4c00864](https://github.com/arenaxr/arena-unity/commit/4c008649560d3910d2f6d9d0b9101c254263639f))
+* major refactor mqtt, ArenaClient => ArenaClientScene ([6709cc2](https://github.com/arenaxr/arena-unity/commit/6709cc25927346c9591446c487172bf24cf853b6))
+* **mqtt:** add custom event publish ([0e07bb9](https://github.com/arenaxr/arena-unity/commit/0e07bb95279388c0e811775c1378cd6eae43278c))
+* **mqtt:** allow custom publish/subcribe ([6a75797](https://github.com/arenaxr/arena-unity/commit/6a75797ba228a53bfba6aa6e197691d0c72c534a))
+* **objects:** color arena objects that have scripts attached ([9b5044e](https://github.com/arenaxr/arena-unity/commit/9b5044eeac3ba3c4ce38b82276e96d81d4debf69))
+* **objects:** ensure local arena objects take priority ([e288c5e](https://github.com/arenaxr/arena-unity/commit/e288c5e6d10ef89bea1654182e0e2970519b75e5))
+* **objects:** prevent arena objects of the same name at start ([a6afe98](https://github.com/arenaxr/arena-unity/commit/a6afe98ca0a58d43b40325e5d3be67f2c7398e3b))
+* **scene:** place arena objects in scene, not ArenaClient children ([a8f65ed](https://github.com/arenaxr/arena-unity/commit/a8f65edbc8870baa803ae47329bc9fb697cd28f4))
+
+
+### Bug Fixes
+
+* **menu:** auto-renamed arena context menu publish topic ([04ae465](https://github.com/arenaxr/arena-unity/commit/04ae4654288fca6525504b214ce477d06ab09319))
+* **naming:** allow html5 non-whitespace object ids ([4087a86](https://github.com/arenaxr/arena-unity/commit/4087a8652a7a4311910afc3ce7b94b0c6080c187))
+* **objects:** allow menu arena object create with mqtt only ([71f1f25](https://github.com/arenaxr/arena-unity/commit/71f1f2560f4654cf2b4f24491fa269e31e4aa6a7))
+* **objects:** remove problimatic auto-rename ([65a2512](https://github.com/arenaxr/arena-unity/commit/65a2512ea135cb752d9c2cb7bc3f9c830edf27f1))
+* **primitive:** match more primitives to a-frame defaults ([42e57ce](https://github.com/arenaxr/arena-unity/commit/42e57cee336b756c20257e783cf136ea86d4a4e3))
+
 ## [0.0.14](https://github.com/conix-center/ARENA-unity/compare/0.0.13...v0.0.14) (2022-07-14)
 
 
