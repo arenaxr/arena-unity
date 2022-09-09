@@ -20,6 +20,7 @@ namespace ArenaUnity
 #endif
         internal static void SignoutArena()
         {
+            // TODO: move to mqtt arena client
 #if UNITY_EDITOR
             if (Application.isPlaying)
                 EditorApplication.ExitPlaymode();
