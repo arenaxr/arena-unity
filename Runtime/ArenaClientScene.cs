@@ -44,12 +44,20 @@ namespace ArenaUnity
         [Tooltip("Name of the scene, without namespace ('example', not 'username/example'")]
         public string sceneName = "example";
 
-        [Header("Performance & Control")]
+        [Header("Perspective")]
         [Tooltip("Cameras for Display 1")]
         [SerializeField]
         public Camera cameraForDisplay;
         [Tooltip("Synchronize camera display to first ARENA user in the scene")]
         public bool cameraAutoSync = false;
+
+        [Tooltip("Path to user head model")]
+        public string headModelPath = "/store/models/robobit.glb";
+        [Tooltip("User display name")]
+        public string displayName = null;
+
+
+        [Header("Performance")]
         [Tooltip("Console log MQTT object messages")]
         public bool logMqttObjects = false;
         [Tooltip("Console log MQTT user messages")]
@@ -83,8 +91,6 @@ namespace ArenaUnity
         {
             base.OnEnable();
             importPath = Path.Combine(appFilesPath, "Assets", "ArenaUnity", "import");
-
-            cameraForDisplay = Camera.main;
 
             // ensure consistent name and transform
             transform.position = Vector3.zero;
@@ -138,13 +144,20 @@ namespace ArenaUnity
             name = "ARENA (Authenticating...)";
             CoroutineWithData cd = new CoroutineWithData(this, SceneSignin(sceneName, namespaceName, realm));
             yield return cd.coroutine;
+            name = "ARENA (MQTT Connecting...)";
             if (cd.result != null)
             {
                 namespaceName = cd.result.ToString();
                 sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
                 sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
             }
-            name = "ARENA (MQTT Connecting...)";
+
+            // publish main/selected camera
+            displayName = userid;
+            cameraForDisplay = Camera.main;
+            ArenaCamera acobj = cameraForDisplay.gameObject.AddComponent(typeof(ArenaCamera)) as ArenaCamera;
+            // TODO: add last will camera delete
+
 
             // get persistence objects
             StartCoroutine(SceneLoadPersist());

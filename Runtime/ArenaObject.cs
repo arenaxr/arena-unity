@@ -23,7 +23,7 @@ namespace ArenaUnity
         public string messageType = "object"; // default to object
         [Tooltip("Persist this object in the ARENA server database (default true = persist on server)")]
         public bool persist = true;
-        [TextArea(5, 10)]
+        [TextArea(5, 20)]
         [Tooltip("ARENA JSON-encoded message (debug only for now)")]
         public string jsonData = null;
 

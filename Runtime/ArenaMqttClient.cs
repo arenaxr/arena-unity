@@ -57,8 +57,8 @@ namespace ArenaUnity
         const string userSubDirUnity = "unity";
         protected string userHomePath { get; private set; }
         protected string appFilesPath { get; private set; }
-        protected string userid { get; private set; }
-        protected string camid { get; private set; }
+        internal string userid { get; private set; }
+        internal string camid { get; private set; }
 
         static readonly string[] Scopes = {
             Oauth2Service.Scope.UserinfoProfile,
@@ -169,7 +169,7 @@ namespace ArenaUnity
             appFilesPath = Application.isMobilePlatform ? Application.persistentDataPath : "";
         }
 
-        protected IEnumerator SceneSignin(string sceneName = null, string namespaceName = null, string realm = null)
+        protected IEnumerator SceneSignin(string sceneName = null, string namespaceName = null, string realm = null, bool will = false)
         {
             string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, brokerAddress, "s");
             string userGAuthPath = sceneAuthDir;
@@ -293,6 +293,12 @@ namespace ArenaUnity
             mqttPassword = auth.token;
             userid = auth.ids.userid;
             camid = auth.ids.camid;
+            if (will)
+            {
+                willFlag = will;
+                willTopic = $"{realm}/{namespaceName}/{sceneName}/{client.ClientId}/{camid}";
+                willMessage = $"{{'object_id':'{camid}','action':'delete'}}";
+            }
             var handler = new JwtSecurityTokenHandler();
             JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
             permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
