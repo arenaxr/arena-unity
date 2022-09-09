@@ -5,7 +5,6 @@
 
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PrettyHierarchy;
@@ -51,6 +50,17 @@ namespace ArenaUnity
 
         void Start()
         {
+            // runtime created arena objects still need to be checked for name uniqueness
+            bool found = false;
+            foreach (var aobj in FindObjectsOfType<ArenaObject>())
+            {
+                if (aobj.name == name)
+                {
+                    if (!found) found = true;
+                    else name = $"{name}-{UnityEngine.Random.Range(0, 1000000)}";
+                }
+            }
+
             isJsonValidated = jsonData != null;
         }
 
