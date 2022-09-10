@@ -114,8 +114,7 @@ namespace ArenaUnity
 
             // message type information
             dynamic msg = new ExpandoObject();
-            // Received: {"object_id":"camera_0757465881_mwfarb","displayName":"Michael W. Farb","action":"update","type":"object","data":{"object_type":"camera","position":{"x":0,"y":1.6,"z":0},"rotation":{"x":0,"y":0,"z":0,"w":1},"color":"#953b22","presence":"Standard","headModelPath":"/static/models/avatars/robobit.glb"},"jitsiId":"dac726de","hasAudio":false,"hasVideo":false,"hasAvatar":false,"timestamp":"2022-09-09T18:16:36.989Z"}
-            msg.object_id = ArenaClientScene.Instance.camid;
+            msg.object_id = ArenaClientScene.Instance.displayName;
             msg.action = created ? "update" : "create";
             msg.type = messageType;
             msg.persist = false;
@@ -124,6 +123,7 @@ namespace ArenaUnity
             dynamic dataUnity = new ExpandoObject();
             dataUnity.object_type = "camera";
             dataUnity.headModelPath = ArenaClientScene.Instance.headModelPath;
+            dataUnity.color = ArenaUnity.ToArenaColor(ArenaClientScene.Instance.displayColor);
 
             // minimum transform information
             dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);

@@ -55,6 +55,8 @@ namespace ArenaUnity
         public string headModelPath = "/store/models/robobit.glb";
         [Tooltip("User display name")]
         public string displayName = null;
+        [Tooltip("User display name color")]
+        public Color displayColor = Color.white;
 
 
         [Header("Performance")]
@@ -140,9 +142,11 @@ namespace ArenaUnity
                 yield break;
             }
 
+            bool will = true;
+
             // start auth flow and MQTT connection
             name = "ARENA (Authenticating...)";
-            CoroutineWithData cd = new CoroutineWithData(this, SceneSignin(sceneName, namespaceName, realm));
+            CoroutineWithData cd = new CoroutineWithData(this, SceneSignin(sceneName, namespaceName, realm, will));
             yield return cd.coroutine;
             name = "ARENA (MQTT Connecting...)";
             if (cd.result != null)
@@ -153,11 +157,12 @@ namespace ArenaUnity
             }
 
             // publish main/selected camera
-            displayName = userid;
+            displayName = !string.IsNullOrWhiteSpace(displayName) ? displayName : userid;
+            Debug.Log(ArenaUnity.ToArenaColor(displayColor));
+            displayColor = ArenaUnity.ColorRandom();
             cameraForDisplay = Camera.main;
+            Debug.Log(ArenaUnity.ToArenaColor(displayColor));
             ArenaCamera acobj = cameraForDisplay.gameObject.AddComponent(typeof(ArenaCamera)) as ArenaCamera;
-            // TODO: add last will camera delete
-
 
             // get persistence objects
             StartCoroutine(SceneLoadPersist());

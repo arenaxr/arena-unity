@@ -296,9 +296,10 @@ namespace ArenaUnity
             if (will)
             {
                 willFlag = will;
-                willTopic = $"{realm}/{namespaceName}/{sceneName}/{client.ClientId}/{camid}";
+                willTopic = $"{realm}/{namespaceName}/{sceneName}/{camid}";
                 willMessage = $"{{'object_id':'{camid}','action':'delete'}}";
             }
+            Debug.Log($"will {willFlag} {willTopic} {willMessage}");
             var handler = new JwtSecurityTokenHandler();
             JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
             permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
