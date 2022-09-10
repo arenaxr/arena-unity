@@ -296,8 +296,11 @@ namespace ArenaUnity
             if (will)
             {
                 willFlag = will;
-                willTopic = $"{realm}/{namespaceName}/{sceneName}/{camid}";
+                willTopic = $"{realm}/s/{namespaceName}/{sceneName}/{camid}";
                 willMessage = $"{{'object_id':'{camid}','action':'delete'}}";
+                //arena - console.js:88 Malformed message(no object_id): { "payloadString":"{'object_id':'camera_1976538201_mwfarb','action':'delete'}","destinationName":"realm/s/mwfarb/example/camera_1976538201_mwfarb","qos":0,"retained":false,"topic":"realm/s/mwfarb/example/camera_1976538201_mwfarb","duplicate":false}
+
+                //TODO: handle lwt on intentional disconnect
             }
             Debug.Log($"will {willFlag} {willTopic} {willMessage}");
             var handler = new JwtSecurityTokenHandler();

@@ -320,7 +320,7 @@ namespace M2MqttUnity
             {
                 if (willFlag)
                 {
-                    client.Connect(clientId, mqttUserName, mqttPassword, false, MqttMsgConnect.QOS_LEVEL_AT_MOST_ONCE, willFlag, willTopic, willMessage, true, MqttMsgConnect.KEEP_ALIVE_PERIOD_DEFAULT);
+                    client.Connect(clientId, mqttUserName, mqttPassword, false, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, willFlag, willTopic, willMessage, true, MqttMsgConnect.KEEP_ALIVE_PERIOD_DEFAULT);
                 }
                 else
                 {

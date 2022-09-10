@@ -55,8 +55,6 @@ namespace ArenaUnity
         public string headModelPath = "/store/models/robobit.glb";
         [Tooltip("User display name")]
         public string displayName = null;
-        [Tooltip("User display name color")]
-        public Color displayColor = Color.white;
 
 
         [Header("Performance")]
@@ -79,8 +77,8 @@ namespace ArenaUnity
 
         private string sceneTopic = null;
         internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
-
         internal List<string> pendingDelete = new List<string>();
+        internal Color displayColor = Color.white;
 
         static string importPath = null;
 
@@ -158,10 +156,8 @@ namespace ArenaUnity
 
             // publish main/selected camera
             displayName = !string.IsNullOrWhiteSpace(displayName) ? displayName : userid;
-            Debug.Log(ArenaUnity.ToArenaColor(displayColor));
             displayColor = ArenaUnity.ColorRandom();
             cameraForDisplay = Camera.main;
-            Debug.Log(ArenaUnity.ToArenaColor(displayColor));
             ArenaCamera acobj = cameraForDisplay.gameObject.AddComponent(typeof(ArenaCamera)) as ArenaCamera;
 
             // get persistence objects
