@@ -155,7 +155,7 @@ namespace ArenaUnity
             Disconnect();
         }
 
-        protected void OnApplicationQuit()
+        protected override void OnApplicationQuit()
         {
             // remove avatar before connection closes
             if (willFlag)
