@@ -38,11 +38,11 @@ namespace ArenaUnity
             name = "ARENA (Starting...)";
         }
 
-        [Tooltip("Name of the topic realm for the scene.")]
+        [Tooltip("Name of the topic realm for the scene (runtime changes ignored).")]
         private string realm = "realm";
-        [Tooltip("Namespace (automated with username), but can be overridden")]
+        [Tooltip("Namespace (automated with username), but can be overridden (runtime changes ignored).")]
         public string namespaceName = null;
-        [Tooltip("Name of the scene, without namespace ('example', not 'username/example'")]
+        [Tooltip("Name of the scene, without namespace ('example', not 'username/example', runtime changes ignored).")]
         public string sceneName = "example";
 
         [Header("Perspective")]
@@ -50,10 +50,11 @@ namespace ArenaUnity
         public string displayName = null;
         [Tooltip("Path to user head model")]
         public string headModelPath = "/store/models/robobit.glb";
-        [Tooltip("Camera for display")]
-        [SerializeField]
-        public Camera cameraForDisplay;
-        [Tooltip("Publish cameraForDisplay pose as user avatar")]
+        //[Tooltip("Camera for display.")]
+        //public Camera displayCamera;
+        [Tooltip("Camera for user avatar (runtime changes ignored).")]
+        public Camera userCamera;
+        [Tooltip("Request camera avatar access and publish presense (runtime changes ignored).")]
         public bool publishCamera = true;
 
         [Header("Performance")]
@@ -138,11 +139,9 @@ namespace ArenaUnity
                 yield break;
             }
 
-            bool will = true;
-
             // start auth flow and MQTT connection
             name = "ARENA (Authenticating...)";
-            CoroutineWithData cd = new CoroutineWithData(this, SceneSignin(sceneName, namespaceName, realm, will));
+            CoroutineWithData cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, publishCamera));
             yield return cd.coroutine;
             name = "ARENA (MQTT Connecting...)";
             if (cd.result != null)
@@ -153,8 +152,8 @@ namespace ArenaUnity
             }
 
             // publish main/selected camera
-            cameraForDisplay = Camera.main;
-            ArenaCamera acobj = cameraForDisplay.gameObject.AddComponent(typeof(ArenaCamera)) as ArenaCamera;
+            userCamera = Camera.main;
+            ArenaCamera acobj = userCamera.gameObject.AddComponent(typeof(ArenaCamera)) as ArenaCamera;
 
             // get persistence objects
             StartCoroutine(SceneLoadPersist());
@@ -757,11 +756,11 @@ namespace ArenaUnity
         protected void OnValidate()
         {
             // camera change?
-            if (cameraForDisplay != null)
+            if (userCamera != null)
             {
                 foreach (Camera cam in Camera.allCameras)
                 {
-                    if (cam.name == cameraForDisplay.name)
+                    if (cam.name == userCamera.name)
                     {
                         cam.targetDisplay = ArenaUnity.mainDisplay;
                         Debug.Log($"{cam.name} now using Display {cam.targetDisplay + 1}.");

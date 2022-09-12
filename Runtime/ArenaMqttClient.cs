@@ -27,9 +27,9 @@ namespace ArenaUnity
     public class ArenaMqttClient : M2MqttUnityClient
     {
         [Header("ARENA MQTT configuration")]
-        [Tooltip("Connect as Anonymous user, or Google authenticated user.")]
+        [Tooltip("Connect as Anonymous, Google authenticated, or Manual (advanced) JWT user (runtime changes ignored).")]
         public Auth authType = Auth.Google;
-        [Tooltip("IP address or URL of the host running broker/auth/persist services.")]
+        [Tooltip("IP address or URL of the host running broker/auth/persist services (runtime changes ignored).")]
         public string hostAddress = "mqtt.arenaxr.org";
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace ArenaUnity
             public string camid { get; set; }
         }
 
-        public enum Auth { Anonymous, Google };
+        public enum Auth { Anonymous, Google, Manual };
         public bool IsShuttingDown { get; internal set; }
 
 
@@ -175,7 +175,23 @@ namespace ArenaUnity
             appFilesPath = Application.isMobilePlatform ? Application.persistentDataPath : "";
         }
 
-        protected IEnumerator SceneSignin(string sceneName = null, string namespaceName = null, string realm = null, bool will = false)
+        /// <summary>
+        /// Sign into the ARENA for a specific scene, optionally using a user avatar camera, per user account.
+        /// </summary>
+        protected IEnumerator SigninScene(string sceneName, string namespaceName, string realm, bool camera)
+        {
+            return Signin(sceneName, namespaceName, realm, camera);
+        }
+
+        /// <summary>
+        /// Sign into the ARENA for any available credentials based on authType per user account.
+        /// </summary>
+        protected IEnumerator Signin()
+        {
+            return Signin();
+        }
+
+        private IEnumerator Signin(string sceneName = null, string namespaceName = null, string realm = null, bool camera = false)
         {
             string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, brokerAddress, "s");
             string userGAuthPath = sceneAuthDir;
@@ -188,6 +204,11 @@ namespace ArenaUnity
             {
                 // check for local mqtt auth
                 Debug.LogWarning("Using local MQTT token.");
+                if (authType != Auth.Manual)
+                {
+                    Debug.LogError($"Authentication type '{authType}' when using local token may create ambiguous results. Switch to '{Auth.Manual}'.");
+                    yield break;
+                }
                 try
                 {
                     using (var sr = new StreamReader(localMqttPath))
@@ -210,8 +231,6 @@ namespace ArenaUnity
                         // prefix all anon users with "anonymous-"
                         tokenType = "anonymous";
                         userName = $"anonymous-unity-{UnityEngine.Random.Range(0, 1000000)}";
-                        if (string.IsNullOrWhiteSpace(namespaceName))
-                            namespaceName = "public";
                         break;
                     case Auth.Google:
                         // get oauth app credentials
@@ -252,8 +271,11 @@ namespace ArenaUnity
                         }
                         tokenType = "google-installed";
                         break;
+                    case Auth.Manual:
+                        Debug.LogError($"Authentication type '{authType}' missing local token file: {localMqttPath}.");
+                        yield break;
                     default:
-                        Debug.LogWarning($"Invalid ARENA authentication type: '{tokenType}'");
+                        Debug.LogError($"Invalid ARENA authentication type: '{tokenType}'");
                         yield break;
                 }
 
@@ -267,7 +289,7 @@ namespace ArenaUnity
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
                 var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
-                if (user.authenticated && (namespaceName == null || namespaceName.Trim() == ""))
+                if (user.authenticated)
                 {
                     namespaceName = user.username;
                     userName = user.username;
@@ -275,11 +297,21 @@ namespace ArenaUnity
                 // get arena user mqtt token
                 form.AddField("id_auth", tokenType);
                 form.AddField("username", userName);
-                form.AddField("realm", realm);
-                form.AddField("userid", "true");
-                form.AddField("camid", "true");
+                if (camera)
+                {
+                    form.AddField("userid", "true");
+                    form.AddField("camid", "true");
+                }
+                if (!string.IsNullOrWhiteSpace(realm))
+                {
+                    form.AddField("realm", realm);
+                }
+                if (string.IsNullOrWhiteSpace(namespaceName))
+                {
+                    namespaceName = "public";
+                }
                 // handle full ARENA scene
-                if (namespaceName != null && sceneName != null)
+                if (!string.IsNullOrWhiteSpace(sceneName))
                 {
                     form.AddField("scene", $"{namespaceName}/{sceneName}");
                 }
@@ -297,11 +329,17 @@ namespace ArenaUnity
             var auth = JsonConvert.DeserializeObject<MqttAuth>(mqttToken);
             mqttUserName = auth.username;
             mqttPassword = auth.token;
-            userid = auth.ids.userid;
-            camid = auth.ids.camid;
-            if (will)
+
+            if (camera)
             {
-                willFlag = will;
+                if (auth == null || auth.ids == null || auth.ids.userid == null || auth.ids.camid == null)
+                {
+                    Debug.LogError("Missing required userid and camid!!!!");
+                    yield break;
+                }
+                userid = auth.ids.userid;
+                camid = auth.ids.camid;
+                willFlag = camera;
                 willTopic = $"{realm}/s/{namespaceName}/{sceneName}/{camid}";
                 dynamic msg = new
                 {
@@ -310,7 +348,7 @@ namespace ArenaUnity
                 };
                 willMessage = JsonConvert.SerializeObject(msg);
             }
-            Debug.Log($"will {willFlag} {willTopic} {willMessage}");
+
             var handler = new JwtSecurityTokenHandler();
             JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
             permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);

@@ -77,8 +77,11 @@ namespace ArenaUnity
             msg.action = created ? "update" : "create";
             msg.type = messageType;
             msg.persist = persist;
-            msg.displayName = !string.IsNullOrWhiteSpace(ArenaClientScene.Instance.displayName) ?
-                ArenaClientScene.Instance.displayName : ArenaClientScene.Instance.userid;
+            if (string.IsNullOrWhiteSpace(ArenaClientScene.Instance.displayName))
+            {   // provide default name if needed
+                ArenaClientScene.Instance.displayName = ArenaClientScene.Instance.userid;
+            }
+            msg.displayName = ArenaClientScene.Instance.displayName;
 
             dynamic dataUnity = new ExpandoObject();
             dataUnity.object_type = "camera";
