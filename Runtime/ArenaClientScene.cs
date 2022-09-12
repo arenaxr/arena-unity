@@ -10,6 +10,7 @@ using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -175,9 +176,18 @@ namespace ArenaUnity
         /// <summary>
         /// Remove ARENA authentication.
         /// </summary>
-        public void SignoutArena()
+#if UNITY_EDITOR
+        [MenuItem("ARENA/Signout")]
+#endif
+        internal static void SignoutArena()
         {
-            ArenaMenu.SignoutArena();
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+                EditorApplication.ExitPlaymode();
+#endif
+            if (Directory.Exists(GoogleWebAuthorizationBroker.Folder))
+                Directory.Delete(GoogleWebAuthorizationBroker.Folder, true);
+            Debug.Log("Logged out of the ARENA");
         }
 
         // Update is called once per frame
@@ -646,7 +656,7 @@ namespace ArenaUnity
             dynamic msg = JsonConvert.DeserializeObject(msgJson);
             msg.timestamp = DateTime.Now.ToString("yyyy-MM-dd' 'HH:mm:ss.fffZ", CultureInfo.InvariantCulture);
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
-            // TODO: Revist ClientId, ATM anonymous user has no client id reights: Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload);
+            // TODO: Revisit ClientId, ATM anonymous user has no client id rights: Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload);
             Publish($"{sceneTopic}/{object_id}", payload);
             LogMessage("Sent", msg);
         }
@@ -764,5 +774,6 @@ namespace ArenaUnity
                 }
             }
         }
+
     }
 }

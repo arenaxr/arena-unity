@@ -22,7 +22,7 @@ namespace ArenaUnity
             // signout button
             if (GUILayout.Button("Signout"))
             {
-                ArenaMenu.SignoutArena();
+                ArenaClientScene.SignoutArena();
             }
 
             // clickable scene url

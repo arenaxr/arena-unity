@@ -5,8 +5,6 @@
 
 using System.Dynamic;
 using System.Globalization;
-using System.IO;
-using Google.Apis.Auth.OAuth2;
 using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
@@ -15,21 +13,6 @@ namespace ArenaUnity
 {
     public static class ArenaMenu
     {
-#if UNITY_EDITOR
-        [MenuItem("ARENA/Signout")]
-#endif
-        internal static void SignoutArena()
-        {
-            // TODO: move to mqtt arena client
-#if UNITY_EDITOR
-            if (Application.isPlaying)
-                EditorApplication.ExitPlaymode();
-#endif
-            if (Directory.Exists(GoogleWebAuthorizationBroker.Folder))
-                Directory.Delete(GoogleWebAuthorizationBroker.Folder, true);
-            Debug.Log("Logged out of the ARENA");
-        }
-
 #if UNITY_EDITOR
         // Add a menu item to create custom GameObjects.
         // Priority 1 ensures it is grouped with the other menu items of the same kind
