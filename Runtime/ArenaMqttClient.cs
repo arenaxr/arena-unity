@@ -409,8 +409,6 @@ namespace ArenaUnity
                     else if (SetCookie.Contains("csrf="))
                         csrfToken = GetCookie(SetCookie, "csrf");
                 }
-
-                Debug.Log($"REST: {www.downloadHandler.text}");
                 yield return www.downloadHandler.text;
             }
         }
