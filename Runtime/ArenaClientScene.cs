@@ -45,12 +45,18 @@ namespace ArenaUnity
         [Tooltip("Name of the scene, without namespace ('example', not 'username/example'")]
         public string sceneName = "example";
 
-        [Header("Performance & Control")]
-        [Tooltip("Cameras for Display 1")]
+        [Header("Perspective")]
+        [Tooltip("User display name")]
+        public string displayName = null;
+        [Tooltip("Path to user head model")]
+        public string headModelPath = "/store/models/robobit.glb";
+        [Tooltip("Camera for display")]
         [SerializeField]
         public Camera cameraForDisplay;
-        [Tooltip("Synchronize camera display to first ARENA user in the scene")]
-        public bool cameraAutoSync = false;
+        [Tooltip("Publish cameraForDisplay pose as user avatar")]
+        public bool publishCamera = true;
+
+        [Header("Performance")]
         [Tooltip("Console log MQTT object messages")]
         public bool logMqttObjects = false;
         [Tooltip("Console log MQTT user messages")]
@@ -70,7 +76,6 @@ namespace ArenaUnity
 
         private string sceneTopic = null;
         internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
-
         internal List<string> pendingDelete = new List<string>();
 
         static string importPath = null;
@@ -84,8 +89,6 @@ namespace ArenaUnity
         {
             base.OnEnable();
             importPath = Path.Combine(appFilesPath, "Assets", "ArenaUnity", "import");
-
-            cameraForDisplay = Camera.main;
 
             // ensure consistent name and transform
             transform.position = Vector3.zero;
@@ -135,17 +138,23 @@ namespace ArenaUnity
                 yield break;
             }
 
+            bool will = true;
+
             // start auth flow and MQTT connection
             name = "ARENA (Authenticating...)";
-            CoroutineWithData cd = new CoroutineWithData(this, SceneSignin(sceneName, namespaceName, realm));
+            CoroutineWithData cd = new CoroutineWithData(this, SceneSignin(sceneName, namespaceName, realm, will));
             yield return cd.coroutine;
+            name = "ARENA (MQTT Connecting...)";
             if (cd.result != null)
             {
                 namespaceName = cd.result.ToString();
                 sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
                 sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
             }
-            name = "ARENA (MQTT Connecting...)";
+
+            // publish main/selected camera
+            cameraForDisplay = Camera.main;
+            ArenaCamera acobj = cameraForDisplay.gameObject.AddComponent(typeof(ArenaCamera)) as ArenaCamera;
 
             // get persistence objects
             StartCoroutine(SceneLoadPersist());
@@ -454,14 +463,6 @@ namespace ArenaUnity
                         cam.nearClipPlane = 0.1f; // match arena
                         cam.farClipPlane = 10000f; // match arena
                         cam.fieldOfView = 80f; // match arena
-
-                        if (cameraAutoSync && !cameraForDisplay.name.StartsWith("camera_"))
-                        {
-                            cam.targetDisplay = ArenaUnity.mainDisplay;
-                            cameraForDisplay = cam;
-                        }
-                        else
-                            cam.targetDisplay = ArenaUnity.secondDisplay;
                     }
                     break;
                 case "light":
@@ -772,5 +773,6 @@ namespace ArenaUnity
                 }
             }
         }
+
     }
 }

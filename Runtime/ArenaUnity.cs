@@ -428,13 +428,18 @@ namespace ArenaUnity
         // color
         public static string ToArenaColor(Color color)
         {
-            return $"#{ColorUtility.ToHtmlStringRGB(color)}";
+            return $"#{ColorUtility.ToHtmlStringRGB(color).ToLower()}";
         }
         public static Color ToUnityColor(string color)
         {
             ColorUtility.TryParseHtmlString(color, out Color colorObj);
             return colorObj;
         }
+        public static Color ColorRandom()
+        {
+            return UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        }
+
         // light
         public static void ToArenaLight(GameObject gobj, ref dynamic data)
         {

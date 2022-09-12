@@ -61,6 +61,10 @@ namespace M2MqttUnity
         [Tooltip("Password for the MQTT broker. Keep blank if no password is required.")]
         protected string mqttPassword = null;
 
+        protected bool willFlag = false;
+        protected string willTopic = null;
+        protected string willMessage = null;
+
         /// <summary>
         /// Wrapped MQTT client
         /// </summary>
@@ -314,7 +318,14 @@ namespace M2MqttUnity
             string clientId = "unity-" + Guid.NewGuid().ToString();
             try
             {
-                client.Connect(clientId, mqttUserName, mqttPassword);
+                if (willFlag)
+                {
+                    client.Connect(clientId, mqttUserName, mqttPassword, false, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, willFlag, willTopic, willMessage, true, MqttMsgConnect.KEEP_ALIVE_PERIOD_DEFAULT);
+                }
+                else
+                {
+                    client.Connect(clientId, mqttUserName, mqttPassword);
+                }
             }
             catch (Exception e)
             {
