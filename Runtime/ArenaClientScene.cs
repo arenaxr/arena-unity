@@ -654,7 +654,8 @@ namespace ArenaUnity
             dynamic msg = JsonConvert.DeserializeObject(msgJson);
             msg.timestamp = DateTime.Now.ToString("yyyy-MM-dd' 'HH:mm:ss.fffZ", CultureInfo.InvariantCulture);
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
-            Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload);
+            // TODO: Revisit ClientId, ATM anonymous user has no client id rights: Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload);
+            Publish($"{sceneTopic}/{object_id}", payload);
             LogMessage("Sent", msg);
         }
 
