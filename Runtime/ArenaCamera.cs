@@ -108,13 +108,14 @@ namespace ArenaUnity
                 return false;
             if (ArenaClientScene.Instance.IsShuttingDown) return false;
             if (messageType != "object") return false;
+            if (!ArenaClientScene.Instance.publishCamera) return false;
 
             //if (!ArenaClientScene.Instance.arenaObjs.ContainsKey(name))
             //    ArenaClientScene.Instance.arenaObjs.Add(name, gameObject);
 
             // message type information
             dynamic msg = new ExpandoObject();
-            msg.object_id = ArenaClientScene.Instance.displayName;
+            msg.object_id = ArenaClientScene.Instance.camid;
             msg.action = created ? "update" : "create";
             msg.type = messageType;
             msg.persist = false;

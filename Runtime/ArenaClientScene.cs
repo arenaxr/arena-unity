@@ -45,17 +45,15 @@ namespace ArenaUnity
         public string sceneName = "example";
 
         [Header("Perspective")]
-        [Tooltip("Cameras for Display 1")]
-        [SerializeField]
-        public Camera cameraForDisplay;
-        [Tooltip("Synchronize camera display to first ARENA user in the scene")]
-        public bool cameraAutoSync = false;
-
-        [Tooltip("Path to user head model")]
-        public string headModelPath = "/store/models/robobit.glb";
         [Tooltip("User display name")]
         public string displayName = null;
-
+        [Tooltip("Path to user head model")]
+        public string headModelPath = "/store/models/robobit.glb";
+        [Tooltip("Camera for display")]
+        [SerializeField]
+        public Camera cameraForDisplay;
+        [Tooltip("Publish cameraForDisplay pose as user avatar")]
+        public bool publishCamera = true;
 
         [Header("Performance")]
         [Tooltip("Console log MQTT object messages")]
@@ -459,14 +457,6 @@ namespace ArenaUnity
                         cam.nearClipPlane = 0.1f; // match arena
                         cam.farClipPlane = 10000f; // match arena
                         cam.fieldOfView = 80f; // match arena
-
-                        if (cameraAutoSync && !cameraForDisplay.name.StartsWith("camera_"))
-                        {
-                            cam.targetDisplay = ArenaUnity.mainDisplay;
-                            cameraForDisplay = cam;
-                        }
-                        else
-                            cam.targetDisplay = ArenaUnity.secondDisplay;
                     }
                     break;
                 case "light":
