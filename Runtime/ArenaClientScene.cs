@@ -189,7 +189,6 @@ namespace ArenaUnity
                 Directory.Delete(GoogleWebAuthorizationBroker.Folder, true);
             Debug.Log("Logged out of the ARENA");
         }
-
         // Update is called once per frame
         protected override void Update()
         {
