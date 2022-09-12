@@ -22,7 +22,7 @@ namespace ArenaUnity
             // signout button
             if (GUILayout.Button("Signout"))
             {
-                ArenaMenu.SignoutArena();
+                ArenaClientScene.SignoutArena();
             }
 
             // clickable scene url
@@ -43,6 +43,9 @@ namespace ArenaUnity
             // add readonly auth results
             if (!string.IsNullOrWhiteSpace(script.permissions))
             {
+                GUILayout.Space(5f);
+                EditorGUILayout.LabelField("Authentication", EditorStyles.boldLabel);
+
                 if (!string.IsNullOrWhiteSpace(script.email))
                 {
                     GUILayout.BeginHorizontal("Box");
