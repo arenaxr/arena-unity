@@ -152,7 +152,6 @@ namespace ArenaUnity
             }
 
             // publish main/selected camera
-            displayName = !string.IsNullOrWhiteSpace(displayName) ? displayName : userid;
             cameraForDisplay = Camera.main;
             ArenaCamera acobj = cameraForDisplay.gameObject.AddComponent(typeof(ArenaCamera)) as ArenaCamera;
 

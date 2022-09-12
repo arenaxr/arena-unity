@@ -6,7 +6,6 @@
 using System.Collections;
 using System.Dynamic;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using PrettyHierarchy;
 using UnityEngine;
 
@@ -21,13 +20,6 @@ namespace ArenaUnity
         private bool persist = false;
         private Color displayColor = Color.white;
 
-        [TextArea(5, 20)]
-        protected string jsonData = null;
-
-        [HideInInspector]
-        protected dynamic data = null; // original message data for object, if any
-        [HideInInspector]
-        protected string parentId = null;
         [HideInInspector]
         protected bool created = false;
 
@@ -49,7 +41,7 @@ namespace ArenaUnity
         {
             while (true)
             {
-                PublishCreateUpdate(true);
+                PublishCreateUpdate();
                 yield return new WaitForSeconds(avatarPublishIntervalSeconds);
             }
         }
@@ -64,14 +56,14 @@ namespace ArenaUnity
             {
                 //TODO: prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
 
-                if (PublishCreateUpdate(true))
+                if (PublishCreateUpdate())
                 {
                     transform.hasChanged = false;
                 }
             }
         }
 
-        public bool PublishCreateUpdate(bool transformOnly = false)
+        public bool PublishCreateUpdate()
         {
             if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return false;
@@ -84,9 +76,10 @@ namespace ArenaUnity
             msg.object_id = ArenaClientScene.Instance.camid;
             msg.action = created ? "update" : "create";
             msg.type = messageType;
-            msg.persist = false;
-            msg.displayName = ArenaClientScene.Instance.displayName;
-            transformOnly = created ? transformOnly : false;
+            msg.persist = persist;
+            msg.displayName = !string.IsNullOrWhiteSpace(ArenaClientScene.Instance.displayName) ?
+                ArenaClientScene.Instance.displayName : ArenaClientScene.Instance.userid;
+
             dynamic dataUnity = new ExpandoObject();
             dataUnity.object_type = "camera";
             dataUnity.headModelPath = ArenaClientScene.Instance.headModelPath;
@@ -94,22 +87,10 @@ namespace ArenaUnity
 
             // minimum transform information
             dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
-            Quaternion rotOut = dataUnity.object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(transform.localRotation) : transform.localRotation;
-            if (data == null || data.rotation == null || data.rotation.w != null)
-                dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
-            else
-                dataUnity.rotation = ArenaUnity.ToArenaRotationEuler(rotOut.eulerAngles);
-
-
-            // merge unity data with original message data
-            var updatedData = new JObject();
-            if (data != null)
-                updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(data)));
-            updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(dataUnity)));
+            dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(transform.localRotation);
 
             // publish
-            msg.data = transformOnly ? dataUnity : updatedData;
-            jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
+            msg.data = dataUnity;
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClientScene.Instance.PublishObject(msg.object_id, payload);
             if (!created)
