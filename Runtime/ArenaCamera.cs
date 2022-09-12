@@ -4,7 +4,6 @@
  */
 
 using System.Collections;
-using System.Collections.Generic;
 using System.Dynamic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,27 +15,21 @@ namespace ArenaUnity
     [DisallowMultipleComponent]
     public class ArenaCamera : PrettyObject
     {
-        [Tooltip("Message type in persistence storage schema")]
-        public string messageType = "object";
-        [Tooltip("Persist this object in the ARENA server database (default true = persist on server)")]
-        public bool persist = true;
+        private const float avatarPublishIntervalSeconds = 1f;
+
+        private string messageType = "object";
+        private bool persist = false;
+        private Color displayColor = Color.white;
+
         [TextArea(5, 20)]
-        [Tooltip("ARENA JSON-encoded message (debug only for now)")]
-        public string jsonData = null;
+        protected string jsonData = null;
 
         [HideInInspector]
-        public dynamic data = null; // original message data for object, if any
+        protected dynamic data = null; // original message data for object, if any
         [HideInInspector]
-        public string parentId = null;
+        protected string parentId = null;
         [HideInInspector]
-        public bool created = false;
-
-        internal string oldName; // test for rename
-        internal bool externalDelete = false;
-        internal bool isJsonValidated = false;
-        internal List<string> animations = null;
-        internal bool meshChanged = false;
-
+        protected bool created = false;
 
         public void OnEnable()
         {
@@ -48,8 +41,8 @@ namespace ArenaUnity
 
         void Start()
         {
+            displayColor = ArenaUnity.ColorRandom();
             StartCoroutine(CameraUpdater());
-            isJsonValidated = jsonData != null;
         }
 
         IEnumerator CameraUpdater()
@@ -57,7 +50,7 @@ namespace ArenaUnity
             while (true)
             {
                 PublishCreateUpdate(true);
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(avatarPublishIntervalSeconds);
             }
         }
 
@@ -67,40 +60,16 @@ namespace ArenaUnity
             if (!ArenaClientScene.Instance || ArenaClientScene.Instance.transformPublishInterval == 0 ||
             Time.frameCount % ArenaClientScene.Instance.transformPublishInterval != 0)
                 return;
-            if (transform.hasChanged || meshChanged)
+            if (transform.hasChanged)
             {
                 //TODO: prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
 
                 if (PublishCreateUpdate(true))
                 {
                     transform.hasChanged = false;
-                    meshChanged = false;
                 }
             }
-            //else if (oldName != null && name != oldName)
-            //{
-            //    HandleRename();
-            //}
-            //oldName = name;
         }
-
-        //private void HandleRename()
-        //{
-        //    if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
-        //        return;
-        //    // pub delete old
-        //    dynamic msg = new
-        //    {
-        //        object_id = oldName,
-        //        action = "delete",
-        //        persist = persist,
-        //    };
-        //    string payload = JsonConvert.SerializeObject(msg);
-        //    ArenaClientScene.Instance.PublishObject(msg.object_id, payload);
-        //    // add new object with new name, it pubs
-        //    created = false;
-        //    transform.hasChanged = true;
-        //}
 
         public bool PublishCreateUpdate(bool transformOnly = false)
         {
@@ -109,9 +78,6 @@ namespace ArenaUnity
             if (ArenaClientScene.Instance.IsShuttingDown) return false;
             if (messageType != "object") return false;
             if (!ArenaClientScene.Instance.publishCamera) return false;
-
-            //if (!ArenaClientScene.Instance.arenaObjs.ContainsKey(name))
-            //    ArenaClientScene.Instance.arenaObjs.Add(name, gameObject);
 
             // message type information
             dynamic msg = new ExpandoObject();
@@ -124,7 +90,7 @@ namespace ArenaUnity
             dynamic dataUnity = new ExpandoObject();
             dataUnity.object_type = "camera";
             dataUnity.headModelPath = ArenaClientScene.Instance.headModelPath;
-            dataUnity.color = ArenaUnity.ToArenaColor(ArenaClientScene.Instance.displayColor);
+            dataUnity.color = ArenaUnity.ToArenaColor(displayColor);
 
             // minimum transform information
             dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
@@ -133,39 +99,7 @@ namespace ArenaUnity
                 dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
             else
                 dataUnity.rotation = ArenaUnity.ToArenaRotationEuler(rotOut.eulerAngles);
-            //dataUnity.scale = ArenaUnity.ToArenaScale(transform.localScale);
-            //ArenaUnity.ToArenaDimensions(gameObject, ref dataUnity);
-            //if (transform.parent && transform.parent.gameObject.GetComponent<ArenaObject>() != null)
-            //{   // parent
-            //    dataUnity.parent = transform.parent.name;
-            //    parentId = transform.parent.name;
-            //}
-            //else if (parentId != null)
-            //{   // unparent
-            //    dataUnity.parent = null;
-            //    parentId = null;
-            //}
 
-            //if (meshChanged)
-            //{
-            //    if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
-            //    {
-            //        dataUnity.geometry = new ExpandoObject();
-            //        ArenaUnity.ToArenaMesh(gameObject, ref dataUnity.geometry);
-            //    }
-            //    else
-            //    {
-            //        ArenaUnity.ToArenaMesh(gameObject, ref dataUnity);
-            //    }
-            //}
-            //// other attributes information
-            //if (!transformOnly)
-            //{
-            //    if (GetComponent<Light>())
-            //        ArenaUnity.ToArenaLight(gameObject, ref dataUnity);
-            //    if (GetComponent<Renderer>())
-            //        ArenaUnity.ToArenaMaterial(gameObject, ref dataUnity);
-            //}
 
             // merge unity data with original message data
             var updatedData = new JObject();
@@ -184,60 +118,5 @@ namespace ArenaUnity
             return true;
         }
 
-        internal void PublishJson()
-        {
-            dynamic msg = new ExpandoObject();
-            msg.object_id = name;
-            msg.action = "update";
-            msg.type = messageType;
-            msg.persist = persist;
-            msg.data = JsonConvert.DeserializeObject(jsonData);
-            string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload); // remote
-            ArenaClientScene.Instance.ProcessMessage(payload); // local
-        }
-
-        //public void OnValidate()
-        //{
-        //    // TODO: handle problematic offline name change
-
-        //    if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
-        //        return;
-        //    if (ArenaClientScene.Instance.IsShuttingDown) return;
-
-        //    // jsonData edited manually by user?
-        //    if (jsonData != null)
-        //    {
-        //        JToken parsed = null;
-        //        try
-        //        {   // test for valid json
-        //            parsed = JToken.Parse(jsonData);
-        //        }
-        //        catch { }
-        //        finally
-        //        {
-        //            // notify GUI to allow publish
-        //            isJsonValidated = parsed != null;
-        //        }
-        //    }
-
-        //    // TODO: color/material change?
-        //}
-
-        //public void OnDestroy()
-        //{
-        //    if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
-        //        return;
-        //    if (ArenaClientScene.Instance.IsShuttingDown) return;
-
-        //    if (!externalDelete)
-        //        ArenaClientScene.Instance.pendingDelete.Add(name);
-        //}
-
-        //public void OnApplicationQuit()
-        //{
-        //    if (ArenaClientScene.Instance != null)
-        //        ArenaClientScene.Instance.IsShuttingDown = true;
-        //}
     }
 }

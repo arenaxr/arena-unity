@@ -76,7 +76,6 @@ namespace ArenaUnity
         private string sceneTopic = null;
         internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
         internal List<string> pendingDelete = new List<string>();
-        internal Color displayColor = Color.white;
 
         static string importPath = null;
 
@@ -154,7 +153,6 @@ namespace ArenaUnity
 
             // publish main/selected camera
             displayName = !string.IsNullOrWhiteSpace(displayName) ? displayName : userid;
-            displayColor = ArenaUnity.ColorRandom();
             cameraForDisplay = Camera.main;
             ArenaCamera acobj = cameraForDisplay.gameObject.AddComponent(typeof(ArenaCamera)) as ArenaCamera;
 
