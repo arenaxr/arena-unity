@@ -708,7 +708,7 @@ namespace ArenaUnity
         private IEnumerator ProcessArenaMessage(dynamic msg, object menuCommand = null)
         {
             // consume object updates
-            if (msg.type == "object")
+            if (msg.type == "object" && msg.object_id != camid)
             {
                 switch ((string)msg.action)
                 {
