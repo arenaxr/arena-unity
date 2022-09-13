@@ -647,26 +647,44 @@ namespace ArenaUnity
             }
         }
 
+        //TODO: prevent publish and throw errors on publishing without rights
+
+        /// <summary>
+        /// Object changes are published using a ClientId + ObjectId topic, a user must have permissions for the entire scene graph.
+        /// </summary>
         public void PublishObject(string object_id, string msgJson)
         {
-            //TODO: prevent publish and throw errors on publishing without rights
-
             dynamic msg = JsonConvert.DeserializeObject(msgJson);
-            msg.timestamp = DateTime.Now.ToString("yyyy-MM-dd' 'HH:mm:ss.fffZ", CultureInfo.InvariantCulture);
-            byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
-            // TODO: Revisit ClientId, ATM anonymous user has no client id rights: Publish($"{sceneTopic}/{client.ClientId}/{object_id}", payload);
-            Publish($"{sceneTopic}/{object_id}", payload);
-            LogMessage("Sent", msg);
+            PublishSceneMessage($"{sceneTopic}/{client.ClientId}/{object_id}", msg);
         }
 
+        /// <summary>
+        /// Camera presense changes are published using a ObjectId-only topic, a user might only have permissions for their camid.
+        /// </summary>
+        public void PublishCamera(string msgJson)
+        {
+            dynamic msg = JsonConvert.DeserializeObject(msgJson);
+            PublishSceneMessage($"{sceneTopic}/{camid}", msg);
+        }
+
+        /// <summary>
+        /// Camera events are published using a ObjectId-only topic, a user might only have permissions for their camid.
+        /// </summary>
         public void PublishEvent(string msgJsonData)
         {
-            dynamic msgData = JsonConvert.DeserializeObject(msgJsonData);
             dynamic msg = new ExpandoObject();
             msg.object_id = camid;
             msg.action = "clientEvent";
-            msg.data = msgData;
-            PublishObject(camid, JsonConvert.SerializeObject(msg));
+            msg.data = JsonConvert.DeserializeObject(msgJsonData);
+            PublishSceneMessage($"{sceneTopic}/{camid}", msg);
+        }
+
+        private void PublishSceneMessage(string topic, dynamic msg)
+        {
+            msg.timestamp = DateTime.Now.ToString("yyyy-MM-dd' 'HH:mm:ss.fffZ", CultureInfo.InvariantCulture);
+            byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
+            Publish(topic, payload);
+            LogMessage("Sent", msg);
         }
 
         protected override void OnConnected()

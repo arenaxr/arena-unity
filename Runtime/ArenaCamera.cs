@@ -95,7 +95,7 @@ namespace ArenaUnity
             // publish
             msg.data = dataUnity;
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload);
+            ArenaClientScene.Instance.PublishCamera(payload);
             if (!created)
                 created = true;
 
