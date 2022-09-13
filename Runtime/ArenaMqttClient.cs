@@ -188,10 +188,10 @@ namespace ArenaUnity
         /// </summary>
         protected IEnumerator Signin()
         {
-            return Signin();
+            return Signin(null, null, null, false);
         }
 
-        private IEnumerator Signin(string sceneName = null, string namespaceName = null, string realm = null, bool camera = false)
+        private IEnumerator Signin(string sceneName, string namespaceName, string realm, bool camera)
         {
             string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, brokerAddress, "s");
             string userGAuthPath = sceneAuthDir;
@@ -255,8 +255,6 @@ namespace ArenaUnity
                                     "user",
                                     CancellationToken.None,
                                     ds).Result;
-                            if (ds.GetType() == typeof(FileDataStore))
-                                Debug.Log($"Credential file saved to: {userGAuthPath}");
 
                             var oauthService = new Oauth2Service(new BaseClientService.Initializer()
                             {
@@ -323,7 +321,6 @@ namespace ArenaUnity
                 StreamWriter writer = new StreamWriter(userMqttPath);
                 writer.Write(mqttToken);
                 writer.Close();
-                Debug.Log($"Mqtt file saved to: {userMqttPath}");
             }
 
             var auth = JsonConvert.DeserializeObject<MqttAuth>(mqttToken);
@@ -334,7 +331,7 @@ namespace ArenaUnity
             {
                 if (auth == null || auth.ids == null || auth.ids.userid == null || auth.ids.camid == null)
                 {
-                    Debug.LogError("Missing required userid and camid!!!!");
+                    Debug.LogError("Missing required userid and camid!!!! Do not 'publish camera' if this is Manual auth.");
                     yield break;
                 }
                 userid = auth.ids.userid;

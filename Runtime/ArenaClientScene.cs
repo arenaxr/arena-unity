@@ -655,7 +655,8 @@ namespace ArenaUnity
         public void PublishObject(string object_id, string msgJson)
         {
             dynamic msg = JsonConvert.DeserializeObject(msgJson);
-            PublishSceneMessage($"{sceneTopic}/{client.ClientId}/{object_id}", msg);
+            msg.timestamp = GetTimestamp();
+            PublishSceneMessage($"{sceneTopic}/{client.ClientId}/{object_id}", JsonConvert.SerializeObject(msg));
         }
 
         /// <summary>
@@ -663,28 +664,48 @@ namespace ArenaUnity
         /// </summary>
         public void PublishCamera(string msgJson)
         {
-            dynamic msg = JsonConvert.DeserializeObject(msgJson);
-            PublishSceneMessage($"{sceneTopic}/{camid}", msg);
+            if (publishCamera) {
+                dynamic msg = JsonConvert.DeserializeObject(msgJson);
+                msg.timestamp = GetTimestamp();
+                PublishSceneMessage($"{sceneTopic}/{camid}", JsonConvert.SerializeObject(msg));
+            }
+            else
+            {
+                Debug.LogWarning("PublishCamera message FAILED!!!!! 'Publish Camera' must be set to true.'");
+            }
         }
 
         /// <summary>
         /// Camera events are published using a ObjectId-only topic, a user might only have permissions for their camid.
         /// </summary>
-        public void PublishEvent(string msgJsonData)
+        public void PublishEvent(string eventType, string msgJsonData)
         {
-            dynamic msg = new ExpandoObject();
-            msg.object_id = camid;
-            msg.action = "clientEvent";
-            msg.data = JsonConvert.DeserializeObject(msgJsonData);
-            PublishSceneMessage($"{sceneTopic}/{camid}", msg);
+            if (publishCamera)
+            {
+                dynamic msg = new ExpandoObject();
+                msg.object_id = camid;
+                msg.action = "clientEvent";
+                msg.type = eventType;
+                msg.data = JsonConvert.DeserializeObject(msgJsonData);
+                msg.timestamp = GetTimestamp();
+                PublishSceneMessage($"{sceneTopic}/{camid}", JsonConvert.SerializeObject(msg));
+            }
+            else
+            {
+                Debug.LogWarning("PublishEvent message FAILED!!!!! 'Publish Camera' must be set to true.'");
+            }
         }
 
-        private void PublishSceneMessage(string topic, dynamic msg)
+        private void PublishSceneMessage(string topic, string msg)
         {
-            msg.timestamp = DateTime.Now.ToString("yyyy-MM-dd' 'HH:mm:ss.fffZ", CultureInfo.InvariantCulture);
-            byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
+            byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
             Publish(topic, payload);
-            LogMessage("Sent", msg);
+            LogMessage("Sent", JsonConvert.DeserializeObject(msg));
+        }
+
+        private static string GetTimestamp()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd' 'HH:mm:ss.fffZ", CultureInfo.InvariantCulture);
         }
 
         protected override void OnConnected()
