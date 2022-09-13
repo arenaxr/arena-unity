@@ -54,7 +54,7 @@ namespace ArenaUnity
         //public Camera displayCamera;
         [Tooltip("Camera for user avatar (runtime changes ignored).")]
         public Camera userCamera;
-        [Tooltip("Request camera avatar access and publish presense (runtime changes ignored).")]
+        [Tooltip("Request camera avatar access and publish presence (runtime changes ignored).")]
         public bool publishCamera = true;
 
         [Header("Performance")]
@@ -659,7 +659,7 @@ namespace ArenaUnity
         }
 
         /// <summary>
-        /// Camera presense changes are published using a ObjectId-only topic, a user might only have permissions for their camid.
+        /// Camera presence changes are published using a ObjectId-only topic, a user might only have permissions for their camid.
         /// </summary>
         public void PublishCamera(string msgJson)
         {
