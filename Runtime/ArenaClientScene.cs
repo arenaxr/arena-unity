@@ -49,7 +49,7 @@ namespace ArenaUnity
         [Tooltip("User display name")]
         public string displayName = null;
         [Tooltip("Path to user head model")]
-        public string headModelPath = "/store/models/robobit.glb";
+        public string headModelPath = "/static/models/avatars/robobit.glb";
         //[Tooltip("Camera for display.")]
         //public Camera displayCamera;
         [Tooltip("Camera for user avatar (runtime changes ignored).")]
