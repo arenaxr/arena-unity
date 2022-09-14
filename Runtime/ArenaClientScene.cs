@@ -78,10 +78,11 @@ namespace ArenaUnity
         private string sceneTopic = null;
         internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
         internal List<string> pendingDelete = new List<string>();
+        internal List<string> downloadQueue = new List<string>();
 
         static string importPath = null;
 
-        static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl" };
+        static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl", "headModelPath" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
 
@@ -238,7 +239,6 @@ namespace ArenaUnity
             {
                 string object_id = (string)msg.object_id;
                 string msg_type = (string)msg.type;
-                DisplayCancelableProgressBar("ARENA Persistence", $"Loading object-id: {object_id}", objects_num / (float)jsonVal.Count);
                 if (!arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
                 {
                     IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
@@ -254,7 +254,6 @@ namespace ArenaUnity
                 }
                 objects_num++;
             }
-            ClearProgressBar();
             // establish parent/child relationships
             foreach (KeyValuePair<string, GameObject> gobj in arenaObjs)
             {
@@ -290,8 +289,7 @@ namespace ArenaUnity
         internal Uri ConstructRemoteUrl(string srcUrl)
         {
             string objUrl = srcUrl.TrimStart('/');
-            if (objUrl.StartsWith("store/")) objUrl = $"https://{brokerAddress}/{objUrl}";
-            else if (objUrl.StartsWith("models/")) objUrl = $"https://{brokerAddress}/store/{objUrl}";
+            if (Uri.IsWellFormedUriString(objUrl, UriKind.Relative)) objUrl = $"https://{brokerAddress}/{objUrl}";
             else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
             if (string.IsNullOrWhiteSpace(objUrl)) return null;
             if (!Uri.IsWellFormedUriString(objUrl, UriKind.Absolute))
@@ -315,6 +313,10 @@ namespace ArenaUnity
             if (messageType != "object") yield break;
             Uri remoteUri = ConstructRemoteUrl(msgUrl);
             if (remoteUri == null) yield break;
+            // don't download the same asset twice, or simultaneously
+            if (downloadQueue.Contains(remoteUri.AbsoluteUri)) yield break;
+            downloadQueue.Add(remoteUri.AbsoluteUri);
+            // check asset type
             if (!Path.HasExtension(remoteUri.AbsoluteUri)) yield break;
             string mimeType = MimeUtility.GetMimeMapping(remoteUri.GetLeftPart(UriPartial.Path));
             if (mimeType == null) yield break;
@@ -366,9 +368,10 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                     // import master-file to link to the rest
                     AssetDatabase.ImportAsset(localPath);
-                    AssetDatabase.Refresh();
+                    // TODO: is this required? AssetDatabase.Refresh();
 #endif
                 }
+                ClearProgressBar();
             }
 
             yield return localPath;
@@ -435,6 +438,7 @@ namespace ArenaUnity
                 }
 #endif
             }
+
             // modify Unity attributes
             switch ((string)data.object_type)
             {
@@ -454,6 +458,25 @@ namespace ArenaUnity
                         AttachImage(checkLocalAsset((string)data.url), gobj);
                     break;
                 case "camera":
+                    if (data.headModelPath != null)
+                    {
+                        string localpath = checkLocalAsset((string)data.headModelPath);
+                        if (localpath != null)
+                        {
+                            string headModelId = $"head-model_{object_id}";
+                            Transform foundHeadModel = gobj.transform.Find(headModelId);
+                            if (!foundHeadModel)
+                            {
+                                GameObject htobj = new GameObject(headModelId);
+                                htobj.transform.parent = gobj.transform;
+                                AttachGltf(localpath, htobj);
+
+                                //TODO: add headtext_camera_3327667076_mwfarb
+
+                                htobj.isStatic = true;
+                            }
+                        }
+                    }
                     // sync camera to main display if requested
                     Camera cam = gobj.GetComponent<Camera>();
                     if (cam == null)
@@ -628,7 +651,7 @@ namespace ArenaUnity
             www.SendWebRequest();
             while (!www.isDone)
             {
-                DisplayCancelableProgressBar("ARENA URL", $"{url} downloading...", www.downloadProgress);
+                DisplayCancelableProgressBar("ARENA URL", $"Downloading {url}", www.downloadProgress);
                 yield return null;
             }
 #if UNITY_2020_1_OR_NEWER
@@ -664,7 +687,8 @@ namespace ArenaUnity
         /// </summary>
         public void PublishCamera(string msgJson)
         {
-            if (publishCamera) {
+            if (publishCamera)
+            {
                 dynamic msg = JsonConvert.DeserializeObject(msgJson);
                 msg.timestamp = GetTimestamp();
                 PublishSceneMessage($"{sceneTopic}/{camid}", JsonConvert.SerializeObject(msg));
@@ -756,7 +780,6 @@ namespace ArenaUnity
                         IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
                         if (uris.Count() > 0)
                         {
-                            DisplayCancelableProgressBar("ARENA Message", $"Loading object-id: {(string)msg.object_id}", 0f);
                             foreach (var uri in uris)
                             {
                                 if (!string.IsNullOrWhiteSpace(uri))
@@ -765,7 +788,6 @@ namespace ArenaUnity
                                     yield return cd.coroutine;
                                 }
                             }
-                            ClearProgressBar();
                         }
                         CreateUpdateObject((string)msg.object_id, (string)msg.type, Convert.ToBoolean(msg.persist), msg.data, menuCommand);
                         break;
