@@ -2,6 +2,22 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.2.0](https://github.com/arenaxr/arena-unity/compare/v0.1.0...v0.2.0) (2022-09-13)
+
+
+### Features
+
+* **auth:** provide simple/scene-specific signin options ([3d22bc3](https://github.com/arenaxr/arena-unity/commit/3d22bc3b586f9bfff1f95894bf1638c7c4355b46))
+* **camera:** publish main/user-selected camera avatar, manage shutdown/lwt deletes ([#37](https://github.com/arenaxr/arena-unity/issues/37)) ([0d1c15c](https://github.com/arenaxr/arena-unity/commit/0d1c15c0c6317ec458655da05ee9f6062a2458e9))
+
+
+### Bug Fixes
+
+* **auth:** remove client id from scene topic, ATM anonymous user has no client id rights ([232845c](https://github.com/arenaxr/arena-unity/commit/232845c4954411477fc30e3ed61baa34c9faf86c))
+* **auth:** resolve publish object/camera topics with/wo client id ([61b02d7](https://github.com/arenaxr/arena-unity/commit/61b02d734b01a7ccd447d04792aab76181ae8e87))
+* **avatar:** don't recreate the unity client camera ([d89e2fa](https://github.com/arenaxr/arena-unity/commit/d89e2fafb2f13fb7b61f3d39a8e4e3e500724ad1))
+* **editor:** give arena object json more room to edit ([4f8b090](https://github.com/arenaxr/arena-unity/commit/4f8b090a5f85efa7e778ff6277c88de43431aa2b))
+
 ## [0.1.0](https://github.com/arenaxr/arena-unity/compare/v0.0.14...v0.1.0) (2022-09-09)
 
 
