@@ -425,6 +425,7 @@ namespace ArenaUnity
                     break;
             }
         }
+
         // color
         public static string ToArenaColor(Color color)
         {
@@ -438,6 +439,97 @@ namespace ArenaUnity
         public static Color ColorRandom()
         {
             return UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        }
+
+        // text
+        public static void ToUnityText(dynamic data, ref GameObject gobj)
+        {
+            TextMesh tm = gobj.AddComponent<TextMesh>();
+            // use scale/font size to gain crisp resolution
+            gobj.transform.localScale = gobj.transform.localScale / 5f;
+            tm.characterSize = 0.1f;
+            tm.fontSize = 45;
+
+            if (data.value != null)
+                tm.text = (string)data.value;
+            else if (data.text != null)
+                tm.text = (string)data.text;
+            if (data.color != null)
+                tm.color = ToUnityColor((string)data.color);
+            if (data.align != null)
+            {
+                switch ((string)data.align)
+                {
+                    default:
+                    case "left":
+                        tm.alignment = TextAlignment.Left;
+                        break;
+                    case "center":
+                        tm.alignment = TextAlignment.Center;
+                        break;
+                    case "right":
+                        tm.alignment = TextAlignment.Right;
+                        break;
+                }
+            }
+
+            string anchor = data.anchor != null ? (string)data.anchor : "center";
+            string baseline = data.baseline != null ? (string)data.baseline : "center";
+            switch ($"{baseline} {anchor}")
+            {
+                case "top left":
+                    tm.anchor = TextAnchor.UpperLeft;
+                    break;
+                case "top center":
+                    tm.anchor = TextAnchor.UpperCenter;
+                    break;
+                case "top right":
+                    tm.anchor = TextAnchor.UpperRight;
+                    break;
+                case "center left":
+                    tm.anchor = TextAnchor.MiddleLeft;
+                    break;
+                case "center center":
+                    tm.anchor = TextAnchor.MiddleCenter;
+                    break;
+                case "center right":
+                    tm.anchor = TextAnchor.MiddleRight;
+                    break;
+                case "bottom left":
+                    tm.anchor = TextAnchor.LowerLeft;
+                    break;
+                case "bottom center":
+                    tm.anchor = TextAnchor.LowerCenter;
+                    break;
+                case "bottom right":
+                    tm.anchor = TextAnchor.LowerRight;
+                    break;
+            }
+            if (data.tabSize != null)
+                tm.tabSize = (float)data.tabSize;
+            tm.richText = false; // a-frame doesnt support tags?
+            //tm.anchor = TextAnchor.MiddleCenter;
+            //tm.fontStyle = ???
+            //if (data.font != null)
+            //{
+            //    switch ((string)data.font)
+            //    {
+            //        default:
+            //        case "roboto":
+            //        case "aileronsemibold":
+            //        case "dejavu":
+            //        case "exo2bold":
+            //        case "exo2semibold":
+            //        case "kelsonsans":
+            //        case "monoid":
+            //        case "mozillavr":
+            //        case "sourcecodepro":
+            //            tm.font = ???;
+            //            break;
+            //    }
+            //}
+
+            // font material needs to occlude like "TextMeshPro/Bitmap"
         }
 
         // light

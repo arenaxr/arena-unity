@@ -488,13 +488,13 @@ namespace ArenaUnity
                                 htobj.transform.parent = gobj.transform;
                                 htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
                                 htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
-                                htobj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                                htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                                 TextMesh tm = htobj.transform.gameObject.AddComponent<TextMesh>();
                                 tm.alignment = TextAlignment.Center;
                                 tm.anchor = TextAnchor.MiddleCenter;
                                 tm.characterSize = 0.1f;
                                 tm.color = ArenaUnity.ToUnityColor((string)data.color);
-                                tm.fontSize = 100;
+                                tm.fontSize = 45;
                                 tm.text = displayName;
                             }
                         }
@@ -508,6 +508,9 @@ namespace ArenaUnity
                         cam.farClipPlane = 10000f; // match arena
                         cam.fieldOfView = 80f; // match arena
                     }
+                    break;
+                case "text":
+                    ArenaUnity.ToUnityText(data, ref gobj);
                     break;
                 case "light":
                     ArenaUnity.ToUnityLight(data, ref gobj);
