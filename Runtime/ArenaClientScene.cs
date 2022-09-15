@@ -471,6 +471,7 @@ namespace ArenaUnity
                                 GameObject hmobj = new GameObject(headModelId);
                                 hmobj.transform.parent = gobj.transform;
                                 AttachGltf(localpath, hmobj);
+                                hmobj.isStatic = true;
                             }
 
                             string headTextId = $"headtext_{object_id}";
