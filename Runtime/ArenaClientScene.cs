@@ -407,7 +407,7 @@ namespace ArenaUnity
 #endif
         }
 
-        private void CreateUpdateObject(string object_id, string storeType, bool persist, dynamic data, object menuCommand = null)
+        private void CreateUpdateObject(string object_id, string storeType, bool persist, dynamic data, string displayName = null, object menuCommand = null)
         {
             ArenaObject aobj = null;
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
@@ -467,13 +467,35 @@ namespace ArenaUnity
                             Transform foundHeadModel = gobj.transform.Find(headModelId);
                             if (!foundHeadModel)
                             {
-                                GameObject htobj = new GameObject(headModelId);
+                                // add model child to camera
+                                GameObject hmobj = new GameObject(headModelId);
+                                hmobj.transform.parent = gobj.transform;
+                                AttachGltf(localpath, hmobj);
+                            }
+
+                            string headTextId = $"headtext_{object_id}";
+                            Transform foundHeadText = gobj.transform.Find(headTextId);
+                            if (foundHeadText)
+                            {
+                                // update text
+                                TextMesh tm = foundHeadText.GetComponent<TextMesh>();
+                                tm.text = displayName;
+                            }
+                            else
+                            {
+                                // add text child to camera
+                                GameObject htobj = new GameObject(headTextId);
                                 htobj.transform.parent = gobj.transform;
-                                AttachGltf(localpath, htobj);
-
-                                //TODO: add headtext_camera_3327667076_mwfarb
-
-                                htobj.isStatic = true;
+                                htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
+                                htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
+                                htobj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                                TextMesh tm = htobj.transform.gameObject.AddComponent<TextMesh>();
+                                tm.alignment = TextAlignment.Center;
+                                tm.anchor = TextAnchor.MiddleCenter;
+                                tm.characterSize = 0.1f;
+                                tm.color = ArenaUnity.ToUnityColor((string)data.color);
+                                tm.fontSize = 100;
+                                tm.text = displayName;
                             }
                         }
                     }
@@ -789,7 +811,7 @@ namespace ArenaUnity
                                 }
                             }
                         }
-                        CreateUpdateObject((string)msg.object_id, (string)msg.type, Convert.ToBoolean(msg.persist), msg.data, menuCommand);
+                        CreateUpdateObject((string)msg.object_id, (string)msg.type, Convert.ToBoolean(msg.persist), msg.data, (string)msg.displayName, menuCommand);
                         break;
                     case "delete":
                         RemoveObject((string)msg.object_id);
