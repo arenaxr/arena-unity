@@ -19,6 +19,13 @@ namespace ArenaUnity
         private string messageType = "object";
         private bool persist = false;
         private Color displayColor = Color.white;
+        internal string userid = null;
+        internal string camid = null;
+
+        [Tooltip("User display name")]
+        public string displayName = null;
+        [Tooltip("Path to user head model")]
+        public string headModelPath = "/static/models/avatars/robobit.glb";
 
         [HideInInspector]
         protected bool created = false;
@@ -41,7 +48,10 @@ namespace ArenaUnity
         {
             while (true)
             {
-                PublishCreateUpdate();
+                if (userid != null && camid != null)
+                {
+                    PublishCreateUpdate();
+                }
                 yield return new WaitForSeconds(avatarPublishIntervalSeconds);
             }
         }
@@ -52,7 +62,7 @@ namespace ArenaUnity
             if (!ArenaClientScene.Instance || ArenaClientScene.Instance.transformPublishInterval == 0 ||
             Time.frameCount % ArenaClientScene.Instance.transformPublishInterval != 0)
                 return;
-            if (transform.hasChanged)
+            if (transform.hasChanged && userid != null && camid != null)
             {
                 //TODO: prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
 
@@ -69,23 +79,22 @@ namespace ArenaUnity
                 return false;
             if (ArenaClientScene.Instance.IsShuttingDown) return false;
             if (messageType != "object") return false;
-            if (!ArenaClientScene.Instance.publishCamera) return false;
 
             // message type information
             dynamic msg = new ExpandoObject();
-            msg.object_id = ArenaClientScene.Instance.camid;
+            msg.object_id = camid;
             msg.action = created ? "update" : "create";
             msg.type = messageType;
             msg.persist = persist;
-            if (string.IsNullOrWhiteSpace(ArenaClientScene.Instance.displayName))
+            if (string.IsNullOrWhiteSpace(displayName))
             {   // provide default name if needed
-                ArenaClientScene.Instance.displayName = ArenaClientScene.Instance.userid;
+                displayName = $"{name} ({userid})";
             }
-            msg.displayName = ArenaClientScene.Instance.displayName;
+            msg.displayName = displayName;
 
             dynamic dataUnity = new ExpandoObject();
             dataUnity.object_type = "camera";
-            dataUnity.headModelPath = ArenaClientScene.Instance.headModelPath;
+            dataUnity.headModelPath = headModelPath;
             dataUnity.color = ArenaUnity.ToArenaColor(displayColor);
 
             // minimum transform information
@@ -95,7 +104,7 @@ namespace ArenaUnity
             // publish
             msg.data = dataUnity;
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishCamera(payload);
+            ArenaClientScene.Instance.PublishCamera(msg.object_id, payload);
             if (!created)
                 created = true;
 

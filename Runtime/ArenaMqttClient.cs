@@ -56,9 +56,9 @@ namespace ArenaUnity
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
         protected string userHomePath { get; private set; }
-        protected string appFilesPath { get; private set; }
-        internal string userid { get; private set; }
-        internal string camid { get; private set; }
+        public string appFilesPath { get; private set; }
+        public string userid { get; private set; }
+        public string camid { get; private set; }
 
         static readonly string[] Scopes = {
             Oauth2Service.Scope.UserinfoProfile,

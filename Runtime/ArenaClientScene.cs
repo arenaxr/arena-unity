@@ -45,18 +45,6 @@ namespace ArenaUnity
         [Tooltip("Name of the scene, without namespace ('example', not 'username/example', runtime changes ignored).")]
         public string sceneName = "example";
 
-        [Header("Perspective")]
-        [Tooltip("User display name")]
-        public string displayName = null;
-        [Tooltip("Path to user head model")]
-        public string headModelPath = "/static/models/avatars/robobit.glb";
-        //[Tooltip("Camera for display.")]
-        //public Camera displayCamera;
-        [Tooltip("Camera for user avatar (runtime changes ignored).")]
-        public Camera userCamera;
-        [Tooltip("Request camera avatar access and publish presence (runtime changes ignored).")]
-        public bool publishCamera = true;
-
         [Header("Performance")]
         [Tooltip("Console log MQTT object messages")]
         public bool logMqttObjects = false;
@@ -79,6 +67,7 @@ namespace ArenaUnity
         internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
         internal List<string> pendingDelete = new List<string>();
         internal List<string> downloadQueue = new List<string>();
+        internal List<string> localCameraIds = new List<string>();
 
         static string importPath = null;
 
@@ -141,8 +130,9 @@ namespace ArenaUnity
             }
 
             // start auth flow and MQTT connection
+            ArenaCamera[] camlist = FindObjectsOfType<ArenaCamera>();
             name = "ARENA (Authenticating...)";
-            CoroutineWithData cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, publishCamera));
+            CoroutineWithData cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, camlist.Length > 0));
             yield return cd.coroutine;
             name = "ARENA (MQTT Connecting...)";
             if (cd.result != null)
@@ -151,10 +141,26 @@ namespace ArenaUnity
                 sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
                 sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
             }
-
-            // publish main/selected camera
-            userCamera = Camera.main;
-            ArenaCamera acobj = userCamera.gameObject.AddComponent(typeof(ArenaCamera)) as ArenaCamera;
+            // publish arena cameras where requested
+            bool foundFirstCam = false;
+            foreach (ArenaCamera cam in camlist)
+            {
+                if (cam.name == Camera.main.name && !foundFirstCam)
+                {
+                    // publish main/selected camera
+                    cam.userid = userid;
+                    cam.camid = camid;
+                    foundFirstCam = true;
+                }
+                else
+                {
+                    // other cameras are auto-generated, and account must have all scene rights
+                    var random = UnityEngine.Random.Range(0, 100000000);
+                    cam.userid = $"{random:D8}_unity";
+                    cam.camid = $"camera_{random:D8}_unity";
+                }
+                localCameraIds.Add(cam.camid);
+            }
 
             // get persistence objects
             StartCoroutine(SceneLoadPersist());
@@ -458,48 +464,7 @@ namespace ArenaUnity
                         AttachImage(checkLocalAsset((string)data.url), gobj);
                     break;
                 case "camera":
-                    if (data.headModelPath != null)
-                    {
-                        string localpath = checkLocalAsset((string)data.headModelPath);
-                        if (localpath != null)
-                        {
-                            string headModelId = $"head-model_{object_id}";
-                            Transform foundHeadModel = gobj.transform.Find(headModelId);
-                            if (!foundHeadModel)
-                            {
-                                // add model child to camera
-                                GameObject hmobj = new GameObject(headModelId);
-                                hmobj.transform.parent = gobj.transform;
-                                AttachGltf(localpath, hmobj);
-                                hmobj.isStatic = true;
-                            }
-
-                            string headTextId = $"headtext_{object_id}";
-                            Transform foundHeadText = gobj.transform.Find(headTextId);
-                            if (foundHeadText)
-                            {
-                                // update text
-                                TextMesh tm = foundHeadText.GetComponent<TextMesh>();
-                                tm.text = displayName;
-                            }
-                            else
-                            {
-                                // add text child to camera
-                                GameObject htobj = new GameObject(headTextId);
-                                htobj.transform.parent = gobj.transform;
-                                htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
-                                htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
-                                htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                                TextMesh tm = htobj.transform.gameObject.AddComponent<TextMesh>();
-                                tm.alignment = TextAlignment.Center;
-                                tm.anchor = TextAnchor.MiddleCenter;
-                                tm.characterSize = 0.1f;
-                                tm.color = ArenaUnity.ToUnityColor((string)data.color);
-                                tm.fontSize = 45;
-                                tm.text = displayName;
-                            }
-                        }
-                    }
+                    AttachAvatar(object_id, data, displayName, gobj);
                     // sync camera to main display if requested
                     Camera cam = gobj.GetComponent<Camera>();
                     if (cam == null)
@@ -552,6 +517,52 @@ namespace ArenaUnity
             {
                 aobj.data = data;
                 aobj.jsonData = JsonConvert.SerializeObject(aobj.data, Formatting.Indented);
+            }
+        }
+
+        internal void AttachAvatar(string object_id, dynamic data, string displayName, GameObject gobj)
+        {
+            if (data.headModelPath != null)
+            {
+                string localpath = checkLocalAsset((string)data.headModelPath);
+                if (localpath != null)
+                {
+                    string headModelId = $"head-model_{object_id}";
+                    Transform foundHeadModel = gobj.transform.Find(headModelId);
+                    if (!foundHeadModel)
+                    {
+                        // add model child to camera
+                        GameObject hmobj = new GameObject(headModelId);
+                        hmobj.transform.parent = gobj.transform;
+                        AttachGltf(localpath, hmobj);
+                        hmobj.isStatic = true;
+                    }
+
+                    string headTextId = $"headtext_{object_id}";
+                    Transform foundHeadText = gobj.transform.Find(headTextId);
+                    if (foundHeadText)
+                    {
+                        // update text
+                        TextMesh tm = foundHeadText.GetComponent<TextMesh>();
+                        tm.text = displayName;
+                    }
+                    else
+                    {
+                        // add text child to camera
+                        GameObject htobj = new GameObject(headTextId);
+                        htobj.transform.parent = gobj.transform;
+                        htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
+                        htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
+                        htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                        TextMesh tm = htobj.transform.gameObject.AddComponent<TextMesh>();
+                        tm.alignment = TextAlignment.Center;
+                        tm.anchor = TextAnchor.MiddleCenter;
+                        tm.characterSize = 0.1f;
+                        tm.color = ArenaUnity.ToUnityColor((string)data.color);
+                        tm.fontSize = 45;
+                        tm.text = displayName;
+                    }
+                }
             }
         }
 
@@ -711,39 +722,25 @@ namespace ArenaUnity
         /// <summary>
         /// Camera presence changes are published using a ObjectId-only topic, a user might only have permissions for their camid.
         /// </summary>
-        public void PublishCamera(string msgJson)
+        public void PublishCamera(string object_id, string msgJson)
         {
-            if (publishCamera)
-            {
-                dynamic msg = JsonConvert.DeserializeObject(msgJson);
-                msg.timestamp = GetTimestamp();
-                PublishSceneMessage($"{sceneTopic}/{camid}", JsonConvert.SerializeObject(msg));
-            }
-            else
-            {
-                Debug.LogWarning("PublishCamera message FAILED!!!!! 'Publish Camera' must be set to true.'");
-            }
+            dynamic msg = JsonConvert.DeserializeObject(msgJson);
+            msg.timestamp = GetTimestamp();
+            PublishSceneMessage($"{sceneTopic}/{object_id}", JsonConvert.SerializeObject(msg));
         }
 
         /// <summary>
         /// Camera events are published using a ObjectId-only topic, a user might only have permissions for their camid.
         /// </summary>
-        public void PublishEvent(string eventType, string msgJsonData)
+        public void PublishEvent(string object_id, string eventType, string msgJsonData)
         {
-            if (publishCamera)
-            {
-                dynamic msg = new ExpandoObject();
-                msg.object_id = camid;
-                msg.action = "clientEvent";
-                msg.type = eventType;
-                msg.data = JsonConvert.DeserializeObject(msgJsonData);
-                msg.timestamp = GetTimestamp();
-                PublishSceneMessage($"{sceneTopic}/{camid}", JsonConvert.SerializeObject(msg));
-            }
-            else
-            {
-                Debug.LogWarning("PublishEvent message FAILED!!!!! 'Publish Camera' must be set to true.'");
-            }
+            dynamic msg = new ExpandoObject();
+            msg.object_id = camid;
+            msg.action = "clientEvent";
+            msg.type = eventType;
+            msg.data = JsonConvert.DeserializeObject(msgJsonData);
+            msg.timestamp = GetTimestamp();
+            PublishSceneMessage($"{sceneTopic}/{object_id}", JsonConvert.SerializeObject(msg));
         }
 
         private void PublishSceneMessage(string topic, string msg)
@@ -797,7 +794,7 @@ namespace ArenaUnity
         private IEnumerator ProcessArenaMessage(dynamic msg, object menuCommand = null)
         {
             // consume object updates
-            if (msg.type == "object" && msg.object_id != camid)
+            if (msg.type == "object" && !localCameraIds.Contains((string)msg.object_id))
             {
                 switch ((string)msg.action)
                 {
@@ -838,26 +835,6 @@ namespace ArenaUnity
             }
             if (msg.action == "clientEvent" && !logMqttEvents) return;
             Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
-        }
-
-        protected void OnValidate()
-        {
-            // camera change?
-            if (userCamera != null)
-            {
-                foreach (Camera cam in Camera.allCameras)
-                {
-                    if (cam.name == userCamera.name)
-                    {
-                        cam.targetDisplay = ArenaUnity.mainDisplay;
-                        Debug.Log($"{cam.name} now using Display {cam.targetDisplay + 1}.");
-                    }
-                    else
-                    {
-                        cam.targetDisplay = ArenaUnity.secondDisplay;
-                    }
-                }
-            }
         }
 
     }
