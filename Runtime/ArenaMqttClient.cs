@@ -330,6 +330,9 @@ namespace ArenaUnity
                 }
                 userid = auth.ids.userid;
                 camid = auth.ids.camid;
+
+                // TODO: will message can only delete the primary camera object, need a solution for multiple cameras
+
                 willFlag = camera;
                 willTopic = $"{realm}/s/{namespaceName}/{sceneName}/{camid}";
                 dynamic msg = new

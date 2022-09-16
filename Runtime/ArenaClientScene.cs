@@ -141,11 +141,17 @@ namespace ArenaUnity
                 sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
                 sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
             }
+            bool sceneObjectRights = false;
+            dynamic perms = JsonConvert.DeserializeObject(permissions);
+            foreach (dynamic pub in perms.publ)
+            {
+                if (sceneTopic.StartsWith(((string)pub).TrimEnd(new char[] { '/', '#' }))) sceneObjectRights = true;
+            }
             // publish arena cameras where requested
             bool foundFirstCam = false;
             foreach (ArenaCamera cam in camlist)
             {
-                if (cam.name == Camera.main.name && !foundFirstCam)
+                if ((cam.name == Camera.main.name || camlist.Length == 1) && !foundFirstCam)
                 {
                     // publish main/selected camera
                     cam.userid = userid;
@@ -155,6 +161,15 @@ namespace ArenaUnity
                 else
                 {
                     // other cameras are auto-generated, and account must have all scene rights
+                    if (!sceneObjectRights)
+                    {
+                        Debug.LogError($"Using more than one ArenaCamera requires full scene permissions. Login with an Editor or Owner account with write permissions for this scene.");
+#if UNITY_EDITOR
+                        if (Application.isPlaying)
+                            EditorApplication.ExitPlaymode();
+#endif
+                        yield break;
+                    }
                     var random = UnityEngine.Random.Range(0, 100000000);
                     cam.userid = $"{random:D8}_unity";
                     cam.camid = $"camera_{random:D8}_unity";
@@ -842,14 +857,13 @@ namespace ArenaUnity
             // send delete of local avatars before connection closes
             foreach (var camid in localCameraIds)
             {
-                string camTopic = $"{realm}/s/{namespaceName}/{sceneName}/{camid}";
                 dynamic msg = new
                 {
                     object_id = camid,
                     action = "delete",
                 };
                 string delCamMsg = JsonConvert.SerializeObject(msg);
-                Publish(camTopic, System.Text.Encoding.UTF8.GetBytes(delCamMsg));
+                PublishCamera(camid, delCamMsg);
             }
             base.OnApplicationQuit();
         }
