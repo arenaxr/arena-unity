@@ -141,15 +141,15 @@ namespace ArenaUnity
             name = "ARENA (MQTT Connecting...)";
             if (cd.result != null)
             {
-                namespaceName = cd.result.ToString();
+                if (string.IsNullOrWhiteSpace(namespaceName)) namespaceName = cd.result.ToString();
                 sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
                 sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
             }
             bool sceneObjectRights = false;
             dynamic perms = JsonConvert.DeserializeObject(permissions);
-            foreach (dynamic pub in perms.publ)
+            foreach (dynamic pubperm in perms.publ)
             {
-                if (sceneTopic.StartsWith(((string)pub).TrimEnd(new char[] { '/', '#' }))) sceneObjectRights = true;
+                if (sceneTopic.StartsWith(((string)pubperm).TrimEnd(new char[] { '/', '#' }))) sceneObjectRights = true;
             }
             // publish arena cameras where requested
             bool foundFirstCam = false;
