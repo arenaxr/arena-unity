@@ -553,9 +553,11 @@ namespace ArenaUnity
                     {
                         // add model child to camera
                         GameObject hmobj = new GameObject(headModelId);
-                        hmobj.transform.parent = gobj.transform;
                         AttachGltf(localpath, hmobj);
-                        hmobj.isStatic = true;
+                        hmobj.transform.localPosition = Vector3.zero;
+                        hmobj.transform.localRotation = Quaternion.identity;
+                        hmobj.transform.localScale = Vector3.one;
+                        hmobj.transform.parent = gobj.transform;
                     }
 
                     string headTextId = $"headtext_{object_id}";
@@ -570,10 +572,6 @@ namespace ArenaUnity
                     {
                         // add text child to camera
                         GameObject htobj = new GameObject(headTextId);
-                        htobj.transform.parent = gobj.transform;
-                        htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
-                        htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
-                        htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                         TextMesh tm = htobj.transform.gameObject.AddComponent<TextMesh>();
                         tm.alignment = TextAlignment.Center;
                         tm.anchor = TextAnchor.MiddleCenter;
@@ -581,6 +579,10 @@ namespace ArenaUnity
                         tm.color = ArenaUnity.ToUnityColor((string)data.color);
                         tm.fontSize = 45;
                         tm.text = displayName;
+                        htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
+                        htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
+                        htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                        htobj.transform.parent = gobj.transform;
                     }
                 }
             }
