@@ -157,12 +157,6 @@ namespace ArenaUnity
 
         protected override void OnApplicationQuit()
         {
-            // remove avatar before connection closes
-            if (willFlag)
-            {
-                Publish(willTopic, System.Text.Encoding.UTF8.GetBytes(willMessage));
-            }
-
             IsShuttingDown = true;
             base.OnApplicationQuit();
         }

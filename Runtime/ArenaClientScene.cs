@@ -794,7 +794,7 @@ namespace ArenaUnity
         private IEnumerator ProcessArenaMessage(dynamic msg, object menuCommand = null)
         {
             // consume object updates
-            if (msg.type == "object" && !localCameraIds.Contains((string)msg.object_id))
+            if (!localCameraIds.Contains((string)msg.object_id))
             {
                 switch ((string)msg.action)
                 {
@@ -837,5 +837,21 @@ namespace ArenaUnity
             Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
         }
 
+        protected override void OnApplicationQuit()
+        {
+            // send delete of local avatars before connection closes
+            foreach (var camid in localCameraIds)
+            {
+                string camTopic = $"{realm}/s/{namespaceName}/{sceneName}/{camid}";
+                dynamic msg = new
+                {
+                    object_id = camid,
+                    action = "delete",
+                };
+                string delCamMsg = JsonConvert.SerializeObject(msg);
+                Publish(camTopic, System.Text.Encoding.UTF8.GetBytes(delCamMsg));
+            }
+            base.OnApplicationQuit();
+        }
     }
 }
