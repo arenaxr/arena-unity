@@ -45,6 +45,10 @@ namespace ArenaUnity
         [Tooltip("Name of the scene, without namespace ('example', not 'username/example', runtime changes ignored).")]
         public string sceneName = "example";
 
+        [Header("Presence")]
+        [Tooltip("Display other camera avatars in the scene")]
+        public bool renderCameras = true;
+
         [Header("Performance")]
         [Tooltip("Console log MQTT object messages")]
         public bool logMqttObjects = false;
@@ -479,7 +483,8 @@ namespace ArenaUnity
                         AttachImage(checkLocalAsset((string)data.url), gobj);
                     break;
                 case "camera":
-                    AttachAvatar(object_id, data, displayName, gobj);
+                    if (renderCameras)
+                        AttachAvatar(object_id, data, displayName, gobj);
                     // sync camera to main display if requested
                     Camera cam = gobj.GetComponent<Camera>();
                     if (cam == null)
