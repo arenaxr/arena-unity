@@ -2,6 +2,26 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.3.0](https://github.com/arenaxr/arena-unity/compare/v0.2.0...v0.3.0) (2022-09-16)
+
+
+### Features
+
+* **avatar:** add displayName to other user's avatars ([283269d](https://github.com/arenaxr/arena-unity/commit/283269d94e0d3dd2d9adfc4719fbb628ce0b05e9))
+* **avatar:** add flag to disable render remote cameras in the scene ([b53ead3](https://github.com/arenaxr/arena-unity/commit/b53ead372c78c13d1a2a6ec16c69573ecb98c8f4))
+* **avatar:** render other user's avatars; fix redundant asset downloads ([fd295d2](https://github.com/arenaxr/arena-unity/commit/fd295d2090c7898d7399ffd3048fd4b636f51380))
+* **camera:** allow multiple cameras with ArenaCamera component ([f65c546](https://github.com/arenaxr/arena-unity/commit/f65c546c759509e1fd6bb2a050973156eb434689))
+* **text:** support importing arena a-text ([e104326](https://github.com/arenaxr/arena-unity/commit/e10432640744544038c92f32d10164f0a49845e7))
+
+
+### Bug Fixes
+
+* **auth:** throw an error when restricted users use more than one camera ([a70c9e9](https://github.com/arenaxr/arena-unity/commit/a70c9e9078218ec41def92667e53118bbea195c3))
+* **avatar:** correctly handle local/remote cam deletes ([5d94f4b](https://github.com/arenaxr/arena-unity/commit/5d94f4bba6a68eabf87df86e84ccbb839fc1c146))
+* **avatar:** fix inconsistant head model positions ([367b178](https://github.com/arenaxr/arena-unity/commit/367b17880adedb4b359966f6d2741e1e116f4f82))
+* **avatar:** use correct static default avatar model ([c4361d7](https://github.com/arenaxr/arena-unity/commit/c4361d7a4ab64a1ae52b2ca918f6e8fdc8dcc3c4))
+* prevent accidental overwrite of custom namespace ([9e28938](https://github.com/arenaxr/arena-unity/commit/9e28938891d6ce4520c22dfc3acfc5c18718a8f0))
+
 ## [0.2.0](https://github.com/arenaxr/arena-unity/compare/v0.1.0...v0.2.0) (2022-09-13)
 
 
