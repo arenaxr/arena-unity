@@ -504,7 +504,8 @@ namespace ArenaUnity
             }
             if (data.tabSize != null)
                 tm.tabSize = (float)data.tabSize;
-            tm.richText = false; // a-frame doesnt support tags?
+            tm.richText = false;
+            // a-frame doesnt support tags?
             //tm.anchor = TextAnchor.MiddleCenter;
             //tm.fontStyle = ???
             //if (data.font != null)
@@ -527,6 +528,11 @@ namespace ArenaUnity
             //}
 
             // font material needs to occlude like "TextMeshPro/Bitmap"
+            tm.font = new Font("Roboto-Regular");
+
+            Renderer renderer = tm.GetComponent<Renderer>();
+            renderer.material = Resources.Load<Material>("Fonts/OccludedTextMaterial");
+
         }
 
         // light

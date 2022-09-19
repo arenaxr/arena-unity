@@ -579,10 +579,11 @@ namespace ArenaUnity
                         tm.color = ArenaUnity.ToUnityColor((string)data.color);
                         tm.fontSize = 45;
                         tm.text = displayName;
-                        htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
-                        htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
-                        htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                        htobj.transform.parent = gobj.transform;
+                        tm.font = new Font("Roboto-Regular");
+
+                        Renderer renderer = tm.GetComponent<Renderer>();
+                        Material mat = renderer.material;
+                        mat.shader.name = "GUI/3D Text Shader";
                     }
                 }
             }
