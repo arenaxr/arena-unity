@@ -107,7 +107,7 @@
       }
     },
     "io.conix.arena.unity": {
-      "version": "https://github.com/conix-center/ARENA-unity.git#0.0.6",
+      "version": "https://github.com/arenaxr/arena-unity.git#0.0.6",
       "depth": 0,
       "source": "git",
       "dependencies": {
