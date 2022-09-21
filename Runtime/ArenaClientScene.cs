@@ -100,7 +100,7 @@ namespace ArenaUnity
         protected override void Start()
         {
 #if UNITY_EDITOR
-            StartCoroutine(ConnectArena());
+          //  StartCoroutine(ConnectArena());
 #endif
         }
 
