@@ -1,5 +1,6 @@
 // https://gist.github.com/krisrok/f55ea7cf89010a9f54a9271953f952fd
 
+#if UNITY_STANDALONE_OSX
 using System.IO;
 using UnityEditor;
 using UnityEditor.Callbacks;
@@ -27,3 +28,4 @@ public class EnableFileSharingPostBuildProcessor
         }
     }
 }
+#endif
