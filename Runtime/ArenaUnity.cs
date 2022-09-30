@@ -528,10 +528,19 @@ namespace ArenaUnity
             //}
 
             // font material needs to occlude like "TextMeshPro/Bitmap"
+            //tm.font = new Font("Arial");
+            //tm.font = new Font("Fonts/Roboto-Regular");
             tm.font = new Font("Roboto-Regular");
 
+            Material occMat = Resources.Load<Material>("Fonts/OccludedTextMaterial");
+            
             Renderer renderer = tm.GetComponent<Renderer>();
-            renderer.material = Resources.Load<Material>("Fonts/OccludedTextMaterial");
+            //renderer.material = Resources.Load<Material>("Packages/io.conix.arena.unity/Runtime/Resources/Fonts/OccludedTextMaterial");
+            //renderer.material = (Material)AssetDatabase.LoadAssetAtPath("Packages/io.conix.arena.unity/Runtime/Resources/Fonts/OccludedTextMaterial");
+            //renderer.material = Resources.Load<Material>("Fonts/OccludedTextMaterial");
+            renderer.sharedMaterial = occMat;
+
+            // renderer.material.shader.name = "GUI/3D Text Shader";
 
         }
 

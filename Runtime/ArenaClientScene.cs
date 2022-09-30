@@ -78,12 +78,18 @@ namespace ArenaUnity
         static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl", "headModelPath" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
-
+        static readonly string[] requiredShaders = {
+            "Standard",
+            "Unlit/Color",
+            "GLTFUtility/Standard (Metallic)",
+            "GLTFUtility/Standard Transparent (Metallic)",
+            "GLTFUtility/Standard (Specular)",
+            "GLTFUtility/Standard Transparent (Specular)",
+        };
 
         protected override void OnEnable()
         {
             base.OnEnable();
-            importPath = Path.Combine(appFilesPath, "Assets", "ArenaUnity", "import");
 
             // ensure consistent name and transform
             transform.position = Vector3.zero;
@@ -96,9 +102,29 @@ namespace ArenaUnity
 #endif
         }
 
+        private static void LogAndExit(string msg)
+        {
+            Debug.LogError(msg);
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+                EditorApplication.ExitPlaymode();
+#endif
+        }
+
         // Start is called before the first frame update
         protected override void Start()
         {
+            importPath = Path.Combine(appFilesPath, "Assets", "ArenaUnity", "import");
+
+            // ensure shaders are in project
+            foreach (string shader in requiredShaders)
+            {
+                if (Shader.Find(shader) == null)
+                {
+                    LogAndExit($"Required shader '{shader}' not found in project.");
+                }
+            }
+
 #if UNITY_EDITOR
             StartCoroutine(ConnectArena());
 #endif
@@ -121,15 +147,12 @@ namespace ArenaUnity
                 {
                     // prevent name collisions before MQTT
                     nameSafe = false; // critical error, arena objects must have unique names
-                    Debug.LogError($"More than one ArenaObject is named '{aobj.name}'. All ArenaObjects must have unique names.");
+                    Debug.LogError($"More than one ArenaObject is named '{aobj.name}'.");
                 }
             }
             if (!nameSafe)
             {
-#if UNITY_EDITOR
-                if (Application.isPlaying)
-                    EditorApplication.ExitPlaymode();
-#endif
+                LogAndExit("All ArenaObjects must have unique names.");
                 yield break;
             }
 
@@ -167,11 +190,7 @@ namespace ArenaUnity
                     // other cameras are auto-generated, and account must have all scene rights
                     if (!sceneObjectRights)
                     {
-                        Debug.LogError($"Using more than one ArenaCamera requires full scene permissions. Login with an Editor or Owner account with write permissions for this scene.");
-#if UNITY_EDITOR
-                        if (Application.isPlaying)
-                            EditorApplication.ExitPlaymode();
-#endif
+                        LogAndExit($"Using more than one ArenaCamera requires full scene permissions. Login with an Editor or Owner account with write permissions for this scene.");
                         yield break;
                     }
                     var random = UnityEngine.Random.Range(0, 100000000);
@@ -225,7 +244,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
 
                 if (EditorUtility.DisplayDialog("Delete!",
-                     $"Are you sure you want to delete object: {ids}?", "Delete", "Save"))
+                     $"Are you sure you want to delete object(s) from the ARENA: {ids}?", "Delete", "Save"))
                 {
                     foreach (string object_id in pendingDelete)
                     {
@@ -393,7 +412,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                     // import master-file to link to the rest
                     AssetDatabase.ImportAsset(localPath);
-                    // TODO: is this required? AssetDatabase.Refresh();
+                    AssetDatabase.Refresh();
 #endif
                 }
                 ClearProgressBar();
@@ -463,6 +482,7 @@ namespace ArenaUnity
                 }
 #endif
             }
+
 
             // modify Unity attributes
             switch ((string)data.object_type)
@@ -542,6 +562,7 @@ namespace ArenaUnity
 
         internal void AttachAvatar(string object_id, dynamic data, string displayName, GameObject gobj)
         {
+            bool worldPositionStays = false;
             if (data.headModelPath != null)
             {
                 string localpath = checkLocalAsset((string)data.headModelPath);
@@ -557,7 +578,8 @@ namespace ArenaUnity
                         hmobj.transform.localPosition = Vector3.zero;
                         hmobj.transform.localRotation = Quaternion.identity;
                         hmobj.transform.localScale = Vector3.one;
-                        hmobj.transform.parent = gobj.transform;
+                        // makes the child keep its local orientation rather than its global orientation
+                        hmobj.transform.SetParent(gobj.transform, worldPositionStays);
                     }
 
                     string headTextId = $"headtext_{object_id}";
@@ -581,9 +603,15 @@ namespace ArenaUnity
                         tm.text = displayName;
                         tm.font = new Font("Roboto-Regular");
 
-                        Renderer renderer = tm.GetComponent<Renderer>();
-                        Material mat = renderer.material;
-                        mat.shader.name = "GUI/3D Text Shader";
+                        // Renderer renderer = tm.GetComponent<Renderer>();
+                        // Material mat = renderer.material;
+                        // mat.shader.name = "GUI/3D Text Shader";
+
+                        htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
+                        htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
+                        htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                        // makes the child keep its local orientation rather than its global orientation
+                        htobj.transform.SetParent(gobj.transform, worldPositionStays);
                     }
                 }
             }
