@@ -244,7 +244,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
 
                 if (EditorUtility.DisplayDialog("Delete!",
-                     $"Are you sure you want to delete object: {ids}?", "Delete", "Save"))
+                     $"Are you sure you want to delete object(s) from the ARENA: {ids}?", "Delete", "Save"))
                 {
                     foreach (string object_id in pendingDelete)
                     {
@@ -483,6 +483,7 @@ namespace ArenaUnity
 #endif
             }
 
+
             // modify Unity attributes
             switch ((string)data.object_type)
             {
@@ -561,6 +562,7 @@ namespace ArenaUnity
 
         internal void AttachAvatar(string object_id, dynamic data, string displayName, GameObject gobj)
         {
+            bool worldPositionStays = false;
             if (data.headModelPath != null)
             {
                 string localpath = checkLocalAsset((string)data.headModelPath);
@@ -576,7 +578,8 @@ namespace ArenaUnity
                         hmobj.transform.localPosition = Vector3.zero;
                         hmobj.transform.localRotation = Quaternion.identity;
                         hmobj.transform.localScale = Vector3.one;
-                        hmobj.transform.parent = gobj.transform;
+                        // makes the child keep its local orientation rather than its global orientation
+                        hmobj.transform.SetParent(gobj.transform, worldPositionStays);
                     }
 
                     string headTextId = $"headtext_{object_id}";
@@ -601,7 +604,8 @@ namespace ArenaUnity
                         htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
                         htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
                         htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                        htobj.transform.parent = gobj.transform;
+                        // makes the child keep its local orientation rather than its global orientation
+                        htobj.transform.SetParent(gobj.transform, worldPositionStays);
                     }
                 }
             }
