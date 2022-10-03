@@ -2,6 +2,17 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.3.1](https://github.com/arenaxr/arena-unity/compare/v0.3.0...v0.3.1) (2022-10-03)
+
+
+### Bug Fixes
+
+* **avatar:** fix local coordinates to parent ([b5bbee0](https://github.com/arenaxr/arena-unity/commit/b5bbee09b337ec98c252413c0dac5ee60cfd468a))
+* **mac:** remove xcode-specific build from non-macs ([e1912d9](https://github.com/arenaxr/arena-unity/commit/e1912d947af6d1910822fde957c2e049a9c35cf6))
+* **packages:** upgrade newtonsoft-json and google.auth ([b932987](https://github.com/arenaxr/arena-unity/commit/b93298731f92147411d529707ddff9365bafd343))
+* **shader:** check for required shaders in project ([7100bb2](https://github.com/arenaxr/arena-unity/commit/7100bb2c18f9c0d8ea25103870863e35fd5d5b39))
+* **text:** fixed text occlusion with textmeshpro ([#41](https://github.com/arenaxr/arena-unity/issues/41)) ([68dd09c](https://github.com/arenaxr/arena-unity/commit/68dd09c95ff13faa59b4a0f136cdd0adc5f1d790))
+
 ## [0.3.0](https://github.com/arenaxr/arena-unity/compare/v0.2.0...v0.3.0) (2022-09-16)
 
 
