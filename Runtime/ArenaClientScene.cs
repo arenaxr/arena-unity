@@ -15,6 +15,7 @@ using MimeMapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Siccity.GLTFUtility;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -587,20 +588,19 @@ namespace ArenaUnity
                     if (foundHeadText)
                     {
                         // update text
-                        TextMesh tm = foundHeadText.GetComponent<TextMesh>();
+                        TextMeshPro tm = foundHeadText.GetComponent<TextMeshPro>();
                         tm.text = displayName;
                     }
                     else
                     {
                         // add text child to camera
                         GameObject htobj = new GameObject(headTextId);
-                        TextMesh tm = htobj.transform.gameObject.AddComponent<TextMesh>();
-                        tm.alignment = TextAlignment.Center;
-                        tm.anchor = TextAnchor.MiddleCenter;
-                        tm.characterSize = 0.1f;
+                        TextMeshPro tm = htobj.transform.gameObject.AddComponent<TextMeshPro>();
+                        tm.alignment = TextAlignmentOptions.Center;
                         tm.color = ArenaUnity.ToUnityColor((string)data.color);
-                        tm.fontSize = 45;
+                        tm.fontSize = 5;
                         tm.text = displayName;
+ 
                         htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
                         htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
                         htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);

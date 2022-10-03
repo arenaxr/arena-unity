@@ -5,6 +5,7 @@
 
 using System;
 using System.Dynamic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -441,11 +442,10 @@ namespace ArenaUnity
         // text
         public static void ToUnityText(dynamic data, ref GameObject gobj)
         {
-            TextMesh tm = gobj.AddComponent<TextMesh>();
+            TextMeshPro tm = gobj.AddComponent<TextMeshPro>();
             // use scale/font size to gain crisp resolution
             gobj.transform.localScale = gobj.transform.localScale / 5f;
-            tm.characterSize = 0.1f;
-            tm.fontSize = 45;
+            tm.fontSize = 2;
 
             if (data.value != null)
                 tm.text = (string)data.value;
@@ -453,60 +453,52 @@ namespace ArenaUnity
                 tm.text = (string)data.text;
             if (data.color != null)
                 tm.color = ToUnityColor((string)data.color);
-            if (data.align != null)
-            {
-                switch ((string)data.align)
-                {
-                    default:
-                    case "left":
-                        tm.alignment = TextAlignment.Left;
-                        break;
-                    case "center":
-                        tm.alignment = TextAlignment.Center;
-                        break;
-                    case "right":
-                        tm.alignment = TextAlignment.Right;
-                        break;
-                }
-            }
 
             string anchor = data.anchor != null ? (string)data.anchor : "center";
             string baseline = data.baseline != null ? (string)data.baseline : "center";
             switch ($"{baseline} {anchor}")
             {
                 case "top left":
-                    tm.anchor = TextAnchor.UpperLeft;
+                    tm.alignment = TextAlignmentOptions.TopLeft;
                     break;
                 case "top center":
-                    tm.anchor = TextAnchor.UpperCenter;
+                    tm.alignment = TextAlignmentOptions.Top;
                     break;
                 case "top right":
-                    tm.anchor = TextAnchor.UpperRight;
+                    tm.alignment = TextAlignmentOptions.TopRight;
+                    break;
+                case "top align":
+                    tm.alignment = TextAlignmentOptions.TopGeoAligned;
                     break;
                 case "center left":
-                    tm.anchor = TextAnchor.MiddleLeft;
+                    tm.alignment = TextAlignmentOptions.BaselineLeft;
                     break;
                 case "center center":
-                    tm.anchor = TextAnchor.MiddleCenter;
+                    tm.alignment = TextAlignmentOptions.Center;
                     break;
                 case "center right":
-                    tm.anchor = TextAnchor.MiddleRight;
+                    tm.alignment = TextAlignmentOptions.BaselineRight;
+                    break;
+                case "center align":
+                    tm.alignment = TextAlignmentOptions.CenterGeoAligned;
                     break;
                 case "bottom left":
-                    tm.anchor = TextAnchor.LowerLeft;
+                    tm.alignment = TextAlignmentOptions.BottomLeft;
                     break;
                 case "bottom center":
-                    tm.anchor = TextAnchor.LowerCenter;
+                    tm.alignment = TextAlignmentOptions.Bottom;
                     break;
                 case "bottom right":
-                    tm.anchor = TextAnchor.LowerRight;
+                    tm.alignment = TextAlignmentOptions.BottomRight;
+                    break;
+                case "bottom align":
+                    tm.alignment = TextAlignmentOptions.BottomGeoAligned;
                     break;
             }
-            if (data.tabSize != null)
-                tm.tabSize = (float)data.tabSize;
-            tm.richText = false; // a-frame doesnt support tags?
-            //tm.anchor = TextAnchor.MiddleCenter;
-            //tm.fontStyle = ???
+
+            tm.richText = false;
+            // a-frame doesnt support tags?
+
             //if (data.font != null)
             //{
             //    switch ((string)data.font)
@@ -525,8 +517,6 @@ namespace ArenaUnity
             //            break;
             //    }
             //}
-
-            // font material needs to occlude like "TextMeshPro/Bitmap"
         }
 
         // light
