@@ -600,7 +600,7 @@ namespace ArenaUnity
                         tm.color = ArenaUnity.ToUnityColor((string)data.color);
                         tm.fontSize = 5;
                         tm.text = displayName;
- 
+
                         htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
                         htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
                         htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
@@ -657,9 +657,11 @@ namespace ArenaUnity
             if (assetPath == null) return;
             AnimationClip[] clips = null;
             GameObject mobj = null;
+            var i = new ImportSettings();
+            i.animationSettings.useLegacyClips = true;
             try
             {
-                mobj = Importer.LoadFromFile(assetPath, new ImportSettings(), out clips);
+                mobj = Importer.LoadFromFile(assetPath, i, out clips);
             }
             catch (Exception err)
             {
