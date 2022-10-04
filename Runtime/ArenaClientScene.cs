@@ -514,6 +514,7 @@ namespace ArenaUnity
                         cam.nearClipPlane = 0.1f; // match arena
                         cam.farClipPlane = 10000f; // match arena
                         cam.fieldOfView = 80f; // match arena
+                        cam.targetDisplay = 8; // render on least-used display
                     }
                     break;
                 case "text":
