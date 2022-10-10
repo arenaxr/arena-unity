@@ -144,6 +144,7 @@ namespace ArenaUnity
                     circle.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
                     circle.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
                     break;
+                case "videosphere": // use sphere as a videosphere placeholder
                 case "sphere":
                     ArenaMeshSphere sphere = gobj.GetComponent<ArenaMeshSphere>() ?? gobj.AddComponent<ArenaMeshSphere>();
                     sphere.radius = data.radius != null ? (float)data.radius : 1f;
