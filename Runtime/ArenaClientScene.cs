@@ -334,6 +334,7 @@ namespace ArenaUnity
         internal Uri ConstructRemoteUrl(string srcUrl)
         {
             string objUrl = srcUrl.TrimStart('/');
+            objUrl = Uri.EscapeDataString(objUrl);
             if (Uri.IsWellFormedUriString(objUrl, UriKind.Relative)) objUrl = $"https://{brokerAddress}/{objUrl}";
             else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
             if (string.IsNullOrWhiteSpace(objUrl)) return null;
@@ -342,6 +343,7 @@ namespace ArenaUnity
                 Debug.LogWarning($"Invalid Uri: '{objUrl}'");
                 return null;
             }
+            objUrl = Uri.UnescapeDataString(objUrl);
             return new Uri(objUrl);
         }
 
