@@ -188,12 +188,12 @@ namespace ArenaUnity
                 }
                 else
                 {
-                    // other cameras are auto-generated, and account must have all scene rights
-                    if (!sceneObjectRights)
-                    {
-                        LogAndExit($"Using more than one ArenaCamera requires full scene permissions. Login with an Editor or Owner account with write permissions for this scene.");
-                        yield break;
-                    }
+                    // TODO: fix: other cameras are auto-generated, and account must have all scene rights
+                    // if (!sceneObjectRights)
+                    // {
+                    //     LogAndExit($"Using more than one ArenaCamera requires full scene permissions. Login with an Editor or Owner account with write permissions for this scene.");
+                    //     yield break;
+                    // }
                     var random = UnityEngine.Random.Range(0, 100000000);
                     cam.userid = $"{random:D8}_unity";
                     cam.camid = $"camera_{random:D8}_unity";
@@ -334,7 +334,7 @@ namespace ArenaUnity
         internal Uri ConstructRemoteUrl(string srcUrl)
         {
             string objUrl = srcUrl.TrimStart('/');
-            objUrl = Uri.EscapeDataString(objUrl);
+            objUrl = Uri.EscapeUriString(objUrl);
             if (Uri.IsWellFormedUriString(objUrl, UriKind.Relative)) objUrl = $"https://{brokerAddress}/{objUrl}";
             else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
             if (string.IsNullOrWhiteSpace(objUrl)) return null;
