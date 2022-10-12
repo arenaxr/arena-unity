@@ -849,13 +849,13 @@ namespace ArenaUnity
             // consume object updates
             if (!localCameraIds.Contains((string)msg.object_id))
             {
-                // TODO: fix, some live updates are not handled well: parent, text, models
-                if ((string)msg.data.object_type != "camera")
-                    yield break;
                 switch ((string)msg.action)
                 {
                     case "create":
                     case "update":
+                        // TODO: fix, some live updates are not handled well: parent, text, models
+                        if ((string)msg.data.object_type != "camera")
+                            yield break;
                         IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
                         if (uris.Count() > 0)
                         {
