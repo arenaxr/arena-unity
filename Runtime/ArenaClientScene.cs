@@ -333,6 +333,9 @@ namespace ArenaUnity
 
         internal Uri ConstructRemoteUrl(string srcUrl)
         {
+            if (string.IsNullOrWhiteSpace(srcUrl)){
+                return null;
+            }
             string objUrl = srcUrl.TrimStart('/');
             objUrl = Uri.EscapeUriString(objUrl);
             if (Uri.IsWellFormedUriString(objUrl, UriKind.Relative)) objUrl = $"https://{brokerAddress}/{objUrl}";
@@ -415,7 +418,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                     // import master-file to link to the rest
                     AssetDatabase.ImportAsset(localPath);
-                    AssetDatabase.Refresh();
+                   // AssetDatabase.Refresh();
 #endif
                 }
                 ClearProgressBar();
@@ -846,6 +849,9 @@ namespace ArenaUnity
             // consume object updates
             if (!localCameraIds.Contains((string)msg.object_id))
             {
+                // TODO: fix, some live updates are not handled well: parent, text, models
+                if ((string)msg.data.object_type != "camera")
+                    yield break;
                 switch ((string)msg.action)
                 {
                     case "create":
