@@ -70,8 +70,10 @@ namespace ArenaUnity
 
         private string sceneTopic = null;
         internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
+        internal Dictionary<string, GameObject> childObjs = new Dictionary<string, GameObject>();
         internal List<string> pendingDelete = new List<string>();
         internal List<string> downloadQueue = new List<string>();
+        internal List<string> parentalQueue = new List<string>();
         internal List<string> localCameraIds = new List<string>();
 
         static string importPath = null;
@@ -299,18 +301,6 @@ namespace ArenaUnity
                 }
                 objects_num++;
             }
-            // establish parent/child relationships
-            foreach (KeyValuePair<string, GameObject> gobj in arenaObjs)
-            {
-                string parent = gobj.Value.GetComponent<ArenaObject>().parentId;
-                if (parent != null && arenaObjs.ContainsKey(parent))
-                {
-                    bool worldPositionStays = false;
-                    // makes the child keep its local orientation rather than its global orientation
-                    gobj.Value.transform.SetParent(arenaObjs[parent].transform, worldPositionStays);
-                    gobj.Value.GetComponent<ArenaObject>().transform.hasChanged = false;
-                }
-            }
         }
 
         private static IEnumerable<string> ExtractAssetUris(dynamic data, string[] urlTags)
@@ -333,7 +323,8 @@ namespace ArenaUnity
 
         internal Uri ConstructRemoteUrl(string srcUrl)
         {
-            if (string.IsNullOrWhiteSpace(srcUrl)){
+            if (string.IsNullOrWhiteSpace(srcUrl))
+            {
                 return null;
             }
             string objUrl = srcUrl.TrimStart('/');
@@ -418,7 +409,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                     // import master-file to link to the rest
                     AssetDatabase.ImportAsset(localPath);
-                   // AssetDatabase.Refresh();
+                    // AssetDatabase.Refresh();
 #endif
                 }
                 ClearProgressBar();
@@ -552,6 +543,44 @@ namespace ArenaUnity
             else
                 gobj.transform.localScale = Vector3.one;
 
+            // establish parent/child relationships
+            bool worldPositionStays = false;
+            string parent = (string)data.parent;
+            if (parent != null)
+            {
+                if (arenaObjs.ContainsKey(parent))
+                {
+                    gobj.SetActive(true);
+                    // makes the child keep its local orientation rather than its global orientation
+                    gobj.transform.SetParent(arenaObjs[parent].transform, worldPositionStays);
+                }
+                else
+                {
+                    gobj.SetActive(false);
+                    parentalQueue.Add(parent);
+                    childObjs.Add(object_id, gobj);
+                }
+            }
+            // find children awaiting a parent
+            if (parentalQueue.Contains(object_id))
+            {
+                foreach (KeyValuePair<string, GameObject> cgobj in childObjs)
+                {
+                    string cparent = cgobj.Value.GetComponent<ArenaObject>().parentId;
+                    if (cparent != null && cparent == object_id)
+                    {
+                        cgobj.Value.SetActive(true);
+                        // makes the child keep its local orientation rather than its global orientation
+                        cgobj.Value.transform.SetParent(arenaObjs[object_id].transform, worldPositionStays);
+                        cgobj.Value.transform.hasChanged = false;
+                        //childObjs.Remove(cgobj.Key);
+                    }
+                }
+                parentalQueue.Remove(object_id);
+            }
+
+            gobj.transform.hasChanged = false;
+
             ArenaUnity.ToUnityMesh(data, ref gobj);
 
             if (isElement(data.material) || isElement(data.color))
@@ -559,7 +588,6 @@ namespace ArenaUnity
             if (isElement(data.material) && isElement(data.material.src))
                 AttachMaterialTexture(checkLocalAsset((string)data.material.src), gobj);
 
-            gobj.transform.hasChanged = false;
             if (aobj != null)
             {
                 aobj.data = data;
