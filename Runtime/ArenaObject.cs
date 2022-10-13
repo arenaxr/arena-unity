@@ -38,6 +38,7 @@ namespace ArenaUnity
         internal bool externalDelete = false;
         internal bool isJsonValidated = false;
         internal List<string> animations = null;
+        internal string gltfUrl = null;
         internal bool meshChanged = false;
 
         public void OnEnable()

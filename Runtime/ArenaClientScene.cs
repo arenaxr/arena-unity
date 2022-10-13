@@ -480,7 +480,6 @@ namespace ArenaUnity
 #endif
             }
 
-
             // modify Unity attributes
             switch ((string)data.object_type)
             {
@@ -500,9 +499,6 @@ namespace ArenaUnity
                         AttachImage(checkLocalAsset((string)data.url), gobj);
                     break;
                 case "camera":
-                    if (renderCameras)
-                        AttachAvatar(object_id, data, displayName, gobj);
-                    // sync camera to main display if requested
                     Camera cam = gobj.GetComponent<Camera>();
                     if (cam == null)
                     {
@@ -512,6 +508,8 @@ namespace ArenaUnity
                         cam.fieldOfView = 80f; // match arena
                         cam.targetDisplay = 8; // render on least-used display
                     }
+                    if (renderCameras)
+                        AttachAvatar(object_id, data, displayName, gobj);
                     break;
                 case "text":
                     ArenaUnity.ToUnityText(data, ref gobj);
@@ -521,6 +519,7 @@ namespace ArenaUnity
                     break;
             }
 
+            // update transform properties
             if (isElement(data.position))
                 gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
             else
@@ -701,9 +700,9 @@ namespace ArenaUnity
             {
                 Debug.LogWarning($"Unable to load GTLF at {assetPath}. {err.Message}");
             }
-            AssignAnimations(mobj, clips);
             if (mobj != null)
             {
+                AssignAnimations(mobj, clips);
                 mobj.transform.parent = gobj.transform;
                 foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
                 {   // prevent inadvertent editing of gltf elements
