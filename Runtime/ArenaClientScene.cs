@@ -491,6 +491,7 @@ namespace ArenaUnity
                     JObject d = JObject.Parse(JsonConvert.SerializeObject(data));
                     foreach (string detailedUrl in d.SelectTokens("gltf-model-lod.detailedUrl"))
                         AttachGltf(checkLocalAsset(detailedUrl), gobj);
+                    // TODO: keep url, to add/remove and check exiting imported urls
                     FindAnimations(data, aobj);
                     break;
                 case "image":
