@@ -274,7 +274,7 @@ namespace ArenaUnity
         }
         private static Vector3 StrPositionToVector3(string strPos)
         {
-            string[] axis = strPos.Split(' ');
+            string[] axis = strPos.Split(new char[] { ' ' }, 3, StringSplitOptions.RemoveEmptyEntries);
             return new Vector3(float.Parse(axis[0]), float.Parse(axis[1]), float.Parse(axis[2]));
         }
         private static string Vector3ToStrPosition(Vector3 position)
@@ -438,6 +438,30 @@ namespace ArenaUnity
         public static Color ColorRandom()
         {
             return UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        }
+
+        // line/thickline
+        public static void ToUnityThickline(dynamic data, ref GameObject gobj)
+        {
+            LineRenderer line = gobj.GetComponent<LineRenderer>();
+            if (line == null)
+                line = gobj.AddComponent<LineRenderer>();
+
+            if (data.color != null)
+                line.startColor = line.endColor = ToUnityColor((string)data.color);
+            if (data.lineWidth != null)
+                line.startWidth = line.endWidth = (float)data.lineWidth / 100f; // pixels vs meters
+            // TODO update constant width in pixels: line.widthMultiplier = trackWidth;
+            if (data.path != null)
+            {
+                string[] nodes = ((string)data.path).Split(new char[] { ',' });
+                line.positionCount = nodes.Length;
+                for (var i = 0; i < nodes.Length; i++)
+                {
+                    Debug.Log(nodes[i]);
+                    line.SetPosition(i, StrPositionToVector3(nodes[i]));
+                }
+            }
         }
 
         // text
