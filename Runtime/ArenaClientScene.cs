@@ -529,11 +529,9 @@ namespace ArenaUnity
                     break;
             }
 
-            // update transform properties
+            // update transform properties, only apply if updated in mqtt message
             if (isElement(data.position))
                 gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
-            else
-                gobj.transform.localPosition = Vector3.zero;
             if (isElement(data.rotation))
             {
                 // TODO: needed? bool invertY = !((string)data.object_type == "camera");
@@ -542,15 +540,11 @@ namespace ArenaUnity
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
                 else // euler
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
+                if ((string)data.object_type == "gltf-model")
+                    gobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
             }
-            else
-                gobj.transform.localRotation = Quaternion.identity;
-            if ((string)data.object_type == "gltf-model")
-                gobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
             if (isElement(data.scale))
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
-            else
-                gobj.transform.localScale = Vector3.one;
 
             // establish parent/child relationships
             bool worldPositionStays = false;
