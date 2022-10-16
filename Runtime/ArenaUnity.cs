@@ -272,16 +272,21 @@ namespace ArenaUnity
                     break;
             }
         }
-        private static Vector3 StrPositionToVector3(string strPos)
+
+        // position
+        private static string ToArenaPositionString(Vector3 position)
+        {
+            return $"{ArenaFloat(position.x)} {ArenaFloat(position.y)} {ArenaFloat(-position.z)}";
+        }
+        private static Vector3 ToUnityPositionString(string strPos)
         {
             string[] axis = strPos.Split(new char[] { ' ' }, 3, StringSplitOptions.RemoveEmptyEntries);
-            return new Vector3(float.Parse(axis[0]), float.Parse(axis[1]), float.Parse(axis[2]));
+            return new Vector3(
+                float.Parse(axis[0]),
+                float.Parse(axis[1]),
+                -float.Parse(axis[2])
+            );
         }
-        private static string Vector3ToStrPosition(Vector3 position)
-        {
-            return $"{ArenaFloat(position.x)} {ArenaFloat(position.y)} {ArenaFloat(position.z)}";
-        }
-        // position
         public static dynamic ToArenaPosition(Vector3 position)
         {
             return new
@@ -299,6 +304,7 @@ namespace ArenaUnity
                 -(float)position.z
             );
         }
+
         // rotation
         public static dynamic ToArenaRotationQuat(Quaternion rotationQuat, bool invertY = true)
         {
@@ -458,8 +464,8 @@ namespace ArenaUnity
                 line.positionCount = nodes.Length;
                 for (var i = 0; i < nodes.Length; i++)
                 {
-                    Debug.Log(nodes[i]);
-                    line.SetPosition(i, StrPositionToVector3(nodes[i]));
+                    Vector3 position = ToUnityPositionString(nodes[i]);
+                    line.SetPosition(i, position);
                 }
             }
         }
@@ -470,8 +476,6 @@ namespace ArenaUnity
             TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
             if (tm == null)
                 tm = gobj.AddComponent<TextMeshPro>();
-            // use scale/font size to gain crisp resolution
-            gobj.transform.localScale = gobj.transform.localScale / 5f;
             tm.fontSize = 2;
 
             if (data.value != null)
