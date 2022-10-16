@@ -467,7 +467,9 @@ namespace ArenaUnity
         // text
         public static void ToUnityText(dynamic data, ref GameObject gobj)
         {
-            TextMeshPro tm = gobj.AddComponent<TextMeshPro>();
+            TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
+            if (tm == null)
+                tm = gobj.AddComponent<TextMeshPro>();
             // use scale/font size to gain crisp resolution
             gobj.transform.localScale = gobj.transform.localScale / 5f;
             tm.fontSize = 2;
@@ -585,7 +587,9 @@ namespace ArenaUnity
                 }
                 else
                 {
-                    Light light = gobj.AddComponent<Light>();
+                    Light light = gobj.GetComponent<Light>();
+                    if (light == null)
+                        light = gobj.AddComponent<Light>();
                     switch ((string)ldata.type)
                     {
                         case "directional":

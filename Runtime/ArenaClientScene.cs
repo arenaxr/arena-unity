@@ -70,8 +70,10 @@ namespace ArenaUnity
 
         private string sceneTopic = null;
         internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
+        internal Dictionary<string, GameObject> childObjs = new Dictionary<string, GameObject>();
         internal List<string> pendingDelete = new List<string>();
         internal List<string> downloadQueue = new List<string>();
+        internal List<string> parentalQueue = new List<string>();
         internal List<string> localCameraIds = new List<string>();
 
         static string importPath = null;
@@ -300,18 +302,6 @@ namespace ArenaUnity
                 }
                 objects_num++;
             }
-            // establish parent/child relationships
-            foreach (KeyValuePair<string, GameObject> gobj in arenaObjs)
-            {
-                string parent = gobj.Value.GetComponent<ArenaObject>().parentId;
-                if (parent != null && arenaObjs.ContainsKey(parent))
-                {
-                    bool worldPositionStays = false;
-                    // makes the child keep its local orientation rather than its global orientation
-                    gobj.Value.transform.SetParent(arenaObjs[parent].transform, worldPositionStays);
-                    gobj.Value.GetComponent<ArenaObject>().transform.hasChanged = false;
-                }
-            }
         }
 
         private static IEnumerable<string> ExtractAssetUris(dynamic data, string[] urlTags)
@@ -334,7 +324,8 @@ namespace ArenaUnity
 
         internal Uri ConstructRemoteUrl(string srcUrl)
         {
-            if (string.IsNullOrWhiteSpace(srcUrl)){
+            if (string.IsNullOrWhiteSpace(srcUrl))
+            {
                 return null;
             }
             string objUrl = srcUrl.TrimStart('/');
@@ -419,7 +410,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                     // import master-file to link to the rest
                     AssetDatabase.ImportAsset(localPath);
-                   // AssetDatabase.Refresh();
+                    // AssetDatabase.Refresh();
 #endif
                 }
                 ClearProgressBar();
@@ -494,19 +485,23 @@ namespace ArenaUnity
 #endif
             }
 
-
             // modify Unity attributes
             switch ((string)data.object_type)
             {
                 case "gltf-model":
                     // load main model
-                    if (data.url != null)
+                    if (data.url != null && aobj.gltfUrl == null)
+                    {
+                        // keep url, to add/remove and check exiting imported urls
+                        aobj.gltfUrl = (string)data.url;
+
                         AttachGltf(checkLocalAsset((string)data.url), gobj);
+                        FindAnimations(data, aobj);
+                    }
                     // load on-demand-model (LOD) as well
-                    JObject d = JObject.Parse(JsonConvert.SerializeObject(data));
-                    foreach (string detailedUrl in d.SelectTokens("gltf-model-lod.detailedUrl"))
-                        AttachGltf(checkLocalAsset(detailedUrl), gobj);
-                    FindAnimations(data, aobj);
+                    //JObject d = JObject.Parse(JsonConvert.SerializeObject(data));
+                    //foreach (string detailedUrl in d.SelectTokens("gltf-model-lod.detailedUrl"))
+                    //    AttachGltf(checkLocalAsset(detailedUrl), gobj);
                     break;
                 case "image":
                     // load image file
@@ -514,9 +509,6 @@ namespace ArenaUnity
                         AttachImage(checkLocalAsset((string)data.url), gobj);
                     break;
                 case "camera":
-                    if (renderCameras)
-                        AttachAvatar(object_id, data, displayName, gobj);
-                    // sync camera to main display if requested
                     Camera cam = gobj.GetComponent<Camera>();
                     if (cam == null)
                     {
@@ -526,6 +518,8 @@ namespace ArenaUnity
                         cam.fieldOfView = 80f; // match arena
                         cam.targetDisplay = 8; // render on least-used display
                     }
+                    if (renderCameras)
+                        AttachAvatar(object_id, data, displayName, gobj);
                     break;
                 case "text":
                     ArenaUnity.ToUnityText(data, ref gobj);
@@ -538,10 +532,9 @@ namespace ArenaUnity
                     break;
             }
 
+            // update transform properties, only apply if updated in mqtt message
             if (isElement(data.position))
                 gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
-            else
-                gobj.transform.localPosition = Vector3.zero;
             if (isElement(data.rotation))
             {
                 // TODO: needed? bool invertY = !((string)data.object_type == "camera");
@@ -550,15 +543,49 @@ namespace ArenaUnity
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
                 else // euler
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
+                if ((string)data.object_type == "gltf-model")
+                    gobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
             }
-            else
-                gobj.transform.localRotation = Quaternion.identity;
-            if ((string)data.object_type == "gltf-model")
-                gobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
             if (isElement(data.scale))
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
-            else
-                gobj.transform.localScale = Vector3.one;
+
+            // establish parent/child relationships
+            bool worldPositionStays = false;
+            string parent = (string)data.parent;
+            if (parent != null)
+            {
+                if (arenaObjs.ContainsKey(parent))
+                {
+                    gobj.SetActive(true);
+                    // makes the child keep its local orientation rather than its global orientation
+                    gobj.transform.SetParent(arenaObjs[parent].transform, worldPositionStays);
+                }
+                else
+                {
+                    gobj.SetActive(false);
+                    parentalQueue.Add(parent);
+                    childObjs.Add(object_id, gobj);
+                }
+            }
+            // find children awaiting a parent
+            if (parentalQueue.Contains(object_id))
+            {
+                foreach (KeyValuePair<string, GameObject> cgobj in childObjs)
+                {
+                    string cparent = cgobj.Value.GetComponent<ArenaObject>().parentId;
+                    if (cparent != null && cparent == object_id)
+                    {
+                        cgobj.Value.SetActive(true);
+                        // makes the child keep its local orientation rather than its global orientation
+                        cgobj.Value.transform.SetParent(arenaObjs[object_id].transform, worldPositionStays);
+                        cgobj.Value.transform.hasChanged = false;
+                        //childObjs.Remove(cgobj.Key);
+                    }
+                }
+                parentalQueue.Remove(object_id);
+            }
+
+            gobj.transform.hasChanged = false;
 
             ArenaUnity.ToUnityMesh(data, ref gobj);
 
@@ -567,7 +594,6 @@ namespace ArenaUnity
             if (isElement(data.material) && isElement(data.material.src))
                 AttachMaterialTexture(checkLocalAsset((string)data.material.src), gobj);
 
-            gobj.transform.hasChanged = false;
             if (aobj != null)
             {
                 aobj.data = data;
@@ -681,9 +707,9 @@ namespace ArenaUnity
             {
                 Debug.LogWarning($"Unable to load GTLF at {assetPath}. {err.Message}");
             }
-            AssignAnimations(mobj, clips);
             if (mobj != null)
             {
+                AssignAnimations(mobj, clips);
                 mobj.transform.parent = gobj.transform;
                 foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
                 {   // prevent inadvertent editing of gltf elements
@@ -861,9 +887,6 @@ namespace ArenaUnity
                 {
                     case "create":
                     case "update":
-                        // TODO: fix, some live updates are not handled well: parent, text, models
-                        if ((string)msg.data.object_type != "camera")
-                            yield break;
                         IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
                         if (uris.Count() > 0)
                         {
