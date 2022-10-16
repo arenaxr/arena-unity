@@ -490,14 +490,18 @@ namespace ArenaUnity
             {
                 case "gltf-model":
                     // load main model
-                    if (data.url != null)
+                    if (data.url != null && aobj.gltfUrl == null)
+                    {
+                        // keep url, to add/remove and check exiting imported urls
+                        aobj.gltfUrl = (string)data.url;
+
                         AttachGltf(checkLocalAsset((string)data.url), gobj);
+                        FindAnimations(data, aobj);
+                    }
                     // load on-demand-model (LOD) as well
-                    JObject d = JObject.Parse(JsonConvert.SerializeObject(data));
-                    foreach (string detailedUrl in d.SelectTokens("gltf-model-lod.detailedUrl"))
-                        AttachGltf(checkLocalAsset(detailedUrl), gobj);
-                    // TODO: keep url, to add/remove and check exiting imported urls
-                    FindAnimations(data, aobj);
+                    //JObject d = JObject.Parse(JsonConvert.SerializeObject(data));
+                    //foreach (string detailedUrl in d.SelectTokens("gltf-model-lod.detailedUrl"))
+                    //    AttachGltf(checkLocalAsset(detailedUrl), gobj);
                     break;
                 case "image":
                     // load image file
@@ -886,9 +890,6 @@ namespace ArenaUnity
                 {
                     case "create":
                     case "update":
-                        // // TODO: fix, some live updates are not handled well: parent, text, models
-                        // if ((string)msg.data.object_type != "camera")
-                        //     yield break;
                         IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
                         if (uris.Count() > 0)
                         {
