@@ -284,6 +284,7 @@ namespace ArenaUnity
             {
                 string object_id = (string)msg.object_id;
                 string msg_type = (string)msg.type;
+                float ttl = isElement(msg.ttl) ? (float)msg.ttl : 0f;
                 if (!arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
                 {
                     IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
@@ -295,7 +296,7 @@ namespace ArenaUnity
                             yield return cd.coroutine;
                         }
                     }
-                    CreateUpdateObject(object_id, msg_type, persist, msg.attributes);
+                    CreateUpdateObject(object_id, msg_type, persist, ttl, msg.attributes);
                 }
                 objects_num++;
             }
@@ -457,7 +458,7 @@ namespace ArenaUnity
 #endif
         }
 
-        private void CreateUpdateObject(string object_id, string storeType, bool persist, dynamic data, string displayName = null, object menuCommand = null)
+        private void CreateUpdateObject(string object_id, string storeType, bool persist, float ttl, dynamic data, string displayName = null, object menuCommand = null)
         {
             ArenaObject aobj = null;
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
@@ -478,6 +479,10 @@ namespace ArenaUnity
                 aobj.persist = persist;
                 aobj.messageType = storeType;
                 aobj.parentId = (string)data.parent;
+                if (ttl > 0)
+                {
+                    aobj.SetTtlDeleteTimer(ttl);
+                }
 #if UNITY_EDITOR
                 // local create context auto-select
                 if (menuCommand != null)
@@ -871,7 +876,12 @@ namespace ArenaUnity
                                 }
                             }
                         }
-                        CreateUpdateObject((string)msg.object_id, (string)msg.type, Convert.ToBoolean(msg.persist), msg.data, (string)msg.displayName, menuCommand);
+                        string object_id = (string)msg.object_id;
+                        string msg_type = (string)msg.type;
+                        float ttl = isElement(msg.ttl) ? (float)msg.ttl : 0f;
+                        bool persist = Convert.ToBoolean(msg.persist);
+                        string displayName = (string)msg.displayName;
+                        CreateUpdateObject(object_id, msg_type, persist, ttl, msg.data, displayName, menuCommand);
                         break;
                     case "delete":
                         RemoveObject((string)msg.object_id);

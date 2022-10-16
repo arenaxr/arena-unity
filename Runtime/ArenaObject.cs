@@ -3,6 +3,7 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using Newtonsoft.Json;
@@ -62,6 +63,18 @@ namespace ArenaUnity
             }
 
             isJsonValidated = jsonData != null;
+        }
+
+        public void SetTtlDeleteTimer(float seconds)
+        {
+            StartCoroutine(TtlUpdater(seconds));
+        }
+
+        IEnumerator TtlUpdater(float seconds)
+        {
+            yield return new WaitForSeconds(seconds);
+            externalDelete = true;
+            Destroy(gameObject);
         }
 
         void Update()
