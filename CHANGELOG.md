@@ -2,6 +2,26 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.4.0](https://github.com/arenaxr/arena-unity/compare/v0.3.1...v0.4.0) (2022-10-17)
+
+
+### Features
+
+* **avatar:** renderCameras should also not attach Camera component ([64e7124](https://github.com/arenaxr/arena-unity/commit/64e71243296c2653f2693921f42027e2f923314c))
+* **thickline:** render arena thickline ([e73a7ac](https://github.com/arenaxr/arena-unity/commit/e73a7ac96761a38b04f027a6fe2e7147b62efd6e))
+* **ttl:** add ttl timer for short-term objects ([85adec9](https://github.com/arenaxr/arena-unity/commit/85adec9a4bc95a493e7f7566f3e6f27eb2875cb3))
+* **videosphere:** use sphere as a videosphere placeholder ([cdae1c4](https://github.com/arenaxr/arena-unity/commit/cdae1c4e2d9cb412608a89c414f36367f3601c09))
+
+
+### Bug Fixes
+
+* **all:** rework live updates to handle parent/text/models better ([#45](https://github.com/arenaxr/arena-unity/issues/45)) ([4f8aea3](https://github.com/arenaxr/arena-unity/commit/4f8aea3567af7325ddfecbb9ee15524bd94cfc7e))
+* **camera:** do not render on default display 1 ([49a3495](https://github.com/arenaxr/arena-unity/commit/49a34951d77d7a8f7653c21d997403e9f4da9ed9))
+* **gltf-model:** allow spaces in model urls ([773e18a](https://github.com/arenaxr/arena-unity/commit/773e18ad51f5e41826510059bb6ac96ab464e228))
+* **gltf:** allow builds to run legacy animation clips ([775d899](https://github.com/arenaxr/arena-unity/commit/775d899d6970d0ef28dfaf5514302ee14bd6f0da))
+* hot patch: external realtime updates disabled ([ed76ff4](https://github.com/arenaxr/arena-unity/commit/ed76ff4d44998c17d9507645b682c9a3b4154de3))
+* **thickline:** fix z position of thickline nodes ([5d1233c](https://github.com/arenaxr/arena-unity/commit/5d1233ceb8f37da1deecb0140a0001f3a1162ba0))
+
 ## [0.3.1](https://github.com/arenaxr/arena-unity/compare/v0.3.0...v0.3.1) (2022-10-03)
 
 
