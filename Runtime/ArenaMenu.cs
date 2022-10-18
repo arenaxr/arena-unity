@@ -143,7 +143,8 @@ namespace ArenaUnity
             Vector3 cameraPoint = cam.transform.position + cam.transform.forward * distance;
 
             dynamic msg = new ExpandoObject();
-            if (ArenaClientScene.Instance.arenaObjs.ContainsKey(object_id))
+            var client = ArenaClientScene.Instance;
+            if (client.arenaObjs.ContainsKey(object_id))
                 object_id = $"{object_id}-{UnityEngine.Random.Range(0, 1000000)}";
             msg.object_id = object_id;
             msg.action = "create";
@@ -158,8 +159,8 @@ namespace ArenaUnity
             data.material = material;
             msg.data = data;
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload); // remote
-            ArenaClientScene.Instance.ProcessMessage(payload, menuCommand); // local
+            client.PublishObject(msg.object_id, payload, client.sceneObjectRights); // remote
+            client.ProcessMessage(payload, menuCommand); // local
         }
 #endif
     }

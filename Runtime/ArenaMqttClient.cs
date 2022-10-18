@@ -137,17 +137,17 @@ namespace ArenaUnity
 
         public void Publish(string topic, byte[] payload)
         {
-            client.Publish(topic, payload);
+            if (client != null) client.Publish(topic, payload);
         }
 
         public void Subscribe(string[] topics)
         {
-            client.Subscribe(topics, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
+            if (client != null) client.Subscribe(topics, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
         }
 
         public void Unsubscribe(string[] topics)
         {
-            client.Unsubscribe(topics);
+            if (client != null) client.Unsubscribe(topics);
         }
 
         protected void OnDestroy()

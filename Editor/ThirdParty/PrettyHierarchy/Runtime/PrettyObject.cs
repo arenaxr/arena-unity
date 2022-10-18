@@ -1,5 +1,6 @@
 ﻿// Modified from: https://github.com/NCEEGEE/PrettyHierarchy
 
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,6 +9,23 @@ namespace PrettyHierarchy
     [DisallowMultipleComponent]
     public class PrettyObject : MonoBehaviour
     {
+        private bool hasPermissions;
+
+        private void updateText()
+        {
+            // for now, arena objects colored text consistently in Editor/ThirdParty/PrettyHierarchy/Editor/Utils/EditorColors.cs
+            if (EditorGUIUtility.isProSkin)
+                textColor = hasPermissions ? new Color32(0, 255, 0, 255) : new Color32(255, 165, 0, 255); // TODO dark theme=light green
+            else
+                textColor = hasPermissions ? new Color32(0, 128, 0, 255) : new Color32(255, 165, 0, 255); // TODO light theme=dark green
+#if UNITY_EDITOR
+
+            EditorApplication.RepaintHierarchyWindow();
+#endif
+        }
+
+        public bool HasPermissions { get { return hasPermissions; } set { hasPermissions = value; updateText(); } }
+
 #if UNITY_EDITOR
         //[Header("Background")]
         //[SerializeField]
@@ -40,15 +58,6 @@ namespace PrettyHierarchy
         public FontStyle FontStyle { get { return fontStyle; } }
         public TextAnchor Alignment { get { return alignment; } }
         public bool TextDropShadow { get { return textDropShadow; } }
-
-        private void Awake()
-        {
-            // for now, arena objects colored text consistently in Editor/ThirdParty/PrettyHierarchy/Editor/Utils/EditorColors.cs
-            // if (EditorGUIUtility.isProSkin)
-            //     textColor = new Color32(0, 255, 0, 255); //dark theme=light green
-            // else
-            //     textColor = new Color32(0, 128, 0, 255); //light theme=dark green
-        }
 
         private void OnValidate()
         {

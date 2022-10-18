@@ -68,6 +68,8 @@ namespace ArenaUnity
         /// </summary>
         public string sceneUrl { get; private set; }
 
+        internal bool sceneObjectRights { get; private set; }
+
         private string sceneTopic = null;
         internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
         internal Dictionary<string, GameObject> childObjs = new Dictionary<string, GameObject>();
@@ -171,7 +173,6 @@ namespace ArenaUnity
                 sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
                 sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
             }
-            bool sceneObjectRights = false;
             dynamic perms = JsonConvert.DeserializeObject(permissions);
             foreach (dynamic pubperm in perms.publ)
             {
@@ -184,18 +185,19 @@ namespace ArenaUnity
                 if ((cam.name == Camera.main.name || camlist.Length == 1) && !foundFirstCam)
                 {
                     // publish main/selected camera
+                    cam.HasPermissions = true; // TODO: client connection always gets at least one
                     cam.userid = userid;
                     cam.camid = camid;
                     foundFirstCam = true;
                 }
                 else
                 {
+                    cam.HasPermissions = sceneObjectRights;
                     // TODO: fix: other cameras are auto-generated, and account must have all scene rights
-                    // if (!sceneObjectRights)
-                    // {
-                    //     LogAndExit($"Using more than one ArenaCamera requires full scene permissions. Login with an Editor or Owner account with write permissions for this scene.");
-                    //     yield break;
-                    // }
+                    if (!sceneObjectRights)
+                    {
+                        Debug.LogWarning($"Using more than one ArenaCamera requires full scene permissions. Only one camera will be published.");
+                    }
                     var random = UnityEngine.Random.Range(0, 100000000);
                     cam.userid = $"{random:D8}_unity";
                     cam.camid = $"camera_{random:D8}_unity";
@@ -258,7 +260,7 @@ namespace ArenaUnity
                             persist = true,
                         };
                         string payload = JsonConvert.SerializeObject(msg);
-                        PublishObject(msg.object_id, payload);
+                        PublishObject(msg.object_id, payload, sceneObjectRights);
                     }
                 }
 #endif
@@ -801,27 +803,27 @@ namespace ArenaUnity
         /// <summary>
         /// Object changes are published using a ClientId + ObjectId topic, a user must have permissions for the entire scene graph.
         /// </summary>
-        public void PublishObject(string object_id, string msgJson)
+        public void PublishObject(string object_id, string msgJson, bool hasPermissions = true)
         {
             dynamic msg = JsonConvert.DeserializeObject(msgJson);
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{client.ClientId}/{object_id}", JsonConvert.SerializeObject(msg));
+            PublishSceneMessage($"{sceneTopic}/{client.ClientId}/{object_id}", JsonConvert.SerializeObject(msg), hasPermissions);
         }
 
         /// <summary>
         /// Camera presence changes are published using a ObjectId-only topic, a user might only have permissions for their camid.
         /// </summary>
-        public void PublishCamera(string object_id, string msgJson)
+        public void PublishCamera(string object_id, string msgJson, bool hasPermissions = true)
         {
             dynamic msg = JsonConvert.DeserializeObject(msgJson);
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{object_id}", JsonConvert.SerializeObject(msg));
+            PublishSceneMessage($"{sceneTopic}/{object_id}", JsonConvert.SerializeObject(msg), hasPermissions);
         }
 
         /// <summary>
         /// Camera events are published using a ObjectId-only topic, a user might only have permissions for their camid.
         /// </summary>
-        public void PublishEvent(string object_id, string eventType, string msgJsonData)
+        public void PublishEvent(string object_id, string eventType, string msgJsonData, bool hasPermissions = true)
         {
             dynamic msg = new ExpandoObject();
             msg.object_id = camid;
@@ -829,14 +831,14 @@ namespace ArenaUnity
             msg.type = eventType;
             msg.data = JsonConvert.DeserializeObject(msgJsonData);
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{object_id}", JsonConvert.SerializeObject(msg));
+            PublishSceneMessage($"{sceneTopic}/{object_id}", JsonConvert.SerializeObject(msg), hasPermissions);
         }
 
-        private void PublishSceneMessage(string topic, string msg)
+        private void PublishSceneMessage(string topic, string msg, bool hasPermissions)
         {
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
             Publish(topic, payload);
-            LogMessage("Sent", JsonConvert.DeserializeObject(msg));
+            LogMessage("Sending", JsonConvert.DeserializeObject(msg), hasPermissions);
         }
 
         private static string GetTimestamp()
@@ -918,7 +920,7 @@ namespace ArenaUnity
             }
         }
 
-        private void LogMessage(string dir, dynamic msg)
+        private void LogMessage(string dir, dynamic msg, bool hasPermissions = true)
         {
             // determine logging level
             if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
@@ -928,7 +930,10 @@ namespace ArenaUnity
                 if (!logMqttObjects) return;
             }
             if (msg.action == "clientEvent" && !logMqttEvents) return;
-            Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
+            if (hasPermissions)
+                Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
+            else
+                Debug.LogWarning($"Permissions FAILED {dir}: {JsonConvert.SerializeObject(msg)}");
         }
 
         protected override void OnApplicationQuit()
@@ -942,7 +947,7 @@ namespace ArenaUnity
                     action = "delete",
                 };
                 string delCamMsg = JsonConvert.SerializeObject(msg);
-                PublishCamera(camid, delCamMsg);
+                PublishCamera(camid, delCamMsg, sceneObjectRights);
             }
             base.OnApplicationQuit();
         }

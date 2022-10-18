@@ -3,7 +3,6 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
-using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,17 +17,35 @@ namespace ArenaUnity
             ArenaObject aobj = (ArenaObject)target;
 
             // add button to publish unity changes
-            GUI.enabled = aobj.messageType == "object";
+            GUI.enabled = aobj.HasPermissions && aobj.messageType == "object";
             if (GUILayout.Button("Publish Unity Data"))
             {
                 aobj.PublishCreateUpdate();
             }
             GUI.enabled = true;
 
+            // edit authorization
+            GUILayout.BeginHorizontal("Box");
+            GUILayout.Label("Publish Permission:");
+            if (Application.isPlaying)
+            {
+                var authStyle = new GUIStyle(EditorStyles.label);
+                authStyle.normal.textColor = aobj.HasPermissions ? Color.green : (Color)new Color32(255, 165, 0, 255);
+                var authString = aobj.HasPermissions ? "A" : "Not a";
+                GUILayout.Label($"{authString}uthorized to publish changes", authStyle);
+            }
+            else
+            {
+                GUILayout.Label("Determined in playmode");
+            }
+            GUILayout.EndHorizontal();
+
+            GUI.enabled = !Application.isPlaying && aobj.HasPermissions;
             DrawDefaultInspector();
+            GUI.enabled = true;
 
             // add button to publish manual json data changes if valid
-            GUI.enabled = aobj.isJsonValidated;
+            GUI.enabled = aobj.HasPermissions && aobj.isJsonValidated;
             if (GUILayout.Button("Publish Json Data"))
             {
                 aobj.PublishJson();

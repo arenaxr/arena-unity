@@ -52,6 +52,8 @@ namespace ArenaUnity
 
         void Start()
         {
+            // TODO: consider how inactive objects react to find here, might need to use arenaObjs array
+
             // runtime created arena objects still need to be checked for name uniqueness
             bool found = false;
             foreach (var aobj in FindObjectsOfType<ArenaObject>())
@@ -84,6 +86,9 @@ namespace ArenaUnity
             if (!ArenaClientScene.Instance || ArenaClientScene.Instance.transformPublishInterval == 0 ||
             Time.frameCount % ArenaClientScene.Instance.transformPublishInterval != 0)
                 return;
+
+            HasPermissions = ArenaClientScene.Instance.sceneObjectRights;
+
             if (transform.hasChanged || meshChanged)
             {
                 //TODO: prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
@@ -113,7 +118,7 @@ namespace ArenaUnity
                 persist = persist,
             };
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload);
+            ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
             // add new object with new name, it pubs
             created = false;
             transform.hasChanged = true;
@@ -193,7 +198,7 @@ namespace ArenaUnity
             msg.data = transformOnly ? dataUnity : updatedData;
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload);
+            ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
             if (!created)
                 created = true;
 
@@ -209,7 +214,7 @@ namespace ArenaUnity
             msg.persist = persist;
             msg.data = JsonConvert.DeserializeObject(jsonData);
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload); // remote
+            ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions); // remote
             ArenaClientScene.Instance.ProcessMessage(payload); // local
         }
 
