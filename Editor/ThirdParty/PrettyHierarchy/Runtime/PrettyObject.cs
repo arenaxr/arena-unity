@@ -20,14 +20,19 @@ namespace PrettyHierarchy
         private void updateText()
         {
             // for now, arena objects colored text consistently in Editor/ThirdParty/PrettyHierarchy/Editor/Utils/EditorColors.cs
-            if (EditorGUIUtility.isProSkin)
-                textColor = hasPermissions ? ColorDarkAllow : ColorDarkDisallow;
-            else
-                textColor = hasPermissions ? ColorLightAllow : ColorLightDisallow;
+            textColor = GetTextColor();
 #if UNITY_EDITOR
 
             EditorApplication.RepaintHierarchyWindow();
 #endif
+        }
+
+        private Color32 GetTextColor()
+        {
+            if (EditorGUIUtility.isProSkin)
+                return hasPermissions ? ColorDarkAllow : ColorDarkDisallow;
+            else
+                return hasPermissions ? ColorLightAllow : ColorLightDisallow;
         }
 
         public bool HasPermissions { get { return hasPermissions; } set { hasPermissions = value; updateText(); } }
@@ -58,7 +63,7 @@ namespace PrettyHierarchy
         public Color32 BackgroundColor { get { return new Color32(backgroundColor.r, backgroundColor.g, backgroundColor.b, 255); } }
 
         public bool UseDefaultTextColor { get { return useDefaultTextColor; } }
-        public Color32 TextColor { get { return textColor; } }
+        public Color32 TextColor { get { return GetTextColor(); } }
         public Font Font { get { return font; } }
         public int FontSize { get { return fontSize; } }
         public FontStyle FontStyle { get { return fontStyle; } }
