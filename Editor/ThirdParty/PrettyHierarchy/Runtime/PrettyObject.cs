@@ -9,15 +9,21 @@ namespace PrettyHierarchy
     [DisallowMultipleComponent]
     public class PrettyObject : MonoBehaviour
     {
+        public static Color32 ColorDarkAllow = new Color32(0, 255, 0, 255); // green
+        public static Color32 ColorLightAllow = new Color32(0, 128, 0, 255); // dark green
+
+        public static Color32 ColorDarkDisallow = new Color32(255, 165, 0, 255); //orange
+        public static Color32 ColorLightDisallow = new Color32(204, 85, 0, 255); // dark orange
+
         private bool hasPermissions;
 
         private void updateText()
         {
             // for now, arena objects colored text consistently in Editor/ThirdParty/PrettyHierarchy/Editor/Utils/EditorColors.cs
             if (EditorGUIUtility.isProSkin)
-                textColor = hasPermissions ? new Color32(0, 255, 0, 255) : new Color32(255, 165, 0, 255); // TODO dark theme=light green
+                textColor = hasPermissions ? ColorDarkAllow : ColorDarkDisallow;
             else
-                textColor = hasPermissions ? new Color32(0, 128, 0, 255) : new Color32(255, 165, 0, 255); // TODO light theme=dark green
+                textColor = hasPermissions ? ColorLightAllow : ColorLightDisallow;
 #if UNITY_EDITOR
 
             EditorApplication.RepaintHierarchyWindow();
@@ -34,7 +40,7 @@ namespace PrettyHierarchy
         private Color32 backgroundColor = new Color32(255, 255, 255, 255);
         //[Header("Text")]
         //[SerializeField]
-        private bool useDefaultTextColor = true;
+        private bool useDefaultTextColor = false;
         //[SerializeField]
         private Color32 textColor = new Color32(0, 0, 0, 255);
         //[SerializeField]

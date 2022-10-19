@@ -3,6 +3,7 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
+using PrettyHierarchy;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,6 +16,12 @@ namespace ArenaUnity
         public override void OnInspectorGUI()
         {
             ArenaObject aobj = (ArenaObject)target;
+
+            Color textColorPerms;
+            if (EditorGUIUtility.isProSkin)
+                textColorPerms = aobj.HasPermissions ? PrettyObject.ColorDarkAllow : PrettyObject.ColorDarkDisallow;
+            else
+                textColorPerms = aobj.HasPermissions ? PrettyObject.ColorLightAllow : PrettyObject.ColorLightDisallow;
 
             // add button to publish unity changes
             GUI.enabled = aobj.HasPermissions && aobj.messageType == "object";
@@ -30,7 +37,7 @@ namespace ArenaUnity
             if (Application.isPlaying)
             {
                 var authStyle = new GUIStyle(EditorStyles.label);
-                authStyle.normal.textColor = aobj.HasPermissions ? Color.green : (Color)new Color32(255, 165, 0, 255);
+                authStyle.normal.textColor = textColorPerms;
                 var authString = aobj.HasPermissions ? "A" : "Not a";
                 GUILayout.Label($"{authString}uthorized to publish changes", authStyle);
             }
