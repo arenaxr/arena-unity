@@ -20,16 +20,16 @@ namespace PrettyHierarchy
         public bool HasPermissions { get { return hasPermissions; } set { hasPermissions = value; } }
 
 #if UNITY_EDITOR
-        private Color32 GetTextColor()
+        private Color32 UpdateTextColor()
         {
+            Color32 color;
             if (EditorGUIUtility.isProSkin)
-                return hasPermissions ? ColorDarkAllow : ColorDarkDisallow;
+                color = hasPermissions ? ColorDarkAllow : ColorDarkDisallow;
             else
-                return hasPermissions ? ColorLightAllow : ColorLightDisallow;
-
+                color = hasPermissions ? ColorLightAllow : ColorLightDisallow;
             EditorApplication.RepaintHierarchyWindow();
+            return color;
         }
-
 
         //[Header("Background")]
         //[SerializeField]
@@ -38,7 +38,7 @@ namespace PrettyHierarchy
         private Color32 backgroundColor = new Color32(255, 255, 255, 255);
         //[Header("Text")]
         //[SerializeField]
-        private bool useDefaultTextColor = true;
+        private bool useDefaultTextColor = false;
         //[SerializeField]
         private Color32 textColor = new Color32(0, 0, 0, 255);
         //[SerializeField]
@@ -56,7 +56,7 @@ namespace PrettyHierarchy
         public Color32 BackgroundColor { get { return new Color32(backgroundColor.r, backgroundColor.g, backgroundColor.b, 255); } }
 
         public bool UseDefaultTextColor { get { return useDefaultTextColor; } }
-        public Color32 TextColor { get { return GetTextColor(); } }
+        public Color32 TextColor { get { return UpdateTextColor(); } }
         public Font Font { get { return font; } }
         public int FontSize { get { return fontSize; } }
         public FontStyle FontStyle { get { return fontStyle; } }
