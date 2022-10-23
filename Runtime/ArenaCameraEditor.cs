@@ -22,7 +22,7 @@ namespace ArenaUnity
             if (Application.isPlaying)
             {
                 var authStyle = new GUIStyle(EditorStyles.label);
-                authStyle.normal.textColor = acobj.HasPermissions ? Color.green : (Color)new Color32(255, 165, 0, 255);
+                authStyle.normal.textColor = acobj.TextColor;
                 var authString = acobj.HasPermissions ? "A" : "Not a";
                 GUILayout.Label($"{authString}uthorized to publish changes", authStyle);
             }
@@ -32,9 +32,7 @@ namespace ArenaUnity
             }
             GUILayout.EndHorizontal();
 
-            GUI.enabled = !Application.isPlaying && acobj.HasPermissions;
             DrawDefaultInspector();
-            GUI.enabled = true;
         }
     }
 #endif

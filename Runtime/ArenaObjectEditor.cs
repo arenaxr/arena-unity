@@ -30,7 +30,7 @@ namespace ArenaUnity
             if (Application.isPlaying)
             {
                 var authStyle = new GUIStyle(EditorStyles.label);
-                authStyle.normal.textColor = aobj.HasPermissions ? Color.green : (Color)new Color32(255, 165, 0, 255);
+                authStyle.normal.textColor = aobj.TextColor;
                 var authString = aobj.HasPermissions ? "A" : "Not a";
                 GUILayout.Label($"{authString}uthorized to publish changes", authStyle);
             }
@@ -40,9 +40,7 @@ namespace ArenaUnity
             }
             GUILayout.EndHorizontal();
 
-            GUI.enabled = !Application.isPlaying && aobj.HasPermissions;
             DrawDefaultInspector();
-            GUI.enabled = true;
 
             // add button to publish manual json data changes if valid
             GUI.enabled = aobj.HasPermissions && aobj.isJsonValidated;

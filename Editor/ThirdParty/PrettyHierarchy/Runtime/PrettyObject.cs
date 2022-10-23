@@ -9,26 +9,28 @@ namespace PrettyHierarchy
     [DisallowMultipleComponent]
     public class PrettyObject : MonoBehaviour
     {
+        public static Color32 ColorDarkAllow = new Color32(0, 255, 0, 255); // green
+        public static Color32 ColorLightAllow = new Color32(0, 128, 0, 255); // dark green
+
+        public static Color32 ColorDarkDisallow = new Color32(255, 165, 0, 255); //orange
+        public static Color32 ColorLightDisallow = new Color32(204, 85, 0, 255); // dark orange
+
         private bool hasPermissions;
 
-        private void updateText()
-        {
-            // for now, arena objects colored text consistently in Editor/ThirdParty/PrettyHierarchy/Editor/Utils/EditorColors.cs
-#if UNITY_EDITOR
-            if (EditorGUIUtility.isProSkin)
-                textColor = hasPermissions ? new Color32(0, 255, 0, 255) : new Color32(255, 165, 0, 255); // TODO dark theme=light green
-            else
-#endif
-                textColor = hasPermissions ? new Color32(0, 128, 0, 255) : new Color32(255, 165, 0, 255); // TODO light theme=dark green
-#if UNITY_EDITOR
+        public bool HasPermissions { get { return hasPermissions; } set { hasPermissions = value; } }
 
+#if UNITY_EDITOR
+        private Color32 UpdateTextColor()
+        {
+            Color32 color;
+            if (EditorGUIUtility.isProSkin)
+                color = hasPermissions ? ColorDarkAllow : ColorDarkDisallow;
+            else
+                color = hasPermissions ? ColorLightAllow : ColorLightDisallow;
             EditorApplication.RepaintHierarchyWindow();
-#endif
+            return color;
         }
 
-        public bool HasPermissions { get { return hasPermissions; } set { hasPermissions = value; updateText(); } }
-
-#if UNITY_EDITOR
         //[Header("Background")]
         //[SerializeField]
         private bool useDefaultBackgroundColor = true;
@@ -36,11 +38,9 @@ namespace PrettyHierarchy
         private Color32 backgroundColor = new Color32(255, 255, 255, 255);
         //[Header("Text")]
         //[SerializeField]
-        private bool useDefaultTextColor = true;
-#endif
+        private bool useDefaultTextColor = false;
         //[SerializeField]
         private Color32 textColor = new Color32(0, 0, 0, 255);
-#if UNITY_EDITOR
         //[SerializeField]
         private Font font;
         //[SerializeField]
@@ -56,7 +56,7 @@ namespace PrettyHierarchy
         public Color32 BackgroundColor { get { return new Color32(backgroundColor.r, backgroundColor.g, backgroundColor.b, 255); } }
 
         public bool UseDefaultTextColor { get { return useDefaultTextColor; } }
-        public Color32 TextColor { get { return textColor; } }
+        public Color32 TextColor { get { return UpdateTextColor(); } }
         public Font Font { get { return font; } }
         public int FontSize { get { return fontSize; } }
         public FontStyle FontStyle { get { return fontStyle; } }
