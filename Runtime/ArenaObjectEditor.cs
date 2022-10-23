@@ -40,9 +40,7 @@ namespace ArenaUnity
             }
             GUILayout.EndHorizontal();
 
-            GUI.enabled = !Application.isPlaying && aobj.HasPermissions;
             DrawDefaultInspector();
-            GUI.enabled = true;
 
             // add button to publish manual json data changes if valid
             GUI.enabled = aobj.HasPermissions && aobj.isJsonValidated;

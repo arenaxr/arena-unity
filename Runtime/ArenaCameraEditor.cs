@@ -32,9 +32,7 @@ namespace ArenaUnity
             }
             GUILayout.EndHorizontal();
 
-            GUI.enabled = !Application.isPlaying && acobj.HasPermissions;
             DrawDefaultInspector();
-            GUI.enabled = true;
         }
     }
 #endif
