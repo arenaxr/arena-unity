@@ -14,9 +14,11 @@ namespace PrettyHierarchy
         private void updateText()
         {
             // for now, arena objects colored text consistently in Editor/ThirdParty/PrettyHierarchy/Editor/Utils/EditorColors.cs
+#if UNITY_EDITOR
             if (EditorGUIUtility.isProSkin)
                 textColor = hasPermissions ? new Color32(0, 255, 0, 255) : new Color32(255, 165, 0, 255); // TODO dark theme=light green
             else
+#endif
                 textColor = hasPermissions ? new Color32(0, 128, 0, 255) : new Color32(255, 165, 0, 255); // TODO light theme=dark green
 #if UNITY_EDITOR
 
@@ -35,8 +37,10 @@ namespace PrettyHierarchy
         //[Header("Text")]
         //[SerializeField]
         private bool useDefaultTextColor = true;
+#endif
         //[SerializeField]
         private Color32 textColor = new Color32(0, 0, 0, 255);
+#if UNITY_EDITOR
         //[SerializeField]
         private Font font;
         //[SerializeField]
