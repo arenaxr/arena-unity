@@ -283,8 +283,16 @@ namespace ArenaUnity
                 var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
                 if (user.authenticated)
                 {
-                    namespaceName = user.username;
                     userName = user.username;
+                }
+                if (string.IsNullOrWhiteSpace(namespaceName))
+                {
+                    if (user.authenticated){
+                        namespaceName = user.username;
+                    }
+                    else{
+                        namespaceName = "public";
+                    }
                 }
                 // get arena user mqtt token
                 form.AddField("id_auth", tokenType);
@@ -297,10 +305,6 @@ namespace ArenaUnity
                 if (!string.IsNullOrWhiteSpace(realm))
                 {
                     form.AddField("realm", realm);
-                }
-                if (string.IsNullOrWhiteSpace(namespaceName))
-                {
-                    namespaceName = "public";
                 }
                 // handle full ARENA scene
                 if (!string.IsNullOrWhiteSpace(sceneName))
@@ -346,8 +350,9 @@ namespace ArenaUnity
             var handler = new JwtSecurityTokenHandler();
             JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
             permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
-            if (string.IsNullOrWhiteSpace(namespaceName))
+            if (string.IsNullOrWhiteSpace(namespaceName)){
                 namespaceName = payloadJson.Sub;
+            }
             mqttExpires = (long)payloadJson.Exp;
             DateTimeOffset dateTimeOffSet = DateTimeOffset.FromUnixTimeSeconds(mqttExpires);
             TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now.ToUniversalTime());
