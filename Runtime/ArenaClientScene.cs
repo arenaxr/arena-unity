@@ -297,6 +297,7 @@ namespace ArenaUnity
                         if (!string.IsNullOrWhiteSpace(uri))
                         {
                             cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
+                            ClearProgressBar();
                             yield return cd.coroutine;
                         }
                     }
@@ -401,24 +402,36 @@ namespace ArenaUnity
                                     SaveAsset(urlSubData, localSubPath);
 #if UNITY_EDITOR
                                     // import each sub-file for a deterministic reference
-                                    AssetDatabase.ImportAsset(localSubPath);
+                                    ImportAsset(localSubPath);
 #endif
                                 }
                                 else allPathsValid = false;
                             }
                         }
                     }
-                    if (!allPathsValid) yield break;
-#if UNITY_EDITOR
-                    // import master-file to link to the rest
-                    AssetDatabase.ImportAsset(localPath);
-                    // AssetDatabase.Refresh();
-#endif
                 }
-                ClearProgressBar();
+                else allPathsValid = false;
+
+                if (!allPathsValid) yield break;
+                // import master-file to link to the rest
+                ImportAsset(localPath);
             }
 
             yield return localPath;
+        }
+
+        private static void ImportAsset(string localPath)
+        {
+#if UNITY_EDITOR
+            try
+            {
+                AssetDatabase.ImportAsset(localPath);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Import error. {e.Message}");
+            }
+#endif
         }
 
         private static void SaveAsset(byte[] data, string path)
@@ -899,6 +912,7 @@ namespace ArenaUnity
                                 if (!string.IsNullOrWhiteSpace(uri))
                                 {
                                     CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
+                                    ClearProgressBar();
                                     yield return cd.coroutine;
                                 }
                             }
