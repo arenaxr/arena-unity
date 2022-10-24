@@ -23,8 +23,8 @@ namespace ArenaUnity.Editor
     internal class ArenaVersion
     {
         const string unityPackageName = "io.conix.arena.unity";
-        const string githubOrg = "conix-center";
-        const string githubName = "ARENA-unity";
+        const string githubOrg = "arenaxr";
+        const string githubName = "arena-unity";
         private static string gitLatestUrl = $"https://api.github.com/repos/{githubOrg}/{githubName}/releases/latest";
         private static ListRequest _listRequest;
         private static bool checkGithub = false;
