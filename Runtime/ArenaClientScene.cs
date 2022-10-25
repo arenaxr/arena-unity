@@ -297,7 +297,6 @@ namespace ArenaUnity
                         if (!string.IsNullOrWhiteSpace(uri))
                         {
                             cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
-                            ClearProgressBar();
                             yield return cd.coroutine;
                         }
                     }
@@ -420,7 +419,7 @@ namespace ArenaUnity
             yield return localPath;
         }
 
-        private static void ImportAsset(string localPath)
+        private void ImportAsset(string localPath)
         {
 #if UNITY_EDITOR
             try
@@ -431,10 +430,11 @@ namespace ArenaUnity
             {
                 Debug.LogWarning($"Import error. {e.Message}");
             }
+            ClearProgressBar();
 #endif
         }
 
-        private static void SaveAsset(byte[] data, string path)
+        private void SaveAsset(byte[] data, string path)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             if (!File.Exists(path))
@@ -912,7 +912,6 @@ namespace ArenaUnity
                                 if (!string.IsNullOrWhiteSpace(uri))
                                 {
                                     CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
-                                    ClearProgressBar();
                                     yield return cd.coroutine;
                                 }
                             }
