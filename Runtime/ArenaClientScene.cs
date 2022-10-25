@@ -481,7 +481,7 @@ namespace ArenaUnity
                 gobj.name = object_id;
                 arenaObjs.Add(object_id, gobj);
                 aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
-                aobj.created = true;
+                aobj.Created = true;
                 aobj.persist = persist;
                 aobj.messageType = storeType;
                 aobj.parentId = (string)data.parent;

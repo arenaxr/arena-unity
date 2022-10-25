@@ -33,10 +33,11 @@ namespace ArenaUnity
         public dynamic data = null; // original message data for object, if any
         [HideInInspector]
         public string parentId = null;
-        [HideInInspector]
-        public bool created = false;
 
-        internal string oldName; // test for rename
+        internal bool Created { get { return created; } set { created = value; } }
+
+        private bool created = false;
+        private string oldName; // test for rename
         internal bool externalDelete = false;
         internal bool isJsonValidated = false;
         internal List<string> animations = null;
