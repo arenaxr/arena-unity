@@ -9,6 +9,7 @@ using System.Dynamic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PrettyHierarchy;
+using TMPro;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -186,6 +187,8 @@ namespace ArenaUnity
                     ArenaUnity.ToArenaLight(gameObject, ref dataUnity);
                 if (GetComponent<Renderer>())
                     ArenaUnity.ToArenaMaterial(gameObject, ref dataUnity);
+                if (GetComponent<TextMeshPro>())
+                    ArenaUnity.ToArenaText(gameObject, ref dataUnity);
             }
 
             // merge unity data with original message data

@@ -36,14 +36,18 @@ namespace ArenaUnity
         {
             string objectType = "entity";
             MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
+            TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
             Light light = gobj.GetComponent<Light>();
             SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
-            if (meshFilter && meshFilter.sharedMesh)
-                objectType = meshFilter.sharedMesh.name.ToLower();
-            else if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0f)
+            // initial priority is primitive
+            if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0f)
                 objectType = "image";
+            else if (tm)
+                objectType = "text";
             else if (light)
                 objectType = "light";
+            else if (meshFilter && meshFilter.sharedMesh)
+                objectType = meshFilter.sharedMesh.name.ToLower();
             return objectType;
         }
         public static void ToUnityMesh(dynamic indata, ref GameObject gobj)
@@ -471,6 +475,58 @@ namespace ArenaUnity
         }
 
         // text
+        public static void ToArenaText(GameObject gobj, ref dynamic data)
+        {
+            TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
+            //tm.fontSize;
+            data.value = tm.text;
+            data.color = ToArenaColor(tm.color);
+            data.width = tm.rectTransform.rect.width;
+            data.height = tm.rectTransform.rect.height;
+            switch (tm.alignment)
+            {
+                case TextAlignmentOptions.TopLeft:
+                    data.baseline = "top";
+                    data.anchor = "left";
+                    break;
+                case TextAlignmentOptions.Top:
+                    data.baseline = "top";
+                    data.anchor = "center";
+                    break;
+                case TextAlignmentOptions.TopRight:
+                    data.baseline = "top";
+                    data.anchor = "right";
+                    break;
+                case TextAlignmentOptions.TopGeoAligned:
+                    data.baseline = "top";
+                    data.anchor = "align";
+                    break;
+                case TextAlignmentOptions.BaselineLeft:
+                    data.baseline = "center";
+                    data.anchor = "left";
+                    break;
+                case TextAlignmentOptions.Center:
+                    data.baseline = "center";
+                    data.anchor = "center";
+                    break;
+                case TextAlignmentOptions.BaselineRight:
+                    data.baseline = "center";
+                    data.anchor = "right";
+                    break;
+                case TextAlignmentOptions.CenterGeoAligned:
+                    data.baseline = "center";
+                    data.anchor = "align";
+                    break;
+                case TextAlignmentOptions.BottomLeft:
+                    data.baseline = "bottom";
+                    data.anchor = "left";
+                    break;
+                case TextAlignmentOptions.Bottom:
+                    data.baseline = "bottom";
+                    data.anchor = "center";
+                    break;
+            }
+        }
         public static void ToUnityText(dynamic data, ref GameObject gobj)
         {
             TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
@@ -484,6 +540,13 @@ namespace ArenaUnity
                 tm.text = (string)data.text;
             if (data.color != null)
                 tm.color = ToUnityColor((string)data.color);
+
+            RectTransform rt = gobj.GetComponent<RectTransform>();
+            if (data.width != null)
+                rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (float)data.width);
+            if (data.height != null)
+                rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (float)data.height);
+            rt.ForceUpdateRectTransforms();
 
             string anchor = data.anchor != null ? (string)data.anchor : "center";
             string baseline = data.baseline != null ? (string)data.baseline : "center";
@@ -526,28 +589,6 @@ namespace ArenaUnity
                     tm.alignment = TextAlignmentOptions.BottomGeoAligned;
                     break;
             }
-
-            tm.richText = false;
-            // a-frame doesnt support tags?
-
-            //if (data.font != null)
-            //{
-            //    switch ((string)data.font)
-            //    {
-            //        default:
-            //        case "roboto":
-            //        case "aileronsemibold":
-            //        case "dejavu":
-            //        case "exo2bold":
-            //        case "exo2semibold":
-            //        case "kelsonsans":
-            //        case "monoid":
-            //        case "mozillavr":
-            //        case "sourcecodepro":
-            //            tm.font = ???;
-            //            break;
-            //    }
-            //}
         }
 
         // light
