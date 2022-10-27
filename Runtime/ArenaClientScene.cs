@@ -373,6 +373,8 @@ namespace ArenaUnity
             bool allPathsValid = true;
             if (!File.Exists(localPath))
             {
+                Debug.Log(msgUrl);
+
                 // get main url src
                 CoroutineWithData cd = new CoroutineWithData(this, HttpRequestRaw(remoteUri.AbsoluteUri));
                 yield return cd.coroutine;
@@ -556,12 +558,10 @@ namespace ArenaUnity
                     }
                     break;
                 case "handLeft":
-                    StartCoroutine(DownloadAssets(storeType, HandLeftPath));
-                    AttachHand(object_id, data, gobj, HandLeftPath, out worldPositionStays, out parent);
+                    AttachHand(object_id, data, HandLeftPath, gobj, aobj, out worldPositionStays, out parent);
                     break;
                 case "handRight":
-                    StartCoroutine(DownloadAssets(storeType, HandRightPath));
-                    AttachHand(object_id, data, gobj, HandRightPath, out worldPositionStays, out parent);
+                    AttachHand(object_id, data, HandRightPath, gobj, aobj, out worldPositionStays, out parent);
                     break;
                 case "text":
                     ArenaUnity.ToUnityText(data, ref gobj);
@@ -641,7 +641,7 @@ namespace ArenaUnity
             }
         }
 
-        private void AttachHand(string object_id, dynamic data, GameObject gobj, string url, out bool worldPositionStays, out string parent)
+        private void AttachHand(string object_id, dynamic data, string url, GameObject gobj, ArenaObject aobj, out bool worldPositionStays, out string parent)
         {
             worldPositionStays = true;
             parent = (string)data.dep;
@@ -650,12 +650,14 @@ namespace ArenaUnity
                 string localpath = checkLocalAsset(url);
                 if (localpath != null)
                 {
-                    Transform foundHandModel = gobj.transform.parent.transform.Find(object_id);
-                    if (!foundHandModel)
+                    // load main model
+                    if (url != null && aobj.gltfUrl == null)
                     {
-                        AttachGltf(localpath, gobj);
-                    }
+                        // keep url, to add/remove and check exiting imported urls
+                        aobj.gltfUrl = url;
 
+                        AttachGltf(checkLocalAsset(url), gobj);
+                    }
                 }
             }
         }
@@ -939,6 +941,7 @@ namespace ArenaUnity
 
         private IEnumerator ProcessArenaMessage(dynamic msg, object menuCommand = null)
         {
+            CoroutineWithData cd;
             // consume object updates
             if (!localCameraIds.Contains((string)msg.object_id))
             {
@@ -951,9 +954,20 @@ namespace ArenaUnity
                         {
                             if (!string.IsNullOrWhiteSpace(uri))
                             {
-                                CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
+                                cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
                                 yield return cd.coroutine;
                             }
+                        }
+                        switch ((string)msg.data.object_type)
+                        {
+                            case "handLeft":
+                                cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, HandLeftPath));
+                                yield return cd.coroutine;
+                                break;
+                            case "handRight":
+                                cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, HandRightPath));
+                                yield return cd.coroutine;
+                                break;
                         }
                         string object_id = (string)msg.object_id;
                         string msg_type = (string)msg.type;
