@@ -91,6 +91,8 @@ namespace ArenaUnity
             "GLTFUtility/Standard (Specular)",
             "GLTFUtility/Standard Transparent (Specular)",
         };
+        static public string HandLeftPath = "static/models/hands/valve_index_left.gltf";
+        static public string HandRightPath = "static/models/hands/valve_index_right.gltf";
 
         protected override void OnEnable()
         {
@@ -391,7 +393,20 @@ namespace ArenaUnity
                         {
                             if (!string.IsNullOrWhiteSpace(uri))
                             {
-                                Uri subUrl = new Uri(remoteUri, uri);
+                                Uri subUrl = null;
+                                try
+                                {
+                                    subUrl = new Uri(remoteUri, uri);
+                                }
+                                catch (UriFormatException)
+                                {
+                                    // formatting errors may be encoded binary data
+                                    continue;
+                                }
+                                catch (Exception err)
+                                {
+                                    Debug.LogWarning($"Invalid GLTF uri: {err.Message}");
+                                }
                                 cd = new CoroutineWithData(this, HttpRequestRaw(subUrl.AbsoluteUri));
                                 yield return cd.coroutine;
                                 if (isCrdSuccess(cd.result))
@@ -501,6 +516,8 @@ namespace ArenaUnity
             }
 
             // modify Unity attributes
+            bool worldPositionStays = false; // default: most children need relative position
+            string parent = (string)data.parent;
             switch ((string)data.object_type)
             {
                 case "gltf-model":
@@ -538,6 +555,14 @@ namespace ArenaUnity
                         AttachAvatar(object_id, data, displayName, gobj);
                     }
                     break;
+                case "handLeft":
+                    StartCoroutine(DownloadAssets(storeType, HandLeftPath));
+                    AttachHand(object_id, data, gobj, HandLeftPath, out worldPositionStays, out parent);
+                    break;
+                case "handRight":
+                    StartCoroutine(DownloadAssets(storeType, HandRightPath));
+                    AttachHand(object_id, data, gobj, HandRightPath, out worldPositionStays, out parent);
+                    break;
                 case "text":
                     ArenaUnity.ToUnityText(data, ref gobj);
                     break;
@@ -567,8 +592,6 @@ namespace ArenaUnity
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
 
             // establish parent/child relationships
-            bool worldPositionStays = false;
-            string parent = (string)data.parent;
             if (parent != null)
             {
                 if (arenaObjs.ContainsKey(parent))
@@ -615,6 +638,25 @@ namespace ArenaUnity
             {
                 aobj.data = data;
                 aobj.jsonData = JsonConvert.SerializeObject(aobj.data, Formatting.Indented);
+            }
+        }
+
+        private void AttachHand(string object_id, dynamic data, GameObject gobj, string url, out bool worldPositionStays, out string parent)
+        {
+            worldPositionStays = true;
+            parent = (string)data.dep;
+            if (url != null)
+            {
+                string localpath = checkLocalAsset(url);
+                if (localpath != null)
+                {
+                    Transform foundHandModel = gobj.transform.parent.transform.Find(object_id);
+                    if (!foundHandModel)
+                    {
+                        AttachGltf(localpath, gobj);
+                    }
+
+                }
             }
         }
 
@@ -905,15 +947,12 @@ namespace ArenaUnity
                     case "create":
                     case "update":
                         IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
-                        if (uris.Count() > 0)
+                        foreach (var uri in uris)
                         {
-                            foreach (var uri in uris)
+                            if (!string.IsNullOrWhiteSpace(uri))
                             {
-                                if (!string.IsNullOrWhiteSpace(uri))
-                                {
-                                    CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
-                                    yield return cd.coroutine;
-                                }
+                                CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
+                                yield return cd.coroutine;
                             }
                         }
                         string object_id = (string)msg.object_id;
