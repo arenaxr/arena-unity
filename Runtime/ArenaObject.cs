@@ -255,7 +255,8 @@ namespace ArenaUnity
                 return;
             if (ArenaClientScene.Instance.IsShuttingDown) return;
 
-            if (!externalDelete)
+            // check if delete meesages should be sent to other subscribers
+            if (!externalDelete || (transform.parent != null && transform.parent.GetComponent<ArenaObject>() == null))
                 ArenaClientScene.Instance.pendingDelete.Add(name);
         }
 

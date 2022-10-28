@@ -91,6 +91,8 @@ namespace ArenaUnity
             "GLTFUtility/Standard (Specular)",
             "GLTFUtility/Standard Transparent (Specular)",
         };
+        static public string HandLeftPath = "static/models/hands/valve_index_left.gltf";
+        static public string HandRightPath = "static/models/hands/valve_index_right.gltf";
 
         protected override void OnEnable()
         {
@@ -371,6 +373,8 @@ namespace ArenaUnity
             bool allPathsValid = true;
             if (!File.Exists(localPath))
             {
+                Debug.Log(msgUrl);
+
                 // get main url src
                 CoroutineWithData cd = new CoroutineWithData(this, HttpRequestRaw(remoteUri.AbsoluteUri));
                 yield return cd.coroutine;
@@ -391,7 +395,20 @@ namespace ArenaUnity
                         {
                             if (!string.IsNullOrWhiteSpace(uri))
                             {
-                                Uri subUrl = new Uri(remoteUri, uri);
+                                Uri subUrl = null;
+                                try
+                                {
+                                    subUrl = new Uri(remoteUri, uri);
+                                }
+                                catch (UriFormatException)
+                                {
+                                    // formatting errors may be encoded binary data
+                                    continue;
+                                }
+                                catch (Exception err)
+                                {
+                                    Debug.LogWarning($"Invalid GLTF uri: {err.Message}");
+                                }
                                 cd = new CoroutineWithData(this, HttpRequestRaw(subUrl.AbsoluteUri));
                                 yield return cd.coroutine;
                                 if (isCrdSuccess(cd.result))
@@ -501,6 +518,8 @@ namespace ArenaUnity
             }
 
             // modify Unity attributes
+            bool worldPositionStays = false; // default: most children need relative position
+            string parent = (string)data.parent;
             switch ((string)data.object_type)
             {
                 case "gltf-model":
@@ -538,6 +557,12 @@ namespace ArenaUnity
                         AttachAvatar(object_id, data, displayName, gobj);
                     }
                     break;
+                case "handLeft":
+                    AttachHand(object_id, data, HandLeftPath, gobj, aobj);
+                    break;
+                case "handRight":
+                    AttachHand(object_id, data, HandRightPath, gobj, aobj);
+                    break;
                 case "text":
                     ArenaUnity.ToUnityText(data, ref gobj);
                     break;
@@ -567,8 +592,6 @@ namespace ArenaUnity
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
 
             // establish parent/child relationships
-            bool worldPositionStays = false;
-            string parent = (string)data.parent;
             if (parent != null)
             {
                 if (arenaObjs.ContainsKey(parent))
@@ -615,6 +638,25 @@ namespace ArenaUnity
             {
                 aobj.data = data;
                 aobj.jsonData = JsonConvert.SerializeObject(aobj.data, Formatting.Indented);
+            }
+        }
+
+        private void AttachHand(string object_id, dynamic data, string url, GameObject gobj, ArenaObject aobj)
+        {
+            if (url != null)
+            {
+                string localpath = checkLocalAsset(url);
+                if (localpath != null)
+                {
+                    // load main model
+                    if (url != null && aobj.gltfUrl == null)
+                    {
+                        // keep url, to add/remove and check exiting imported urls
+                        aobj.gltfUrl = url;
+
+                        AttachGltf(checkLocalAsset(url), gobj);
+                    }
+                }
             }
         }
 
@@ -897,6 +939,7 @@ namespace ArenaUnity
 
         private IEnumerator ProcessArenaMessage(dynamic msg, object menuCommand = null)
         {
+            CoroutineWithData cd;
             // consume object updates
             if (!localCameraIds.Contains((string)msg.object_id))
             {
@@ -905,16 +948,24 @@ namespace ArenaUnity
                     case "create":
                     case "update":
                         IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
-                        if (uris.Count() > 0)
+                        foreach (var uri in uris)
                         {
-                            foreach (var uri in uris)
+                            if (!string.IsNullOrWhiteSpace(uri))
                             {
-                                if (!string.IsNullOrWhiteSpace(uri))
-                                {
-                                    CoroutineWithData cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
-                                    yield return cd.coroutine;
-                                }
+                                cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
+                                yield return cd.coroutine;
                             }
+                        }
+                        switch ((string)msg.data.object_type)
+                        {
+                            case "handLeft":
+                                cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, HandLeftPath));
+                                yield return cd.coroutine;
+                                break;
+                            case "handRight":
+                                cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, HandRightPath));
+                                yield return cd.coroutine;
+                                break;
                         }
                         string object_id = (string)msg.object_id;
                         string msg_type = (string)msg.type;
