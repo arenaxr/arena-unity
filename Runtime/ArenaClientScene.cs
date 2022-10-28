@@ -558,10 +558,10 @@ namespace ArenaUnity
                     }
                     break;
                 case "handLeft":
-                    AttachHand(object_id, data, HandLeftPath, gobj, aobj, out worldPositionStays, out parent);
+                    AttachHand(object_id, data, HandLeftPath, gobj, aobj);
                     break;
                 case "handRight":
-                    AttachHand(object_id, data, HandRightPath, gobj, aobj, out worldPositionStays, out parent);
+                    AttachHand(object_id, data, HandRightPath, gobj, aobj);
                     break;
                 case "text":
                     ArenaUnity.ToUnityText(data, ref gobj);
@@ -641,10 +641,8 @@ namespace ArenaUnity
             }
         }
 
-        private void AttachHand(string object_id, dynamic data, string url, GameObject gobj, ArenaObject aobj, out bool worldPositionStays, out string parent)
+        private void AttachHand(string object_id, dynamic data, string url, GameObject gobj, ArenaObject aobj)
         {
-            worldPositionStays = true;
-            parent = (string)data.dep;
             if (url != null)
             {
                 string localpath = checkLocalAsset(url);
