@@ -36,6 +36,7 @@ namespace ArenaUnity
 
         internal bool Created { get { return created; } set { created = value; } }
 
+        private float publishInterval; // varies
         private bool created = false;
         private string oldName; // test for rename
         internal bool externalDelete = false;
@@ -68,7 +69,9 @@ namespace ArenaUnity
             }
 
             isJsonValidated = jsonData != null;
+            StartCoroutine(PublishTickThrottle());
         }
+
 
         public void SetTtlDeleteTimer(float seconds)
         {
@@ -82,26 +85,31 @@ namespace ArenaUnity
             Destroy(gameObject);
         }
 
+        IEnumerator PublishTickThrottle()
+        {
+            //TODO: prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
+
+            while (true)
+            {
+                // send only when changed, each publishInterval
+                if ((transform.hasChanged || meshChanged) && ArenaClientScene.Instance)
+                {
+                    publishInterval = ((float)ArenaClientScene.Instance.camUpdateIntervalMs / 1000f);
+                    if (PublishCreateUpdate(true))
+                    {
+                        transform.hasChanged = false;
+                        meshChanged = false;
+                    }
+                }
+                yield return new WaitForSeconds(publishInterval);
+            }
+        }
+
         void Update()
         {
-            // send only when changed, each publishInterval frames, or stop at 0 frames
-            if (!ArenaClientScene.Instance || ArenaClientScene.Instance.transformPublishInterval == 0 ||
-            Time.frameCount % ArenaClientScene.Instance.transformPublishInterval != 0)
-                return;
-
             HasPermissions = ArenaClientScene.Instance.sceneObjectRights;
 
-            if (transform.hasChanged || meshChanged)
-            {
-                //TODO: prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
-
-                if (PublishCreateUpdate(true))
-                {
-                    transform.hasChanged = false;
-                    meshChanged = false;
-                }
-            }
-            else if (oldName != null && name != oldName)
+            if (oldName != null && name != oldName)
             {
                 HandleRename();
             }

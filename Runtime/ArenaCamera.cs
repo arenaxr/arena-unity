@@ -14,7 +14,8 @@ namespace ArenaUnity
     [DisallowMultipleComponent]
     public class ArenaCamera : PrettyObject
     {
-        private const float avatarPublishIntervalSeconds = 1f;
+        private const float cameraKeepAliveInterval = 1f; // 1 second
+        private float publishInterval; // varies
 
         private string messageType = "object";
         private bool persist = false;
@@ -41,36 +42,34 @@ namespace ArenaUnity
         void Start()
         {
             displayColor = ArenaUnity.ColorRandom();
-            StartCoroutine(CameraUpdater());
+            StartCoroutine(PublishTickThrottle());
         }
 
-        IEnumerator CameraUpdater()
+        IEnumerator PublishTickThrottle()
         {
             while (true)
             {
                 if (userid != null && camid != null)
                 {
+                    // send more frequently when changed, otherwise minimum 1 second keep alive
+                    if (transform.hasChanged && ArenaClientScene.Instance)
+                    {
+                        publishInterval = ((float)ArenaClientScene.Instance.camUpdateIntervalMs / 1000f);
+                        transform.hasChanged = false;
+                    }
+                    else
+                    {
+                        publishInterval = cameraKeepAliveInterval;
+                    }
                     PublishCreateUpdate();
                 }
-                yield return new WaitForSeconds(avatarPublishIntervalSeconds);
+                yield return new WaitForSeconds(publishInterval);
             }
         }
 
         void Update()
         {
-            // send only when changed, each publishInterval frames, or stop at 0 frames
-            if (!ArenaClientScene.Instance || ArenaClientScene.Instance.transformPublishInterval == 0 ||
-            Time.frameCount % ArenaClientScene.Instance.transformPublishInterval != 0)
-                return;
-            if (transform.hasChanged && userid != null && camid != null)
-            {
-                //TODO: prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
-
-                if (PublishCreateUpdate())
-                {
-                    transform.hasChanged = false;
-                }
-            }
+            // let CameraTickThrottle handle publish frequency
         }
 
         public bool PublishCreateUpdate()

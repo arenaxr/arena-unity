@@ -59,9 +59,9 @@ namespace ArenaUnity
         public bool logMqttEvents = false;
         [Tooltip("Console log MQTT non-persist messages")]
         public bool logMqttNonPersist = false;
-        [Tooltip("Publish per frames frequency to publish detected transform changes (0 to stop)")]
-        [Range(0, 60)]
-        public int transformPublishInterval = 30; // in publish per frames
+        [Tooltip("Publish interval frequency to publish detected transform changes (milliseconds)")]
+        [Range(100, 1000)]
+        public int camUpdateIntervalMs = 100;
 
         /// <summary>
         /// Browser URL for the scene.
