@@ -2,6 +2,27 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.5.0](https://github.com/arenaxr/arena-unity/compare/v0.4.0...v0.5.0) (2022-11-01)
+
+
+### Features
+
+* **auth:** add auth state to hierarchy window ([#47](https://github.com/arenaxr/arena-unity/issues/47)) ([834574f](https://github.com/arenaxr/arena-unity/commit/834574f455772cb8e0b6b98672b69da80e132c1d))
+* **auth:** show object perms in console and inspector ([f2d5a52](https://github.com/arenaxr/arena-unity/commit/f2d5a52f1cd6ec112701995ba828718f21eaaca6))
+* **avatar:** render hands from remote immersive vr ([#48](https://github.com/arenaxr/arena-unity/issues/48)) ([11aeb7c](https://github.com/arenaxr/arena-unity/commit/11aeb7c0cb27b4555cb0466bd8ed45801b66ae0e))
+* **text:** support unity text objects port to arena ([b9673da](https://github.com/arenaxr/arena-unity/commit/b9673da1eb40289ca2d64982e99e38b0d446e105))
+
+
+### Bug Fixes
+
+* **auth:** corrected namespace conflict ([d7603b9](https://github.com/arenaxr/arena-unity/commit/d7603b93c0b3e8e9c3f9eb7a16c54e92f22f2d21))
+* **auth:** fix object perms in console during building ([2ed1b4e](https://github.com/arenaxr/arena-unity/commit/2ed1b4ef29c20f2c027d29f27c1c441bff71b2e6))
+* **import:** fixed random progress meters hanging around ([0eb602a](https://github.com/arenaxr/arena-unity/commit/0eb602a686b926ff5436574402a1fdc15411e487))
+* **mqtt:** updated publish rate to 10 Hz for transform changes ([5912fd6](https://github.com/arenaxr/arena-unity/commit/5912fd6f85fced50ad2b28a00959104a77328e3c))
+* **object:** fix serialization create flag to allow object copy ([958f84c](https://github.com/arenaxr/arena-unity/commit/958f84caaf7cf4a0e2b6d22f18f93cf12095540b))
+* protect against bad formatted assets ([b2e8e32](https://github.com/arenaxr/arena-unity/commit/b2e8e327bd9e0a36ed53bd0b756483b88a51d209))
+* updated missing package version number v0.4.1 ([6d02f93](https://github.com/arenaxr/arena-unity/commit/6d02f935743f6dd97ceae010de1054bbdcf0fd22))
+
 ## [0.4.0](https://github.com/arenaxr/arena-unity/compare/v0.3.1...v0.4.0) (2022-10-17)
 
 
