@@ -2,6 +2,13 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.5.1](https://github.com/arenaxr/arena-unity/compare/v0.5.0...v0.5.1) (2022-11-10)
+
+
+### Bug Fixes
+
+* **update:** allow update manager to handle leading v in version tag ([45b92af](https://github.com/arenaxr/arena-unity/commit/45b92af297aeb9c1b781fc2c97e25c87a1daa086))
+
 ## [0.5.0](https://github.com/arenaxr/arena-unity/compare/v0.4.0...v0.5.0) (2022-11-01)
 
 
