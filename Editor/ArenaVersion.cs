@@ -34,7 +34,6 @@ namespace ArenaUnity.Editor
 
         static ArenaVersion()
         {
-            string latest = PlayerPrefs.GetString("GitVersionLatest", GH_RATE_LIMIT_VERSION);
             long time = (long)PlayerPrefs.GetFloat("GitVersionCheckTime", 0);
             TimeSpan t = DateTime.UtcNow - new DateTime(time);
             // only check github every 24 hours to avoid hitting api rate limit
@@ -49,13 +48,26 @@ namespace ArenaUnity.Editor
             if (_listRequest.Status == StatusCode.Success)
             {
                 var package = _listRequest.Result.FirstOrDefault(p => p.name == unityPackageName);
-                if (package != null && Version.TryParse(package.version, out var local))
+                if (package != null && Version.TryParse(package.version.Trim('v'), out var local))
                 {
-                    if (Version.TryParse(package.versions.latest, out var latest))
+                    // Check unity package manager/github automated version manager
+                    if (Version.TryParse(package.versions.latest.Trim('v'), out var latest))
                     {
                         if (local < latest)
                         {
                             Debug.LogWarning(UpgradeMessage(local, latest));
+                        }
+                    }
+                    else
+                    {
+                        // Minimal, check last saved version check
+                        string latest_sav = PlayerPrefs.GetString("GitVersionLatest", GH_RATE_LIMIT_VERSION).Trim('v');
+                        if (Version.TryParse(latest_sav, out latest))
+                        {
+                            if (local < latest)
+                            {
+                                Debug.LogWarning(UpgradeMessage(local, latest));
+                            }
                         }
                     }
                     // Check github directly next
@@ -87,9 +99,9 @@ namespace ArenaUnity.Editor
                 dynamic git = JsonConvert.DeserializeObject(www.downloadHandler.text);
                 if (git != null)
                 {
-                    if (Version.TryParse((string)git.tag_name, out var latest))
+                    if (Version.TryParse(((string)git.tag_name).Trim('v'), out var latest))
                     {
-                        PlayerPrefs.SetString("GitVersionLatest", (string)git.tag_name);
+                        PlayerPrefs.SetString("GitVersionLatest", latest.ToString());
                         if (local < latest)
                         {
                             Debug.LogWarning(UpgradeMessage(local, latest));
@@ -103,7 +115,7 @@ namespace ArenaUnity.Editor
 
         private static string UpgradeMessage(Version local, Version latest)
         {
-            return $"ARENA for Unity Package version {latest} is available, however {local} is installed.\nUpdate to https://github.com/{githubOrg}/{githubName}.git#{latest}";
+            return $"ARENA for Unity Package version {latest} is available, however {local} is installed.\nUpdate to https://github.com/{githubOrg}/{githubName}.git#latest";
         }
 
         private static string CurrentMessage(Version local)
