@@ -2,6 +2,13 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.6.0](https://github.com/arenaxr/arena-unity/compare/v0.5.1...v0.6.0) (2022-11-21)
+
+
+### Features
+
+* **mqtt:** define all messages callback ([6b6c1d0](https://github.com/arenaxr/arena-unity/commit/6b6c1d02050be7e90012263baef3bdd0c26f8786))
+
 ## [0.5.1](https://github.com/arenaxr/arena-unity/compare/v0.5.0...v0.5.1) (2022-11-10)
 
 
