@@ -78,6 +78,10 @@ namespace ArenaUnity
         internal List<string> parentalQueue = new List<string>();
         internal List<string> localCameraIds = new List<string>();
 
+        // Define callbacks
+        public delegate void DecodeMessageDelegate(string topic, byte[] message);
+        public DecodeMessageDelegate OnMessageCallback = null; // null, until library user instantiates.
+
         static string importPath = null;
 
         static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl", "headModelPath" };
@@ -373,8 +377,6 @@ namespace ArenaUnity
             bool allPathsValid = true;
             if (!File.Exists(localPath))
             {
-                Debug.Log(msgUrl);
-
                 // get main url src
                 CoroutineWithData cd = new CoroutineWithData(this, HttpRequestRaw(remoteUri.AbsoluteUri));
                 yield return cd.coroutine;
@@ -916,6 +918,9 @@ namespace ArenaUnity
 
         protected override void DecodeMessage(string topic, byte[] message)
         {
+            // Call the delegate if a user has defined it
+            if (OnMessageCallback != null) OnMessageCallback(topic, message);
+
             // ignore this client's messages
             if (!topic.Contains(client.ClientId))
             {

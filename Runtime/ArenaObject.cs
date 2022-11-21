@@ -27,6 +27,7 @@ namespace ArenaUnity
         public bool persist = true;
         [TextArea(5, 20)]
         [Tooltip("ARENA JSON-encoded message (debug only for now)")]
+        [SerializeField]
         public string jsonData = null;
 
         [HideInInspector]
@@ -55,6 +56,7 @@ namespace ArenaUnity
 
         void Start()
         {
+            //Debug.Log(jsonData);
             // TODO: consider how inactive objects react to find here, might need to use arenaObjs array
 
             // runtime created arena objects still need to be checked for name uniqueness
@@ -263,7 +265,7 @@ namespace ArenaUnity
                 return;
             if (ArenaClientScene.Instance.IsShuttingDown) return;
 
-            // check if delete meesages should be sent to other subscribers
+            // check if delete messages should be sent to other subscribers
             if (!externalDelete || (transform.parent != null && transform.parent.GetComponent<ArenaObject>() == null))
                 ArenaClientScene.Instance.pendingDelete.Add(name);
         }
