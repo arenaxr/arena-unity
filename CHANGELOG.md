@@ -2,8 +2,13 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
-## [0.6.0](https://github.com/arenaxr/arena-unity/compare/v0.5.1...v0.6.0) (2022-11-21)
+## [0.6.1](https://github.com/arenaxr/arena-unity/compare/v0.6.0...v0.6.1) (2022-12-22)
 
+### Features
+
+* **glTFUtility:** add support for URP/HDRP
+
+## [0.6.0](https://github.com/arenaxr/arena-unity/compare/v0.5.1...v0.6.0) (2022-11-21)
 
 ### Features
 

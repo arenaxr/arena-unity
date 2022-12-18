@@ -19,6 +19,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Rendering;
 
 namespace ArenaUnity
 {
@@ -87,13 +88,21 @@ namespace ArenaUnity
         static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl", "headModelPath" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
-        static readonly string[] requiredShaders = {
+        static readonly string[] requiredShadersStandardRP = {
             "Standard",
             "Unlit/Color",
             "GLTFUtility/Standard (Metallic)",
             "GLTFUtility/Standard Transparent (Metallic)",
             "GLTFUtility/Standard (Specular)",
             "GLTFUtility/Standard Transparent (Specular)",
+        };
+        static readonly string[] requiredShadersURPHDRP = {
+            // "Standard",
+            // "Unlit/Color",
+            "GLTFUtility/URP/Standard (Metallic)",
+            "GLTFUtility/URP/Standard Transparent (Metallic)",
+            "GLTFUtility/URP/Standard (Specular)",
+            "GLTFUtility/URP/Standard Transparent (Specular)",
         };
         static public string HandLeftPath = "static/models/hands/valve_index_left.gltf";
         static public string HandRightPath = "static/models/hands/valve_index_right.gltf";
@@ -126,6 +135,11 @@ namespace ArenaUnity
         protected override void Start()
         {
             importPath = Path.Combine(appFilesPath, "Assets", "ArenaUnity", "import");
+
+            var requiredShaders = requiredShadersStandardRP;
+            // check if URP or HDR; different shaders are required
+            if (GraphicsSettings.renderPipelineAsset)
+                requiredShaders = requiredShadersURPHDRP;
 
             // ensure shaders are in project
             foreach (string shader in requiredShaders)
