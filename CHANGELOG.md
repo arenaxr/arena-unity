@@ -7,6 +7,7 @@ ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 ### Features
 
 * **glTFUtility:** add support for URP/HDRP
+* **object:** don't create (or download assests for) GameObjects that already exist in the Unity scene.
 
 ## [0.6.0](https://github.com/arenaxr/arena-unity/compare/v0.5.1...v0.6.0) (2022-11-21)
 

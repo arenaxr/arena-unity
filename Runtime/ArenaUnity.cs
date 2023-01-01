@@ -753,6 +753,13 @@ namespace ArenaUnity
                 }
                 // object material
                 var material = renderer.material;
+                if (GraphicsSettings.renderPipelineAsset)
+                {
+                    if (GraphicsSettings.renderPipelineAsset.GetType().ToString().Contains("HDRenderPipelineAsset"))
+                        material.shader = Shader.Find("HDRP/Lit");
+                    else
+                        material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                }
                 // legacy color overrides material color in the arena
                 if (data.color != null) // support legacy arena color
                     material.SetColor(ColorPropertyName, ToUnityColor((string)data.color));
