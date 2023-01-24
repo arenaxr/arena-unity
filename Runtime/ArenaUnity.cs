@@ -16,6 +16,8 @@ namespace ArenaUnity
     /// </summary>
     public static class ArenaUnity
     {
+        private static string ColorPropertyName = (!GraphicsSettings.renderPipelineAsset ? "_Color" : "_BaseColor");
+
         private static float ArenaFloat(float n) { return (float)Math.Round(n, 3); }
 
         // time
@@ -50,6 +52,7 @@ namespace ArenaUnity
                 objectType = meshFilter.sharedMesh.name.ToLower();
             return objectType;
         }
+
         public static void ToUnityMesh(dynamic indata, ref GameObject gobj)
         {
             dynamic data;
@@ -730,7 +733,7 @@ namespace ArenaUnity
                 data.material.shader = "standard";
                 //data.url = ToArenaTexture(mat);
                 //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
-                if (mat.HasProperty("_Color"))
+                if (mat.HasProperty(ColorPropertyName))
                     data.material.color = ToArenaColor(mat.color);
                 //data.material.side = "double";
             }
@@ -750,19 +753,26 @@ namespace ArenaUnity
                 }
                 // object material
                 var material = renderer.material;
+                if (GraphicsSettings.renderPipelineAsset)
+                {
+                    if (GraphicsSettings.renderPipelineAsset.GetType().ToString().Contains("HDRenderPipelineAsset"))
+                        material.shader = Shader.Find("HDRP/Lit");
+                    else
+                        material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                }
                 // legacy color overrides material color in the arena
                 if (data.color != null) // support legacy arena color
-                    material.SetColor("_Color", ToUnityColor((string)data.color));
+                    material.SetColor(ColorPropertyName, ToUnityColor((string)data.color));
                 else if (data.material != null && data.material.color != null)
-                    material.SetColor("_Color", ToUnityColor((string)data.material.color));
+                    material.SetColor(ColorPropertyName, ToUnityColor((string)data.material.color));
                 if (data.material != null)
                 {
                     if (data.material.shader != null)
                         material.shader.name = (string)data.material.shader == "flat" ? "Unlit/Color" : "Standard";
                     if (data.material.opacity != null)
                     {
-                        Color c = material.GetColor("_Color");
-                        material.SetColor("_Color", new Color(c.r, c.g, c.b, (float)data.material.opacity));
+                        Color c = material.GetColor(ColorPropertyName);
+                        material.SetColor(ColorPropertyName, new Color(c.r, c.g, c.b, (float)data.material.opacity));
                     }
                     if (data.material.transparent != null)
                     {

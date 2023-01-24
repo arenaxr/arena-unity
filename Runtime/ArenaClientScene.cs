@@ -19,6 +19,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Rendering;
 
 namespace ArenaUnity
 {
@@ -87,13 +88,21 @@ namespace ArenaUnity
         static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl", "headModelPath" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
-        static readonly string[] requiredShaders = {
+        static readonly string[] requiredShadersStandardRP = {
             "Standard",
             "Unlit/Color",
             "GLTFUtility/Standard (Metallic)",
             "GLTFUtility/Standard Transparent (Metallic)",
             "GLTFUtility/Standard (Specular)",
             "GLTFUtility/Standard Transparent (Specular)",
+        };
+        static readonly string[] requiredShadersURPHDRP = {
+            // "Standard",
+            // "Unlit/Color",
+            "GLTFUtility/URP/Standard (Metallic)",
+            "GLTFUtility/URP/Standard Transparent (Metallic)",
+            "GLTFUtility/URP/Standard (Specular)",
+            "GLTFUtility/URP/Standard Transparent (Specular)",
         };
         static public string HandLeftPath = "static/models/hands/valve_index_left.gltf";
         static public string HandRightPath = "static/models/hands/valve_index_right.gltf";
@@ -126,6 +135,11 @@ namespace ArenaUnity
         protected override void Start()
         {
             importPath = Path.Combine(appFilesPath, "Assets", "ArenaUnity", "import");
+
+            var requiredShaders = requiredShadersStandardRP;
+            // check if URP or HDR; different shaders are required
+            if (GraphicsSettings.renderPipelineAsset)
+                requiredShaders = requiredShadersURPHDRP;
 
             // ensure shaders are in project
             foreach (string shader in requiredShaders)
@@ -295,15 +309,20 @@ namespace ArenaUnity
                 string object_id = (string)msg.object_id;
                 string msg_type = (string)msg.type;
                 float ttl = isElement(msg.ttl) ? (float)msg.ttl : 0f;
+
                 if (!arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
                 {
-                    IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
-                    foreach (var uri in uris)
+                    // there isnt already an object in the scene created by the user with the same object_id
+                    if (GameObject.Find((string)(msg.object_id)) == null)
                     {
-                        if (!string.IsNullOrWhiteSpace(uri))
+                        IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
+                        foreach (var uri in uris)
                         {
-                            cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
-                            yield return cd.coroutine;
+                            if (!string.IsNullOrWhiteSpace(uri))
+                            {
+                                cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
+                                yield return cd.coroutine;
+                            }
                         }
                     }
                     CreateUpdateObject(object_id, msg_type, persist, ttl, msg.attributes);
@@ -496,8 +515,14 @@ namespace ArenaUnity
 #if !UNITY_EDITOR
                 Debug.Log($"Loading object '{object_id}'..."); // show new objects in log
 #endif
-                gobj = new GameObject();
-                gobj.name = object_id;
+                // check if theres already an object in unity, if so dont make a new one
+                gobj = GameObject.Find((string)object_id);
+                if (gobj == null)
+                {
+                    gobj = new GameObject();
+                    gobj.name = object_id;
+                }
+
                 arenaObjs.Add(object_id, gobj);
                 aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
                 aobj.Created = true;
@@ -952,31 +977,37 @@ namespace ArenaUnity
                 {
                     case "create":
                     case "update":
-                        IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
-                        foreach (var uri in uris)
-                        {
-                            if (!string.IsNullOrWhiteSpace(uri))
-                            {
-                                cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, uri));
-                                yield return cd.coroutine;
-                            }
-                        }
-                        switch ((string)msg.data.object_type)
-                        {
-                            case "handLeft":
-                                cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, HandLeftPath));
-                                yield return cd.coroutine;
-                                break;
-                            case "handRight":
-                                cd = new CoroutineWithData(this, DownloadAssets((string)msg.type, HandRightPath));
-                                yield return cd.coroutine;
-                                break;
-                        }
                         string object_id = (string)msg.object_id;
                         string msg_type = (string)msg.type;
                         float ttl = isElement(msg.ttl) ? (float)msg.ttl : 0f;
                         bool persist = Convert.ToBoolean(msg.persist);
                         string displayName = (string)msg.displayName;
+
+                        // there isnt already an object in the scene created by the user with the same object_id
+                        if (GameObject.Find((string)object_id) == null)
+                        {
+                            IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
+                            foreach (var uri in uris)
+                            {
+                                if (!string.IsNullOrWhiteSpace(uri))
+                                {
+                                    cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
+                                    yield return cd.coroutine;
+                                }
+                            }
+                        }
+
+                        switch ((string)msg.data.object_type)
+                        {
+                            case "handLeft":
+                                cd = new CoroutineWithData(this, DownloadAssets(msg_type, HandLeftPath));
+                                yield return cd.coroutine;
+                                break;
+                            case "handRight":
+                                cd = new CoroutineWithData(this, DownloadAssets(msg_type, HandRightPath));
+                                yield return cd.coroutine;
+                                break;
+                        }
                         CreateUpdateObject(object_id, msg_type, persist, ttl, msg.data, displayName, menuCommand);
                         break;
                     case "delete":
