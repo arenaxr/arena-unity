@@ -104,8 +104,6 @@ namespace ArenaUnity
             "GLTFUtility/URP/Standard (Specular)",
             "GLTFUtility/URP/Standard Transparent (Specular)",
         };
-        static public string HandLeftPath = "static/models/hands/valve_index_left.gltf";
-        static public string HandRightPath = "static/models/hands/valve_index_right.gltf";
 
         protected override void OnEnable()
         {
@@ -585,10 +583,10 @@ namespace ArenaUnity
                     }
                     break;
                 case "handLeft":
-                    AttachHand(object_id, data, HandLeftPath, gobj, aobj);
+                    AttachHand(object_id, data, gobj, aobj);
                     break;
                 case "handRight":
-                    AttachHand(object_id, data, HandRightPath, gobj, aobj);
+                    AttachHand(object_id, data, gobj, aobj);
                     break;
                 case "text":
                     ArenaUnity.ToUnityText(data, ref gobj);
@@ -668,20 +666,20 @@ namespace ArenaUnity
             }
         }
 
-        private void AttachHand(string object_id, dynamic data, string url, GameObject gobj, ArenaObject aobj)
+        private void AttachHand(string object_id, dynamic data, GameObject gobj, ArenaObject aobj)
         {
-            if (url != null)
+            if (data.url != null)
             {
-                string localpath = checkLocalAsset(url);
+                string localpath = checkLocalAsset((string)data.url);
                 if (localpath != null)
                 {
                     // load main model
-                    if (url != null && aobj.gltfUrl == null)
+                    if (data.url != null && aobj.gltfUrl == null)
                     {
                         // keep url, to add/remove and check exiting imported urls
-                        aobj.gltfUrl = url;
+                        aobj.gltfUrl = data.url;
 
-                        AttachGltf(checkLocalAsset(url), gobj);
+                        AttachGltf(localpath, gobj);
                     }
                 }
             }
@@ -995,18 +993,6 @@ namespace ArenaUnity
                                     yield return cd.coroutine;
                                 }
                             }
-                        }
-
-                        switch ((string)msg.data.object_type)
-                        {
-                            case "handLeft":
-                                cd = new CoroutineWithData(this, DownloadAssets(msg_type, HandLeftPath));
-                                yield return cd.coroutine;
-                                break;
-                            case "handRight":
-                                cd = new CoroutineWithData(this, DownloadAssets(msg_type, HandRightPath));
-                                yield return cd.coroutine;
-                                break;
                         }
                         CreateUpdateObject(object_id, msg_type, persist, ttl, msg.data, displayName, menuCommand);
                         break;
