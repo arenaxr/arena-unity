@@ -85,6 +85,9 @@ namespace ArenaUnity
 
         static string importPath = null;
 
+        const string prefixCam = "camera_";
+        const string prefixHandL = "handLeft_";
+        const string prefixHandR = "handRight_";
         static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl", "headModelPath" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
@@ -971,11 +974,12 @@ namespace ArenaUnity
             // consume object updates
             if (!localCameraIds.Contains((string)msg.object_id))
             {
+                string object_id;
                 switch ((string)msg.action)
                 {
                     case "create":
                     case "update":
-                        string object_id = (string)msg.object_id;
+                        object_id = (string)msg.object_id;
                         string msg_type = (string)msg.type;
                         float ttl = isElement(msg.ttl) ? (float)msg.ttl : 0f;
                         bool persist = Convert.ToBoolean(msg.persist);
@@ -997,7 +1001,16 @@ namespace ArenaUnity
                         CreateUpdateObject(object_id, msg_type, persist, ttl, msg.data, displayName, menuCommand);
                         break;
                     case "delete":
-                        RemoveObject((string)msg.object_id);
+                        object_id = (string)msg.object_id;
+                        RemoveObject(object_id);
+                        // camera special case, look for hands to delete
+                        if (object_id.StartsWith(prefixCam))
+                        {
+                            string hand_left_id = $"{prefixHandL}{object_id.Substring(prefixCam.Length)}";
+                            string hand_right_id = $"{prefixHandR}{object_id.Substring(prefixCam.Length)}";
+                            RemoveObject(hand_left_id);
+                            RemoveObject(hand_right_id);
+                        }
                         break;
                     default:
                         break;
