@@ -6,6 +6,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PrettyHierarchy;
@@ -45,6 +46,8 @@ namespace ArenaUnity
         internal List<string> animations = null;
         internal string gltfUrl = null;
         internal bool meshChanged = false;
+
+        internal List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
 
         public void OnEnable()
         {
@@ -161,7 +164,9 @@ namespace ArenaUnity
 
             // minimum transform information
             dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
-            Quaternion rotOut = dataUnity.object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(transform.localRotation) : transform.localRotation;
+            Quaternion rotOut = transform.localRotation;
+            if (gltfTypeList.Where(x => x.Contains(dataUnity.object_type)).FirstOrDefault() != null)
+                ArenaUnity.UnityToGltfRotationQuat(transform.localRotation);
             if (data == null || data.rotation == null || data.rotation.w != null)
                 dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
             else

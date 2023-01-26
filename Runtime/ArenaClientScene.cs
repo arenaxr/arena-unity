@@ -88,6 +88,8 @@ namespace ArenaUnity
         const string prefixCam = "camera_";
         const string prefixHandL = "handLeft_";
         const string prefixHandR = "handRight_";
+        internal List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
+
         static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl", "headModelPath" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
@@ -550,6 +552,8 @@ namespace ArenaUnity
             string parent = (string)data.parent;
             switch ((string)data.object_type)
             {
+                case "handLeft":
+                case "handRight":
                 case "gltf-model":
                     // load main model
                     if (data.url != null && aobj.gltfUrl == null)
@@ -585,12 +589,6 @@ namespace ArenaUnity
                         AttachAvatar(object_id, data, displayName, gobj);
                     }
                     break;
-                case "handLeft":
-                    AttachHand(object_id, data, gobj, aobj);
-                    break;
-                case "handRight":
-                    AttachHand(object_id, data, gobj, aobj);
-                    break;
                 case "text":
                     ArenaUnity.ToUnityText(data, ref gobj);
                     break;
@@ -613,7 +611,7 @@ namespace ArenaUnity
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
                 else // euler
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
-                if ((string)data.object_type == "gltf-model")
+                if (gltfTypeList.Where(x => x.Contains((string)data.object_type)).FirstOrDefault() != null)
                     gobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
             }
             if (isElement(data.scale))
@@ -666,25 +664,6 @@ namespace ArenaUnity
             {
                 aobj.data = data;
                 aobj.jsonData = JsonConvert.SerializeObject(aobj.data, Formatting.Indented);
-            }
-        }
-
-        private void AttachHand(string object_id, dynamic data, GameObject gobj, ArenaObject aobj)
-        {
-            if (data.url != null)
-            {
-                string localpath = checkLocalAsset((string)data.url);
-                if (localpath != null)
-                {
-                    // load main model
-                    if (data.url != null && aobj.gltfUrl == null)
-                    {
-                        // keep url, to add/remove and check exiting imported urls
-                        aobj.gltfUrl = data.url;
-
-                        AttachGltf(localpath, gobj);
-                    }
-                }
             }
         }
 
