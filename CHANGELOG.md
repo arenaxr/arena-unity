@@ -2,6 +2,15 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.6.2](https://github.com/arenaxr/arena-unity/compare/v0.6.1...v0.6.2) (2023-01-26)
+
+
+### Bug Fixes
+
+* **hand:** apply proper transforms for hands the same as all gltf ([8a558ae](https://github.com/arenaxr/arena-unity/commit/8a558ae247fb00b0916c948b5f591b3a0abb5348))
+* **hand:** locally remove matching hands when camera is deleted ([beff3f3](https://github.com/arenaxr/arena-unity/commit/beff3f37f7760fd857daba57bc8ae375cb26da73))
+* **hand:** Use new a-frame hand model urls. Closes [#51](https://github.com/arenaxr/arena-unity/issues/51). ([7318d34](https://github.com/arenaxr/arena-unity/commit/7318d34553695dc2ba7e4dfb87658cd546577b25))
+
 ## [0.6.1](https://github.com/arenaxr/arena-unity/compare/v0.6.0...v0.6.1) (2022-12-22)
 
 ### Features
