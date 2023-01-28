@@ -2,6 +2,13 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.6.3](https://github.com/arenaxr/arena-unity/compare/v0.6.2...v0.6.3) (2023-01-28)
+
+
+### Bug Fixes
+
+* **object:** alway convert rotation to quaternions for wire. Closes [#54](https://github.com/arenaxr/arena-unity/issues/54). ([0dad548](https://github.com/arenaxr/arena-unity/commit/0dad548fe464a991b74c2cf48e9f579b3dab8e30))
+
 ## [0.6.2](https://github.com/arenaxr/arena-unity/compare/v0.6.1...v0.6.2) (2023-01-26)
 
 
