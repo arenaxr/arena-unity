@@ -332,6 +332,10 @@ namespace ArenaUnity
                 (float)rotationQuat.w
             );
         }
+        /// <summary>
+        /// Converts Vector3 rotationEuler to dynamic rotationEuler. CAUTION: Do not use for ARENA!
+        /// A merge with quaternion type will leave a mix of xyz euler and w quaternion = badness.
+        /// </summary>
         public static dynamic ToArenaRotationEuler(Vector3 rotationEuler, bool invertY = true)
         {
             return new

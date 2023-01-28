@@ -56,7 +56,7 @@ namespace ArenaUnity
                 data.object_type = object_type;
                 data.url = object_url;
                 Quaternion rotOut = object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(Quaternion.identity) : Quaternion.identity;
-                data.rotation = ArenaUnity.ToArenaRotationEuler(rotOut.eulerAngles);
+                data.rotation = ArenaUnity.ToArenaRotationQuat(rotOut); // always send quaternions over the wire
                 data.position = ArenaUnity.ToArenaPosition(cameraPoint);
                 msg.data = data;
                 string payload = JsonConvert.SerializeObject(msg);
