@@ -98,7 +98,7 @@ namespace ArenaUnity
 
             // minimum transform information
             dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
-            dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(transform.localRotation);
+            dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(transform.localRotation); // always send quaternions over the wire
 
             // publish
             msg.data = dataUnity;
