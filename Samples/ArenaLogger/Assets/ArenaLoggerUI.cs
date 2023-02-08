@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 namespace ArenaLogger.Example
 {
+    // TODO: Use the TouchScreenKeyboard.Open() function to open the keyboard. Please see the TouchScreenKeyboard scripting reference for the parameters that this function takes.
+
     public class ArenaLoggerUI : MonoBehaviour
     {
         [Header("User Interface")]
