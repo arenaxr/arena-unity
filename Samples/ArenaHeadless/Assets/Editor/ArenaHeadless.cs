@@ -10,6 +10,14 @@ public static class ArenaHeadless
     {
         isBatchMode = true;
         EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity");
+
+        ArenaClientScene scene = ArenaClientScene.Instance;
+        scene.hostAddress = "mqtt.arenaxr.org";
+        scene.authType = ArenaMqttClient.Auth.Anonymous;
+        scene.namespaceName = "public";
+        scene.sceneName = "example";
+        scene.ConnectArena();
+
         EditorApplication.EnterPlaymode();
     }
 }
