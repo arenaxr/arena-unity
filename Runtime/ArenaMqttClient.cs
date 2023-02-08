@@ -224,7 +224,7 @@ namespace ArenaUnity
                     case Auth.Anonymous:
                         // prefix all anon users with "anonymous-"
                         tokenType = "anonymous";
-                        userName = $"anonymous-unity-{UnityEngine.Random.Range(0, 1000000)}";
+                        userName = $"anonymous-unity";
                         break;
                     case Auth.Google:
                         // get oauth app credentials

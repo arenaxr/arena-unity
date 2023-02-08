@@ -87,7 +87,7 @@ namespace ArenaUnity
             msg.persist = persist;
             if (string.IsNullOrWhiteSpace(displayName))
             {   // provide default name if needed
-                displayName = $"{name} ({userid})";
+                displayName = name;
             }
             msg.displayName = displayName;
 
