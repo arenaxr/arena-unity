@@ -5,7 +5,7 @@ A sample application to integrate ARENA and manage objects from a headless serve
 - Quit
 
 ## Option 1 (from build):
-1. Follow [this](https://docs.arenaxr.org/content/unity/build.html) to setup the build enviornment. Make sure the required shaders are included!
+1. Follow [this](https://docs.arenaxr.org/content/unity/build.html) to setup the build environment. Make sure the required shaders are included!
 2. Add the `HeadlessCLI.cs` script to a Game Object. Feel free to edit it.
 3. Build your application. File -> Build Settings -> Build -> choose name and path.
 4.
