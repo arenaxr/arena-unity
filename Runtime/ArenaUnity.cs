@@ -5,6 +5,7 @@
 
 using System;
 using System.Dynamic;
+using Newtonsoft.Json.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -809,5 +810,17 @@ namespace ArenaUnity
             }
         }
 
+        internal static void ToUnityAnimationMixer(dynamic data, JObject jData, ref GameObject gobj)
+        {
+            ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
+            if (am == null)
+                am = gobj.AddComponent<ArenaAnimationMixer>();
+
+            if (data.url != null)
+                am.FindAnimations(ArenaClientScene.Instance.checkLocalAsset((string)data.url));
+            am.json = ArenaAnimationMixerJson.CreateFromJSON(jData.ToString());
+            am.ApplyAnimations();
+            Debug.Log("animation-mixer: " + am.json.SaveToString());
+        }
     }
 }
