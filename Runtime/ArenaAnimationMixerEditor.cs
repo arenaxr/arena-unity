@@ -24,7 +24,7 @@ namespace ArenaUnity
             {
                 if (GUILayout.Button($"Update {am.componentName}"))
                 {
-                    // am.PublishCreateUpdate();
+                    am.UpdateObject();
                 }
             }
             GUI.enabled = true;
@@ -35,17 +35,17 @@ namespace ArenaUnity
             if (am.animations != null && am.animations.Count > 0)
             {
                 GUILayout.Space(5f);
-                EditorGUILayout.LabelField("Clips Selected", EditorStyles.boldLabel);
-                GUILayout.BeginHorizontal("Box");
-                if (GUILayout.Toggle(true, $"All (total = {am.animations.Count})"))
-                {
-                    // anim.Play(animation);
-                }
-                else
-                {
-                    //anim.Stop(animation);
-                }
-                GUILayout.EndHorizontal();
+                EditorGUILayout.LabelField("Clips ", EditorStyles.boldLabel);
+                // GUILayout.BeginHorizontal("Box");
+                // if (GUILayout.Toggle(true, $"All (total = {am.animations.Count})"))
+                // {
+                //     // anim.Play(animation);
+                // }
+                // else
+                // {
+                //     //anim.Stop(animation);
+                // }
+                // GUILayout.EndHorizontal();
                 for (int i = 0; i < am.animations.Count; i++)
                 {
                     GUILayout.BeginHorizontal("Box");

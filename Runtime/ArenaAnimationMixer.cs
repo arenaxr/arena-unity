@@ -3,40 +3,33 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace ArenaUnity
 {
+    [ExecuteInEditMode]
     public class ArenaAnimationMixer : MonoBehaviour
     {
         internal readonly string componentName = "animation-mixer";
 
+        [Tooltip("Serializable JSON attributes for Arena animation-mixer")]
         public ArenaAnimationMixerJson json = new ArenaAnimationMixerJson();
         internal List<string> animations = null;
 
-        protected bool apply = false;
-        internal bool scriptLoaded = false;
+        internal bool apply = false;
+        internal bool animationScanned = false;
 
         protected virtual void Start()
         {
-            var aobj = GetComponent<ArenaObject>();
-            if (aobj != null && aobj.data != null && aobj.data.url != null)
-            {
-                FindAnimations((string)aobj.data.url);
-            }
             ApplyAnimations();
         }
 
         protected void OnValidate()
         {
             apply = true;
-
-            if (!scriptLoaded)
-            {
-                scriptLoaded = true;
-            }
         }
 
         protected void Update()
@@ -46,11 +39,22 @@ namespace ArenaUnity
                 ApplyAnimations();
                 apply = false;
             }
+
+            if (!animationScanned)
+            {
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null && aobj.data != null && aobj.data.url != null)
+                {
+                    FindAnimations(ArenaClientScene.Instance.checkLocalAsset((string)aobj.data.url));
+                    animationScanned = true;
+                    apply = true;
+                }
+            }
         }
 
         internal void ApplyAnimations()
         {
-            Debug.Log("animation-mixer: " + json.SaveToString());
+            Debug.Log("ApplyAnimations animation-mixer: " + json.SaveToString());
 
             Animation anim = GetComponentInChildren<Animation>(true);
 
@@ -77,7 +81,7 @@ namespace ArenaUnity
                 foreach (string animation in animations)
                 {
                     //anim.PlayQueued(animation, QueueMode.CompleteOthers);
-                    anim.PlayQueued(animation);
+                    anim.Play(animation);
                 }
             }
 
@@ -110,7 +114,7 @@ namespace ArenaUnity
         {
             // check for animations
             var assetRepresentationsAtPath = AssetDatabase.LoadAllAssetRepresentationsAtPath(url);
-            List<string> animations = new List<string>();
+            animations = new List<string>();
 
             foreach (var assetRepresentation in assetRepresentationsAtPath)
             {
@@ -120,7 +124,18 @@ namespace ArenaUnity
                     animations.Add(animationClip.name);
                 }
             }
+
+            Debug.Log("FindAnimations animation-mixer: " + animations.ToString());
         }
 
+        internal void UpdateObject()
+        {
+            var aobj = GetComponent<ArenaObject>();
+            if (aobj != null)
+            {
+                aobj.PublishJson($"{{\"{componentName}\":{json.SaveToString()}}}");
+                apply = true;
+            }
+        }
     }
 }

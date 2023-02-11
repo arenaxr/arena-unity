@@ -220,14 +220,15 @@ namespace ArenaUnity
             return true;
         }
 
-        internal void PublishJson()
+        internal void PublishJson(string objData)
         {
+            Debug.Log($"PublishJson: {objData}");
             dynamic msg = new ExpandoObject();
             msg.object_id = name;
             msg.action = "update";
             msg.type = messageType;
             msg.persist = persist;
-            msg.data = JsonConvert.DeserializeObject(jsonData);
+            msg.data = JsonConvert.DeserializeObject(objData);
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions); // remote
             ArenaClientScene.Instance.ProcessMessage(payload); // local

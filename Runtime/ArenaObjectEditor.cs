@@ -46,7 +46,7 @@ namespace ArenaUnity
             GUI.enabled = aobj.HasPermissions && aobj.isJsonValidated;
             if (GUILayout.Button("Publish Json Data"))
             {
-                aobj.PublishJson();
+                aobj.PublishJson(aobj.jsonData);
             }
             GUI.enabled = true;
 
