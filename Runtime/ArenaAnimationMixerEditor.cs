@@ -13,15 +13,19 @@ namespace ArenaUnity
     [CustomEditor(typeof(ArenaAnimationMixer))]
     public class ArenaAnimationMixerEditor : Editor
     {
+
         public override void OnInspectorGUI()
         {
             ArenaAnimationMixer am = (ArenaAnimationMixer)target;
 
             // add button to publish unity changes
             //GUI.enabled = am.HasPermissions && am.messageType == "object";
-            if (GUILayout.Button("Update animation-mixer"))
+            if (am.json != null)
             {
-               // am.PublishCreateUpdate();
+                if (GUILayout.Button($"Update {am.componentName}"))
+                {
+                    // am.PublishCreateUpdate();
+                }
             }
             GUI.enabled = true;
 

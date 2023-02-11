@@ -815,12 +815,8 @@ namespace ArenaUnity
             ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
             if (am == null)
                 am = gobj.AddComponent<ArenaAnimationMixer>();
-
-            if (data.url != null)
-                am.FindAnimations(ArenaClientScene.Instance.checkLocalAsset((string)data.url));
             am.json = ArenaAnimationMixerJson.CreateFromJSON(jData.ToString());
             am.ApplyAnimations();
-            Debug.Log("animation-mixer: " + am.json.SaveToString());
         }
     }
 }

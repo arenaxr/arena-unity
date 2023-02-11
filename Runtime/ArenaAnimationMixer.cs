@@ -9,21 +9,49 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
-
-
     public class ArenaAnimationMixer : MonoBehaviour
     {
+        internal readonly string componentName = "animation-mixer";
 
         public ArenaAnimationMixerJson json = new ArenaAnimationMixerJson();
         internal List<string> animations = null;
 
-        void Start()
-        {
+        protected bool apply = false;
+        internal bool scriptLoaded = false;
 
+        protected virtual void Start()
+        {
+            var aobj = GetComponent<ArenaObject>();
+            if (aobj != null && aobj.data != null && aobj.data.url != null)
+            {
+                FindAnimations((string)aobj.data.url);
+            }
+            ApplyAnimations();
+        }
+
+        protected void OnValidate()
+        {
+            apply = true;
+
+            if (!scriptLoaded)
+            {
+                scriptLoaded = true;
+            }
+        }
+
+        protected void Update()
+        {
+            if (apply)
+            {
+                ApplyAnimations();
+                apply = false;
+            }
         }
 
         internal void ApplyAnimations()
         {
+            Debug.Log("animation-mixer: " + json.SaveToString());
+
             Animation anim = GetComponentInChildren<Animation>(true);
 
             anim.cullingType = AnimationCullingType.BasedOnRenderers;
@@ -75,30 +103,23 @@ namespace ArenaUnity
             //Rewind Rewinds the animation named name.
             //Sample Samples animations at the current state.
             //Stop Stops all playing animations that were started with this Animation.
+
         }
 
-        public void FindAnimations(string url)
+        private void FindAnimations(string url)
         {
-            //#if UNITY_EDITOR
             // check for animations
             var assetRepresentationsAtPath = AssetDatabase.LoadAllAssetRepresentationsAtPath(url);
-            //List<string> animations = null;
+            List<string> animations = new List<string>();
+
             foreach (var assetRepresentation in assetRepresentationsAtPath)
             {
                 var animationClip = assetRepresentation as AnimationClip;
                 if (animationClip != null)
                 {
-                    if (animations == null)
-                        animations = new List<string>();
                     animations.Add(animationClip.name);
                 }
             }
-            //#endif
-        }
-
-        void OnValidate()
-        {
-
         }
 
     }
