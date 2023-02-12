@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ namespace ArenaUnity
 
         [Tooltip("Serializable JSON attributes for Arena animation-mixer")]
         public ArenaAnimationMixerJson json = new ArenaAnimationMixerJson();
-        internal List<string> animations = null;
+        public List<string> animations = null;
 
         internal bool apply = false;
         internal bool animationScanned = false;

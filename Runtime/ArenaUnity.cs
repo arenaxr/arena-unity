@@ -5,6 +5,7 @@
 
 using System;
 using System.Dynamic;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TMPro;
 using UnityEngine;
@@ -815,8 +816,13 @@ namespace ArenaUnity
             ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
             if (am == null)
                 am = gobj.AddComponent<ArenaAnimationMixer>();
-            am.json = ArenaAnimationMixerJson.CreateFromJSON(jData.ToString());
-            //Debug.Log()
+            foreach (JToken amObj in jData.SelectTokens("animation-mixer"))
+            {
+                am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(amObj));
+            }
+            
+            Debug.Log(JsonConvert.SerializeObject(jData));
+            Debug.Log(JsonConvert.SerializeObject(am.json));
             am.apply = true;
         }
     }
