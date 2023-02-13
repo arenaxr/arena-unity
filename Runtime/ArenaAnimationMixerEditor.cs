@@ -39,23 +39,22 @@ namespace ArenaUnity
             {
                 GUILayout.Space(5f);
                 EditorGUILayout.LabelField("Clips ", EditorStyles.boldLabel);
+                GUILayout.BeginHorizontal("Box");
+                if (GUILayout.Toggle((am.json.clip == "*"), "All"))
+                {
+                    am.json.clip = "*";
+                }
+                GUILayout.EndHorizontal();
                 for (int i = 0; i < am.animations.Count; i++)
                 {
                     GUILayout.BeginHorizontal("Box");
-                    Match m = Regex.Match(am.animations[i], pattern);
-                    if (GUILayout.Toggle(m.Success, $"{i}: {am.animations[i]}"))
+                    if (GUILayout.Toggle((am.json.clip == am.animations[i]), $"{i}: {am.animations[i]}"))
                     {
-                        Debug.Log($"on {am.animations[i]}");
-                    }
-                    else
-                    {
-                        Debug.Log($"off {am.animations[i]}");
+                        am.json.clip = am.animations[i];
                     }
                     GUILayout.EndHorizontal();
                 }
             }
-
-
 
         }
     }

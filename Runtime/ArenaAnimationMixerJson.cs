@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class ArenaAnimationMixerJson
     public const int defcrossFadeDuration = 0;
     public const LoopType defloop = LoopType.repeat;
     public const string defrepetitions = null;
-    public const int deftimeScale = 1;
+    public const float deftimeScale = 1;
     public const bool defclampWhenFinished = false;
     public const int defstartAt = 0;
 
@@ -87,7 +88,7 @@ public class ArenaAnimationMixerJson
     /// Scaling factor for playback speed. A value of 0 causes the animation to pause. Negative values cause the animation to play backwards.
     /// </summary>
     [Tooltip("Scaling factor for playback speed. A value of 0 causes the animation to pause. Negative values cause the animation to play backwards.")]
-    public int timeScale = deftimeScale;
+    public float timeScale = deftimeScale;
     public bool ShouldSerializetimeScale()
     {
         return (timeScale != deftimeScale);
@@ -113,20 +114,16 @@ public class ArenaAnimationMixerJson
         return (startAt != defstartAt);
     }
 
-
     public string SaveToString()
     {
         return JsonConvert.SerializeObject(this);
     }
 
-    //public string SaveToStringNonDefault()
-    //{
-    //    return JsonConvert.SerializeObject(this, new JsonSerializerSettings( ));
-    //}
-
     public static ArenaAnimationMixerJson CreateFromJSON(string jsonString)
     {
-        return JsonConvert.DeserializeObject<ArenaAnimationMixerJson>(jsonString);
+        string value = Regex.Unescape(jsonString);
+        Debug.Log($"jsonString {value}");
+        return JsonConvert.DeserializeObject<ArenaAnimationMixerJson>(value);
     }
 
 }
