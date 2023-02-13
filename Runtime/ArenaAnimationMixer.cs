@@ -64,8 +64,6 @@ namespace ArenaUnity
 
         internal void ApplyAnimations()
         {
-            Debug.Log("ApplyAnimations animation-mixer: " + json.SaveToString());
-
             Animation anim = GetComponentInChildren<Animation>(true);
             if (anim == null) return;
             // set animation mixer properties
@@ -111,8 +109,6 @@ namespace ArenaUnity
                     animations.Add(animationClip.name);
                 }
             }
-
-            Debug.Log("FindAnimations animation-mixer: " + animations.ToString());
         }
 
         internal void UpdateObject()

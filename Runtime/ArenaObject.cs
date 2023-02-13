@@ -58,7 +58,6 @@ namespace ArenaUnity
 
         void Start()
         {
-            //Debug.Log(jsonData);
             // TODO: consider how inactive objects react to find here, might need to use arenaObjs array
 
             // runtime created arena objects still need to be checked for name uniqueness
@@ -225,7 +224,6 @@ namespace ArenaUnity
 
         internal void PublishJson(string objData, bool overwrite = false)
         {
-            Debug.Log($"PublishJson: {objData}");
             dynamic msg = new ExpandoObject();
             msg.object_id = name;
             msg.action = "update";

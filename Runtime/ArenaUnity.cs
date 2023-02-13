@@ -826,9 +826,6 @@ namespace ArenaUnity
             {
                 am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(amObj));
             }
-            
-            Debug.Log(JsonConvert.SerializeObject(jData));
-            Debug.Log(JsonConvert.SerializeObject(am.json));
             am.apply = true;
         }
     }
