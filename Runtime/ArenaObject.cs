@@ -223,7 +223,7 @@ namespace ArenaUnity
             return true;
         }
 
-        internal void PublishJson(string objData)
+        internal void PublishJson(string objData, bool overwrite = false)
         {
             Debug.Log($"PublishJson: {objData}");
             dynamic msg = new ExpandoObject();
@@ -231,10 +231,11 @@ namespace ArenaUnity
             msg.action = "update";
             msg.type = messageType;
             msg.persist = persist;
+            if (overwrite) msg.overwrite = overwrite;
 
             var updatedData = new JObject();
-            if (data != null)
-                updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(data)));
+            if (jsonData != null)
+                updatedData.Merge(JObject.Parse(jsonData));
             updatedData.Merge(JObject.Parse(objData));
 
             // publish

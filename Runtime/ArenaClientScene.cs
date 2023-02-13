@@ -414,7 +414,16 @@ namespace ArenaUnity
                         {
                             json = r.ReadToEnd();
                         }
-                        IEnumerable<string> uris = ExtractAssetUris(JsonConvert.DeserializeObject(json), gltfUriTags);
+                        IEnumerable<string> uris = new string[] { };
+                        try
+                        {
+                            uris = ExtractAssetUris(JsonConvert.DeserializeObject(json), gltfUriTags);
+                        }
+                        catch (JsonReaderException e)
+                        {
+                            Debug.LogWarning(e.Message);
+                            allPathsValid = false;
+                        }
                         foreach (var uri in uris)
                         {
                             if (!string.IsNullOrWhiteSpace(uri))

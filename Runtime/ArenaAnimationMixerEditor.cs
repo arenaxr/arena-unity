@@ -3,7 +3,7 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
-using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -34,6 +34,7 @@ namespace ArenaUnity
             DrawDefaultInspector();
 
             // add any animation buttons
+            string pattern = @$"{am.json.clip.Replace("*", @"\w*")}"; // update wildcards for .Net
             if (am.animations != null && am.animations.Count > 0)
             {
                 GUILayout.Space(5f);
@@ -41,13 +42,20 @@ namespace ArenaUnity
                 for (int i = 0; i < am.animations.Count; i++)
                 {
                     GUILayout.BeginHorizontal("Box");
-                    if (GUILayout.Toggle(true, $"{i}: {am.animations[i]}"))
+                    Match m = Regex.Match(am.animations[i], pattern);
+                    if (GUILayout.Toggle(m.Success, $"{i}: {am.animations[i]}"))
                     {
-                       // anim.Play(animation);
+                        Debug.Log($"on {am.animations[i]}");
+                    }
+                    else
+                    {
+                        Debug.Log($"off {am.animations[i]}");
                     }
                     GUILayout.EndHorizontal();
                 }
             }
+
+
 
         }
     }
