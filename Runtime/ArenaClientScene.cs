@@ -663,7 +663,8 @@ namespace ArenaUnity
                 AttachMaterialTexture(checkLocalAsset((string)data.material.src), gobj);
 
             // data.animation-mixer
-            foreach (JToken amObj in jData.SelectTokens("animation-mixer"))
+            JToken amObj = jData.SelectToken("animation-mixer");
+            if (amObj != null)
             {
                 ArenaUnity.ToUnityAnimationMixer(data, jData, ref gobj);
             }

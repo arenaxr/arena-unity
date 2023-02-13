@@ -19,10 +19,12 @@ namespace ArenaUnity
             ArenaAnimationMixer am = (ArenaAnimationMixer)target;
 
             // add button to publish unity changes
-            //GUI.enabled = am.HasPermissions && am.messageType == "object";
+            var aobj = am.GetComponent<ArenaObject>();
+            if (aobj != null)
+                GUI.enabled = aobj.HasPermissions;
             if (am.json != null)
             {
-                if (GUILayout.Button($"Update {am.componentName}"))
+                if (GUILayout.Button($"Publish {am.componentName}"))
                 {
                     am.UpdateObject();
                 }
@@ -36,26 +38,12 @@ namespace ArenaUnity
             {
                 GUILayout.Space(5f);
                 EditorGUILayout.LabelField("Clips ", EditorStyles.boldLabel);
-                // GUILayout.BeginHorizontal("Box");
-                // if (GUILayout.Toggle(true, $"All (total = {am.animations.Count})"))
-                // {
-                //     // anim.Play(animation);
-                // }
-                // else
-                // {
-                //     //anim.Stop(animation);
-                // }
-                // GUILayout.EndHorizontal();
                 for (int i = 0; i < am.animations.Count; i++)
                 {
                     GUILayout.BeginHorizontal("Box");
                     if (GUILayout.Toggle(true, $"{i}: {am.animations[i]}"))
                     {
                        // anim.Play(animation);
-                    }
-                    else
-                    {
-                        //anim.Stop(animation);
                     }
                     GUILayout.EndHorizontal();
                 }

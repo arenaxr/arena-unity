@@ -810,13 +810,19 @@ namespace ArenaUnity
                 }
             }
         }
-
+        // animation-mixer
+        internal static void ToArenaAnimationMixer(GameObject gobj, ref JObject jData)
+        {
+            ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
+            jData["animation-mixer"] = am.json.SaveToString();
+        }
         internal static void ToUnityAnimationMixer(dynamic data, JObject jData, ref GameObject gobj)
         {
             ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
             if (am == null)
                 am = gobj.AddComponent<ArenaAnimationMixer>();
-            foreach (JToken amObj in jData.SelectTokens("animation-mixer"))
+            JToken amObj = jData.SelectToken("animation-mixer");
+            if (amObj != null)
             {
                 am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(amObj));
             }

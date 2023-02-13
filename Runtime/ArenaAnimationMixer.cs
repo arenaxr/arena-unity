@@ -18,7 +18,7 @@ namespace ArenaUnity
 
         [Tooltip("Serializable JSON attributes for Arena animation-mixer")]
         public ArenaAnimationMixerJson json = new ArenaAnimationMixerJson();
-        public List<string> animations = null;
+        internal List<string> animations = null;
 
         internal bool apply = false;
         internal bool animationScanned = false;

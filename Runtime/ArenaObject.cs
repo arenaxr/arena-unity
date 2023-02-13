@@ -208,6 +208,9 @@ namespace ArenaUnity
             if (data != null)
                 updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(data)));
             updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(dataUnity)));
+            // TODO: temp location until JObject completely replaces dynamic object
+            if (GetComponent<ArenaAnimationMixer>())
+                ArenaUnity.ToArenaAnimationMixer(gameObject, ref updatedData);
 
             // publish
             msg.data = transformOnly ? dataUnity : updatedData;
@@ -228,7 +231,15 @@ namespace ArenaUnity
             msg.action = "update";
             msg.type = messageType;
             msg.persist = persist;
-            msg.data = JsonConvert.DeserializeObject(objData);
+
+            var updatedData = new JObject();
+            if (data != null)
+                updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(data)));
+            updatedData.Merge(JObject.Parse(objData));
+
+            // publish
+            msg.data = updatedData;
+            jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions); // remote
             ArenaClientScene.Instance.ProcessMessage(payload); // local
