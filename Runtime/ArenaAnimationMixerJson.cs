@@ -37,10 +37,10 @@ public class ArenaAnimationMixerJson
     /// </summary>
     [Tooltip("Name of the animation clip(s) to play. Accepts wildcards.")]
     public string clip = defclip;
-    //public bool ShouldSerializeclip() // <-- TODO should mark required?
-    //{
-    //    return (clip != defclip);
-    //}
+    public bool ShouldSerializeclip()
+    {
+        return true; // required
+    }
 
     /// <summary>
     /// Duration of the animation, in seconds.
