@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using ArenaUnity;
 
 // This class must live in an Editor folder
 public static class ArenaHeadless
