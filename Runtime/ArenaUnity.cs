@@ -826,7 +826,7 @@ namespace ArenaUnity
             JToken amObj = jData.SelectToken("animation-mixer");
             if (amObj != null)
             {
-                am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(amObj));
+                am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(amObj), amObj);
             }
             am.apply = true;
         }

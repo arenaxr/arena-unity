@@ -1,6 +1,6 @@
 ﻿/**
  * Open source software under the terms in /LICENSE
- * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
 using System.Collections.Generic;
@@ -13,19 +13,18 @@ namespace ArenaUnity.Components
 {
     [ExecuteInEditMode]
     [DisallowMultipleComponent]
+    [HelpURL("https://docs.arenaxr.org/content/schemas/message/animation-mixer")]
     public class ArenaAnimationMixer : MonoBehaviour
     {
         // STATUS
         // DONE clip: * Name of the animation clip(s) to play. Accepts wildcards.
-        // READ duration: AUTO    Duration of the animation, in seconds.
+        // TODO duration: AUTO    Duration of the animation, in seconds.
         // DONE crossFadeDuration:   0   Duration of cross - fades between clips, in seconds.
         // DONE loop:  once, repeat, or pingpong. In repeat and pingpong modes, the clip plays once plus the specified number of repetitions. For pingpong, every second clip plays in reverse.
         // TODO repetitions: Infinity    Number of times to play the clip, in addition to the first play.Repetitions are ignored for loop: once.
         // DONE timeScale:   1   Scaling factor for playback speed. A value of 0 causes the animation to pause.Negative values cause the animation to play backwards.
         // DONE clampWhenFinished:   false   If true, halts the animation at the last frame.
         // DONE startAt: 0   Sets the start of an animation to a specific time(in milliseconds).This is useful when you need to jump to an exact time in an animation.The input parameter will be scaled by the mixer's timeScale.
-
-        internal readonly string componentName = "animation-mixer";
 
         [Tooltip("Serializable JSON attributes for Arena animation-mixer")]
         public ArenaAnimationMixerJson json = new ArenaAnimationMixerJson();
@@ -36,7 +35,7 @@ namespace ArenaUnity.Components
 
         protected virtual void Start()
         {
-            ApplyAnimations();
+            apply = true;
         }
 
         protected void OnValidate()
@@ -66,6 +65,7 @@ namespace ArenaUnity.Components
 
         internal void ApplyAnimations()
         {
+            // apply changes to local unity object
             Animation anim = GetComponentInChildren<Animation>(true);
             if (anim == null) return;
             // set animation mixer properties
@@ -82,6 +82,7 @@ namespace ArenaUnity.Components
             if (json.clampWhenFinished) anim.wrapMode = WrapMode.ClampForever;
 
             // play animations according to clip and wildcard
+            // if (json.clip == null) return;
             string pattern = @$"{json.clip.Replace("*", @"\w*")}"; // update wildcards for .Net
             if (animations != null && animations.Count > 0)
             {
@@ -103,7 +104,7 @@ namespace ArenaUnity.Components
                     }
                     if (includeClip)
                     {
-                        float fadeLength = (float)(json.crossFadeDuration / 1000);
+                        float fadeLength = (float)(json.crossFadeDuration);
                         if (fadeLength > 0)
                             anim.CrossFade(animations[i], fadeLength);
                         else
@@ -134,7 +135,7 @@ namespace ArenaUnity.Components
             var aobj = GetComponent<ArenaObject>();
             if (aobj != null)
             {
-                aobj.PublishJson($"{{\"{componentName}\":{json.SaveToString()}}}");
+                aobj.PublishUpdate($"{{\"{ArenaAnimationMixerJson.componentName}\":{json.SaveToString()}}}");
                 apply = true;
             }
         }

@@ -223,7 +223,7 @@ namespace ArenaUnity
             return true;
         }
 
-        internal void PublishJson(string objData, bool overwrite = false)
+        internal void PublishUpdate(string objData, bool all = false, bool overwrite = false)
         {
             dynamic msg = new ExpandoObject();
             msg.object_id = name;
@@ -232,14 +232,15 @@ namespace ArenaUnity
             msg.persist = persist;
             if (overwrite) msg.overwrite = overwrite;
 
+            // merge new data with original message data
             var updatedData = new JObject();
             if (jsonData != null)
                 updatedData.Merge(JObject.Parse(jsonData));
             updatedData.Merge(JObject.Parse(objData));
+            jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
 
             // publish
-            msg.data = updatedData;
-            jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
+            msg.data = all ? updatedData : JObject.Parse(objData);
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions); // remote
             ArenaClientScene.Instance.ProcessMessage(payload); // local
