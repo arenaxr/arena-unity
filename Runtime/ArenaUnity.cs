@@ -5,6 +5,8 @@
 
 using System;
 using System.Dynamic;
+using ArenaUnity.Components;
+using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TMPro;

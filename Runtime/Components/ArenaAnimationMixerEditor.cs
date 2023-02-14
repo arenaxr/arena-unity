@@ -3,11 +3,10 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
-using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace ArenaUnity
+namespace ArenaUnity.Components
 {
 #if UNITY_EDITOR
     [CustomEditor(typeof(ArenaAnimationMixer))]
@@ -34,7 +33,6 @@ namespace ArenaUnity
             DrawDefaultInspector();
 
             // add any animation buttons
-            string pattern = @$"{am.json.clip.Replace("*", @"\w*")}"; // update wildcards for .Net
             if (am.animations != null && am.animations.Count > 0)
             {
                 GUILayout.Space(5f);
