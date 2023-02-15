@@ -2,6 +2,20 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.7.0](https://github.com/arenaxr/arena-unity/compare/v0.6.3...v0.7.0) (2023-02-15)
+
+
+### Features
+
+* **animation-mixer:** support animation-mixer, test new json parser ([#59](https://github.com/arenaxr/arena-unity/issues/59)) ([09cc529](https://github.com/arenaxr/arena-unity/commit/09cc529f7b0f05aba608dc986c8a8d51440a813c))
+* **samples:** add "headless" build option ([#56](https://github.com/arenaxr/arena-unity/issues/56)) ([b11b1aa](https://github.com/arenaxr/arena-unity/commit/b11b1aa4f4152f37cdb27e534cfe4d74d4596844))
+
+
+### Bug Fixes
+
+* **avatar:** simplified automated naming of exported cameras ([3ec7676](https://github.com/arenaxr/arena-unity/commit/3ec7676c965a6695029baea589b9841c0e9b1b0e))
+* **object:** handle poorly formatted model/image content ([9719723](https://github.com/arenaxr/arena-unity/commit/9719723fcb4e0375e32e4fbbd7c5bf7d40c9fcc5))
+
 ## [0.6.3](https://github.com/arenaxr/arena-unity/compare/v0.6.2...v0.6.3) (2023-01-28)
 
 
