@@ -517,6 +517,7 @@ namespace ArenaUnity
         private void CreateUpdateObject(string object_id, string storeType, bool persist, float ttl, dynamic data, string displayName = null, object menuCommand = null)
         {
             ArenaObject aobj = null;
+            JObject jData = JObject.Parse(JsonConvert.SerializeObject(data));
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
             {   // update local
                 if (gobj != null)
@@ -571,11 +572,9 @@ namespace ArenaUnity
                         aobj.gltfUrl = (string)data.url;
 
                         AttachGltf(checkLocalAsset((string)data.url), gobj);
-                        FindAnimations(data, aobj);
                     }
                     // load on-demand-model (LOD) as well
-                    //JObject d = JObject.Parse(JsonConvert.SerializeObject(data));
-                    //foreach (string detailedUrl in d.SelectTokens("gltf-model-lod.detailedUrl"))
+                    //foreach (string detailedUrl in jData.SelectTokens("gltf-model-lod.detailedUrl"))
                     //    AttachGltf(checkLocalAsset(detailedUrl), gobj);
                     break;
                 case "image":
@@ -626,9 +625,10 @@ namespace ArenaUnity
             if (isElement(data.scale))
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
 
-            // establish parent/child relationships
+            // data.parent
             if (parent != null)
             {
+                // establish parent/child relationships
                 if (arenaObjs.ContainsKey(parent))
                 {
                     gobj.SetActive(true);
@@ -642,9 +642,9 @@ namespace ArenaUnity
                     childObjs.Add(object_id, gobj);
                 }
             }
-            // find children awaiting a parent
             if (parentalQueue.Contains(object_id))
             {
+                // find children awaiting a parent
                 foreach (KeyValuePair<string, GameObject> cgobj in childObjs)
                 {
                     string cparent = cgobj.Value.GetComponent<ArenaObject>().parentId;
@@ -662,17 +662,30 @@ namespace ArenaUnity
 
             gobj.transform.hasChanged = false;
 
+            // geometry (mesh)
             ArenaUnity.ToUnityMesh(data, ref gobj);
 
+            // data.material
             if (isElement(data.material) || isElement(data.color))
                 ArenaUnity.ToUnityMaterial(data, ref gobj);
             if (isElement(data.material) && isElement(data.material.src))
                 AttachMaterialTexture(checkLocalAsset((string)data.material.src), gobj);
 
+            // data.animation-mixer
+            JToken amObj = jData.SelectToken("animation-mixer");
+            if (amObj != null)
+            {
+                ArenaUnity.ToUnityAnimationMixer(data, jData, ref gobj);
+            }
+
             if (aobj != null)
             {
                 aobj.data = data;
-                aobj.jsonData = JsonConvert.SerializeObject(aobj.data, Formatting.Indented);
+                var updatedData = new JObject();
+                if (aobj.jsonData != null)
+                    updatedData.Merge(JObject.Parse(aobj.jsonData));
+                updatedData.Merge(data);
+                aobj.jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
             }
         }
 
@@ -726,25 +739,7 @@ namespace ArenaUnity
             }
         }
 
-        private void FindAnimations(dynamic data, ArenaObject aobj)
-        {
-#if UNITY_EDITOR
-            // check for animations
-            var assetRepresentationsAtPath = AssetDatabase.LoadAllAssetRepresentationsAtPath(checkLocalAsset((string)data.url));
-            foreach (var assetRepresentation in assetRepresentationsAtPath)
-            {
-                var animationClip = assetRepresentation as AnimationClip;
-                if (animationClip != null)
-                {
-                    if (aobj.animations == null)
-                        aobj.animations = new List<string>();
-                    aobj.animations.Add(animationClip.name);
-                }
-            }
-#endif
-        }
-
-        private string checkLocalAsset(string msgUrl)
+        internal string checkLocalAsset(string msgUrl)
         {
             Uri uri = ConstructRemoteUrl(msgUrl);
             if (uri == null) return null;

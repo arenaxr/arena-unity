@@ -5,6 +5,10 @@
 
 using System;
 using System.Dynamic;
+using ArenaUnity.Components;
+using ArenaUnity.Schemas;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -808,6 +812,23 @@ namespace ArenaUnity
                 }
             }
         }
-
+        // animation-mixer
+        internal static void ToArenaAnimationMixer(GameObject gobj, ref JObject jData)
+        {
+            ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
+            jData["animation-mixer"] = am.json.SaveToString();
+        }
+        internal static void ToUnityAnimationMixer(dynamic data, JObject jData, ref GameObject gobj)
+        {
+            ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
+            if (am == null)
+                am = gobj.AddComponent<ArenaAnimationMixer>();
+            JToken amObj = jData.SelectToken("animation-mixer");
+            if (amObj != null)
+            {
+                am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(amObj), amObj);
+            }
+            am.apply = true;
+        }
     }
 }

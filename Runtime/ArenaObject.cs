@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using ArenaUnity.Components;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PrettyHierarchy;
@@ -27,7 +28,7 @@ namespace ArenaUnity
         [Tooltip("Persist this object in the ARENA server database (default true = persist on server)")]
         public bool persist = true;
         [TextArea(5, 20)]
-        [Tooltip("ARENA JSON-encoded message (debug only for now)")]
+        [Tooltip("ARENA JSON-encoded message")]
         [SerializeField]
         public string jsonData = null;
 
@@ -43,7 +44,6 @@ namespace ArenaUnity
         private string oldName; // test for rename
         internal bool externalDelete = false;
         internal bool isJsonValidated = false;
-        internal List<string> animations = null;
         internal string gltfUrl = null;
         internal bool meshChanged = false;
 
@@ -59,7 +59,6 @@ namespace ArenaUnity
 
         void Start()
         {
-            //Debug.Log(jsonData);
             // TODO: consider how inactive objects react to find here, might need to use arenaObjs array
 
             // runtime created arena objects still need to be checked for name uniqueness
@@ -209,10 +208,14 @@ namespace ArenaUnity
             if (data != null)
                 updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(data)));
             updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(dataUnity)));
+            // TODO: temp location until JObject completely replaces dynamic object
+            if (GetComponent<ArenaAnimationMixer>())
+                ArenaUnity.ToArenaAnimationMixer(gameObject, ref updatedData);
+
+            jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
 
             // publish
             msg.data = transformOnly ? dataUnity : updatedData;
-            jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
             if (!created)
@@ -221,14 +224,25 @@ namespace ArenaUnity
             return true;
         }
 
-        internal void PublishJson()
+        internal void PublishUpdate(string objData, bool all = false, bool overwrite = false)
         {
             dynamic msg = new ExpandoObject();
             msg.object_id = name;
             msg.action = "update";
             msg.type = messageType;
             msg.persist = persist;
-            msg.data = JsonConvert.DeserializeObject(jsonData);
+            if (overwrite) msg.overwrite = overwrite;
+
+            // merge new data with original message data
+            var updatedData = new JObject();
+            if (jsonData != null)
+                updatedData.Merge(JObject.Parse(jsonData));
+            updatedData.Merge(JObject.Parse(objData));
+
+            jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
+
+            // publish
+            msg.data = all ? updatedData : JObject.Parse(objData);
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions); // remote
             ArenaClientScene.Instance.ProcessMessage(payload); // local
