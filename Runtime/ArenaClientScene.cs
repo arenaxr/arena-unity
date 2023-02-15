@@ -569,9 +569,12 @@ namespace ArenaUnity
                     if (data.url != null && aobj.gltfUrl == null)
                     {
                         // keep url, to add/remove and check exiting imported urls
-                        aobj.gltfUrl = (string)data.url;
-
-                        AttachGltf(checkLocalAsset((string)data.url), gobj);
+                        string assetPath = checkLocalAsset((string)data.url);
+                        if (assetPath != null)
+                        {
+                            AttachGltf(assetPath, gobj);
+                            aobj.gltfUrl = (string)data.url;
+                        }
                     }
                     // load on-demand-model (LOD) as well
                     //foreach (string detailedUrl in jData.SelectTokens("gltf-model-lod.detailedUrl"))
