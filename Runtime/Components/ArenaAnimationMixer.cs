@@ -116,6 +116,7 @@ namespace ArenaUnity.Components
 
         private void FindAnimations(string url)
         {
+#if UNITY_EDITOR
             // check for animations
             var assetRepresentationsAtPath = AssetDatabase.LoadAllAssetRepresentationsAtPath(url);
             animations = new List<string>();
@@ -128,6 +129,7 @@ namespace ArenaUnity.Components
                     animations.Add(animationClip.name);
                 }
             }
+#endif
         }
 
         internal void UpdateObject()
