@@ -45,8 +45,10 @@ namespace ArenaUnity.Schemas
         public string clip = defclip;
         public bool ShouldSerializeclip()
         {
-            if (_token != null && _token.SelectToken("clip") != null) return true;
-            return (clip != defclip);
+            // TODO: operationally the web component appears to require clip to function
+            //if (_token != null && _token.SelectToken("clip") != null) return true;
+            //return (clip != defclip);
+            return true;
         }
 
         [Tooltip("Duration of cross-fades between clips, in seconds.")]

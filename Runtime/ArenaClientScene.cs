@@ -681,7 +681,11 @@ namespace ArenaUnity
             if (aobj != null)
             {
                 aobj.data = data;
-                aobj.jsonData = JsonConvert.SerializeObject(aobj.data, Formatting.Indented);
+                var updatedData = new JObject();
+                if (aobj.jsonData != null)
+                    updatedData.Merge(JObject.Parse(aobj.jsonData));
+                updatedData.Merge(data);
+                aobj.jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
             }
         }
 

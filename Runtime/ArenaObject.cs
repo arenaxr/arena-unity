@@ -28,7 +28,7 @@ namespace ArenaUnity
         [Tooltip("Persist this object in the ARENA server database (default true = persist on server)")]
         public bool persist = true;
         [TextArea(5, 20)]
-        [Tooltip("ARENA JSON-encoded message (debug only for now)")]
+        [Tooltip("ARENA JSON-encoded message")]
         [SerializeField]
         public string jsonData = null;
 
@@ -212,9 +212,10 @@ namespace ArenaUnity
             if (GetComponent<ArenaAnimationMixer>())
                 ArenaUnity.ToArenaAnimationMixer(gameObject, ref updatedData);
 
+            jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
+
             // publish
             msg.data = transformOnly ? dataUnity : updatedData;
-            jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
             if (!created)
@@ -237,6 +238,7 @@ namespace ArenaUnity
             if (jsonData != null)
                 updatedData.Merge(JObject.Parse(jsonData));
             updatedData.Merge(JObject.Parse(objData));
+
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
 
             // publish
