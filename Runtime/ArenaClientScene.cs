@@ -10,6 +10,7 @@ using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using ArenaUnity.Components;
 using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
@@ -680,6 +681,14 @@ namespace ArenaUnity
             {
                 ArenaUnity.ToUnityAnimationMixer(data, jData, ref gobj);
             }
+            JToken clObj = jData.SelectToken("click-listener");
+            if (clObj != null)
+            {
+                Collider c = gobj.GetComponent<Collider>();
+                if (c == null) c = gobj.AddComponent<MeshCollider>();
+                RaycastClickExample cl = gobj.GetComponent<RaycastClickExample>();
+                if (cl == null) cl = gobj.AddComponent<RaycastClickExample>();
+            }
 
             if (aobj != null)
             {
@@ -998,6 +1007,11 @@ namespace ArenaUnity
                             RemoveObject(hand_right_id);
                         }
                         break;
+                    case "clientEvent":
+                        object_id = (string)msg.object_id;
+                        msg_type = (string)msg.type;
+                        ClientEventOnObject(object_id, msg_type, msg.data);
+                        break;
                     default:
                         break;
                 }
@@ -1005,20 +1019,35 @@ namespace ArenaUnity
             }
         }
 
+        private void ClientEventOnObject(string object_id, string msg_type, dynamic data)
+        {
+            //{"object_id":"box","action":"clientEvent","type":"mousedown","data":{"clickPos":{"x":-2.87,"y":1.6,"z":6.225},"position":{"x":-0.195,"y":0.305,"z":1.913},"source":"camera_2418540601_mwfarb"},"timestamp":"2023-02-15T18:59:02.413Z"}
+            if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
+            {
+                switch (msg_type)
+                {
+                    case "mousedown":
+                        //gobj.GetComponent<OnMouseDownExample>().OnMouseDown();
+                        gobj.GetComponent<RaycastClickExample>().OnMouseDown();
+                        break;
+                }
+            }
+        }
+
         private void LogMessage(string dir, dynamic msg, bool hasPermissions = true)
         {
             // determine logging level
-            if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
-            if (msg.type == "object")
-            {
-                if (msg.data != null && msg.data.object_type == "camera" && !logMqttUsers) return;
-                if (!logMqttObjects) return;
-            }
-            if (msg.action == "clientEvent" && !logMqttEvents) return;
-            if (hasPermissions)
-                Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
-            else
-                Debug.LogWarning($"Permissions FAILED {dir}: {JsonConvert.SerializeObject(msg)}");
+            //if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
+            //if (msg.type == "object")
+            //{
+            //    if (msg.data != null && msg.data.object_type == "camera" && !logMqttUsers) return;
+            //    if (!logMqttObjects) return;
+            //}
+            //if (msg.action == "clientEvent" && !logMqttEvents) return;
+            //if (hasPermissions)
+            Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
+            //else
+            //    Debug.LogWarning($"Permissions FAILED {dir}: {JsonConvert.SerializeObject(msg)}");
         }
 
         protected override void OnApplicationQuit()
