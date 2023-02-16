@@ -1,6 +1,6 @@
 {
   "name": "io.conix.arena.unity",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "displayName": "ARENA Library for Unity",
   "description": "Enables control of ARENA assets through Unity.",
   "unity": "2019.4",

@@ -2,6 +2,15 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.7.1](https://github.com/arenaxr/arena-unity/compare/v0.7.0...v0.7.1) (2023-02-16)
+
+
+### Bug Fixes
+
+* **animation-mixer:** avoid AssetDatabase for standalone builds ([8dd27e0](https://github.com/arenaxr/arena-unity/commit/8dd27e0d964033c1ac70f125d5b05b83a4952d91))
+* **animation-mixer:** load clip list at gltf file read ([e0b840d](https://github.com/arenaxr/arena-unity/commit/e0b840d4bd68fd59c5d5f17b3a2a72bf6bd15013))
+* **hand:** fixed dealyed load of controller models ([e3fc715](https://github.com/arenaxr/arena-unity/commit/e3fc715b1ae94daf4e06f663eb5399399849e43f))
+
 ## [0.7.0](https://github.com/arenaxr/arena-unity/compare/v0.6.3...v0.7.0) (2023-02-15)
 
 
