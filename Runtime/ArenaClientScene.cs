@@ -572,7 +572,7 @@ namespace ArenaUnity
                         string assetPath = checkLocalAsset((string)data.url);
                         if (assetPath != null)
                         {
-                            AttachGltf(assetPath, gobj);
+                            AttachGltf(assetPath, gobj, aobj);
                             aobj.gltfUrl = (string)data.url;
                         }
                     }
@@ -765,7 +765,7 @@ namespace ArenaUnity
             }
         }
 
-        private void AttachGltf(string assetPath, GameObject gobj)
+        private void AttachGltf(string assetPath, GameObject gobj, ArenaObject aobj = null)
         {
             if (assetPath == null) return;
             AnimationClip[] clips = null;
@@ -782,7 +782,8 @@ namespace ArenaUnity
             }
             if (mobj != null)
             {
-                AssignAnimations(mobj, clips);
+                if (clips != null && aobj != null)
+                    AssignAnimations(aobj, mobj, clips);
                 mobj.transform.parent = gobj.transform;
                 foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
                 {   // prevent inadvertent editing of gltf elements
@@ -791,17 +792,19 @@ namespace ArenaUnity
             }
         }
 
-        private void AssignAnimations(GameObject mobj, AnimationClip[] clips)
+        private void AssignAnimations(ArenaObject aobj, GameObject mobj, AnimationClip[] clips)
         {
             if (clips != null && clips.Length > 0)
             {
+                aobj.animations = new List<string>();
                 Animation anim = mobj.AddComponent<Animation>();
                 foreach (AnimationClip clip in clips)
                 {
                     clip.legacy = true;
                     anim.AddClip(clip, clip.name);
-                    anim.clip = anim.GetClip(clip.name);
-                    anim.wrapMode = WrapMode.Loop;
+                    //anim.clip = anim.GetClip(clip.name);
+                    //anim.wrapMode = WrapMode.Loop;
+                    aobj.animations.Add(clip.name);
                 }
             }
         }
