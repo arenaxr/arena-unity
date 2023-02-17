@@ -24,7 +24,7 @@ namespace ArenaUnity.Schemas
         public const string defclip = "*";
         public const int defcrossFadeDuration = 0;
         public const LoopType defloop = LoopType.repeat;
-        public const string defrepetitions = null;
+        public const string defrepetitions = "";
         public const float deftimeScale = 1;
         public const bool defclampWhenFinished = false;
         public const int defstartAt = 0;
