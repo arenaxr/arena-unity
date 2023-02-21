@@ -15,19 +15,54 @@ using UnityEngine;
 namespace ArenaUnity.Schemas
 {
     /// <summary>
-    /// A list of available animations can usually be found by inspecting the model file or its documentation. All animations will play by default. To play only a specific set of animations, use wildcards: animation-mixer='clip: run_*'. \n\nMore properties at <a href='https://github.com/n5ro/aframe-extras/tree/master/src/loaders#animation'>https://github.com/n5ro/aframe-extras/tree/master/src/loaders#animation</a>",
+    /// A list of available animations can usually be found by inspecting the model file or its documentation. All animations will play by default. To play only a specific set of animations, use wildcards: animation-mixer='clip: run_*'. More properties at <a href='https://github.com/n5ro/aframe-extras/tree/master/src/loaders#animation'>https://github.com/n5ro/aframe-extras/tree/master/src/loaders#animation</a>
     /// </summary>
     [Serializable]
     public class ArenaAnimationMixerJson
     {
         public const string componentName = "animation-mixer";
-        public const string defclip = "*";
-        public const int defcrossFadeDuration = 0;
-        public const LoopType defloop = LoopType.repeat;
-        public const string defrepetitions = "";
-        public const float deftimeScale = 1;
-        public const bool defclampWhenFinished = false;
-        public const int defstartAt = 0;
+
+        // ArenaAnimationMixerJson Member-fields
+
+        private const bool defClampWhenFinished = false;
+        [JsonProperty(PropertyName = "clampWhenFinished")]
+        [Tooltip("If true, halts the animation at the last frame.")]
+        public bool ClampWhenFinished = defClampWhenFinished;
+        public bool ShouldSerializeClampWhenFinished()
+        {
+            if (_token != null && _token.SelectToken("clampWhenFinished") != null) return true;
+            return (ClampWhenFinished != defClampWhenFinished);
+        }
+
+        private const string defClip = "*";
+        [JsonProperty(PropertyName = "clip")]
+        [Tooltip("Name of the animation clip(s) to play. Accepts wildcards.")]
+        public string Clip = defClip;
+        public bool ShouldSerializeClip()
+        {
+            if (_token != null && _token.SelectToken("clip") != null) return true;
+            return (Clip != defClip);
+        }
+
+        private const float defCrossFadeDuration = 0;
+        [JsonProperty(PropertyName = "crossFadeDuration")]
+        [Tooltip("Duration of cross-fades between clips, in seconds.")]
+        public float CrossFadeDuration = defCrossFadeDuration;
+        public bool ShouldSerializeCrossFadeDuration()
+        {
+            if (_token != null && _token.SelectToken("crossFadeDuration") != null) return true;
+            return (CrossFadeDuration != defCrossFadeDuration);
+        }
+
+        private const float defDuration = 0;
+        [JsonProperty(PropertyName = "duration")]
+        [Tooltip("Duration of the animation, in seconds (0 = auto).")]
+        public float Duration = defDuration;
+        public bool ShouldSerializeDuration()
+        {
+            if (_token != null && _token.SelectToken("duration") != null) return true;
+            return (Duration != defDuration);
+        }
 
         public enum LoopType
         {
@@ -38,67 +73,45 @@ namespace ArenaUnity.Schemas
             [EnumMember(Value = "pingpong")]
             pingpong,
         }
-
-        // ArenaAnimationMixerJson Member-fields
-
-        [Tooltip("Name of the animation clip(s) to play. Accepts wildcards.")]
-        public string clip = defclip;
-        public bool ShouldSerializeclip()
-        {
-            // TODO: operationally the web component appears to require clip to function
-            //if (_token != null && _token.SelectToken("clip") != null) return true;
-            //return (clip != defclip);
-            return true;
-        }
-
-        [Tooltip("Duration of cross-fades between clips, in seconds.")]
-        public int crossFadeDuration = defcrossFadeDuration;
-        public bool ShouldSerializecrossFadeDuration()
-        {
-            if (_token != null && _token.SelectToken("crossFadeDuration") != null) return true;
-            return (crossFadeDuration != defcrossFadeDuration);
-        }
-
-        [Tooltip("once, repeat, or pingpong. In repeat and pingpong modes, the clip plays once plus the specified number of repetitions. For pingpong, every second clip plays in reverse.")]
+        private const LoopType defLoop = LoopType.repeat;
         [JsonConverter(typeof(StringEnumConverter))]
-        public LoopType loop = defloop;
-        public bool ShouldSerializeloop()
+        [JsonProperty(PropertyName = "loop")]
+        [Tooltip("once, repeat, or pingpong. In repeat and pingpong modes, the clip plays once plus the specified number of repetitions. For pingpong, every second clip plays in reverse.")]
+        public LoopType Loop = defLoop;
+        public bool ShouldSerializeLoop()
         {
             if (_token != null && _token.SelectToken("loop") != null) return true;
-            return (loop != defloop);
+            return (Loop != defLoop);
         }
 
-        // TODO: empty to serialize as null
-        [Tooltip("Number of times to play the clip, in addition to the first play. Repetitions are ignored for loop: once.")]
-        public string repetitions = defrepetitions;
-        public bool ShouldSerializerepetitions()
+        private const string defRepetitions = "";
+        [JsonProperty(PropertyName = "repetitions")]
+        [Tooltip("Number of times to play the clip, in addition to the first play (empty string = Infinity). Repetitions are ignored for loop: once.")]
+        public string Repetitions = defRepetitions;
+        public bool ShouldSerializeRepetitions()
         {
             if (_token != null && _token.SelectToken("repetitions") != null) return true;
-            return (repetitions != defrepetitions);
+            return (Repetitions != defRepetitions);
         }
 
-        [Tooltip("Scaling factor for playback speed. A value of 0 causes the animation to pause. Negative values cause the animation to play backwards.")]
-        public float timeScale = deftimeScale;
-        public bool ShouldSerializetimeScale()
-        {
-            if (_token != null && _token.SelectToken("timeScale") != null) return true;
-            return (timeScale != deftimeScale);
-        }
-
-        [Tooltip("If true, halts the animation at the last frame.")]
-        public bool clampWhenFinished = defclampWhenFinished;
-        public bool ShouldSerializeclampWhenFinished()
-        {
-            if (_token != null && _token.SelectToken("clampWhenFinished") != null) return true;
-            return (clampWhenFinished != defclampWhenFinished);
-        }
-
+        private const float defStartAt = 0;
+        [JsonProperty(PropertyName = "startAt")]
         [Tooltip("Sets the start of an animation to a specific time (in milliseconds). This is useful when you need to jump to an exact time in an animation. The input parameter will be scaled by the mixer's timeScale.")]
-        public int startAt = defstartAt;
-        public bool ShouldSerializestartAt()
+        public float StartAt = defStartAt;
+        public bool ShouldSerializeStartAt()
         {
             if (_token != null && _token.SelectToken("startAt") != null) return true;
-            return (startAt != defstartAt);
+            return (StartAt != defStartAt);
+        }
+
+        private const float defTimeScale = 1;
+        [JsonProperty(PropertyName = "timeScale")]
+        [Tooltip("Scaling factor for playback speed. A value of 0 causes the animation to pause. Negative values cause the animation to play backwards.")]
+        public float TimeScale = defTimeScale;
+        public bool ShouldSerializeTimeScale()
+        {
+            if (_token != null && _token.SelectToken("timeScale") != null) return true;
+            return (TimeScale != defTimeScale);
         }
 
         // General json object management
@@ -118,6 +131,5 @@ namespace ArenaUnity.Schemas
             _token = token; // save updated wire json
             return JsonConvert.DeserializeObject<ArenaAnimationMixerJson>(Regex.Unescape(jsonString));
         }
-
     }
 }
