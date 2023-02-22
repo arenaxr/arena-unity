@@ -820,15 +820,15 @@ namespace ArenaUnity
         }
         internal static void ToUnityAnimationMixer(dynamic data, JObject jData, ref GameObject gobj)
         {
-            ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
-            if (am == null)
-                am = gobj.AddComponent<ArenaAnimationMixer>();
             JToken amObj = jData.SelectToken("animation-mixer");
-            if (amObj != null)
+            if (amObj != null && amObj.HasValues)
             {
+                ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
+                if (am == null)
+                    am = gobj.AddComponent<ArenaAnimationMixer>();
                 am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(amObj), amObj);
+                am.apply = true;
             }
-            am.apply = true;
         }
     }
 }

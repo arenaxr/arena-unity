@@ -46,6 +46,7 @@ namespace ArenaUnity
         internal bool isJsonValidated = false;
         internal string gltfUrl = null;
         internal bool meshChanged = false;
+        internal List<string> animations = null; // TODO (mwfarb): ideal localation: ArenaGltfModel component
 
         internal List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
 
@@ -111,7 +112,8 @@ namespace ArenaUnity
 
         void Update()
         {
-            HasPermissions = ArenaClientScene.Instance.sceneObjectRights;
+            if (ArenaClientScene.Instance != null)
+                HasPermissions = ArenaClientScene.Instance.sceneObjectRights;
 
             if (oldName != null && name != oldName)
             {

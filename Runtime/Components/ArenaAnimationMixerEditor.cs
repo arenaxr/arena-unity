@@ -34,22 +34,22 @@ namespace ArenaUnity.Components
             DrawDefaultInspector();
 
             // add any animation buttons
-            if (am.animations != null && am.animations.Count > 0)
+            if (aobj != null && aobj.animations != null && aobj.animations.Count > 0)
             {
                 GUILayout.Space(5f);
                 EditorGUILayout.LabelField("Clips ", EditorStyles.boldLabel);
                 GUILayout.BeginHorizontal("Box");
-                if (GUILayout.Toggle((am.json.clip == "*"), "All"))
+                if (GUILayout.Toggle((am.json.Clip == "*"), "All"))
                 {
-                    am.json.clip = "*";
+                    am.json.Clip = "*";
                 }
                 GUILayout.EndHorizontal();
-                for (int i = 0; i < am.animations.Count; i++)
+                for (int i = 0; i < aobj.animations.Count; i++)
                 {
                     GUILayout.BeginHorizontal("Box");
-                    if (GUILayout.Toggle((am.json.clip == am.animations[i]), $"{i}: {am.animations[i]}"))
+                    if (GUILayout.Toggle((am.json.Clip == aobj.animations[i]), $"{i}: {aobj.animations[i]}"))
                     {
-                        am.json.clip = am.animations[i];
+                        am.json.Clip = aobj.animations[i];
                     }
                     GUILayout.EndHorizontal();
                 }
