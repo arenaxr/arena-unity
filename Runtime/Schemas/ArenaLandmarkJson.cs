@@ -118,7 +118,14 @@ namespace ArenaUnity.Schemas
         public static ArenaLandmarkJson CreateFromJSON(string jsonString, JToken token)
         {
             _token = token; // save updated wire json
-            return JsonConvert.DeserializeObject<ArenaLandmarkJson>(Regex.Unescape(jsonString));
+            ArenaLandmarkJson json = null;
+            try {
+                json = JsonConvert.DeserializeObject<ArenaLandmarkJson>(Regex.Unescape(jsonString));
+            } catch (JsonReaderException e)
+            {
+                Debug.LogWarning($"{e.Message}: {jsonString}");
+            }
+            return json;
         }
     }
 }

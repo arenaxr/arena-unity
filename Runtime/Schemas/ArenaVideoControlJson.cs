@@ -106,7 +106,14 @@ namespace ArenaUnity.Schemas
         public static ArenaVideoControlJson CreateFromJSON(string jsonString, JToken token)
         {
             _token = token; // save updated wire json
-            return JsonConvert.DeserializeObject<ArenaVideoControlJson>(Regex.Unescape(jsonString));
+            ArenaVideoControlJson json = null;
+            try {
+                json = JsonConvert.DeserializeObject<ArenaVideoControlJson>(Regex.Unescape(jsonString));
+            } catch (JsonReaderException e)
+            {
+                Debug.LogWarning($"{e.Message}: {jsonString}");
+            }
+            return json;
         }
     }
 }

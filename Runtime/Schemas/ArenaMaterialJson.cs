@@ -233,7 +233,14 @@ namespace ArenaUnity.Schemas
         public static ArenaMaterialJson CreateFromJSON(string jsonString, JToken token)
         {
             _token = token; // save updated wire json
-            return JsonConvert.DeserializeObject<ArenaMaterialJson>(Regex.Unescape(jsonString));
+            ArenaMaterialJson json = null;
+            try {
+                json = JsonConvert.DeserializeObject<ArenaMaterialJson>(Regex.Unescape(jsonString));
+            } catch (JsonReaderException e)
+            {
+                Debug.LogWarning($"{e.Message}: {jsonString}");
+            }
+            return json;
         }
     }
 }

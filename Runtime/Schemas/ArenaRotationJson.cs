@@ -75,7 +75,14 @@ namespace ArenaUnity.Schemas
         public static ArenaRotationJson CreateFromJSON(string jsonString, JToken token)
         {
             _token = token; // save updated wire json
-            return JsonConvert.DeserializeObject<ArenaRotationJson>(Regex.Unescape(jsonString));
+            ArenaRotationJson json = null;
+            try {
+                json = JsonConvert.DeserializeObject<ArenaRotationJson>(Regex.Unescape(jsonString));
+            } catch (JsonReaderException e)
+            {
+                Debug.LogWarning($"{e.Message}: {jsonString}");
+            }
+            return json;
         }
     }
 }

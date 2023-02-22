@@ -66,7 +66,14 @@ namespace ArenaUnity.Schemas
         public static ArenaScaleJson CreateFromJSON(string jsonString, JToken token)
         {
             _token = token; // save updated wire json
-            return JsonConvert.DeserializeObject<ArenaScaleJson>(Regex.Unescape(jsonString));
+            ArenaScaleJson json = null;
+            try {
+                json = JsonConvert.DeserializeObject<ArenaScaleJson>(Regex.Unescape(jsonString));
+            } catch (JsonReaderException e)
+            {
+                Debug.LogWarning($"{e.Message}: {jsonString}");
+            }
+            return json;
         }
     }
 }

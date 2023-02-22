@@ -111,7 +111,14 @@ namespace ArenaUnity.Schemas
         public static ArenaTextinputJson CreateFromJSON(string jsonString, JToken token)
         {
             _token = token; // save updated wire json
-            return JsonConvert.DeserializeObject<ArenaTextinputJson>(Regex.Unescape(jsonString));
+            ArenaTextinputJson json = null;
+            try {
+                json = JsonConvert.DeserializeObject<ArenaTextinputJson>(Regex.Unescape(jsonString));
+            } catch (JsonReaderException e)
+            {
+                Debug.LogWarning($"{e.Message}: {jsonString}");
+            }
+            return json;
         }
     }
 }

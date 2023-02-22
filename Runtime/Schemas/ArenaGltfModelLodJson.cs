@@ -79,7 +79,14 @@ namespace ArenaUnity.Schemas
         public static ArenaGltfModelLodJson CreateFromJSON(string jsonString, JToken token)
         {
             _token = token; // save updated wire json
-            return JsonConvert.DeserializeObject<ArenaGltfModelLodJson>(Regex.Unescape(jsonString));
+            ArenaGltfModelLodJson json = null;
+            try {
+                json = JsonConvert.DeserializeObject<ArenaGltfModelLodJson>(Regex.Unescape(jsonString));
+            } catch (JsonReaderException e)
+            {
+                Debug.LogWarning($"{e.Message}: {jsonString}");
+            }
+            return json;
         }
     }
 }

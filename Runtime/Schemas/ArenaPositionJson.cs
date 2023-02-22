@@ -66,7 +66,14 @@ namespace ArenaUnity.Schemas
         public static ArenaPositionJson CreateFromJSON(string jsonString, JToken token)
         {
             _token = token; // save updated wire json
-            return JsonConvert.DeserializeObject<ArenaPositionJson>(Regex.Unescape(jsonString));
+            ArenaPositionJson json = null;
+            try {
+                json = JsonConvert.DeserializeObject<ArenaPositionJson>(Regex.Unescape(jsonString));
+            } catch (JsonReaderException e)
+            {
+                Debug.LogWarning($"{e.Message}: {jsonString}");
+            }
+            return json;
         }
     }
 }

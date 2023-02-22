@@ -119,7 +119,14 @@ namespace ArenaUnity.Schemas
         public static ArenaAttributionJson CreateFromJSON(string jsonString, JToken token)
         {
             _token = token; // save updated wire json
-            return JsonConvert.DeserializeObject<ArenaAttributionJson>(Regex.Unescape(jsonString));
+            ArenaAttributionJson json = null;
+            try {
+                json = JsonConvert.DeserializeObject<ArenaAttributionJson>(Regex.Unescape(jsonString));
+            } catch (JsonReaderException e)
+            {
+                Debug.LogWarning($"{e.Message}: {jsonString}");
+            }
+            return json;
         }
     }
 }

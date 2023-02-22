@@ -84,7 +84,14 @@ namespace ArenaUnity.Schemas
         public static ArenaGotoUrlJson CreateFromJSON(string jsonString, JToken token)
         {
             _token = token; // save updated wire json
-            return JsonConvert.DeserializeObject<ArenaGotoUrlJson>(Regex.Unescape(jsonString));
+            ArenaGotoUrlJson json = null;
+            try {
+                json = JsonConvert.DeserializeObject<ArenaGotoUrlJson>(Regex.Unescape(jsonString));
+            } catch (JsonReaderException e)
+            {
+                Debug.LogWarning($"{e.Message}: {jsonString}");
+            }
+            return json;
         }
     }
 }

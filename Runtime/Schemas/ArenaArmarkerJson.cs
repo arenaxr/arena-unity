@@ -136,7 +136,14 @@ namespace ArenaUnity.Schemas
         public static ArenaArmarkerJson CreateFromJSON(string jsonString, JToken token)
         {
             _token = token; // save updated wire json
-            return JsonConvert.DeserializeObject<ArenaArmarkerJson>(Regex.Unescape(jsonString));
+            ArenaArmarkerJson json = null;
+            try {
+                json = JsonConvert.DeserializeObject<ArenaArmarkerJson>(Regex.Unescape(jsonString));
+            } catch (JsonReaderException e)
+            {
+                Debug.LogWarning($"{e.Message}: {jsonString}");
+            }
+            return json;
         }
     }
 }

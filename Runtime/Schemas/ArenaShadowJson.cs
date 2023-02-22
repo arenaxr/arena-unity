@@ -59,7 +59,14 @@ namespace ArenaUnity.Schemas
         public static ArenaShadowJson CreateFromJSON(string jsonString, JToken token)
         {
             _token = token; // save updated wire json
-            return JsonConvert.DeserializeObject<ArenaShadowJson>(Regex.Unescape(jsonString));
+            ArenaShadowJson json = null;
+            try {
+                json = JsonConvert.DeserializeObject<ArenaShadowJson>(Regex.Unescape(jsonString));
+            } catch (JsonReaderException e)
+            {
+                Debug.LogWarning($"{e.Message}: {jsonString}");
+            }
+            return json;
         }
     }
 }

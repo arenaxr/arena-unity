@@ -463,7 +463,14 @@ namespace ArenaUnity.Schemas
         public static ArenaEnvironmentPresetsJson CreateFromJSON(string jsonString, JToken token)
         {
             _token = token; // save updated wire json
-            return JsonConvert.DeserializeObject<ArenaEnvironmentPresetsJson>(Regex.Unescape(jsonString));
+            ArenaEnvironmentPresetsJson json = null;
+            try {
+                json = JsonConvert.DeserializeObject<ArenaEnvironmentPresetsJson>(Regex.Unescape(jsonString));
+            } catch (JsonReaderException e)
+            {
+                Debug.LogWarning($"{e.Message}: {jsonString}");
+            }
+            return json;
         }
     }
 }
