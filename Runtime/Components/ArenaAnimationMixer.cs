@@ -61,42 +61,42 @@ namespace ArenaUnity.Components
             if (anim.isPlaying) anim.Stop();
             anim.cullingType = AnimationCullingType.BasedOnRenderers;
             anim.playAutomatically = true;
-            switch (json.loop.ToString())
+            switch (json.Loop.ToString())
             {
                 default:
                 case "repeat": anim.wrapMode = WrapMode.Loop; break;
                 case "once": anim.wrapMode = WrapMode.Once; break;
                 case "pingpong": anim.wrapMode = WrapMode.PingPong; break;
             }
-            if (json.clampWhenFinished) anim.wrapMode = WrapMode.ClampForever;
+            if (json.ClampWhenFinished) anim.wrapMode = WrapMode.ClampForever;
 
             var aobj = GetComponent<ArenaObject>();
             if (aobj != null)
                 animations = aobj.animations;
 
             // play animations according to clip and wildcard
-            string pattern = @$"{json.clip.Replace("*", @"\w*")}"; // update wildcards for .Net
+            string pattern = @$"{json.Clip.Replace("*", @"\w*")}"; // update wildcards for .Net
             if (animations != null && animations.Count > 0)
             {
                 for (int i = 0; i < animations.Count; i++)
                 {
                     // set each animation on separate layer so all can be played
                     anim[animations[i]].layer = i;
-                    anim[animations[i]].speed = (float)json.timeScale;
-                    anim[animations[i]].time = (float)(json.startAt / 1000);
+                    anim[animations[i]].speed = (float)json.TimeScale;
+                    anim[animations[i]].time = (float)(json.StartAt / 1000);
                     bool includeClip = false;
-                    if (json.clip.Contains("*")) // only use regex for wildcards
+                    if (json.Clip.Contains("*")) // only use regex for wildcards
                     {
                         Match m = Regex.Match(animations[i], pattern);
                         if (m.Success) includeClip = true;
                     }
-                    else if (json.clip == animations[i])
+                    else if (json.Clip == animations[i])
                     {
                         includeClip = true;
                     }
                     if (includeClip)
                     {
-                        float fadeLength = (float)(json.crossFadeDuration);
+                        float fadeLength = (float)(json.CrossFadeDuration);
                         if (fadeLength > 0)
                             anim.CrossFade(animations[i], fadeLength);
                         else
