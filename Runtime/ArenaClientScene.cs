@@ -685,9 +685,17 @@ namespace ArenaUnity
             if (clObj != null)
             {
                 Collider c = gobj.GetComponent<Collider>();
-                if (c == null) c = gobj.AddComponent<MeshCollider>();
-                RaycastClickExample cl = gobj.GetComponent<RaycastClickExample>();
-                if (cl == null) cl = gobj.AddComponent<RaycastClickExample>();
+                if (c == null) {
+                    MeshCollider mc = gobj.AddComponent<MeshCollider>();
+                    MeshFilter mf = gobj.GetComponent<MeshFilter>();
+                    if (mf != null)
+                    {
+                        mc.sharedMesh = null;
+                        mc.sharedMesh = mf.mesh;
+                    }
+                }
+                ArenaClickListener cl = gobj.GetComponent<ArenaClickListener>();
+                if (cl == null) cl = gobj.AddComponent<ArenaClickListener>();
             }
 
             if (aobj != null)
@@ -1030,8 +1038,7 @@ namespace ArenaUnity
                 switch (msg_type)
                 {
                     case "mousedown":
-                        //gobj.GetComponent<OnMouseDownExample>().OnMouseDown();
-                        gobj.GetComponent<RaycastClickExample>().OnMouseDown();
+                        gobj.GetComponent<ArenaClickListener>().ExternalMouseDown(data);
                         break;
                 }
             }
@@ -1039,18 +1046,18 @@ namespace ArenaUnity
 
         private void LogMessage(string dir, dynamic msg, bool hasPermissions = true)
         {
-            // determine logging level
-            //if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
-            //if (msg.type == "object")
-            //{
-            //    if (msg.data != null && msg.data.object_type == "camera" && !logMqttUsers) return;
-            //    if (!logMqttObjects) return;
-            //}
-            //if (msg.action == "clientEvent" && !logMqttEvents) return;
-            //if (hasPermissions)
-            Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
-            //else
-            //    Debug.LogWarning($"Permissions FAILED {dir}: {JsonConvert.SerializeObject(msg)}");
+            //determine logging level
+            if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
+            if (msg.type == "object")
+            {
+                if (msg.data != null && msg.data.object_type == "camera" && !logMqttUsers) return;
+                if (!logMqttObjects) return;
+            }
+            if (msg.action == "clientEvent" && !logMqttEvents) return;
+            if (hasPermissions)
+                Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
+            else
+                Debug.LogWarning($"Permissions FAILED {dir}: {JsonConvert.SerializeObject(msg)}");
         }
 
         protected override void OnApplicationQuit()
