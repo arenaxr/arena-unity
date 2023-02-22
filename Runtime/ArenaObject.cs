@@ -112,7 +112,8 @@ namespace ArenaUnity
 
         void Update()
         {
-            HasPermissions = ArenaClientScene.Instance.sceneObjectRights;
+            if (ArenaClientScene.Instance != null)
+                HasPermissions = ArenaClientScene.Instance.sceneObjectRights;
 
             if (oldName != null && name != oldName)
             {
