@@ -33,8 +33,8 @@ namespace ArenaUnity.Components
         internal List<string> animations = null;
 
         internal bool apply = false;
-
-        private string updatedJson = null;
+        internal bool scriptLoaded = false;
+        internal string updatedJson = null;
 
         protected virtual void Start()
         {
@@ -43,7 +43,14 @@ namespace ArenaUnity.Components
 
         protected void OnValidate()
         {
-            UpdateObject();
+            if (!scriptLoaded)
+            {
+                scriptLoaded = true;
+            }
+            else
+            {   // do not publish update on script load
+                UpdateObject();
+            }
         }
 
         protected void Update()
