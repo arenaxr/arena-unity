@@ -13,6 +13,7 @@ namespace ArenaUnity.Components
     [ExecuteInEditMode]
     [DisallowMultipleComponent]
     [HelpURL("https://docs.arenaxr.org/content/schemas/message/animation-mixer")]
+    [RequireComponent(typeof(ArenaObject))]
     public class ArenaAnimationMixer : MonoBehaviour
     {
         // STATUS
@@ -32,6 +33,8 @@ namespace ArenaUnity.Components
         internal List<string> animations = null;
 
         internal bool apply = false;
+        internal bool scriptLoaded = false;
+        internal string updatedJson = null;
 
         protected virtual void Start()
         {
@@ -40,7 +43,14 @@ namespace ArenaUnity.Components
 
         protected void OnValidate()
         {
-            apply = true;
+            if (!scriptLoaded)
+            {
+                scriptLoaded = true;
+            }
+            else
+            {   // do not publish update on script load
+                UpdateObject();
+            }
         }
 
         protected void Update()
@@ -58,21 +68,24 @@ namespace ArenaUnity.Components
             Animation anim = GetComponentInChildren<Animation>(true);
             if (anim == null) return;
             // set animation mixer properties
-            if (anim.isPlaying) anim.Stop();
-            anim.cullingType = AnimationCullingType.BasedOnRenderers;
-            anim.playAutomatically = true;
-            switch (json.Loop.ToString())
-            {
-                default:
-                case "repeat": anim.wrapMode = WrapMode.Loop; break;
-                case "once": anim.wrapMode = WrapMode.Once; break;
-                case "pingpong": anim.wrapMode = WrapMode.PingPong; break;
-            }
-            if (json.ClampWhenFinished) anim.wrapMode = WrapMode.ClampForever;
+            anim.Stop();
+            anim.cullingType = AnimationCullingType.AlwaysAnimate;
+            anim.playAutomatically = false;
 
             var aobj = GetComponent<ArenaObject>();
             if (aobj != null)
                 animations = aobj.animations;
+            if (animations.Count > 0) anim.clip = anim[animations[0]].clip;
+
+            if (json == null) return;
+            switch (json.Loop)
+            {
+                default:
+                case ArenaAnimationMixerJson.LoopType.Repeat: anim.wrapMode = WrapMode.Loop; break;
+                case ArenaAnimationMixerJson.LoopType.Once: anim.wrapMode = WrapMode.Once; break;
+                case ArenaAnimationMixerJson.LoopType.Pingpong: anim.wrapMode = WrapMode.PingPong; break;
+            }
+            if (json.ClampWhenFinished) anim.wrapMode = WrapMode.ClampForever;
 
             // play animations according to clip and wildcard
             string pattern = @$"{json.Clip.Replace("*", @"\w*")}"; // update wildcards for .Net
@@ -108,12 +121,17 @@ namespace ArenaUnity.Components
 
         internal void UpdateObject()
         {
-            var aobj = GetComponent<ArenaObject>();
-            if (aobj != null)
+            var newJson = json.SaveToString();
+            if (updatedJson != newJson)
             {
-                aobj.PublishUpdate($"{{\"{ArenaAnimationMixerJson.componentName}\":{json.SaveToString()}}}");
-                apply = true;
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null)
+                {
+                    aobj.PublishUpdate($"{{\"{ArenaAnimationMixerJson.componentName}\":{newJson}}}");
+                    apply = true;
+                }
             }
+            updatedJson = newJson;
         }
     }
 }
