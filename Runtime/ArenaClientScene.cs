@@ -681,6 +681,8 @@ namespace ArenaUnity
             {
                 ArenaUnity.ToUnityAnimationMixer(data, jData, ref gobj);
             }
+
+            // data.click-listener
             JToken clObj = jData.SelectToken("click-listener");
             if (clObj != null)
             {
@@ -690,8 +692,20 @@ namespace ArenaUnity
                     MeshFilter mf = gobj.GetComponent<MeshFilter>();
                     if (mf != null)
                     {
-                        mc.sharedMesh = null;
+                        //mc.sharedMesh = mf.sharedMesh;
                         mc.sharedMesh = mf.mesh;
+                    }
+                    else
+                    {
+                        //SkinnedMeshRenderer smr = gobj.GetComponentInChildren<SkinnedMeshRenderer>();
+                        //if (smr != null)
+                        //{
+                        //    mc = smr.gameObject.AddComponent<MeshCollider>();
+                        //    if (mc != null)
+                        //    {
+                        //        mc.sharedMesh = smr.sharedMesh;
+                        //    }
+                        //}
                     }
                 }
                 ArenaClickListener cl = gobj.GetComponent<ArenaClickListener>();
@@ -1046,7 +1060,7 @@ namespace ArenaUnity
 
         private void LogMessage(string dir, dynamic msg, bool hasPermissions = true)
         {
-            //determine logging level
+            // determine logging level
             if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
             if (msg.type == "object")
             {
