@@ -3,9 +3,9 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
-using ArenaUnity.Schemas;
+using System.Dynamic;
+using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Networking.Types;
 
 namespace ArenaUnity.Components
 {
@@ -28,6 +28,7 @@ namespace ArenaUnity.Components
             _renderer = GetComponent<Renderer>();
         }
 
+
         //private void Update()
         //{
         //    if (Input.GetMouseButtonDown(0))
@@ -42,41 +43,55 @@ namespace ArenaUnity.Components
         //        {
         //            if (_hit.transform == transform)
         //            {
-        //                Debug.Log($"Local Click {name} (Raycast)!");
-        //                ChangeColorAndPublish();
+        //                Debug.Log($"Local Click {name} (Raycast MouseDown)!");
+        //                MyMouseDown();
         //            }
         //        }
         //    }
         //}
 
-        internal void OnMouseDown()
+        internal void OnMouseDown(UnityEngine.UIElements.MouseDownEvent evt)
         {
             Debug.Log($"Local Click {name} (OnMouseDown)!");
-            ChangeColorAndPublish();
+            Vector3 rayPosition = _mainCamera.ScreenToWorldPoint(evt.mousePosition);
+            Vector3 camPosition = _mainCamera.transform.localPosition;
+            string camName = _mainCamera.name;
+            PublishMouseEvent("mousedown", rayPosition, camPosition, camName);
+            MyMouseDown();
         }
-
         internal void OnMouseUp()
         {
             Debug.Log($"Local Click {name} (OnMouseUp)!");
         }
-
         internal void OnMouseOver()
         {
             Debug.Log($"Local Click {name} (OnMouseOver)!");
         }
-
         internal void OnMouseExit()
         {
             Debug.Log($"Local Click {name} (OnMouseExit)!");
         }
 
+        //{"object_id":"box","action":"clientEvent","type":"mousedown","data":{"clickPos":{"x":-2.87,"y":1.6,"z":6.225},"position":{"x":-0.195,"y":0.305,"z":1.913},"source":"camera_2418540601_mwfarb"},"timestamp":"2023-02-15T18:59:02.413Z"}
         internal void ExternalMouseDown(dynamic data)
         {
-            Debug.Log($"Remote Click {name}!");
-            ChangeColorAndPublish();
+            Debug.Log($"Remote Click {name} (OnMouseDown)!");
+            MyMouseDown();
+        }
+        internal void ExternalMouseUp(dynamic data)
+        {
+            Debug.Log($"Remote Click {name} (OnMouseUp)!");
+        }
+        internal void ExternalMouseOver(dynamic data)
+        {
+            Debug.Log($"Remote Click {name} (OnMouseOver)!");
+        }
+        internal void ExternalMouseExit(dynamic data)
+        {
+            Debug.Log($"Remote Click {name} (OnMouseExit)!");
         }
 
-        private void ChangeColorAndPublish()
+        private void MyMouseDown()
         {
             if (_renderer)
             {
@@ -86,6 +101,16 @@ namespace ArenaUnity.Components
 
             var aobj = GetComponent<ArenaObject>();
             if (aobj != null) aobj.PublishCreateUpdate();
+        }
+
+        internal void PublishMouseEvent(string eventType, Vector3 rayPosition, Vector3 camPosition, string camName)
+        {
+            dynamic data = new ExpandoObject();
+            data.clickPos = ArenaUnity.ToArenaPosition(rayPosition);
+            data.position = ArenaUnity.ToArenaPosition(camPosition);
+            data.source = camName;
+
+            ArenaClientScene.Instance.PublishEvent(name, eventType, JsonConvert.DeserializeObject(data)); // remote
         }
 
     }

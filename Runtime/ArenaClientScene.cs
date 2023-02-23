@@ -1023,13 +1023,21 @@ namespace ArenaUnity
 
         private void ClientEventOnObject(string object_id, string msg_type, dynamic data)
         {
-            //{"object_id":"box","action":"clientEvent","type":"mousedown","data":{"clickPos":{"x":-2.87,"y":1.6,"z":6.225},"position":{"x":-0.195,"y":0.305,"z":1.913},"source":"camera_2418540601_mwfarb"},"timestamp":"2023-02-15T18:59:02.413Z"}
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
             {
                 switch (msg_type)
                 {
                     case "mousedown":
                         gobj.GetComponent<ArenaClickListener>().ExternalMouseDown(data);
+                        break;
+                    case "mouseup":
+                        gobj.GetComponent<ArenaClickListener>().ExternalMouseUp(data);
+                        break;
+                    case "mouseenter":
+                        gobj.GetComponent<ArenaClickListener>().ExternalMouseOver(data);
+                        break;
+                    case "mouseleave":
+                        gobj.GetComponent<ArenaClickListener>().ExternalMouseExit(data);
                         break;
                 }
             }
