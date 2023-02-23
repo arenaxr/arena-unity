@@ -678,7 +678,7 @@ namespace ArenaUnity
             JToken amObj = jData.SelectToken("animation-mixer");
             if (amObj != null)
             {
-                ArenaUnity.ToUnityAnimationMixer(data, jData, ref gobj);
+                ArenaUnity.ToUnityAnimationMixer(jData, ref gobj);
             }
 
             if (aobj != null)

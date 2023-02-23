@@ -22,14 +22,6 @@ namespace ArenaUnity.Components
             var aobj = am.GetComponent<ArenaObject>();
             if (aobj != null)
                 GUI.enabled = aobj.HasPermissions;
-            if (am.json != null)
-            {
-                if (GUILayout.Button($"Publish {ArenaAnimationMixerJson.componentName}"))
-                {
-                    am.UpdateObject();
-                }
-            }
-            GUI.enabled = true;
 
             DrawDefaultInspector();
 
@@ -42,6 +34,7 @@ namespace ArenaUnity.Components
                 if (GUILayout.Toggle((am.json.Clip == "*"), "All"))
                 {
                     am.json.Clip = "*";
+                    if (am.json != null) am.UpdateObject();
                 }
                 GUILayout.EndHorizontal();
                 for (int i = 0; i < aobj.animations.Count; i++)
@@ -50,11 +43,13 @@ namespace ArenaUnity.Components
                     if (GUILayout.Toggle((am.json.Clip == aobj.animations[i]), $"{i}: {aobj.animations[i]}"))
                     {
                         am.json.Clip = aobj.animations[i];
+                        if (am.json != null) am.UpdateObject();
                     }
                     GUILayout.EndHorizontal();
                 }
             }
 
+            GUI.enabled = true;
         }
     }
 #endif
