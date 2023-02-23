@@ -686,30 +686,7 @@ namespace ArenaUnity
             JToken clObj = jData.SelectToken("click-listener");
             if (clObj != null)
             {
-                Collider c = gobj.GetComponent<Collider>();
-                if (c == null) {
-                    MeshCollider mc = gobj.AddComponent<MeshCollider>();
-                    MeshFilter mf = gobj.GetComponent<MeshFilter>();
-                    if (mf != null)
-                    {
-                        //mc.sharedMesh = mf.sharedMesh;
-                        mc.sharedMesh = mf.mesh;
-                    }
-                    else
-                    {
-                        //SkinnedMeshRenderer smr = gobj.GetComponentInChildren<SkinnedMeshRenderer>();
-                        //if (smr != null)
-                        //{
-                        //    mc = smr.gameObject.AddComponent<MeshCollider>();
-                        //    if (mc != null)
-                        //    {
-                        //        mc.sharedMesh = smr.sharedMesh;
-                        //    }
-                        //}
-                    }
-                }
-                ArenaClickListener cl = gobj.GetComponent<ArenaClickListener>();
-                if (cl == null) cl = gobj.AddComponent<ArenaClickListener>();
+                ArenaUnity.ToUnityClickListener(ref gobj);
             }
 
             if (aobj != null)

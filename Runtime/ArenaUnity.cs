@@ -816,7 +816,7 @@ namespace ArenaUnity
         internal static void ToArenaAnimationMixer(GameObject gobj, ref JObject jData)
         {
             ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
-            jData["animation-mixer"] = am.json.SaveToString();
+            jData["animation-mixer"] = am.json.ToString();
         }
         internal static void ToUnityAnimationMixer(JObject jData, ref GameObject gobj)
         {
@@ -826,9 +826,44 @@ namespace ArenaUnity
                 ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
                 if (am == null)
                     am = gobj.AddComponent<ArenaAnimationMixer>();
-                am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(amObj), amObj);
+                am.json = ArenaAnimationMixerJson.CreateFromJSON(amObj.ToString(), amObj);
                 am.apply = true;
             }
+        }
+        // click-listener
+        internal static void ToArenaClickListener(GameObject gobj, ref JObject jData)
+        {
+            ArenaClickListener am = gobj.GetComponent<ArenaClickListener>();
+            jData["click-listener"] = true;
+        }
+        internal static void ToUnityClickListener(ref GameObject gobj)
+        {
+            Collider c = gobj.GetComponent<Collider>();
+            if (c == null)
+            {
+                MeshCollider mc = gobj.AddComponent<MeshCollider>();
+                MeshFilter mf = gobj.GetComponent<MeshFilter>();
+                if (mf != null)
+                {
+                    //mc.sharedMesh = mf.sharedMesh;
+                    mc.sharedMesh = mf.mesh;
+                }
+                else
+                {
+                    SkinnedMeshRenderer smr = gobj.GetComponentInChildren<SkinnedMeshRenderer>();
+                    if (smr != null)
+                    {
+                        //mc = smr.transform.parent.gameObject.AddComponent<MeshCollider>();
+                        mc = gobj.AddComponent<MeshCollider>();
+                        if (mc != null)
+                        {
+                            mc.sharedMesh = smr.sharedMesh;
+                        }
+                    }
+                }
+            }
+            ArenaClickListener cl = gobj.GetComponent<ArenaClickListener>();
+            if (cl == null) cl = gobj.AddComponent<ArenaClickListener>();
         }
     }
 }

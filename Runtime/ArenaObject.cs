@@ -213,6 +213,8 @@ namespace ArenaUnity
             // TODO: temp location until JObject completely replaces dynamic object
             if (GetComponent<ArenaAnimationMixer>())
                 ArenaUnity.ToArenaAnimationMixer(gameObject, ref updatedData);
+            if (GetComponent<ArenaClickListener>())
+                ArenaUnity.ToArenaClickListener(gameObject, ref updatedData);
 
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
 
