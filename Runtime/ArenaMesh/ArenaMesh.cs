@@ -29,7 +29,7 @@ namespace ArenaUnity
                 scriptLoaded = true;
             }
             else
-            {   // do not publish mesh update on sciript load
+            {   // do not publish mesh update on script load
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null) aobj.meshChanged = true;
             }
