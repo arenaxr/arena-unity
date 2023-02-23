@@ -20,23 +20,17 @@ public class ArenaClickListener : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("Input.mousePosition " + Input.mousePosition.ToString());
-
             //_ray = new Ray(
             //_mainCamera.ScreenToWorldPoint(Input.mousePosition),
             //_mainCamera.transform.forward);
             // or:
             _ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
-            Debug.Log("_ray " + _ray.ToString());
-
             if (Physics.Raycast(_ray, out _hit))
             {
-                Debug.Log("_hit " + _hit.ToString());
-
                 if (_hit.transform == transform)
                 {
-                    Debug.Log("Local Click (Raycast)!");
+                    Debug.Log($"Local Click {name} (Raycast)!");
                     ChangeColorAndPublish();
                 }
             }
@@ -45,20 +39,23 @@ public class ArenaClickListener : MonoBehaviour
 
     internal void OnMouseDown()
     {
-        Debug.Log("Local Click (OnMouseDown)!");
+        Debug.Log($"Local Click {name} (OnMouseDown)!");
         ChangeColorAndPublish();
     }
 
     internal void ExternalMouseDown(dynamic data)
     {
-        Debug.Log("Remote Click!");
+        Debug.Log($"Remote Click {name}!");
         ChangeColorAndPublish();
     }
 
     private void ChangeColorAndPublish()
     {
-        _renderer.material.color =
-            _renderer.material.color == Color.red ? Color.blue : Color.red;
+        if (_renderer)
+        {
+            _renderer.material.color =
+                _renderer.material.color == Color.red ? Color.blue : Color.red;
+        }
 
         var aobj = GetComponent<ArenaObject>();
         if (aobj != null) aobj.PublishCreateUpdate();
