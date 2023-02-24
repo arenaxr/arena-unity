@@ -906,7 +906,7 @@ namespace ArenaUnity
         public void PublishEvent(string object_id, string eventType, string msgJsonData, bool hasPermissions = true)
         {
             dynamic msg = new ExpandoObject();
-            msg.object_id = camid;
+            msg.object_id = object_id;
             msg.action = "clientEvent";
             msg.type = eventType;
             msg.data = JsonConvert.DeserializeObject(msgJsonData);

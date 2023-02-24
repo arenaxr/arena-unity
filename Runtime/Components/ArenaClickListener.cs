@@ -113,7 +113,6 @@ namespace ArenaUnity.Components
             data.position = ArenaUnity.ToArenaPosition(camPosition);
             data.source = camName;
             string payload = JsonConvert.SerializeObject(data);
-            Debug.Log(payload) ;
 
             ArenaClientScene.Instance.PublishEvent(name, eventType, payload); // remote
         }

@@ -816,7 +816,7 @@ namespace ArenaUnity
         internal static void ToArenaAnimationMixer(GameObject gobj, ref JObject jData)
         {
             ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
-            jData["animation-mixer"] = am.json.ToString();
+            jData["animation-mixer"] = am.json.SaveToString();
         }
         internal static void ToUnityAnimationMixer(JObject jData, ref GameObject gobj)
         {
