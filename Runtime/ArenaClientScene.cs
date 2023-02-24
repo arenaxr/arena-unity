@@ -916,6 +916,7 @@ namespace ArenaUnity
 
         private void PublishSceneMessage(string topic, string msg, bool hasPermissions)
         {
+            Debug.Log(msg);
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
             Publish(topic, payload);
             LogMessage("Sending", JsonConvert.DeserializeObject(msg), hasPermissions);
@@ -1034,7 +1035,7 @@ namespace ArenaUnity
                         gobj.GetComponent<ArenaClickListener>().ExternalMouseUp(data);
                         break;
                     case "mouseenter":
-                        gobj.GetComponent<ArenaClickListener>().ExternalMouseOver(data);
+                        gobj.GetComponent<ArenaClickListener>().ExternalMouseEnter(data);
                         break;
                     case "mouseleave":
                         gobj.GetComponent<ArenaClickListener>().ExternalMouseExit(data);

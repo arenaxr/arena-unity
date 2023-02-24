@@ -5,6 +5,7 @@
 
 using System.Dynamic;
 using Newtonsoft.Json;
+using UnityEditor;
 using UnityEngine;
 
 namespace ArenaUnity.Components
@@ -16,7 +17,6 @@ namespace ArenaUnity.Components
     public class ArenaClickListener : MonoBehaviour
     {
         private Camera _mainCamera;
-
         private Renderer _renderer;
 
         private Ray _ray;
@@ -27,7 +27,6 @@ namespace ArenaUnity.Components
             _mainCamera = Camera.main;
             _renderer = GetComponent<Renderer>();
         }
-
 
         //private void Update()
         //{
@@ -50,26 +49,22 @@ namespace ArenaUnity.Components
         //    }
         //}
 
-        internal void OnMouseDown(UnityEngine.UIElements.MouseDownEvent evt)
+        internal void OnMouseDown()
         {
-            Debug.Log($"Local Click {name} (OnMouseDown)!");
-            Vector3 rayPosition = _mainCamera.ScreenToWorldPoint(evt.mousePosition);
-            Vector3 camPosition = _mainCamera.transform.localPosition;
-            string camName = _mainCamera.name;
-            PublishMouseEvent("mousedown", rayPosition, camPosition, camName);
+            PublishMouseEvent("mousedown");
             MyMouseDown();
         }
         internal void OnMouseUp()
         {
-            Debug.Log($"Local Click {name} (OnMouseUp)!");
+            PublishMouseEvent("mouseup");
         }
-        internal void OnMouseOver()
+        internal void OnMouseEnter()
         {
-            Debug.Log($"Local Click {name} (OnMouseOver)!");
+            PublishMouseEvent("mouseenter");
         }
         internal void OnMouseExit()
         {
-            Debug.Log($"Local Click {name} (OnMouseExit)!");
+            PublishMouseEvent("mouseleave");
         }
 
         //{"object_id":"box","action":"clientEvent","type":"mousedown","data":{"clickPos":{"x":-2.87,"y":1.6,"z":6.225},"position":{"x":-0.195,"y":0.305,"z":1.913},"source":"camera_2418540601_mwfarb"},"timestamp":"2023-02-15T18:59:02.413Z"}
@@ -82,9 +77,9 @@ namespace ArenaUnity.Components
         {
             Debug.Log($"Remote Click {name} (OnMouseUp)!");
         }
-        internal void ExternalMouseOver(dynamic data)
+        internal void ExternalMouseEnter(dynamic data)
         {
-            Debug.Log($"Remote Click {name} (OnMouseOver)!");
+            Debug.Log($"Remote Click {name} (OnMouseEnter)!");
         }
         internal void ExternalMouseExit(dynamic data)
         {
@@ -103,14 +98,24 @@ namespace ArenaUnity.Components
             if (aobj != null) aobj.PublishCreateUpdate();
         }
 
-        internal void PublishMouseEvent(string eventType, Vector3 rayPosition, Vector3 camPosition, string camName)
+        internal void PublishMouseEvent(string eventType)
         {
+            Debug.Log($"Local Click {name} ({eventType})!");
+
+            _ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+            Physics.Raycast(_ray, out _hit);
+
+            Vector3 camPosition = _mainCamera.transform.localPosition;
+            string camName = _mainCamera.name;
+
             dynamic data = new ExpandoObject();
-            data.clickPos = ArenaUnity.ToArenaPosition(rayPosition);
+            data.clickPos = ArenaUnity.ToArenaPosition(_hit.point);
             data.position = ArenaUnity.ToArenaPosition(camPosition);
             data.source = camName;
+            string payload = JsonConvert.SerializeObject(data);
+            Debug.Log(payload) ;
 
-            ArenaClientScene.Instance.PublishEvent(name, eventType, JsonConvert.DeserializeObject(data)); // remote
+            ArenaClientScene.Instance.PublishEvent(name, eventType, payload); // remote
         }
 
     }
