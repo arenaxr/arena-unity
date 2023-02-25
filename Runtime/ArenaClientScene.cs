@@ -676,6 +676,7 @@ namespace ArenaUnity
                 AttachMaterialTexture(checkLocalAsset((string)data.material.src), gobj);
 
             // data.animation-mixer
+            Debug.Log("should be no change; " + jData.ToString(Formatting.Indented));
             JToken amObj = jData.SelectToken("animation-mixer");
             if (amObj != null)
             {
