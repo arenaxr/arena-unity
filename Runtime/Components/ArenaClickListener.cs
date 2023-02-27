@@ -16,19 +16,19 @@ namespace ArenaUnity.Components
     public class ArenaClickListener : MonoBehaviour
     {
         private Camera _mainCamera;
-        private Renderer _renderer;
 
         private Ray _ray;
         private RaycastHit _hit;
 
         private bool meshAvailable = false;
 
+        public delegate void ClientEventMessageDelegate(string event_type, dynamic data);
+        public ClientEventMessageDelegate OnEventCallback = null; // null, until library user instantiates.
+
         private void Start()
         {
             _mainCamera = Camera.main;
-            _renderer = GetComponent<Renderer>();
         }
-
 
         private void Update()
         {
@@ -64,7 +64,6 @@ namespace ArenaUnity.Components
         internal void OnMouseDown()
         {
             PublishMouseEvent("mousedown");
-            //MyMouseDown();
         }
         internal void OnMouseUp()
         {
@@ -80,64 +79,6 @@ namespace ArenaUnity.Components
         }
 
         //{"object_id":"box","action":"clientEvent","type":"mousedown","data":{"clickPos":{"x":-2.87,"y":1.6,"z":6.225},"position":{"x":-0.195,"y":0.305,"z":1.913},"source":"camera_2418540601_mwfarb"},"timestamp":"2023-02-15T18:59:02.413Z"}
-        internal void ExternalMouseDown(dynamic data)
-        {
-            Debug.Log($"Remote Click {name} (OnMouseDown)!");
-            MyMouseDown(data);
-        }
-        internal void ExternalMouseUp(dynamic data)
-        {
-            Debug.Log($"Remote Click {name} (OnMouseUp)!");
-        }
-        internal void ExternalMouseEnter(dynamic data)
-        {
-            Debug.Log($"Remote Click {name} (OnMouseEnter)!");
-        }
-        internal void ExternalMouseExit(dynamic data)
-        {
-            Debug.Log($"Remote Click {name} (OnMouseExit)!");
-        }
-
-        private void MyMouseDown(dynamic data)
-        {
-            //color
-            if (_renderer)
-            {
-                _renderer.material.color =
-                    _renderer.material.color == Color.red ? Color.blue : Color.red;
-            }
-            var aobj = GetComponent<ArenaObject>();
-            if (aobj != null) aobj.PublishCreateUpdate();
-
-            //laser
-            string line_id = $"line-{UnityEngine.Random.Range(0, 100000000)}";
-            dynamic msg = new ExpandoObject();
-            msg.object_id = line_id;
-            msg.action = "update";
-            msg.type = "object";
-            msg.ttl = 1;
-            msg.data = new ExpandoObject();
-            msg.data.object_type = "thickline";
-            string start = ArenaUnity.ToArenaPositionString(new Vector3(
-                (float)data.clickPos.x,
-                (float)data.clickPos.y,
-                (float)data.clickPos.z
-            ));
-            string end = ArenaUnity.ToArenaPositionString(new Vector3(
-                (float)data.position.x,
-                (float)data.position.y - .1f,
-                (float)data.position.z
-            ));
-            msg.data.path = $"{start},{end}";
-            msg.data.color = ArenaUnity.ToArenaColor(new Color32(255, 0, 0, 255));
-            msg.data.lineWidth = 5;
-
-            string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload, aobj.HasPermissions); // remote
-            ArenaClientScene.Instance.ProcessMessage(payload); // local
-
-        }
-
         internal void PublishMouseEvent(string eventType)
         {
             Debug.Log($"Local Click {name} ({eventType})!");

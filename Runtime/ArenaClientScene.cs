@@ -70,10 +70,12 @@ namespace ArenaUnity
         /// </summary>
         public string sceneUrl { get; private set; }
 
-        internal bool sceneObjectRights { get; private set; }
+        internal bool sceneObjectRights { get; private set; } = false;
+
+        public bool persistLoaded { get; private set; } = false;
 
         private string sceneTopic = null;
-        internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
+        public Dictionary<string, GameObject> arenaObjs { get; private set; } = new Dictionary<string, GameObject>();
         internal Dictionary<string, GameObject> childObjs = new Dictionary<string, GameObject>();
         internal List<string> pendingDelete = new List<string>();
         internal List<string> downloadQueue = new List<string>();
@@ -314,7 +316,7 @@ namespace ArenaUnity
                 string msg_type = (string)msg.type;
                 float ttl = isElement(msg.ttl) ? (float)msg.ttl : 0f;
 
-                if (!arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
+                if (arenaObjs != null && !arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
                 {
                     // there isnt already an object in the scene created by the user with the same object_id
                     if (GameObject.Find((string)(msg.object_id)) == null)
@@ -333,6 +335,7 @@ namespace ArenaUnity
                 }
                 objects_num++;
             }
+            persistLoaded = true;
         }
 
         private static IEnumerable<string> ExtractAssetUris(dynamic data, string[] urlTags)
@@ -1025,21 +1028,9 @@ namespace ArenaUnity
         {
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
             {
-                switch (msg_type)
-                {
-                    case "mousedown":
-                        gobj.GetComponent<ArenaClickListener>().ExternalMouseDown(data);
-                        break;
-                    case "mouseup":
-                        gobj.GetComponent<ArenaClickListener>().ExternalMouseUp(data);
-                        break;
-                    case "mouseenter":
-                        gobj.GetComponent<ArenaClickListener>().ExternalMouseEnter(data);
-                        break;
-                    case "mouseleave":
-                        gobj.GetComponent<ArenaClickListener>().ExternalMouseExit(data);
-                        break;
-                }
+                // pass event on to click-listener is defined
+                ArenaClickListener acl = gobj.GetComponent<ArenaClickListener>();
+                if (acl != null && acl.OnEventCallback != null) acl.OnEventCallback(msg_type, data);
             }
         }
 
