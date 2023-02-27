@@ -22,37 +22,68 @@ namespace ArenaUnity.Components
         private Ray _ray;
         private RaycastHit _hit;
 
+        private bool meshAvailable = false;
+
         private void Start()
         {
             _mainCamera = Camera.main;
             _renderer = GetComponent<Renderer>();
         }
 
-        //private void Update()
-        //{
-        //    if (Input.GetMouseButtonDown(0))
-        //    {
-        //        //_ray = new Ray(
-        //        //_mainCamera.ScreenToWorldPoint(Input.mousePosition),
-        //        //_mainCamera.transform.forward);
-        //        // or:
-        //        _ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
-        //        if (Physics.Raycast(_ray, out _hit))
-        //        {
-        //            if (_hit.transform == transform)
-        //            {
-        //                Debug.Log($"Local Click {name} (Raycast MouseDown)!");
-        //                MyMouseDown();
-        //            }
-        //        }
-        //    }
-        //}
+        private void Update()
+        {
+            if (!meshAvailable)
+            {
+                MeshCollider mc = GetComponent<MeshCollider>();
+                if (mc == null) mc = gameObject.AddComponent<MeshCollider>();
+
+                MeshFilter mf = GetComponent<MeshFilter>();
+                if (mf != null)
+                {
+                    //mf.mesh.RecalculateBounds();
+                    mc.sharedMesh = mf.mesh;
+                    meshAvailable = true;
+                }
+                else
+                {
+                    SkinnedMeshRenderer smr = GetComponentInChildren<SkinnedMeshRenderer>();
+                    if (smr != null)
+                    {
+                        //mc = smr.transform.parent.gameObject.AddComponent<MeshCollider>();
+                        mc = gameObject.AddComponent<MeshCollider>();
+                        if (mc != null)
+                        {
+                            mc.sharedMesh = smr.sharedMesh;
+                            meshAvailable = true;
+                        }
+                    }
+                }
+            }
+
+            //    if (Input.GetMouseButtonDown(0))
+            //    {
+            //        //_ray = new Ray(
+            //        //_mainCamera.ScreenToWorldPoint(Input.mousePosition),
+            //        //_mainCamera.transform.forward);
+            //        // or:
+            //        _ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+
+            //        if (Physics.Raycast(_ray, out _hit))
+            //        {
+            //            if (_hit.transform == transform)
+            //            {
+            //                Debug.Log($"Local Click {name} (Raycast MouseDown)!");
+            //                MyMouseDown();
+            //            }
+            //        }
+            //    }
+        }
 
         internal void OnMouseDown()
         {
             PublishMouseEvent("mousedown");
-            MyMouseDown();
+            //MyMouseDown();
         }
         internal void OnMouseUp()
         {

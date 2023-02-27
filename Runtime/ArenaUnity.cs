@@ -838,30 +838,6 @@ namespace ArenaUnity
         }
         internal static void ToUnityClickListener(ref GameObject gobj)
         {
-            Collider c = gobj.GetComponent<Collider>();
-            if (c == null)
-            {
-                MeshCollider mc = gobj.AddComponent<MeshCollider>();
-                MeshFilter mf = gobj.GetComponent<MeshFilter>();
-                if (mf != null)
-                {
-                    //mc.sharedMesh = mf.sharedMesh;
-                    mc.sharedMesh = mf.mesh;
-                }
-                else
-                {
-                    SkinnedMeshRenderer smr = gobj.GetComponentInChildren<SkinnedMeshRenderer>();
-                    if (smr != null)
-                    {
-                        //mc = smr.transform.parent.gameObject.AddComponent<MeshCollider>();
-                        mc = gobj.AddComponent<MeshCollider>();
-                        if (mc != null)
-                        {
-                            mc.sharedMesh = smr.sharedMesh;
-                        }
-                    }
-                }
-            }
             ArenaClickListener cl = gobj.GetComponent<ArenaClickListener>();
             if (cl == null) cl = gobj.AddComponent<ArenaClickListener>();
         }
