@@ -285,11 +285,11 @@ namespace ArenaUnity
         }
 
         // position
-        private static string ToArenaPositionString(Vector3 position)
+        public static string ToArenaPositionString(Vector3 position)
         {
             return $"{ArenaFloat(position.x)} {ArenaFloat(position.y)} {ArenaFloat(-position.z)}";
         }
-        private static Vector3 ToUnityPositionString(string strPos)
+        public static Vector3 ToUnityPositionString(string strPos)
         {
             string[] axis = strPos.Split(new char[] { ' ' }, 3, StringSplitOptions.RemoveEmptyEntries);
             return new Vector3(

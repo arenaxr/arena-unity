@@ -5,7 +5,6 @@
 
 using System.Dynamic;
 using Newtonsoft.Json;
-using UnityEditor;
 using UnityEngine;
 
 namespace ArenaUnity.Components
@@ -60,24 +59,6 @@ namespace ArenaUnity.Components
                     }
                 }
             }
-
-            //    if (Input.GetMouseButtonDown(0))
-            //    {
-            //        //_ray = new Ray(
-            //        //_mainCamera.ScreenToWorldPoint(Input.mousePosition),
-            //        //_mainCamera.transform.forward);
-            //        // or:
-            //        _ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-
-            //        if (Physics.Raycast(_ray, out _hit))
-            //        {
-            //            if (_hit.transform == transform)
-            //            {
-            //                Debug.Log($"Local Click {name} (Raycast MouseDown)!");
-            //                MyMouseDown();
-            //            }
-            //        }
-            //    }
         }
 
         internal void OnMouseDown()
@@ -102,7 +83,7 @@ namespace ArenaUnity.Components
         internal void ExternalMouseDown(dynamic data)
         {
             Debug.Log($"Remote Click {name} (OnMouseDown)!");
-            MyMouseDown();
+            MyMouseDown(data);
         }
         internal void ExternalMouseUp(dynamic data)
         {
@@ -117,16 +98,44 @@ namespace ArenaUnity.Components
             Debug.Log($"Remote Click {name} (OnMouseExit)!");
         }
 
-        private void MyMouseDown()
+        private void MyMouseDown(dynamic data)
         {
+            //color
             if (_renderer)
             {
                 _renderer.material.color =
                     _renderer.material.color == Color.red ? Color.blue : Color.red;
             }
-
             var aobj = GetComponent<ArenaObject>();
             if (aobj != null) aobj.PublishCreateUpdate();
+
+            //laser
+            string line_id = $"line-{UnityEngine.Random.Range(0, 100000000)}";
+            dynamic msg = new ExpandoObject();
+            msg.object_id = line_id;
+            msg.action = "update";
+            msg.type = "object";
+            msg.ttl = 1;
+            msg.data = new ExpandoObject();
+            msg.data.object_type = "thickline";
+            string start = ArenaUnity.ToArenaPositionString(new Vector3(
+                (float)data.clickPos.x,
+                (float)data.clickPos.y,
+                (float)data.clickPos.z
+            ));
+            string end = ArenaUnity.ToArenaPositionString(new Vector3(
+                (float)data.position.x,
+                (float)data.position.y - .1f,
+                (float)data.position.z
+            ));
+            msg.data.path = $"{start},{end}";
+            msg.data.color = ArenaUnity.ToArenaColor(new Color32(255, 0, 0, 255));
+            msg.data.lineWidth = 5;
+
+            string payload = JsonConvert.SerializeObject(msg);
+            ArenaClientScene.Instance.PublishObject(msg.object_id, payload, aobj.HasPermissions); // remote
+            ArenaClientScene.Instance.ProcessMessage(payload); // local
+
         }
 
         internal void PublishMouseEvent(string eventType)
