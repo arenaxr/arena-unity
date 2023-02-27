@@ -40,7 +40,7 @@ namespace ArenaUnity.Schemas
         public string Clip = defClip;
         public bool ShouldSerializeClip()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defCrossFadeDuration = 0f;
@@ -129,11 +129,9 @@ namespace ArenaUnity.Schemas
         {
             _token = token; // save updated wire json
             ArenaAnimationMixerJson json = null;
-            try
-            {
+            try {
                 json = JsonConvert.DeserializeObject<ArenaAnimationMixerJson>(Regex.Unescape(jsonString));
-            }
-            catch (JsonReaderException e)
+            } catch (JsonReaderException e)
             {
                 Debug.LogWarning($"{e.Message}: {jsonString}");
             }
