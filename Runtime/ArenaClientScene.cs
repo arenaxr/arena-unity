@@ -676,7 +676,6 @@ namespace ArenaUnity
                 AttachMaterialTexture(checkLocalAsset((string)data.material.src), gobj);
 
             // data.animation-mixer
-            Debug.Log("should be no change; " + jData.ToString(Formatting.Indented));
             JToken amObj = jData.SelectToken("animation-mixer");
             if (amObj != null)
             {
@@ -917,7 +916,6 @@ namespace ArenaUnity
 
         private void PublishSceneMessage(string topic, string msg, bool hasPermissions)
         {
-            Debug.Log(msg);
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
             Publish(topic, payload);
             LogMessage("Sending", JsonConvert.DeserializeObject(msg), hasPermissions);

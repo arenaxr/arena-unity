@@ -826,7 +826,7 @@ namespace ArenaUnity
                 ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
                 if (am == null)
                     am = gobj.AddComponent<ArenaAnimationMixer>();
-                am.json = ArenaAnimationMixerJson.CreateFromJSON(amObj.ToString(), amObj);
+                am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(amObj), amObj);
                 am.apply = true;
             }
         }
