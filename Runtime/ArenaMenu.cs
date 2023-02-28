@@ -159,8 +159,7 @@ namespace ArenaUnity
             data.material = material;
             msg.data = data;
             string payload = JsonConvert.SerializeObject(msg);
-            client.PublishObject(msg.object_id, payload, client.sceneObjectRights); // remote
-            client.ProcessMessage(payload, menuCommand); // local
+            client.PublishObject(msg.object_id, payload, client.sceneObjectRights);
         }
 #endif
     }

@@ -246,8 +246,7 @@ namespace ArenaUnity
             // publish
             msg.data = all ? updatedData : JObject.Parse(objData);
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions); // remote
-            ArenaClientScene.Instance.ProcessMessage(payload); // local
+            ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
         }
 
         public void OnValidate()

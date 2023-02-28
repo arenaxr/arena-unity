@@ -10,6 +10,7 @@ using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using ArenaUnity.Components;
 using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
@@ -68,10 +69,12 @@ namespace ArenaUnity
         /// </summary>
         public string sceneUrl { get; private set; }
 
-        internal bool sceneObjectRights { get; private set; }
+        internal bool sceneObjectRights { get; private set; } = false;
+
+        public bool persistLoaded { get; private set; } = false;
 
         private string sceneTopic = null;
-        internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
+        public Dictionary<string, GameObject> arenaObjs { get; private set; } = new Dictionary<string, GameObject>();
         internal Dictionary<string, GameObject> childObjs = new Dictionary<string, GameObject>();
         internal List<string> pendingDelete = new List<string>();
         internal List<string> downloadQueue = new List<string>();
@@ -317,7 +320,7 @@ namespace ArenaUnity
                 string msg_type = (string)msg.type;
                 float ttl = isElement(msg.ttl) ? (float)msg.ttl : 0f;
 
-                if (!arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
+                if (arenaObjs != null && !arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
                 {
                     // there isnt already an object in the scene created by the user with the same object_id
                     if (GameObject.Find((string)(msg.object_id)) == null)
@@ -336,6 +339,7 @@ namespace ArenaUnity
                 }
                 objects_num++;
             }
+            persistLoaded = true;
         }
 
         private static IEnumerable<string> ExtractAssetUris(dynamic data, string[] urlTags)
@@ -679,8 +683,7 @@ namespace ArenaUnity
                 AttachMaterialTexture(checkLocalAsset((string)data.material.src), gobj);
 
             // data.animation-mixer
-            JToken amObj = jData.SelectToken("animation-mixer");
-            if (amObj != null)
+            if (jData.SelectToken("animation-mixer") != null)
             {
                 ArenaUnity.ToUnityAnimationMixer(jData, ref gobj);
             }
@@ -899,22 +902,23 @@ namespace ArenaUnity
         /// <summary>
         /// Camera events are published using a ObjectId-only topic, a user might only have permissions for their camid.
         /// </summary>
-        public void PublishEvent(string object_id, string eventType, string msgJsonData, bool hasPermissions = true)
+        public void PublishEvent(string object_id, string eventType, string source, string msgJsonData, bool hasPermissions = true)
         {
             dynamic msg = new ExpandoObject();
-            msg.object_id = camid;
+            msg.object_id = object_id;
             msg.action = "clientEvent";
             msg.type = eventType;
             msg.data = JsonConvert.DeserializeObject(msgJsonData);
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{object_id}", JsonConvert.SerializeObject(msg), hasPermissions);
+            PublishSceneMessage($"{sceneTopic}/{source}", JsonConvert.SerializeObject(msg), hasPermissions);
         }
 
         private void PublishSceneMessage(string topic, string msg, bool hasPermissions)
         {
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
-            Publish(topic, payload);
+            Publish(topic, payload); // remote
             LogMessage("Sending", JsonConvert.DeserializeObject(msg), hasPermissions);
+            ProcessMessage(payload); // local
         }
 
         private static string GetTimestamp()
