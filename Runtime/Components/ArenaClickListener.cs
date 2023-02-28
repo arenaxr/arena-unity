@@ -15,8 +15,8 @@ namespace ArenaUnity.Components
     [RequireComponent(typeof(ArenaObject))]
     public class ArenaClickListener : MonoBehaviour
     {
-        private Camera _mainCamera;
-
+        private Camera _camera;
+        private ArenaCamera _arenaCam;
         private Ray _ray;
         private RaycastHit _hit;
 
@@ -27,7 +27,9 @@ namespace ArenaUnity.Components
 
         private void Start()
         {
-            _mainCamera = Camera.main;
+            _camera = Camera.main;
+            _arenaCam = _camera.GetComponent<ArenaCamera>();
+            if (_arenaCam == null) _arenaCam = _camera.gameObject.AddComponent<ArenaCamera>();
         }
 
         private void Update()
@@ -83,11 +85,11 @@ namespace ArenaUnity.Components
         {
             Debug.Log($"Local Click '{name}' ({eventType})!");
 
-            _ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+            _ray = _camera.ScreenPointToRay(Input.mousePosition);
             Physics.Raycast(_ray, out _hit);
 
-            Vector3 camPosition = _mainCamera.transform.localPosition;
-            string camName = _mainCamera.name;
+            Vector3 camPosition = _camera.transform.localPosition;
+            string camName = _arenaCam.camid;
 
             dynamic data = new ExpandoObject();
             data.clickPos = ArenaUnity.ToArenaPosition(_hit.point);
