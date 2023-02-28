@@ -32,7 +32,7 @@ namespace ArenaUnity.Components
 
         private void Update()
         {
-            // TODO: too many mech colliders?
+            // TODO: too many mesh colliders?
 
             if (!meshAvailable)
             {
@@ -42,8 +42,9 @@ namespace ArenaUnity.Components
                 MeshFilter mf = GetComponent<MeshFilter>();
                 if (mf != null)
                 {
-                    //mf.mesh.RecalculateBounds();
+                    mf.mesh.RecalculateBounds(); // TODO: necessary?
                     mc.sharedMesh = mf.mesh;
+                    mc.cookingOptions = MeshColliderCookingOptions.None; // TODO: necessary?
                     meshAvailable = true;
                 }
                 else
@@ -51,8 +52,7 @@ namespace ArenaUnity.Components
                     SkinnedMeshRenderer smr = GetComponentInChildren<SkinnedMeshRenderer>();
                     if (smr != null)
                     {
-                        //mc = smr.transform.parent.gameObject.AddComponent<MeshCollider>();
-                        mc = gameObject.AddComponent<MeshCollider>();
+                        mc = smr.transform.parent.gameObject.AddComponent<MeshCollider>();
                         if (mc != null)
                         {
                             mc.sharedMesh = smr.sharedMesh;
