@@ -18,11 +18,15 @@ namespace ArenaUnity
         [SerializeField] internal PlaneType type = PlaneType.Default;
         [SerializeField, Range(0.5f, 10f)] internal float width = 1f;
         [SerializeField, Range(0.5f, 10f)] internal float height = 1f;
-        [SerializeField, Range(2, 40)] internal int wSegments = 2;
-        [SerializeField, Range(2, 40)] internal int hSegments = 2;
+        [SerializeField, Range(1, 20)] internal int wSegments = 1;
+        [SerializeField, Range(1, 20)] internal int hSegments = 1;
 
         protected override void Build(MeshFilter filter)
         {
+            // convert to triangles
+            wSegments *= 2;
+            hSegments *= 2;
+
             switch (type)
             {
                 case PlaneType.Noise:
