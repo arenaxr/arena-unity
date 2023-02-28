@@ -74,13 +74,13 @@ namespace ArenaUnity
             }
             switch (type)
             {
-                // build your own meshes, defaults here should reflect ARENA/AFRAME/THREE defaults
+                // build your own meshes, defaults here should reflect ARENA/AFRAME defaults
                 case "capsule":
                     ArenaMeshCapsule capsule = gobj.GetComponent<ArenaMeshCapsule>() ?? gobj.AddComponent<ArenaMeshCapsule>();
                     capsule.radius = data.radius != null ? (float)data.radius : 1f;
                     capsule.length = data.length != null ? (float)data.length : 1f;
                     capsule.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
-                    capsule.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
+                    capsule.heightSegments = data.segmentsCap != null ? (int)data.segmentsCap : 18;
                     break;
                 case "box":
                 case "cube": // support legacy arena 'cube' == 'box'
@@ -88,15 +88,20 @@ namespace ArenaUnity
                     cube.width = data.width != null ? (float)data.width : 1f;
                     cube.height = data.height != null ? (float)data.height : 1f;
                     cube.depth = data.depth != null ? (float)data.depth : 1f;
-                    cube.widthSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 2;
-                    cube.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 2;
-                    cube.depthSegments = data.segmentsDepth != null ? (int)data.segmentsDepth : 2;
+                    cube.widthSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 1;
+                    cube.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 1;
+                    cube.depthSegments = data.segmentsDepth != null ? (int)data.segmentsDepth : 1;
                     break;
                 case "cone":
                     ArenaMeshCone cone = gobj.GetComponent<ArenaMeshCone>() ?? gobj.AddComponent<ArenaMeshCone>();
                     cone.radius = data.radiusBottom != null ? (float)data.radiusBottom : 1f;
+                    //cone.radiusTop = data.radiusTop != null ? (float)data.radiusTop : 0.01f;
                     cone.height = data.height != null ? (float)data.height : 1f;
                     cone.subdivision = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
+                    //cone.segmentsHeight = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
+                    //cone.openEnded = data.openEnded != null ? Convert.ToBoolean(data.openEnded) : false;
+                    //cone.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
+                    //cone.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
                     break;
                 case "cylinder":
                     ArenaMeshCylinder cylinder = gobj.GetComponent<ArenaMeshCylinder>() ?? gobj.AddComponent<ArenaMeshCylinder>();
@@ -105,33 +110,35 @@ namespace ArenaUnity
                     cylinder.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     cylinder.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
                     cylinder.openEnded = data.openEnded != null ? Convert.ToBoolean(data.openEnded) : false;
+                    //cylinder.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
+                    //cylinder.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
                     break;
                 case "dodecahedron":
                     ArenaMeshDodecahedron dodecahedron = gobj.GetComponent<ArenaMeshDodecahedron>() ?? gobj.AddComponent<ArenaMeshDodecahedron>();
                     dodecahedron.radius = data.radius != null ? (float)data.radius : 1f;
-                    dodecahedron.details = 0;
+                    dodecahedron.details = data.detail != null ? (int)data.detail : 0;
                     break;
                 case "tetrahedron":
                     ArenaMeshTetrahedron tetrahedron = gobj.GetComponent<ArenaMeshTetrahedron>() ?? gobj.AddComponent<ArenaMeshTetrahedron>();
                     tetrahedron.radius = data.radius != null ? (float)data.radius : 1f;
-                    tetrahedron.details = 0;
+                    tetrahedron.details = data.detail != null ? (int)data.detail : 0;
                     break;
                 case "icosahedron":
                     ArenaMeshIcosahedron icosahedron = gobj.GetComponent<ArenaMeshIcosahedron>() ?? gobj.AddComponent<ArenaMeshIcosahedron>();
                     icosahedron.radius = data.radius != null ? (float)data.radius : 1f;
-                    icosahedron.details = 0;
+                    icosahedron.details = data.detail != null ? (int)data.detail : 0;
                     break;
                 case "octahedron":
                     ArenaMeshOctahedron octahedron = gobj.GetComponent<ArenaMeshOctahedron>() ?? gobj.AddComponent<ArenaMeshOctahedron>();
                     octahedron.radius = data.radius != null ? (float)data.radius : 1f;
-                    octahedron.details = 0;
+                    octahedron.details = data.detail != null ? (int)data.detail : 0;
                     break;
                 case "plane":
                     ArenaMeshPlane plane = gobj.GetComponent<ArenaMeshPlane>() ?? gobj.AddComponent<ArenaMeshPlane>();
                     plane.width = data.width != null ? (float)data.width : 1f;
                     plane.height = data.height != null ? (float)data.height : 1f;
-                    plane.wSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 2;
-                    plane.hSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 2;
+                    plane.wSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 1;
+                    plane.hSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 1;
                     break;
                 case "prism":
                     ArenaMeshPrism prism = gobj.GetComponent<ArenaMeshPrism>() ?? gobj.AddComponent<ArenaMeshPrism>();
@@ -141,9 +148,9 @@ namespace ArenaUnity
                     break;
                 case "ring":
                     ArenaMeshRing ring = gobj.GetComponent<ArenaMeshRing>() ?? gobj.AddComponent<ArenaMeshRing>();
-                    ring.outerRadius = data.radiusOuter != null ? (float)data.radiusOuter : 1f;
-                    ring.innerRadius = data.radiusInner != null ? (float)data.radiusInner : 0.5f;
-                    ring.phiSegments = data.segmentsPhi != null ? (int)data.segmentsPhi : 8;
+                    ring.outerRadius = data.radiusOuter != null ? (float)data.radiusOuter : 1.2f;
+                    ring.innerRadius = data.radiusInner != null ? (float)data.radiusInner : 0.8f;
+                    ring.phiSegments = data.segmentsPhi != null ? (int)data.segmentsPhi : 10;
                     ring.thetaSegments = data.segmentsTheta != null ? (int)data.segmentsTheta : 32;
                     ring.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
                     ring.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
@@ -161,11 +168,15 @@ namespace ArenaUnity
                     sphere.radius = data.radius != null ? (float)data.radius : 1f;
                     sphere.lonSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 18;
                     sphere.latSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 36;
+                    //sphere.phiStart = (float)(data.phiStart != null ? Mathf.PI / 180 * (float)data.phiStart : 0f);
+                    //sphere.phiLength = (float)(data.phiLength != null ? Mathf.PI / 180 * (float)data.phiLength : Mathf.PI * 2f);
+                    //sphere.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
+                    //sphere.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI);
                     break;
                 case "torus":
                     ArenaMeshTorus torus = gobj.GetComponent<ArenaMeshTorus>() ?? gobj.AddComponent<ArenaMeshTorus>();
                     torus.radius = data.radius != null ? (float)data.radius : 1f;
-                    torus.radiusTubular = data.radiusTubular != null ? (float)data.radiusTubular : 0.4f;
+                    torus.radiusTubular = data.radiusTubular != null ? (float)data.radiusTubular : 0.2f;
                     torus.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     torus.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 32;
                     torus.thetaStart = 0f;
@@ -174,11 +185,11 @@ namespace ArenaUnity
                 case "torusKnot":
                     ArenaMeshTorusKnot torusKnot = gobj.GetComponent<ArenaMeshTorusKnot>() ?? gobj.AddComponent<ArenaMeshTorusKnot>();
                     torusKnot.radius = data.radius != null ? (float)data.radius : 1f;
-                    torusKnot.radiusTubular = data.radiusTubular != null ? (float)data.radiusTubular : 0.4f;
-                    torusKnot.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
-                    torusKnot.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 32;
-                    torusKnot.p = data.p != null ? (int)data.p : 2;
-                    torusKnot.q = data.q != null ? (int)data.q : 3;
+                    torusKnot.radiusTubular = data.radiusTubular != null ? (float)data.radiusTubular : 0.2f;
+                    torusKnot.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 8;
+                    torusKnot.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 100;
+                    torusKnot.p = data.p != null ? (float)data.p : 2f;
+                    torusKnot.q = data.q != null ? (float)data.q : 3f;
                     break;
                 case "triangle":
                     ArenaMeshTriangle triangle = gobj.GetComponent<ArenaMeshTriangle>() ?? gobj.AddComponent<ArenaMeshTriangle>();
