@@ -37,7 +37,6 @@ namespace ArenaUnity
         {
             base.Awake();
             Instance = this;
-            name = "ARENA (Starting...)";
         }
 
         [Tooltip("Name of the topic realm for the scene (runtime changes ignored).")]
@@ -82,6 +81,8 @@ namespace ArenaUnity
         // Define callbacks
         public delegate void DecodeMessageDelegate(string topic, byte[] message);
         public DecodeMessageDelegate OnMessageCallback = null; // null, until library user instantiates.
+
+        public string originalName { get; private set; }
 
         static string importPath = null;
 
@@ -137,6 +138,9 @@ namespace ArenaUnity
         // Start is called before the first frame update
         protected override void Start()
         {
+            originalName = name;
+            name = $"{originalName} (Starting...)";
+
             importPath = Path.Combine(appFilesPath, "Assets", "ArenaUnity", "import");
 
             var requiredShaders = requiredShadersStandardRP;
@@ -186,10 +190,10 @@ namespace ArenaUnity
 
             // start auth flow and MQTT connection
             ArenaCamera[] camlist = FindObjectsOfType<ArenaCamera>();
-            name = "ARENA (Authenticating...)";
+            name = $"{originalName} (Authenticating...)";
             CoroutineWithData cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, camlist.Length > 0));
             yield return cd.coroutine;
-            name = "ARENA (MQTT Connecting...)";
+            name = $"{originalName} (MQTT Connecting...)";
             if (cd.result != null)
             {
                 if (string.IsNullOrWhiteSpace(namespaceName)) namespaceName = cd.result.ToString();
@@ -922,13 +926,13 @@ namespace ArenaUnity
         {
             base.OnConnected();
             Subscribe(new string[] { $"{sceneTopic}/#" });
-            name = "ARENA (MQTT Connected)";
+            name = $"{originalName} (MQTT Connected)";
         }
 
         protected override void OnDisconnected()
         {
             base.OnDisconnected();
-            name = "ARENA (MQTT Disconnected)";
+            name = $"{originalName} (MQTT Disconnected)";
         }
 
         protected override void DecodeMessage(string topic, byte[] message)
