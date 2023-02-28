@@ -38,7 +38,6 @@ namespace ArenaUnity
         {
             base.Awake();
             Instance = this;
-            name = "ARENA (Starting...)";
         }
 
         [Tooltip("Name of the topic realm for the scene (runtime changes ignored).")]
@@ -85,6 +84,8 @@ namespace ArenaUnity
         // Define callbacks
         public delegate void DecodeMessageDelegate(string topic, byte[] message);
         public DecodeMessageDelegate OnMessageCallback = null; // null, until library user instantiates.
+
+        public string originalName { get; private set; }
 
         static string importPath = null;
 
@@ -140,6 +141,9 @@ namespace ArenaUnity
         // Start is called before the first frame update
         protected override void Start()
         {
+            originalName = name;
+            name = $"{originalName} (Starting...)";
+
             importPath = Path.Combine(appFilesPath, "Assets", "ArenaUnity", "import");
 
             var requiredShaders = requiredShadersStandardRP;
@@ -189,10 +193,10 @@ namespace ArenaUnity
 
             // start auth flow and MQTT connection
             ArenaCamera[] camlist = FindObjectsOfType<ArenaCamera>();
-            name = "ARENA (Authenticating...)";
+            name = $"{originalName} (Authenticating...)";
             CoroutineWithData cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, camlist.Length > 0));
             yield return cd.coroutine;
-            name = "ARENA (MQTT Connecting...)";
+            name = $"{originalName} (MQTT Connecting...)";
             if (cd.result != null)
             {
                 if (string.IsNullOrWhiteSpace(namespaceName)) namespaceName = cd.result.ToString();
@@ -906,7 +910,7 @@ namespace ArenaUnity
         /// <summary>
         /// Camera events are published using a ObjectId-only topic, a user might only have permissions for their camid.
         /// </summary>
-        public void PublishEvent(string object_id, string eventType, string msgJsonData, bool hasPermissions = true)
+        public void PublishEvent(string object_id, string eventType, string source, string msgJsonData, bool hasPermissions = true)
         {
             dynamic msg = new ExpandoObject();
             msg.object_id = object_id;
@@ -914,14 +918,15 @@ namespace ArenaUnity
             msg.type = eventType;
             msg.data = JsonConvert.DeserializeObject(msgJsonData);
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{object_id}", JsonConvert.SerializeObject(msg), hasPermissions);
+            PublishSceneMessage($"{sceneTopic}/{object_id}/{source}", JsonConvert.SerializeObject(msg), hasPermissions);
         }
 
         private void PublishSceneMessage(string topic, string msg, bool hasPermissions)
         {
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
-            Publish(topic, payload);
+            Publish(topic, payload); // remote
             LogMessage("Sending", JsonConvert.DeserializeObject(msg), hasPermissions);
+            ProcessMessage(payload); // local
         }
 
         private static string GetTimestamp()
@@ -933,13 +938,13 @@ namespace ArenaUnity
         {
             base.OnConnected();
             Subscribe(new string[] { $"{sceneTopic}/#" });
-            name = "ARENA (MQTT Connected)";
+            name = $"{originalName} (MQTT Connected)";
         }
 
         protected override void OnDisconnected()
         {
             base.OnDisconnected();
-            name = "ARENA (MQTT Disconnected)";
+            name = $"{originalName} (MQTT Disconnected)";
         }
 
         protected override void DecodeMessage(string topic, byte[] message)

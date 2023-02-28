@@ -84,7 +84,7 @@ public class LaserPointer : MonoBehaviour
         msg.data.color = ArenaUnity.ArenaUnity.ToArenaColor(new Color32(255, 0, 0, 255));
         msg.data.lineWidth = 5;
         string payload = JsonConvert.SerializeObject(msg);
-        _scene.PublishObject(msg.object_id, payload); // remote
+        _scene.PublishObject(msg.object_id, payload);
         //ball
         string ball_id = $"ball-{UnityEngine.Random.Range(0, 100000000)}";
         msg = new ExpandoObject();
@@ -102,7 +102,7 @@ public class LaserPointer : MonoBehaviour
         msg.data.color = ArenaUnity.ArenaUnity.ToArenaColor(new Color32(255, 0, 0, 255));
         msg.data.lineWidth = 5;
         payload = JsonConvert.SerializeObject(msg);
-        _scene.PublishObject(msg.object_id, payload); // remote
+        _scene.PublishObject(msg.object_id, payload);
     }
 
 }
