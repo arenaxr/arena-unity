@@ -1,17 +1,15 @@
 using System.Collections;
-using System.Collections.Generic;
-using ArenaUnity;
-using Newtonsoft.Json;
 using System.Dynamic;
-using UnityEngine;
-using System;
+using ArenaUnity;
 using ArenaUnity.Components;
-using Packages.Rider.Editor.UnitTesting;
+using Newtonsoft.Json;
+using UnityEngine;
 
 public class LaserPointer : MonoBehaviour
 {
     private ArenaClientScene _scene;
-
+    private Color32 _laserColor = new Color32(255, 0, 0, 255);
+    private Vector3 _targetScale = new Vector3(.06f, .06f, .06f);
 
     void Awake()
     {
@@ -40,6 +38,8 @@ public class LaserPointer : MonoBehaviour
 
         // find clickable arena objects
 
+        // TODO: find balance of ACL attached complete, or in progress
+
         foreach (var aobj in _scene.arenaObjs.Values)
         {
             // attach callbacks
@@ -47,9 +47,8 @@ public class LaserPointer : MonoBehaviour
             if (acl)
             {
                 acl.OnEventCallback = MyMouseDown;
-                Debug.Log($"Click callback attched to {aobj.name}");
+                Debug.Log($"Click callback attached to {aobj.name}");
             }
-
         }
     }
 
@@ -64,13 +63,13 @@ public class LaserPointer : MonoBehaviour
     /// </summary>
     private void MyMouseDown(string event_type, dynamic data)
     {
-        Debug.Log($"Remote Click {data.object_id} ({event_type})!");
+        Debug.Log($"Remote Click '{data.object_id}' ({event_type})!");
 
-        //{"object_id":"box","action":"clientEvent","type":"mousedown","data":{"clickPos":{"x":-2.87,"y":1.6,"z":6.225},"position":{"x":-0.195,"y":0.305,"z":1.913},"source":"camera_2418540601_mwfarb"},"timestamp":"2023-02-15T18:59:02.413Z"}
         if (event_type != "mousedown") return;
+        int instance = UnityEngine.Random.Range(0, 100000000);
 
         //laser
-        string line_id = $"line-{UnityEngine.Random.Range(0, 100000000)}";
+        string line_id = $"line-{instance}";
         dynamic msg = new ExpandoObject();
         msg.object_id = line_id;
         msg.action = "create";
@@ -78,28 +77,25 @@ public class LaserPointer : MonoBehaviour
         msg.ttl = 1;
         msg.data = new ExpandoObject();
         msg.data.object_type = "thickline";
-        string start = $"{data.position.x} {(float)data.position.y - .1f} {data.position.z}";
-        string end = $"{data.clickPos.x} {data.clickPos.y} {data.clickPos.z}";
+        string start = $"{(float)data.clickPos.x - 0f} {(float)data.clickPos.y - .5f} {(float)data.clickPos.z - 0f}";
+        string end = $"{data.position.x} {data.position.y} {data.position.z}";
         msg.data.path = $"{start},{end}";
-        msg.data.color = ArenaUnity.ArenaUnity.ToArenaColor(new Color32(255, 0, 0, 255));
+        msg.data.color = ArenaUnity.ArenaUnity.ToArenaColor(_laserColor);
         msg.data.lineWidth = 5;
         string payload = JsonConvert.SerializeObject(msg);
         _scene.PublishObject(msg.object_id, payload);
         //ball
-        string ball_id = $"ball-{UnityEngine.Random.Range(0, 100000000)}";
+        string target_id = $"target-{instance}";
         msg = new ExpandoObject();
-        msg.object_id = ball_id;
+        msg.object_id = target_id;
         msg.action = "create";
         msg.type = "object";
         msg.ttl = 1;
         msg.data = new ExpandoObject();
         msg.data.object_type = "sphere";
-        msg.data.position = new ExpandoObject();
-        msg.data.position.x = (float)data.clickPos.x;
-        msg.data.position.y = (float)data.clickPos.y;
-        msg.data.position.z = (float)data.clickPos.z;
-        msg.data.scale = ArenaUnity.ArenaUnity.ToArenaScale(new Vector3(.06f, .06f, .06f));
-        msg.data.color = ArenaUnity.ArenaUnity.ToArenaColor(new Color32(255, 0, 0, 255));
+        msg.data.position = data.position;
+        msg.data.scale = ArenaUnity.ArenaUnity.ToArenaScale(_targetScale);
+        msg.data.color = ArenaUnity.ArenaUnity.ToArenaColor(_laserColor);
         msg.data.lineWidth = 5;
         payload = JsonConvert.SerializeObject(msg);
         _scene.PublishObject(msg.object_id, payload);
