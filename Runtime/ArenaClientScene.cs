@@ -683,15 +683,13 @@ namespace ArenaUnity
                 AttachMaterialTexture(checkLocalAsset((string)data.material.src), gobj);
 
             // data.animation-mixer
-            JToken amObj = jData.SelectToken("animation-mixer");
-            if (amObj != null)
+            if (jData.SelectToken("animation-mixer") != null)
             {
                 ArenaUnity.ToUnityAnimationMixer(jData, ref gobj);
             }
 
             // data.click-listener
-            JToken clObj = jData.SelectToken("click-listener");
-            if (clObj != null)
+            if (jData.SelectToken("click-listener") != null)
             {
                 ArenaUnity.ToUnityClickListener(ref gobj);
             }

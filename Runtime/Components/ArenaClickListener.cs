@@ -34,6 +34,8 @@ namespace ArenaUnity.Components
 
         private void Update()
         {
+            // TODO: too many mech colliders?
+
             if (!meshAvailable)
             {
                 MeshCollider mc = GetComponent<MeshCollider>();
@@ -80,7 +82,6 @@ namespace ArenaUnity.Components
             PublishMouseEvent("mouseleave");
         }
 
-        //{"object_id":"box","action":"clientEvent","type":"mousedown","data":{"clickPos":{"x":-2.87,"y":1.6,"z":6.225},"position":{"x":-0.195,"y":0.305,"z":1.913},"source":"camera_2418540601_mwfarb"},"timestamp":"2023-02-15T18:59:02.413Z"}
         internal void PublishMouseEvent(string eventType)
         {
             Debug.Log($"Local Click '{name}' ({eventType})!");
