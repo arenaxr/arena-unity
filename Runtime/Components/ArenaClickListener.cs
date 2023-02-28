@@ -17,8 +17,6 @@ namespace ArenaUnity.Components
     {
         private Camera _camera;
         private ArenaCamera _arenaCam;
-        private Ray _ray;
-        private RaycastHit _hit;
 
         private bool meshAvailable = false;
 
@@ -84,17 +82,18 @@ namespace ArenaUnity.Components
 
         internal void PublishMouseEvent(string eventType)
         {
-            Debug.Log($"Local Click '{name}' ({eventType})!");
+            RaycastHit _hit;
+            Ray _ray = _camera.ScreenPointToRay(Input.mousePosition);
+            if (!Physics.Raycast(_ray, out _hit)) return;
 
-            _ray = _camera.ScreenPointToRay(Input.mousePosition);
-            Physics.Raycast(_ray, out _hit);
+            Debug.Log($"Local Click '{name}' ({eventType})!");
 
             Vector3 camPosition = _camera.transform.localPosition;
             string camName = _arenaCam.camid;
 
             dynamic data = new ExpandoObject();
-            data.clickPos = ArenaUnity.ToArenaPosition(_hit.point);
-            data.position = ArenaUnity.ToArenaPosition(camPosition);
+            data.clickPos = ArenaUnity.ToArenaPosition(camPosition);
+            data.position = ArenaUnity.ToArenaPosition(_hit.point);
             data.source = camName;
             string payload = JsonConvert.SerializeObject(data);
 
