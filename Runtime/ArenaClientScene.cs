@@ -682,12 +682,12 @@ namespace ArenaUnity
             if (isElement(data.material) && isElement(data.material.src))
                 AttachMaterialTexture(checkLocalAsset((string)data.material.src), gobj);
 
-            //// data.animation-mixer
-            //JToken amObj = jData.SelectToken("animation-mixer");
-            //if (amObj != null)
-            //{
-            //    ArenaUnity.ToUnityAnimationMixer(jData, ref gobj);
-            //}
+            // data.animation-mixer
+            JToken amObj = jData.SelectToken("animation-mixer");
+            if (amObj != null)
+            {
+                ArenaUnity.ToUnityAnimationMixer(jData, ref gobj);
+            }
 
             // data.click-listener
             JToken clObj = jData.SelectToken("click-listener");
