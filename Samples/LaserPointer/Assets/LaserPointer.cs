@@ -37,10 +37,13 @@ public class LaserPointer : MonoBehaviour
     /// <summary>
     /// A delegate method used as a callback to go some special handling on incoming messages.
     /// </summary>
-    private void MouseEventCallback(string event_type, dynamic data)
+    private void MouseEventCallback(string event_type, string message)
     {
         if (event_type != "mousedown") return;
         int instance = UnityEngine.Random.Range(0, 100000000);
+
+        // TODO: provide better serialzation
+        dynamic m = JsonConvert.DeserializeObject(message);
 
         // laser
         dynamic msg = new ExpandoObject();
@@ -50,8 +53,8 @@ public class LaserPointer : MonoBehaviour
         msg.ttl = 1;
         msg.data = new ExpandoObject();
         msg.data.object_type = "thickline";
-        string start = $"{data.clickPos.x} {(float)data.clickPos.y - .1f} {data.clickPos.z}";
-        string end = $"{data.position.x} {data.position.y} {data.position.z}";
+        string start = $"{m.data.clickPos.x} {(float)m.data.clickPos.y - .1f} {m.data.clickPos.z}";
+        string end = $"{m.data.position.x} {m.data.position.y} {m.data.position.z}";
         msg.data.path = $"{start},{end}";
         msg.data.color = ArenaUnity.ArenaUnity.ToArenaColor(_laserColor);
         msg.data.lineWidth = 5;
@@ -65,12 +68,11 @@ public class LaserPointer : MonoBehaviour
         msg.ttl = 1;
         msg.data = new ExpandoObject();
         msg.data.object_type = "sphere";
-        msg.data.position = data.position;
+        msg.data.position = m.data.position;
         msg.data.scale = ArenaUnity.ArenaUnity.ToArenaScale(_targetScale);
         msg.data.color = ArenaUnity.ArenaUnity.ToArenaColor(_laserColor);
         msg.data.lineWidth = 5;
         payload = JsonConvert.SerializeObject(msg);
         _scene.PublishObject(msg.object_id, payload);
     }
-
 }

@@ -1018,7 +1018,7 @@ namespace ArenaUnity
                     case "clientEvent":
                         object_id = (string)msg.object_id;
                         msg_type = (string)msg.type;
-                        ClientEventOnObject(object_id, msg_type, msg.data);
+                        ClientEventOnObject(object_id, msg_type, JsonConvert.SerializeObject(msg));
                         break;
                     default:
                         break;
@@ -1027,13 +1027,13 @@ namespace ArenaUnity
             }
         }
 
-        private void ClientEventOnObject(string object_id, string msg_type, dynamic data)
+        private void ClientEventOnObject(string object_id, string msg_type, string msg)
         {
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
             {
                 // pass event on to click-listener is defined
                 ArenaClickListener acl = gobj.GetComponent<ArenaClickListener>();
-                if (acl != null && acl.OnEventCallback != null) acl.OnEventCallback(msg_type, data);
+                if (acl != null && acl.OnEventCallback != null) acl.OnEventCallback(msg_type, msg);
             }
         }
 

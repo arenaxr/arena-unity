@@ -20,7 +20,7 @@ namespace ArenaUnity.Components
 
         private bool meshAvailable = false;
 
-        public delegate void ClientEventMessageDelegate(string event_type, dynamic data);
+        public delegate void ClientEventMessageDelegate(string event_type, string msg);
         public ClientEventMessageDelegate OnEventCallback = null; // null, until user instantiates.
 
         private void Start()
