@@ -481,9 +481,11 @@ namespace ArenaUnity
 
             if (data.color != null)
                 line.startColor = line.endColor = ToUnityColor((string)data.color);
+            // convert arena thickline pixels vs unity meters
+            float pixelWidth = 1f; // default
             if (data.lineWidth != null)
-                line.startWidth = line.endWidth = (float)data.lineWidth / 100f; // pixels vs meters
-            // TODO update constant width in pixels: line.widthMultiplier = trackWidth;
+                pixelWidth = (float)data.lineWidth;
+            line.startWidth = line.endWidth = pixelWidth * 0.005f;
             if (data.path != null)
             {
                 string[] nodes = ((string)data.path).Split(new char[] { ',' });
@@ -840,6 +842,17 @@ namespace ArenaUnity
                 am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(amObj), amObj);
                 am.apply = true;
             }
+        }
+        // click-listener
+        internal static void ToArenaClickListener(GameObject gobj, ref JObject jData)
+        {
+            ArenaClickListener am = gobj.GetComponent<ArenaClickListener>();
+            jData["click-listener"] = true;
+        }
+        internal static void ToUnityClickListener(ref GameObject gobj)
+        {
+            ArenaClickListener cl = gobj.GetComponent<ArenaClickListener>();
+            if (cl == null) cl = gobj.AddComponent<ArenaClickListener>();
         }
     }
 }

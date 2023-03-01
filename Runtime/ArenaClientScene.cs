@@ -688,6 +688,12 @@ namespace ArenaUnity
                 ArenaUnity.ToUnityAnimationMixer(jData, ref gobj);
             }
 
+            // data.click-listener
+            if (jData.SelectToken("click-listener") != null)
+            {
+                ArenaUnity.ToUnityClickListener(ref gobj);
+            }
+
             if (aobj != null)
             {
                 aobj.data = data;
@@ -1009,10 +1015,25 @@ namespace ArenaUnity
                             RemoveObject(hand_right_id);
                         }
                         break;
+                    case "clientEvent":
+                        object_id = (string)msg.object_id;
+                        msg_type = (string)msg.type;
+                        ClientEventOnObject(object_id, msg_type, msg.data);
+                        break;
                     default:
                         break;
                 }
                 yield break;
+            }
+        }
+
+        private void ClientEventOnObject(string object_id, string msg_type, dynamic data)
+        {
+            if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
+            {
+                // pass event on to click-listener is defined
+                ArenaClickListener acl = gobj.GetComponent<ArenaClickListener>();
+                if (acl != null && acl.OnEventCallback != null) acl.OnEventCallback(msg_type, data);
             }
         }
 
