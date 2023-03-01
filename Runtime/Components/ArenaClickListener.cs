@@ -49,10 +49,11 @@ namespace ArenaUnity.Components
                     if (smr != null)
                     {
                         // gltf-model
-                        MeshCollider mc = smr.transform.parent.gameObject.AddComponent<MeshCollider>();
-                        if (mc != null)
+                        MeshCollider mcChild = smr.transform.parent.gameObject.AddComponent<MeshCollider>();
+                        if (mcChild != null)
                         {
-                            mc.sharedMesh = smr.sharedMesh;
+                            mcChild.sharedMesh = smr.sharedMesh;
+                            ArenaClickListenerModel aclm = smr.transform.parent.gameObject.AddComponent<ArenaClickListenerModel>();
                             meshAvailable = true;
                         }
                     }
@@ -96,6 +97,5 @@ namespace ArenaUnity.Components
 
             ArenaClientScene.Instance.PublishEvent(name, eventType, data.source, payload);
         }
-
     }
 }
