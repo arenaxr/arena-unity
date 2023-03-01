@@ -9,6 +9,7 @@ namespace ArenaUnity
     public abstract class ArenaMesh : MonoBehaviour
     {
         protected MeshFilter filter;
+        protected MeshCollider mc;
         internal bool build = false;
         internal bool scriptLoaded = false;
 
@@ -16,6 +17,8 @@ namespace ArenaUnity
         {
             filter = GetComponent<MeshFilter>();
             Build(filter);
+            mc = GetComponent<MeshCollider>();
+            if (mc != null) mc.sharedMesh = filter.mesh;
         }
         protected abstract void Build(MeshFilter filter);
 
@@ -40,6 +43,8 @@ namespace ArenaUnity
             if (build)
             {
                 Build(filter);
+                mc = GetComponent<MeshCollider>();
+                if (mc != null) mc.sharedMesh = filter.mesh;
                 build = false;
             }
         }
