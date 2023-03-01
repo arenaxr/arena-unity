@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
+
+using UnityEngine;
 
 namespace ArenaUnity
 {
