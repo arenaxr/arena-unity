@@ -166,8 +166,8 @@ namespace ArenaUnity
                 case "sphere":
                     ArenaMeshSphere sphere = gobj.GetComponent<ArenaMeshSphere>() ?? gobj.AddComponent<ArenaMeshSphere>();
                     sphere.radius = data.radius != null ? (float)data.radius : 1f;
-                    sphere.lonSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 18;
-                    sphere.latSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 36;
+                    sphere.latSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 18;
+                    sphere.lonSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 36;
                     //sphere.phiStart = (float)(data.phiStart != null ? Mathf.PI / 180 * (float)data.phiStart : 0f);
                     //sphere.phiLength = (float)(data.phiLength != null ? Mathf.PI / 180 * (float)data.phiLength : Mathf.PI * 2f);
                     //sphere.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
