@@ -21,7 +21,7 @@ namespace ArenaUnity.Components
         private bool meshAvailable = false;
 
         public delegate void ClientEventMessageDelegate(string event_type, dynamic data);
-        public ClientEventMessageDelegate OnEventCallback = null; // null, until library user instantiates.
+        public ClientEventMessageDelegate OnEventCallback = null; // null, until user instantiates.
 
         private void Start()
         {
@@ -82,18 +82,18 @@ namespace ArenaUnity.Components
 
         internal void PublishMouseEvent(string eventType)
         {
-            RaycastHit _hit;
-            Ray _ray = _camera.ScreenPointToRay(Input.mousePosition);
-            if (!Physics.Raycast(_ray, out _hit)) return;
+            RaycastHit hit;
+            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+            Physics.Raycast(ray, out hit);
 
-            Debug.Log($"Local Click '{name}' ({eventType})!");
+            Debug.Log($"Local '{name}' ({eventType})!"); // TODO: remove debug log
 
             Vector3 camPosition = _camera.transform.localPosition;
             string camName = _arenaCam.camid;
 
             dynamic data = new ExpandoObject();
             data.clickPos = ArenaUnity.ToArenaPosition(camPosition);
-            data.position = ArenaUnity.ToArenaPosition(_hit.point);
+            data.position = ArenaUnity.ToArenaPosition(hit.point);
             data.source = camName;
             string payload = JsonConvert.SerializeObject(data);
 
