@@ -32,8 +32,6 @@ namespace ArenaUnity.Components
 
         private void Update()
         {
-            // TODO: too many mesh colliders?
-
             if (!meshAvailable)
             {
                 MeshFilter mf = GetComponent<MeshFilter>();
@@ -41,9 +39,8 @@ namespace ArenaUnity.Components
                 {
                     // primitive geometry
                     MeshCollider mc = gameObject.AddComponent<MeshCollider>();
-                    //mf.mesh.RecalculateBounds(); // TODO: necessary?
                     mc.sharedMesh = mf.mesh;
-                    //mc.cookingOptions = MeshColliderCookingOptions.None; // TODO: necessary?
+                    mc.convex = true; // simplify collision mesh when possible
                     meshAvailable = true;
                 }
                 else
