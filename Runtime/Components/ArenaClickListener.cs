@@ -36,15 +36,14 @@ namespace ArenaUnity.Components
 
             if (!meshAvailable)
             {
-                MeshCollider mc = GetComponent<MeshCollider>();
-                if (mc == null) mc = gameObject.AddComponent<MeshCollider>();
-
                 MeshFilter mf = GetComponent<MeshFilter>();
                 if (mf != null)
                 {
-                    mf.mesh.RecalculateBounds(); // TODO: necessary?
+                    // primitive geometry
+                    MeshCollider mc = gameObject.AddComponent<MeshCollider>();
+                    //mf.mesh.RecalculateBounds(); // TODO: necessary?
                     mc.sharedMesh = mf.mesh;
-                    mc.cookingOptions = MeshColliderCookingOptions.None; // TODO: necessary?
+                    //mc.cookingOptions = MeshColliderCookingOptions.None; // TODO: necessary?
                     meshAvailable = true;
                 }
                 else
@@ -52,7 +51,8 @@ namespace ArenaUnity.Components
                     SkinnedMeshRenderer smr = GetComponentInChildren<SkinnedMeshRenderer>();
                     if (smr != null)
                     {
-                        mc = smr.transform.parent.gameObject.AddComponent<MeshCollider>();
+                        // gltf-model
+                        MeshCollider mc = smr.transform.parent.gameObject.AddComponent<MeshCollider>();
                         if (mc != null)
                         {
                             mc.sharedMesh = smr.sharedMesh;

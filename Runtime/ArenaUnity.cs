@@ -481,9 +481,11 @@ namespace ArenaUnity
 
             if (data.color != null)
                 line.startColor = line.endColor = ToUnityColor((string)data.color);
+            // convert arena thickline pixels vs unity meters
+            float pixelWidth = 1f; // default
             if (data.lineWidth != null)
-                line.startWidth = line.endWidth = (float)data.lineWidth / 100f; // pixels vs meters
-            // TODO update constant width in pixels: line.widthMultiplier = trackWidth;
+                pixelWidth = (float)data.lineWidth;
+            line.startWidth = line.endWidth = pixelWidth * 0.005f;
             if (data.path != null)
             {
                 string[] nodes = ((string)data.path).Split(new char[] { ',' });

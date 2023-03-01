@@ -63,7 +63,7 @@ public class LaserPointer : MonoBehaviour
     /// </summary>
     private void MyMouseDown(string event_type, dynamic data)
     {
-        Debug.Log($"Remote Click '{data.object_id}' ({event_type})!");
+        Debug.Log($"Remote Click '{JsonComvert.Deserialize(data)}' ({event_type})!");
 
         if (event_type != "mousedown") return;
         int instance = UnityEngine.Random.Range(0, 100000000);
@@ -77,7 +77,7 @@ public class LaserPointer : MonoBehaviour
         msg.ttl = 1;
         msg.data = new ExpandoObject();
         msg.data.object_type = "thickline";
-        string start = $"{(float)data.clickPos.x - 0f} {(float)data.clickPos.y - .5f} {(float)data.clickPos.z - 0f}";
+        string start = $"{data.clickPos.x} {(float)data.clickPos.y - .1f} {data.clickPos.z}";
         string end = $"{data.position.x} {data.position.y} {data.position.z}";
         msg.data.path = $"{start},{end}";
         msg.data.color = ArenaUnity.ArenaUnity.ToArenaColor(_laserColor);
