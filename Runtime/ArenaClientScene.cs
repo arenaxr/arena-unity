@@ -924,7 +924,6 @@ namespace ArenaUnity
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
             Publish(topic, payload); // remote
             LogMessage("Sending", JsonConvert.DeserializeObject(msg), hasPermissions);
-            ProcessMessage(payload); // local
         }
 
         private static string GetTimestamp()
@@ -949,12 +948,7 @@ namespace ArenaUnity
         {
             // Call the delegate if a user has defined it
             if (OnMessageCallback != null) OnMessageCallback(topic, message);
-
-            // ignore this client's messages
-            if (!topic.Contains(client.ClientId))
-            {
-                ProcessMessage(message);
-            }
+            ProcessMessage(message);
         }
 
         internal void ProcessMessage(string message, object menuCommand = null)
