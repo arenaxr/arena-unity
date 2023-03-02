@@ -45,6 +45,9 @@ namespace ArenaUnity.Components
                 }
                 else
                 {
+                    // TODO: create combined mesh collider, test for "this arena object only"
+                    // https://docs.unity3d.com/ScriptReference/Mesh.CombineMeshes.html
+
                     SkinnedMeshRenderer smr = GetComponentInChildren<SkinnedMeshRenderer>();
                     if (smr != null)
                     {
