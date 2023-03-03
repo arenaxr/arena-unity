@@ -482,7 +482,7 @@ namespace ArenaUnity
             // TODO: support Material opacity/visibility
             LineRenderer line = gobj.GetComponent<LineRenderer>();
             // always use thickline, too many variables otherwise
-            data.object_id = "thickline";
+            data.object_type = "thickline";
             string[] positions = new string[line.positionCount];
             Vector3[] vertices = new Vector3[line.positionCount];
             line.GetPositions(vertices);
