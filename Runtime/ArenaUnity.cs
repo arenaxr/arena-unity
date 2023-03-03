@@ -542,10 +542,44 @@ namespace ArenaUnity
                         pixelWidth = (float)data.lineWidth;
                     break;
             }
-            // convert arena thickline pixels vs unity meters
-            line.startWidth = line.endWidth = pixelWidth * SinglePixelInMeters;
             if (data.color != null)
                 line.startColor = line.endColor = ToUnityColor((string)data.color);
+            // convert arena thickline pixels vs unity meters
+            float numkeys = 2;
+            float w = 1;
+            AnimationCurve curve = new AnimationCurve();
+            string lineWidthStyler = (string)data.lineWidthStyler;
+            switch (lineWidthStyler)
+            {
+                case "center-sharp": numkeys = 3; break;
+                case "center-smooth": numkeys = 10; break;
+                case "sine-wave": numkeys = 10; break;
+            }
+            for (int i = 0; i < numkeys; i++)
+            {
+                float p = i / (numkeys - 1);
+                switch (lineWidthStyler)
+                {
+                    case "grow":
+                        w = p;
+                        break;
+                    case "shrink":
+                        w = 1 - p;
+                        break;
+                    case "center-sharp":
+                        w = 1 - Math.Abs(2 * p - 1);
+                        break;
+                    case "center-smooth":
+                        w = (float)Math.Sin(p * 3.1415);
+                        break;
+                    case "sine-wave":
+                        w = (float)(0.5 + 0.5 * Math.Sin((p - 0.5) * 2 * 3.1415 * 10));
+                        break;
+                }
+                curve.AddKey(p, w);
+            }
+            line.widthCurve = curve;
+            line.widthMultiplier = pixelWidth * SinglePixelInMeters;
         }
 
         // text
