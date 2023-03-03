@@ -27,6 +27,9 @@ namespace ArenaUnity
         public string messageType = "object"; // default to object
         [Tooltip("Persist this object in the ARENA server database (default true = persist on server)")]
         public bool persist = true;
+        [Tooltip("Override (globalUpdateMs) publish frequency to publish detected transform changes (milliseconds)")]
+        [Range(100, 1000)]
+        public int objectUpdateMs = 100;
         [TextArea(5, 20)]
         [Tooltip("ARENA JSON-encoded message")]
         [SerializeField]
@@ -46,7 +49,7 @@ namespace ArenaUnity
         internal bool isJsonValidated = false;
         internal string gltfUrl = null;
         internal bool meshChanged = false;
-        internal List<string> animations = null; // TODO (mwfarb): ideal localation: ArenaGltfModel component
+        internal List<string> animations = null; // TODO (mwfarb): ideal location: ArenaGltfModel component
 
         internal List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
 
@@ -99,7 +102,7 @@ namespace ArenaUnity
                 // send only when changed, each publishInterval
                 if ((transform.hasChanged || meshChanged) && ArenaClientScene.Instance)
                 {
-                    publishInterval = ((float)ArenaClientScene.Instance.camUpdateIntervalMs / 1000f);
+                    publishInterval = ((float)ArenaClientScene.Instance.globalUpdateMs / 1000f);
                     if (PublishCreateUpdate(true))
                     {
                         transform.hasChanged = false;
@@ -203,6 +206,8 @@ namespace ArenaUnity
                     ArenaUnity.ToArenaMaterial(gameObject, ref dataUnity);
                 if (GetComponent<TextMeshPro>())
                     ArenaUnity.ToArenaText(gameObject, ref dataUnity);
+                if (GetComponent<LineRenderer>())
+                    ArenaUnity.ToArenaLine(gameObject, ref dataUnity);
             }
 
             // merge unity data with original message data

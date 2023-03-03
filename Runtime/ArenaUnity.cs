@@ -20,6 +20,7 @@ namespace ArenaUnity
     /// </summary>
     public static class ArenaUnity
     {
+        private const float SinglePixelInMeters = 0.005f;
         private static string ColorPropertyName = (!GraphicsSettings.renderPipelineAsset ? "_Color" : "_BaseColor");
 
         private static float ArenaFloat(float n) { return (float)Math.Round(n, 3); }
@@ -45,9 +46,12 @@ namespace ArenaUnity
             TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
             Light light = gobj.GetComponent<Light>();
             SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
+            LineRenderer lr = gobj.GetComponent<LineRenderer>();
             // initial priority is primitive
             if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0f)
                 objectType = "image";
+            else if (lr)
+                objectType = "thickline";
             else if (tm)
                 objectType = "text";
             else if (light)
@@ -473,29 +477,75 @@ namespace ArenaUnity
         }
 
         // line/thickline
-        public static void ToUnityThickline(dynamic data, ref GameObject gobj)
+        public static void ToArenaLine(GameObject gobj, ref dynamic data)
+        {
+            // TODO: support Material opacity/visibility
+            LineRenderer line = gobj.GetComponent<LineRenderer>();
+            // always use thickline, too many variables otherwise
+            data.object_id = "thickline";
+            string[] positions = new string[line.positionCount];
+            Vector3[] vertices = new Vector3[line.positionCount];
+            line.GetPositions(vertices);
+            if (line.useWorldSpace)
+            {   // line.useWorldSpace does not match arena thickline which always uses position
+                for (var i = 0; i < line.positionCount; i++)
+                {
+                    // arena ignores line position transform, so translate every position?...
+                    positions[i] = ToArenaPositionString(vertices[i] - gobj.transform.localPosition);
+                }
+                // TODO: does arena ignores thickline rotation?
+            }
+            else
+            {   // !line.useWorldSpace matches arena thickline which always uses position
+                for (var i = 0; i < line.positionCount; i++)
+                {
+                    positions[i] = ToArenaPositionString(vertices[i]);
+                }
+            }
+            data.path = string.Join(",", positions);
+            data.lineWidth = (int)(line.startWidth / SinglePixelInMeters); // TODO: support endWidth
+            data.color = ToArenaColor(line.startColor); // TODO: support endColor
+        }
+        public static void ToUnityLine(dynamic data, ref GameObject gobj)
         {
             LineRenderer line = gobj.GetComponent<LineRenderer>();
             if (line == null)
                 line = gobj.AddComponent<LineRenderer>();
 
+            float pixelWidth = 1f; // default
+            switch ((string)data.object_type)
+            {
+                case "line":
+                    line.useWorldSpace = true; // match arena line which always ignores position
+                    if (data.start != null && data.end != null)
+                    {
+                        Vector3[] nodes = {
+                            ToUnityPosition(data.start),
+                            ToUnityPosition(data.end),
+                        };
+                        line.SetPositions(nodes);
+                    }
+                    break;
+                case "thickline":
+                    line.useWorldSpace = false; // match arena thickline which always uses position
+                    if (data.path != null)
+                    {
+                        string[] nodes = ((string)data.path).Split(new char[] { ',' });
+                        line.positionCount = nodes.Length;
+                        for (var i = 0; i < nodes.Length; i++)
+                        {
+                            Vector3 position = ToUnityPositionString(nodes[i]);
+                            line.SetPosition(i, position);
+                        }
+                    }
+                    if (data.lineWidth != null)
+                        pixelWidth = (float)data.lineWidth;
+                    break;
+            }
+            // convert arena thickline pixels vs unity meters
+            line.startWidth = line.endWidth = pixelWidth * SinglePixelInMeters;
             if (data.color != null)
                 line.startColor = line.endColor = ToUnityColor((string)data.color);
-            // convert arena thickline pixels vs unity meters
-            float pixelWidth = 1f; // default
-            if (data.lineWidth != null)
-                pixelWidth = (float)data.lineWidth;
-            line.startWidth = line.endWidth = pixelWidth * 0.005f;
-            if (data.path != null)
-            {
-                string[] nodes = ((string)data.path).Split(new char[] { ',' });
-                line.positionCount = nodes.Length;
-                for (var i = 0; i < nodes.Length; i++)
-                {
-                    Vector3 position = ToUnityPositionString(nodes[i]);
-                    line.SetPosition(i, position);
-                }
-            }
         }
 
         // text

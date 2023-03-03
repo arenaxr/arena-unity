@@ -14,7 +14,7 @@ namespace ArenaUnity
     [DisallowMultipleComponent]
     public class ArenaCamera : PrettyObject
     {
-        private const float cameraKeepAliveInterval = 1f; // 1 second
+        private const float cameraKeepAliveMs = 1f; // 1 second
         private float publishInterval; // varies
 
         private string messageType = "object";
@@ -27,6 +27,9 @@ namespace ArenaUnity
         public string displayName = null;
         [Tooltip("Path to user head model")]
         public string headModelPath = "/static/models/avatars/robobit.glb";
+        [Tooltip("Override (globalUpdateMs) publish frequency to publish detected transform changes (milliseconds)")]
+        [Range(100, 1000)]
+        public int cameraUpdateMs = 100;
 
         [HideInInspector]
         protected bool created = false;
@@ -54,12 +57,12 @@ namespace ArenaUnity
                     // send more frequently when changed, otherwise minimum 1 second keep alive
                     if (transform.hasChanged && ArenaClientScene.Instance)
                     {
-                        publishInterval = ((float)ArenaClientScene.Instance.camUpdateIntervalMs / 1000f);
+                        publishInterval = ((float)ArenaClientScene.Instance.globalUpdateMs / 1000f);
                         transform.hasChanged = false;
                     }
                     else
                     {
-                        publishInterval = cameraKeepAliveInterval;
+                        publishInterval = cameraKeepAliveMs;
                     }
                     PublishCreateUpdate();
                 }
