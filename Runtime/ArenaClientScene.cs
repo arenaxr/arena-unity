@@ -611,8 +611,9 @@ namespace ArenaUnity
                 case "text":
                     ArenaUnity.ToUnityText(data, ref gobj);
                     break;
+                case "line":
                 case "thickline":
-                    ArenaUnity.ToUnityThickline(data, ref gobj);
+                    ArenaUnity.ToUnityLine(data, ref gobj);
                     break;
                 case "light":
                     ArenaUnity.ToUnityLight(data, ref gobj);

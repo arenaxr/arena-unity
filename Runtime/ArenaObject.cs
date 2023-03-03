@@ -203,6 +203,8 @@ namespace ArenaUnity
                     ArenaUnity.ToArenaMaterial(gameObject, ref dataUnity);
                 if (GetComponent<TextMeshPro>())
                     ArenaUnity.ToArenaText(gameObject, ref dataUnity);
+                if (GetComponent<LineRenderer>())
+                    ArenaUnity.ToArenaLine(gameObject, ref dataUnity);
             }
 
             // merge unity data with original message data
