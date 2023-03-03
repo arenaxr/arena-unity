@@ -11,6 +11,8 @@ public class LaserPointer : MonoBehaviour
     private Color32 _laserColor = new Color32(255, 0, 0, 255);
     private Vector3 _targetScale = new Vector3(.06f, .06f, .06f);
 
+    public bool useThickline = true;
+
     void Start()
     {
         StartCoroutine(RunProgram());
@@ -44,6 +46,9 @@ public class LaserPointer : MonoBehaviour
 
         // TODO: provide better serialzation
         dynamic m = JsonConvert.DeserializeObject(message);
+        dynamic start = m.data.clickPos;
+        dynamic end = m.data.position;
+        start.y = (float)start.y - .1f; // lower position for visibility
 
         // laser
         dynamic msg = new ExpandoObject();
@@ -52,12 +57,20 @@ public class LaserPointer : MonoBehaviour
         msg.type = "object";
         msg.ttl = 1;
         msg.data = new ExpandoObject();
-        msg.data.object_type = "thickline";
-        string start = $"{m.data.clickPos.x} {(float)m.data.clickPos.y - .1f} {m.data.clickPos.z}";
-        string end = $"{m.data.position.x} {m.data.position.y} {m.data.position.z}";
-        msg.data.path = $"{start},{end}";
+        msg.data.object_type = useThickline ? "thickline" : "line";
+        if (useThickline)
+        {
+            string startTL = $"{start.x} {start.y} {start.z}";
+            string endTL = $"{end.x} {end.y} {end.z}";
+            msg.data.path = $"{startTL},{endTL}";
+            msg.data.lineWidth = 5;
+        }
+        else
+        {
+            msg.data.start = start;
+            msg.data.end = end;
+        }
         msg.data.color = ArenaUnity.ArenaUnity.ToArenaColor(_laserColor);
-        msg.data.lineWidth = 5;
         string payload = JsonConvert.SerializeObject(msg);
         _scene.PublishObject(msg.object_id, payload);
         // target
