@@ -20,7 +20,7 @@ namespace ArenaUnity
     /// </summary>
     public static class ArenaUnity
     {
-        private const float SinglePixelInMeters = 0.005f;
+        private const float LineSinglePixelInMeters = 0.005f;
         private static string ColorPropertyName = (!GraphicsSettings.renderPipelineAsset ? "_Color" : "_BaseColor");
         public enum MatRendMode
         {   // TODO: the standards for "_Mode" seem to be missing?
@@ -515,7 +515,7 @@ namespace ArenaUnity
                 }
             }
             data.path = string.Join(",", positions);
-            data.lineWidth = (int)(line.startWidth / SinglePixelInMeters); // TODO: support endWidth
+            data.lineWidth = (int)(line.startWidth / LineSinglePixelInMeters); // TODO: support endWidth
             data.color = ToArenaColor(line.startColor); // TODO: support endColor
         }
         public static void ToUnityLine(dynamic data, ref GameObject gobj)
@@ -591,7 +591,7 @@ namespace ArenaUnity
                 curve.AddKey(p, w);
             }
             line.widthCurve = curve;
-            line.widthMultiplier = pixelWidth * SinglePixelInMeters;
+            line.widthMultiplier = pixelWidth * LineSinglePixelInMeters;
         }
 
         // text
