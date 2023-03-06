@@ -22,6 +22,13 @@ namespace ArenaUnity
     {
         private const float SinglePixelInMeters = 0.005f;
         private static string ColorPropertyName = (!GraphicsSettings.renderPipelineAsset ? "_Color" : "_BaseColor");
+        public enum MatRendMode
+        {   // TODO: the standards for "_Mode" seem to be missing?
+            Opaque = 0,
+            Cutout = 1,
+            Fade = 2,
+            Transparent = 3
+        }
 
         private static float ArenaFloat(float n) { return (float)Math.Round(n, 3); }
 
@@ -471,6 +478,11 @@ namespace ArenaUnity
             ColorUtility.TryParseHtmlString(color, out Color colorObj);
             return colorObj;
         }
+        public static Color ToUnityColor(string color, float opacity)
+        {
+            Color c = ToUnityColor(color);
+            return new Color(c.r, c.g, c.b, opacity);
+        }
         public static Color ColorRandom()
         {
             return UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
@@ -788,60 +800,35 @@ namespace ArenaUnity
             dynamic material = new ExpandoObject();
             data.material = material;
             // shaders only
-            if (mat.shader.name == "Standard")
+            switch (mat.shader.name)
             {
-                data.material.shader = "standard";
-                //data.url = ToArenaTexture(mat);
-                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
+                default:
+                case "Standard":
+                    data.material.shader = "standard"; break;
+                case "Unlit/Color":
+                case "Unlit/Texture":
+                case "Unlit/Texture Colored":
+                case "Legacy Shaders/Transparent/Diffuse":
+                    data.material.shader = "flat"; break;
+            }
+            //data.url = ToArenaTexture(mat);
+            if (mat.HasProperty(ColorPropertyName))
                 data.material.color = ToArenaColor(mat.color);
-                //data.material.metalness = ArenaFloat(mat.GetFloat("_Metallic"));
-                //data.material.roughness = ArenaFloat(1f - mat.GetFloat("_Glossiness"));
-                data.material.transparent = mat.GetFloat("_Mode") == 3f ? true : false;
-                data.material.opacity = ArenaFloat(mat.color.a);
-                //if (mat.color.a == 1f)
-                //    data.material.side = "double";
-            }
-            else if (mat.shader.name == "Unlit/Color")
+            //data.material.metalness = ArenaFloat(mat.GetFloat("_Metallic"));
+            //data.material.roughness = ArenaFloat(1f - mat.GetFloat("_Glossiness"));
+            //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
+            //data.material.side = "double";
+            switch ((MatRendMode)mat.GetFloat("_Mode"))
             {
-                data.material.shader = "flat";
-                //data.material.side = "double";
+                case MatRendMode.Opaque:
+                case MatRendMode.Fade:
+                    data.material.transparent = false; break;
+                case MatRendMode.Transparent:
+                case MatRendMode.Cutout:
+                    data.material.transparent = true; break;
             }
-            else if (mat.shader.name == "Unlit/Texture")
-            {
-                data.material.shader = "flat";
-                //data.url = ToArenaTexture(mat);
-                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
-                //data.material.side = "double";
-            }
-            else if (mat.shader.name == "Unlit/Texture Colored")
-            {
-                data.material.shader = "flat";
-                //data.url = ToArenaTexture(mat);
-                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
-                data.material.color = ToArenaColor(mat.color);
-                //data.material.side = "double";
-            }
-            else if (mat.shader.name == "Legacy Shaders/Transparent/Diffuse")
-            {
-                data.material.shader = "flat";
-                //data.url = ToArenaTexture(mat);
-                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
-                data.material.color = ToArenaColor(mat.color);
-                data.material.transparent = true;
-                data.material.opacity = ArenaFloat(mat.color.a);
-                //if (mat.color.a == 1f)
-                //    data.material.side = "double";
-            }
-            else
-            {
-                // other shaders
-                data.material.shader = "standard";
-                //data.url = ToArenaTexture(mat);
-                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
-                if (mat.HasProperty(ColorPropertyName))
-                    data.material.color = ToArenaColor(mat.color);
-                //data.material.side = "double";
-            }
+            data.material.opacity = ArenaFloat(mat.color.a);
+
         }
         public static void ToUnityMaterial(dynamic data, ref GameObject gobj)
         {
@@ -868,43 +855,44 @@ namespace ArenaUnity
                 // legacy color overrides material color in the arena
                 if (data.color != null) // support legacy arena color
                     material.SetColor(ColorPropertyName, ToUnityColor((string)data.color));
-                else if (data.material != null && data.material.color != null)
-                    material.SetColor(ColorPropertyName, ToUnityColor((string)data.material.color));
                 if (data.material != null)
                 {
+                    float opacity = data.material.opacity != null ? (float)data.material.opacity : 1f;
+                    bool transparent = Convert.ToBoolean(data.material.transparent);
+                    bool opaque = opacity == 1f;
+                    material.SetColor(ColorPropertyName, ToUnityColor((string)data.material.color, opacity));
                     if (data.material.shader != null)
                         material.shader.name = (string)data.material.shader == "flat" ? "Unlit/Color" : "Standard";
-                    if (data.material.opacity != null)
+                    // For runtime set/change transparency mode, follow GUI params
+                    // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/StandardShaderGUI.cs#L344
+                    if (transparent)
+                        material.SetFloat("_Mode", (float)MatRendMode.Transparent);
+                    else
                     {
-                        Color c = material.GetColor(ColorPropertyName);
-                        material.SetColor(ColorPropertyName, new Color(c.r, c.g, c.b, (float)data.material.opacity));
-                    }
-                    if (data.material.transparent != null)
-                    {
-                        // For runtime set/change transparency mode, follow GUI params
-                        // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/StandardShaderGUI.cs#L344
-                        if (Convert.ToBoolean(data.material.transparent))
-                        {
-                            material.SetFloat("_Mode", 3f); // StandardShaderGUI.BlendMode.Transparent
-                            material.SetInt("_SrcBlend", (int)BlendMode.One);
-                            material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
-                            material.SetInt("_ZWrite", 0);
-                            material.DisableKeyword("_ALPHATEST_ON");
-                            material.DisableKeyword("_ALPHABLEND_ON");
-                            material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                            material.renderQueue = 3000;
-                        }
+                        if (opaque)
+                            material.SetFloat("_Mode", (float)MatRendMode.Opaque);
                         else
-                        {
-                            material.SetFloat("_Mode", 0f); // StandardShaderGUI.BlendMode.Opaque
-                            material.SetInt("_SrcBlend", (int)BlendMode.One);
-                            material.SetInt("_DstBlend", (int)BlendMode.Zero);
-                            material.SetInt("_ZWrite", 1);
-                            material.DisableKeyword("_ALPHATEST_ON");
-                            material.DisableKeyword("_ALPHABLEND_ON");
-                            material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                            material.renderQueue = -1;
-                        }
+                            material.SetFloat("_Mode", (float)MatRendMode.Fade);
+                    }
+                    if (opaque)
+                    {
+                        material.SetInt("_SrcBlend", (int)BlendMode.One);
+                        material.SetInt("_DstBlend", (int)BlendMode.Zero);
+                        material.SetInt("_ZWrite", 1);
+                        material.DisableKeyword("_ALPHATEST_ON");
+                        material.DisableKeyword("_ALPHABLEND_ON");
+                        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                        material.renderQueue = -1;
+                    }
+                    else
+                    {
+                        material.SetInt("_SrcBlend", (int)BlendMode.One);
+                        material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+                        material.SetInt("_ZWrite", 0);
+                        material.DisableKeyword("_ALPHATEST_ON");
+                        material.DisableKeyword("_ALPHABLEND_ON");
+                        material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                        material.renderQueue = 3000;
                     }
                 }
             }
