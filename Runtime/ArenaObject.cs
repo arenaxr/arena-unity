@@ -102,7 +102,8 @@ namespace ArenaUnity
                 // send only when changed, each publishInterval
                 if ((transform.hasChanged || meshChanged) && ArenaClientScene.Instance)
                 {
-                    publishInterval = ((float)ArenaClientScene.Instance.globalUpdateMs / 1000f);
+                    int ms = objectUpdateMs != ArenaClientScene.Instance.globalUpdateMs ? objectUpdateMs : ArenaClientScene.Instance.globalUpdateMs;
+                    publishInterval = (float)ms / 1000f;
                     if (PublishCreateUpdate(true))
                     {
                         transform.hasChanged = false;

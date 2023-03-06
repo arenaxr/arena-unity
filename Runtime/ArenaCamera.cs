@@ -57,7 +57,8 @@ namespace ArenaUnity
                     // send more frequently when changed, otherwise minimum 1 second keep alive
                     if (transform.hasChanged && ArenaClientScene.Instance)
                     {
-                        publishInterval = ((float)ArenaClientScene.Instance.globalUpdateMs / 1000f);
+                        int ms = cameraUpdateMs != ArenaClientScene.Instance.globalUpdateMs ? cameraUpdateMs : ArenaClientScene.Instance.globalUpdateMs;
+                        publishInterval = (float)ms / 1000f;
                         transform.hasChanged = false;
                     }
                     else
