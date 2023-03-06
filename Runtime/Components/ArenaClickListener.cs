@@ -36,31 +36,43 @@ namespace ArenaUnity.Components
             {
                 MeshFilter mf = GetComponent<MeshFilter>();
                 if (mf != null)
-                {
-                    // primitive geometry
+                {   // primitive geometry
                     MeshCollider mc = gameObject.AddComponent<MeshCollider>();
                     mc.sharedMesh = mf.mesh;
                     mc.convex = true; // simplify collision mesh when possible
                     meshAvailable = true;
                 }
                 else
-                {
-                    // TODO: create combined mesh collider, test for "this arena object only"
-                    // https://docs.unity3d.com/ScriptReference/Mesh.CombineMeshes.html
-
-                    SkinnedMeshRenderer smr = GetComponentInChildren<SkinnedMeshRenderer>();
-                    if (smr != null)
-                    {
-                        // gltf-model
-                        MeshCollider mcChild = smr.transform.parent.gameObject.AddComponent<MeshCollider>();
-                        if (mcChild != null)
-                        {
-                            mcChild.sharedMesh = smr.sharedMesh;
-                            ArenaClickListenerModel aclm = smr.transform.parent.gameObject.AddComponent<ArenaClickListenerModel>();
-                            meshAvailable = true;
-                        }
-                    }
+                {   // gltf-model
+                    // TODO: test for "this arena object only"
+                    foreach (MeshRenderer mr in GetComponentsInChildren<MeshRenderer>())
+                        AssignColliderMR(mr);
+                    foreach (SkinnedMeshRenderer smr in GetComponentsInChildren<SkinnedMeshRenderer>())
+                        AssignColliderSMR(smr);
                 }
+            }
+        }
+
+        private void AssignColliderMR(MeshRenderer mr)
+        {
+            MeshCollider mcChild = mr.gameObject.AddComponent<MeshCollider>();
+            if (mcChild != null)
+            {
+                MeshFilter mf = mr.GetComponent<MeshFilter>();
+                mcChild.sharedMesh = mf.sharedMesh;
+                ArenaClickListenerModel aclm = mr.gameObject.AddComponent<ArenaClickListenerModel>();
+                meshAvailable = true;
+            }
+        }
+
+        private void AssignColliderSMR(SkinnedMeshRenderer smr)
+        {
+            MeshCollider mcChild = smr.gameObject.AddComponent<MeshCollider>();
+            if (mcChild != null)
+            {
+                mcChild.sharedMesh = smr.sharedMesh;
+                ArenaClickListenerModel aclm = smr.gameObject.AddComponent<ArenaClickListenerModel>();
+                meshAvailable = true;
             }
         }
 
@@ -86,8 +98,6 @@ namespace ArenaUnity.Components
             RaycastHit hit;
             Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
             Physics.Raycast(ray, out hit);
-
-            Debug.Log($"Local '{name}' ({eventType})!"); // TODO: remove debug log
 
             Vector3 camPosition = _camera.transform.localPosition;
             string camName = _arenaCam.camid;

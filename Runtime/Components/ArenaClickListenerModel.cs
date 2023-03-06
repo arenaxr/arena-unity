@@ -15,7 +15,7 @@ namespace ArenaUnity.Components
 
         private void Start()
         {
-            _arenaCL = transform.parent.gameObject.GetComponent<ArenaClickListener>();
+            _arenaCL = GetComponentInParent<ArenaClickListener>();
         }
 
         private void Update()
