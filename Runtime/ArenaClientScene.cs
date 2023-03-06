@@ -929,7 +929,7 @@ namespace ArenaUnity
 
         private static string GetTimestamp()
         {
-            return DateTime.Now.ToString("yyyy-MM-dd' 'HH:mm:ss.fffZ", CultureInfo.InvariantCulture);
+            return DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss.fffZ", CultureInfo.InvariantCulture);
         }
 
         protected override void OnConnected()
