@@ -860,7 +860,8 @@ namespace ArenaUnity
                     float opacity = data.material.opacity != null ? (float)data.material.opacity : 1f;
                     bool transparent = Convert.ToBoolean(data.material.transparent);
                     bool opaque = opacity == 1f;
-                    material.SetColor(ColorPropertyName, ToUnityColor((string)data.material.color, opacity));
+                    if (data.material.color != null)
+                        material.SetColor(ColorPropertyName, ToUnityColor((string)data.material.color, opacity));
                     if (data.material.shader != null)
                         material.shader.name = (string)data.material.shader == "flat" ? "Unlit/Color" : "Standard";
                     // For runtime set/change transparency mode, follow GUI params
