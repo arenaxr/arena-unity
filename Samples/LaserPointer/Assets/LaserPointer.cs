@@ -44,7 +44,9 @@ public class LaserPointer : MonoBehaviour
         if (event_type != "mousedown") return;
         int instance = UnityEngine.Random.Range(0, 100000000);
 
-        // TODO: provide better serialzation
+        // TODO (error) Received: {"object_id":"guac-cube_1_1","action":"clientEvent","type":"mousedown","data":{"position":{"x":1,"y":1,"z":-3},"source":"pyClient-144637"},"timestamp":"2023-03-06T16:30:06.368Z"}
+
+        // TODO: provide better serialization
         dynamic m = JsonConvert.DeserializeObject(message);
         dynamic start = m.data.clickPos;
         dynamic end = m.data.position;
