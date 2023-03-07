@@ -928,8 +928,8 @@ namespace ArenaUnity
         }
 
         private static string GetTimestamp()
-        {
-            return DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss.fffZ", CultureInfo.InvariantCulture);
+        {   // o Format Specifier 2008-10-31T17:04:32.0000000Z
+            return DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
         }
 
         protected override void OnConnected()
