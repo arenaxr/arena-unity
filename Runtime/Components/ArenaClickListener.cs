@@ -46,14 +46,15 @@ namespace ArenaUnity.Components
                 {   // gltf-model
                     // TODO: test for "this arena object only"
                     foreach (MeshRenderer mr in GetComponentsInChildren<MeshRenderer>())
-                        AssignColliderMR(mr);
+                        AssignColliderMesh(mr);
                     foreach (SkinnedMeshRenderer smr in GetComponentsInChildren<SkinnedMeshRenderer>())
-                        AssignColliderSMR(smr);
+                        AssignColliderSkinnedMesh(smr);
+                    meshAvailable = true;
                 }
             }
         }
 
-        private void AssignColliderMR(MeshRenderer mr)
+        private void AssignColliderMesh(MeshRenderer mr)
         {
             MeshCollider mcChild = mr.gameObject.AddComponent<MeshCollider>();
             if (mcChild != null)
@@ -61,18 +62,16 @@ namespace ArenaUnity.Components
                 MeshFilter mf = mr.GetComponent<MeshFilter>();
                 mcChild.sharedMesh = mf.sharedMesh;
                 ArenaClickListenerModel aclm = mr.gameObject.AddComponent<ArenaClickListenerModel>();
-                meshAvailable = true;
             }
         }
 
-        private void AssignColliderSMR(SkinnedMeshRenderer smr)
+        private void AssignColliderSkinnedMesh(SkinnedMeshRenderer smr)
         {
             MeshCollider mcChild = smr.gameObject.AddComponent<MeshCollider>();
             if (mcChild != null)
             {
                 mcChild.sharedMesh = smr.sharedMesh;
                 ArenaClickListenerModel aclm = smr.gameObject.AddComponent<ArenaClickListenerModel>();
-                meshAvailable = true;
             }
         }
 
