@@ -2,6 +2,24 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.9.0](https://github.com/arenaxr/arena-unity/compare/v0.8.0...v0.9.0) (2023-03-07)
+
+
+### Features
+
+* **line/thickline:** support  object type, also LineRenderer to ([07d832f](https://github.com/arenaxr/arena-unity/commit/07d832f6de8eae2d304ab1943fd22d779b4a15c4))
+* **mqtt:** add publish frequency override values per object/camera ([#66](https://github.com/arenaxr/arena-unity/issues/66)) ([370ebac](https://github.com/arenaxr/arena-unity/commit/370ebac6b71151ffdee4b0ea9ad3ec9a42d64e87))
+* **thickline:** support prescreened lineWidthStyler algorithms ([f156394](https://github.com/arenaxr/arena-unity/commit/f1563948eda86b7cf4839b88db521d2996a322c9))
+
+
+### Bug Fixes
+
+* **laser:** add program choice to use laser line or thickline ([0b71b8a](https://github.com/arenaxr/arena-unity/commit/0b71b8aae2084427583db1b5bf0efd58f205f895))
+* **material:** improved opacity irregularity in rendering ([1f02a4b](https://github.com/arenaxr/arena-unity/commit/1f02a4b604d8210dd851a0b1bcf361a9a87bd948))
+* **material:** use Fade mode for opacity&lt;1 trans==true ([d104a39](https://github.com/arenaxr/arena-unity/commit/d104a39ebe1daa35756167387931d6bfc898e48f))
+* **mqtt:** fixed timestamp format ([aec6434](https://github.com/arenaxr/arena-unity/commit/aec6434634450c2e31b0d23b09d0bf673508d207))
+* **mqtt:** fixed UTC Zulu timestamp ([0ee16fe](https://github.com/arenaxr/arena-unity/commit/0ee16fe7c25e01afbd12c2fce22c9c20fc10bdce))
+
 ## [0.8.0](https://github.com/arenaxr/arena-unity/compare/v0.7.1...v0.8.0) (2023-03-02)
 
 
