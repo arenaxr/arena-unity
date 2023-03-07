@@ -852,31 +852,28 @@ namespace ArenaUnity
                     else
                         material.shader = Shader.Find("Universal Render Pipeline/Lit");
                 }
+                float opacity = (data.material != null && data.material.opacity != null) ? (float)data.material.opacity : 1f;
                 // legacy color overrides material color in the arena
                 if (data.color != null) // support legacy arena color
-                    material.SetColor(ColorPropertyName, ToUnityColor((string)data.color));
+                    material.SetColor(ColorPropertyName, ToUnityColor((string)data.color, opacity));
                 if (data.material != null)
                 {
-                    float opacity = data.material.opacity != null ? (float)data.material.opacity : 1f;
                     bool transparent = Convert.ToBoolean(data.material.transparent);
-                    bool opaque = opacity == 1f;
+                    bool opaque = opacity >= 1f;
                     if (data.material.color != null)
                         material.SetColor(ColorPropertyName, ToUnityColor((string)data.material.color, opacity));
+                    if (data.material.opacity != null)
+                    {
+                        Color c = material.GetColor(ColorPropertyName);
+                        material.SetColor(ColorPropertyName, new Color(c.r, c.g, c.b, opacity));
+                    }
                     if (data.material.shader != null)
                         material.shader.name = (string)data.material.shader == "flat" ? "Unlit/Color" : "Standard";
                     // For runtime set/change transparency mode, follow GUI params
                     // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/StandardShaderGUI.cs#L344
-                    if (transparent)
-                        material.SetFloat("_Mode", (float)MatRendMode.Transparent);
-                    else
-                    {
-                        if (opaque)
-                            material.SetFloat("_Mode", (float)MatRendMode.Opaque);
-                        else
-                            material.SetFloat("_Mode", (float)MatRendMode.Fade);
-                    }
-                    if (opaque)
-                    {
+                    if (opacity >= 1f)
+                    {   // op == 1
+                        material.SetFloat("_Mode", (float)MatRendMode.Opaque);
                         material.SetInt("_SrcBlend", (int)BlendMode.One);
                         material.SetInt("_DstBlend", (int)BlendMode.Zero);
                         material.SetInt("_ZWrite", 1);
@@ -885,8 +882,20 @@ namespace ArenaUnity
                         material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
                         material.renderQueue = -1;
                     }
+                    if (opacity <= 0f)
+                    {   // op == 0
+                        material.SetFloat("_Mode", (float)MatRendMode.Transparent);
+                        material.SetInt("_SrcBlend", (int)BlendMode.One);
+                        material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+                        material.SetInt("_ZWrite", 0);
+                        material.EnableKeyword("_ALPHATEST_ON");
+                        material.EnableKeyword("_ALPHABLEND_ON");
+                        material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                        material.renderQueue = 3000;
+                    }
                     else
-                    {
+                    {   // op 0-1
+                        material.SetFloat("_Mode", (float)MatRendMode.Fade);
                         material.SetInt("_SrcBlend", (int)BlendMode.One);
                         material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
                         material.SetInt("_ZWrite", 0);
