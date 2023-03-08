@@ -203,6 +203,11 @@ namespace ArenaUnity
                 sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
                 sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
             }
+            if (permissions == null)
+            {
+                LogAndExit("Permissions not received.");
+                yield break;
+            }
             dynamic perms = JsonConvert.DeserializeObject(permissions);
             foreach (dynamic pubperm in perms.publ)
             {
@@ -692,7 +697,7 @@ namespace ArenaUnity
             // data.click-listener
             if (jData.SelectToken("click-listener") != null)
             {
-                ArenaUnity.ToUnityClickListener(ref gobj);
+                ArenaUnity.ToUnityClickListener(jData, ref gobj);
             }
 
             if (aobj != null)

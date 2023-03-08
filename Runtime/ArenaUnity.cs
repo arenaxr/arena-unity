@@ -915,13 +915,13 @@ namespace ArenaUnity
         }
         internal static void ToUnityAnimationMixer(JObject jData, ref GameObject gobj)
         {
-            JToken amObj = jData.SelectToken("animation-mixer");
-            if (amObj != null && amObj.Type != JTokenType.Null)
+            JToken jToken = jData.SelectToken("animation-mixer");
+            if (jToken != null && jToken.Type != JTokenType.Null)
             {
                 ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
                 if (am == null)
                     am = gobj.AddComponent<ArenaAnimationMixer>();
-                am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(amObj), amObj);
+                am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(jToken), jToken);
                 am.apply = true;
             }
         }
@@ -931,10 +931,16 @@ namespace ArenaUnity
             ArenaClickListener am = gobj.GetComponent<ArenaClickListener>();
             jData["click-listener"] = true;
         }
-        internal static void ToUnityClickListener(ref GameObject gobj)
+        internal static void ToUnityClickListener(JObject jData, ref GameObject gobj)
         {
-            ArenaClickListener cl = gobj.GetComponent<ArenaClickListener>();
-            if (cl == null) cl = gobj.AddComponent<ArenaClickListener>();
+            JToken jToken = jData.SelectToken("click-listener");
+            // we accept any string or boolean true
+            if ((jToken != null && jToken.Type != JTokenType.Null) || (jToken.Type == JTokenType.Boolean && jToken.Value<bool>()))
+            {
+                ArenaClickListener cl = gobj.GetComponent<ArenaClickListener>();
+                if (cl == null)
+                    cl = gobj.AddComponent<ArenaClickListener>();
+            }
         }
     }
 }
