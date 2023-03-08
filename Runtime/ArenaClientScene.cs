@@ -204,7 +204,7 @@ namespace ArenaUnity
                 sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
             }
             if (permissions == null)
-            {
+            {   // fail when permissions not set
                 LogAndExit("Permissions not received.");
                 yield break;
             }
