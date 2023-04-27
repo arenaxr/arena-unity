@@ -541,7 +541,7 @@ namespace ArenaUnity
 #if !UNITY_EDITOR
                 Debug.Log($"Loading object '{object_id}'..."); // show new objects in log
 #endif
-                // check if theres already an object in unity, if so dont make a new one
+                // check if theres already an object in unity, if so don't make a new one
                 gobj = GameObject.Find((string)object_id);
                 if (gobj == null)
                 {
