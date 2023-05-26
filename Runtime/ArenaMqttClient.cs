@@ -30,7 +30,7 @@ namespace ArenaUnity
         [Tooltip("Connect as Anonymous, Google authenticated, or Manual (advanced) JWT user (runtime changes ignored).")]
         public Auth authType = Auth.Google;
         [Tooltip("IP address or URL of the host running broker/auth/persist services (runtime changes ignored).")]
-        public string hostAddress = "mqtt.arenaxr.org";
+        public string hostAddress = "arenaxr.org";
 
         /// <summary>
         /// Authenticated user email account.
