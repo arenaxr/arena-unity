@@ -574,8 +574,6 @@ namespace ArenaUnity
             string object_type = (string)data.object_type;
             switch (object_type)
             {
-                case "handLeft":
-                case "handRight":
                 case "gltf-model":
                     // load main model
                     if (data.url != null && aobj.gltfUrl == null)
@@ -586,10 +584,6 @@ namespace ArenaUnity
                         {
                             aobj.gltfUrl = (string)data.url;
                             AttachGltf(assetPath, gobj, aobj);
-                            if (drawControllerRays && (object_type == "handLeft" || object_type == "handRight"))
-                            {
-                                gobj.AddComponent<ArenaHand>();
-                            }
                         }
                     }
                     // load on-demand-model (LOD) as well
@@ -615,6 +609,10 @@ namespace ArenaUnity
                         }
                         AttachAvatar(object_id, data, displayName, gobj);
                     }
+                    break;
+                case "handLeft":
+                case "handRight":
+                    AttachHand(object_id, data, gobj);
                     break;
                 case "text":
                     ArenaUnity.ToUnityText(data, ref gobj);
@@ -759,6 +757,36 @@ namespace ArenaUnity
                         htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                         // makes the child keep its local orientation rather than its global orientation
                         htobj.transform.SetParent(gobj.transform, worldPositionStays);
+                    }
+                }
+            }
+        }
+
+        internal void AttachHand(string object_id, dynamic data, GameObject gobj)
+        {
+            bool worldPositionStays = false;
+            if (data.url != null)
+            {
+                string localpath = checkLocalAsset((string)data.url);
+                if (localpath != null)
+                {
+                    string handModelId = $"hand-model_{object_id}";
+                    Transform foundHandModel = gobj.transform.Find(handModelId);
+                    if (!foundHandModel)
+                    {
+                        // add model child to camera
+                        GameObject hmobj = new GameObject(handModelId);
+                        AttachGltf(localpath, hmobj);
+                        hmobj.transform.localPosition = Vector3.zero;
+                        hmobj.transform.localRotation = Quaternion.identity;
+                        hmobj.transform.localScale = Vector3.one;
+                        // makes the child keep its local orientation rather than its global orientation
+                        hmobj.transform.SetParent(gobj.transform, worldPositionStays);
+
+                        if (drawControllerRays)
+                        {
+                            gobj.AddComponent<ArenaHand>();
+                        }
                     }
                 }
             }
