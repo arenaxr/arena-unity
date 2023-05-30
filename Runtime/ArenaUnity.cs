@@ -20,7 +20,7 @@ namespace ArenaUnity
     /// </summary>
     public static class ArenaUnity
     {
-        private const float LineSinglePixelInMeters = 0.005f;
+        public const float LineSinglePixelInMeters = 0.005f;
         private static string ColorPropertyName = (!GraphicsSettings.renderPipelineAsset ? "_Color" : "_BaseColor");
         public enum MatRendMode
         {   // TODO: the standards for "_Mode" seem to be missing?
