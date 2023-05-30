@@ -50,6 +50,8 @@ namespace ArenaUnity
         [Header("Presence")]
         [Tooltip("Display other camera avatars in the scene")]
         public bool renderCameras = true;
+        [Tooltip("Display VR Controller Rays")]
+        public bool drawControllerRays = false;
 
         [Header("Performance")]
         [Tooltip("Console log MQTT object messages")]
@@ -584,6 +586,10 @@ namespace ArenaUnity
                         {
                             aobj.gltfUrl = (string)data.url;
                             AttachGltf(assetPath, gobj, aobj);
+                            if (drawControllerRays && (object_type == "handLeft" || object_type == "handRight"))
+                            {
+                                gobj.AddComponent<ArenaHand>();
+                            }
                         }
                     }
                     // load on-demand-model (LOD) as well
