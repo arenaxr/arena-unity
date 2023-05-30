@@ -418,15 +418,10 @@ namespace ArenaUnity
                 if (isCrdSuccess(cd.result))
                 {
                     byte[] urlData = (byte[])cd.result;
-                    SaveAsset(urlData, localPath);
                     // get gltf sub-assets
                     if (".gltf" == Path.GetExtension(localPath).ToLower())
                     {
-                        string json;
-                        using (StreamReader r = new StreamReader(localPath))
-                        {
-                            json = r.ReadToEnd();
-                        }
+                        string json = System.Text.Encoding.UTF8.GetString(urlData);
                         IEnumerable<string> uris = new string[] { };
                         try
                         {
@@ -471,6 +466,7 @@ namespace ArenaUnity
                             }
                         }
                     }
+                    SaveAsset(urlData, localPath);
                 }
                 else allPathsValid = false;
 
@@ -573,7 +569,8 @@ namespace ArenaUnity
             // modify Unity attributes
             bool worldPositionStays = false; // default: most children need relative position
             string parent = (string)data.parent;
-            switch ((string)data.object_type)
+            string object_type = (string)data.object_type;
+            switch (object_type)
             {
                 case "handLeft":
                 case "handRight":
@@ -585,8 +582,8 @@ namespace ArenaUnity
                         string assetPath = checkLocalAsset((string)data.url);
                         if (assetPath != null)
                         {
-                            AttachGltf(assetPath, gobj, aobj);
                             aobj.gltfUrl = (string)data.url;
+                            AttachGltf(assetPath, gobj, aobj);
                         }
                     }
                     // load on-demand-model (LOD) as well
