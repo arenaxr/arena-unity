@@ -2,6 +2,16 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.9.1](https://github.com/arenaxr/arena-unity/compare/v0.9.0...v0.9.1) (2023-05-30)
+
+
+### Bug Fixes
+
+* **auth:** check for failed permissions from bad hostname ([3243872](https://github.com/arenaxr/arena-unity/commit/3243872d2cc7178af202b658e522bf94ae1c958a))
+* **click-listener:** accept both legacy string or boolean values ([2b2efd8](https://github.com/arenaxr/arena-unity/commit/2b2efd8cc3ddc6f6e4334f98edf9b6c53b0c91d5))
+* **gltf:** fixed runtime loading of multiple .gltf files and assets ([760f977](https://github.com/arenaxr/arena-unity/commit/760f97744d4fdc735fa4c7521d8aabab79cae0f7))
+* **hand:** add drawControllerRay option, and fix hand model position ([#70](https://github.com/arenaxr/arena-unity/issues/70)) ([bd3b564](https://github.com/arenaxr/arena-unity/commit/bd3b5640fb2345fbf3a0772aa6de5774c5de33b8))
+
 ## [0.9.0](https://github.com/arenaxr/arena-unity/compare/v0.8.0...v0.9.0) (2023-03-07)
 
 
