@@ -2,6 +2,16 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.9.2](https://github.com/arenaxr/arena-unity/compare/v0.9.1...v0.9.2) (2023-06-02)
+
+
+### Bug Fixes
+
+* **click-listener:** do not auto-add ArenaCamera component ([c2b3b81](https://github.com/arenaxr/arena-unity/commit/c2b3b81ac2c09062a3830571ec3b35285c51444d))
+* **object:** check for existing arena object component ([b134689](https://github.com/arenaxr/arena-unity/commit/b134689fca066982170381bca65620a59d4815eb))
+* **object:** recursively remove children if any parents are deleted ([d1d81f9](https://github.com/arenaxr/arena-unity/commit/d1d81f92bed972e9fec0c19fce8fc1df3f2f4e4a))
+* **object:** use dict update rathar than add arenaObjs ([b20e82d](https://github.com/arenaxr/arena-unity/commit/b20e82ddf289e5b1239926a4a08a6870e52f4126))
+
 ## [0.9.1](https://github.com/arenaxr/arena-unity/compare/v0.9.0...v0.9.1) (2023-05-30)
 
 
