@@ -26,6 +26,8 @@ namespace ArenaUnity.Components
         private void Start()
         {
             _camera = Camera.main;
+            if (_camera == null) return;
+
             _arenaCam = _camera.GetComponent<ArenaCamera>();
             if (_arenaCam == null) _arenaCam = _camera.gameObject.AddComponent<ArenaCamera>();
         }
@@ -94,6 +96,8 @@ namespace ArenaUnity.Components
 
         internal void PublishMouseEvent(string eventType)
         {
+            if (_camera == null) return;
+
             RaycastHit hit;
             Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
             Physics.Raycast(ray, out hit);

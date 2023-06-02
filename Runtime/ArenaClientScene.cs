@@ -626,24 +626,7 @@ namespace ArenaUnity
                     break;
             }
 
-            // update transform properties, only apply if updated in mqtt message
-            if (isElement(data.position))
-                gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
-            if (isElement(data.rotation))
-            {
-                // TODO: needed? bool invertY = !((string)data.object_type == "camera");
-                bool invertY = true;
-                if (isElement(data.rotation.w)) // quaternion
-                    gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
-                else // euler
-                    gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
-                if (gltfTypeList.Where(x => x.Contains((string)data.object_type)).FirstOrDefault() != null)
-                    gobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
-            }
-            if (isElement(data.scale))
-                gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
-
-            // data.parent
+            // handle data.parent BEFORE setting transform in case object becomes unparented
             if (parent != null)
             {
                 // establish parent/child relationships
@@ -660,6 +643,12 @@ namespace ArenaUnity
                     childObjs.Add(object_id, gobj);
                 }
             }
+            else {
+                if (gobj.transform.parent != null) {
+                    gobj.transform.SetParent(null);
+                }
+            }
+
             if (parentalQueue.Contains(object_id))
             {
                 // find children awaiting a parent
@@ -677,6 +666,23 @@ namespace ArenaUnity
                 }
                 parentalQueue.Remove(object_id);
             }
+
+            // update transform properties, only apply if updated in mqtt message
+            if (isElement(data.position))
+                gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
+            if (isElement(data.rotation))
+            {
+                // TODO: needed? bool invertY = !((string)data.object_type == "camera");
+                bool invertY = true;
+                if (isElement(data.rotation.w)) // quaternion
+                    gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
+                else // euler
+                    gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
+                if (gltfTypeList.Where(x => x.Contains((string)data.object_type)).FirstOrDefault() != null)
+                    gobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
+            }
+            if (isElement(data.scale))
+                gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
 
             gobj.transform.hasChanged = false;
 
