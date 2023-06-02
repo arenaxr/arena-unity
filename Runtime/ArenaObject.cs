@@ -152,7 +152,7 @@ namespace ArenaUnity
             if (messageType != "object") return false;
 
             if (!ArenaClientScene.Instance.arenaObjs.ContainsKey(name))
-                ArenaClientScene.Instance.arenaObjs.Add(name, gameObject);
+                ArenaClientScene.Instance.arenaObjs[name] = gameObject;
 
             // message type information
             dynamic msg = new ExpandoObject();

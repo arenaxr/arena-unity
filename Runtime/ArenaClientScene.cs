@@ -178,7 +178,7 @@ namespace ArenaUnity
             {
                 if (!arenaObjs.ContainsKey(aobj.name))
                 {
-                    arenaObjs.Add(aobj.name, aobj.gameObject);
+                    arenaObjs[aobj.name] = aobj.gameObject;
                 }
                 else
                 {
@@ -550,7 +550,7 @@ namespace ArenaUnity
                 if (aobj == null)
                 {
                     aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
-                    arenaObjs.Add(object_id, gobj);
+                    arenaObjs[object_id] = gobj;
                 }
                 aobj.Created = true;
                 aobj.persist = persist;
