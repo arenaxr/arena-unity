@@ -546,9 +546,12 @@ namespace ArenaUnity
                     gobj = new GameObject();
                     gobj.name = object_id;
                 }
-
-                arenaObjs.Add(object_id, gobj);
-                aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
+                aobj = gobj.GetComponent<ArenaObject>();
+                if (aobj == null)
+                {
+                    aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
+                    arenaObjs.Add(object_id, gobj);
+                }
                 aobj.Created = true;
                 aobj.persist = persist;
                 aobj.messageType = storeType;
