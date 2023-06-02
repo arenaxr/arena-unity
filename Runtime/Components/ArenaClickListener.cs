@@ -25,15 +25,19 @@ namespace ArenaUnity.Components
 
         private void Start()
         {
-            _camera = Camera.main;
-            if (_camera == null) return;
-
-            _arenaCam = _camera.GetComponent<ArenaCamera>();
-            if (_arenaCam == null) _arenaCam = _camera.gameObject.AddComponent<ArenaCamera>();
         }
 
         private void Update()
         {
+            // discover which camera to use for collisions
+            _camera = Camera.main;
+            if (_camera != null && _arenaCam == null) {
+                // if user has chosen to add ArenaCamera, only then publish clientEvent events,
+                // do not auto-add ArenaCamera component
+                _arenaCam = _camera.GetComponent<ArenaCamera>();
+            }
+
+            // update colliders
             if (!meshAvailable)
             {
                 MeshFilter mf = GetComponent<MeshFilter>();
@@ -96,7 +100,8 @@ namespace ArenaUnity.Components
 
         internal void PublishMouseEvent(string eventType)
         {
-            if (_camera == null) return;
+            // if user has chosen to add ArenaCamera, only then publish clientEvent events
+            if (_camera == null || _arenaCam == null) return;
 
             RaycastHit hit;
             Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
@@ -111,7 +116,7 @@ namespace ArenaUnity.Components
             data.source = camName;
             string payload = JsonConvert.SerializeObject(data);
 
-            ArenaClientScene.Instance.PublishEvent(name, eventType, data.source, payload);
+            ArenaClientScene.Instance.PublishEvent(name, eventType, camName, payload);
         }
     }
 }
