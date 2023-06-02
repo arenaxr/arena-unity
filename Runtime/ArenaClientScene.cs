@@ -896,7 +896,14 @@ namespace ArenaUnity
         {
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
             {
-                gobj.GetComponent<ArenaObject>().externalDelete = true;
+                // recursively remove children if any
+                foreach(Transform child in gobj.transform)
+                {
+                    RemoveObject(child.name);
+                }
+                // remove this
+                ArenaObject aobj = gobj.GetComponent<ArenaObject>();
+                aobj.externalDelete = true;
                 Destroy(gobj);
             }
             arenaObjs.Remove(object_id);
