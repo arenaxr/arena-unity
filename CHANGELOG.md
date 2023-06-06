@@ -2,6 +2,13 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.9.3](https://github.com/arenaxr/arena-unity/compare/v0.9.2...v0.9.3) (2023-06-06)
+
+
+### Bug Fixes
+
+* **renderer:** enable/diable renderer from data.visible ([c143444](https://github.com/arenaxr/arena-unity/commit/c143444978fe389a39ec923368a00b1e632face6))
+
 ## [0.9.2](https://github.com/arenaxr/arena-unity/compare/v0.9.1...v0.9.2) (2023-06-02)
 
 
