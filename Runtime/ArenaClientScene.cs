@@ -646,8 +646,10 @@ namespace ArenaUnity
                     childObjs.Add(object_id, gobj);
                 }
             }
-            else {
-                if (gobj.transform.parent != null) {
+            else
+            {
+                if (gobj.transform.parent != null)
+                {
                     gobj.transform.SetParent(null);
                 }
             }
@@ -697,6 +699,16 @@ namespace ArenaUnity
                 ArenaUnity.ToUnityMaterial(data, ref gobj);
             if (isElement(data.material) && isElement(data.material.src))
                 AttachMaterialTexture(checkLocalAsset((string)data.material.src), gobj);
+
+            // data.visible
+            if (isElement(data.visible))
+            {
+                // TODO: handle realtime renderer changes from unity.
+                // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
+                var renderer = gobj.GetComponent<Renderer>();
+                if (renderer != null)
+                    renderer.enabled = Convert.ToBoolean(data.visible);
+            }
 
             // data.animation-mixer
             if (jData.SelectToken("animation-mixer") != null)
@@ -897,7 +909,7 @@ namespace ArenaUnity
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
             {
                 // recursively remove children if any
-                foreach(Transform child in gobj.transform)
+                foreach (Transform child in gobj.transform)
                 {
                     RemoveObject(child.name);
                 }
