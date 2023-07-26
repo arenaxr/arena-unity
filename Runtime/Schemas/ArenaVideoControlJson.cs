@@ -93,16 +93,6 @@ namespace ArenaUnity.Schemas
             return (Volume != defVolume);
         }
 
-        private static bool defCleanup = true;
-        [JsonProperty(PropertyName = "cleanup")]
-        [Tooltip("Automatically remove HTML5 video and img assets from DOM on object removal")]
-        public bool Cleanup = defCleanup;
-        public bool ShouldSerializeCleanup()
-        {
-            if (_token != null && _token.SelectToken("cleanup") != null) return true;
-            return (Cleanup != defCleanup);
-        }
-
         // General json object management
 
         [JsonExtensionData]

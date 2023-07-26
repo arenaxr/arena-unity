@@ -21,7 +21,7 @@ namespace ArenaUnity.Components
         // TODO duration: AUTO    Duration of the animation, in seconds.
         // DONE crossFadeDuration:   0   Duration of cross - fades between clips, in seconds.
         // DONE loop:  once, repeat, or pingpong. In repeat and pingpong modes, the clip plays once plus the specified number of repetitions. For pingpong, every second clip plays in reverse.
-        // DONE repetitions: Infinity    Number of times to play the clip, in addition to the first play.Repetitions are ignored for loop: once.
+        // TODO repetitions: Infinity    Number of times to play the clip, in addition to the first play.Repetitions are ignored for loop: once.
         // DONE timeScale:   1   Scaling factor for playback speed. A value of 0 causes the animation to pause.Negative values cause the animation to play backwards.
         // DONE clampWhenFinished:   false   If true, halts the animation at the last frame.
         // DONE startAt: 0   Sets the start of an animation to a specific time(in milliseconds).This is useful when you need to jump to an exact time in an animation.The input parameter will be scaled by the mixer's timeScale.
@@ -109,17 +109,11 @@ namespace ArenaUnity.Components
                     }
                     if (includeClip)
                     {
-                        //float fadeLength = (float)(json.CrossFadeDuration);
-                        //if (fadeLength > 0)
-                        //    anim.CrossFade(animations[i], fadeLength);
-                        //else
-                        //    anim.Play(animations[i]);
-                        anim.PlayQueued(animations[i]);
-                        if (json.Repetitions != null && int.Parse(json.Repetitions) == 2)
-                        {
-                            anim.PlayQueued(animations[i]);
-                            anim.PlayQueued(animations[i]);
-                        }
+                        float fadeLength = (float)(json.CrossFadeDuration);
+                        if (fadeLength > 0)
+                            anim.CrossFade(animations[i], fadeLength);
+                        else
+                            anim.Play(animations[i]);
                     }
                 }
             }

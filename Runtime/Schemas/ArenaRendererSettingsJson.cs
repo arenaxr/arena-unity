@@ -26,6 +26,16 @@ namespace ArenaUnity.Schemas
 
         // renderer-settings member-fields
 
+        private static float defGammaFactor = 2.2f;
+        [JsonProperty(PropertyName = "gammaFactor")]
+        [Tooltip("Gamma factor (three.js default is 2.0; we use 2.2 as default)")]
+        public float GammaFactor = defGammaFactor;
+        public bool ShouldSerializeGammaFactor()
+        {
+            if (_token != null && _token.SelectToken("gammaFactor") != null) return true;
+            return (GammaFactor != defGammaFactor);
+        }
+
         private static bool defLocalClippingEnabled = false;
         [JsonProperty(PropertyName = "localClippingEnabled")]
         [Tooltip("Defines whether the renderer respects object-level clipping planes")]
@@ -36,23 +46,35 @@ namespace ArenaUnity.Schemas
             return (LocalClippingEnabled != defLocalClippingEnabled);
         }
 
-        public enum OutputColorSpaceType
+        public enum OutputEncodingType
         {
-            [EnumMember(Value = "SRGBColorSpace")]
-            SrGBColorSpace,
-            [EnumMember(Value = "LinearSRGBColorSpace")]
-            LinearSRGBColorSpace,
-            [EnumMember(Value = "DisplayP3ColorSpace")]
-            DisplayP3colorSpace,
-            [EnumMember(Value = "NoColorSpace")]
-            NoColorSpace,
+            [EnumMember(Value = "BasicDepthPacking")]
+            BasicDepthPacking,
+            [EnumMember(Value = "GammaEncoding")]
+            GammaEncoding,
+            [EnumMember(Value = "LinearEncoding")]
+            LinearEncoding,
+            [EnumMember(Value = "LogLuvEncoding")]
+            LogLuvEncoding,
+            [EnumMember(Value = "RGBADepthPacking")]
+            RgBADepthPacking,
+            [EnumMember(Value = "RGBDEncoding")]
+            RgBDEncoding,
+            [EnumMember(Value = "RGBEEncoding")]
+            RgBEEncoding,
+            [EnumMember(Value = "RGBM16Encoding")]
+            RgBM16encoding,
+            [EnumMember(Value = "RGBM7Encoding")]
+            RgBM7encoding,
+            [EnumMember(Value = "sRGBEncoding")]
+            SrGBEncoding,
         }
-        private static OutputColorSpaceType defOutputColorSpace = OutputColorSpaceType.SrGBColorSpace;
+        private static OutputEncodingType defOutputEncoding = OutputEncodingType.SrGBEncoding;
         [JsonConverter(typeof(StringEnumConverter))]
-        [JsonProperty(PropertyName = "outputColorSpace")]
-        [Tooltip("Defines the output color space of the renderer (three.js default is SRGBColorSpace)")]
-        public OutputColorSpaceType OutputColorSpace = defOutputColorSpace;
-        public bool ShouldSerializeOutputColorSpace()
+        [JsonProperty(PropertyName = "outputEncoding")]
+        [Tooltip("Defines the output encoding of the renderer (three.js default is LinearEncoding; we use sRGBEncoding as default)")]
+        public OutputEncodingType OutputEncoding = defOutputEncoding;
+        public bool ShouldSerializeOutputEncoding()
         {
             return true; // required in json schema 
         }

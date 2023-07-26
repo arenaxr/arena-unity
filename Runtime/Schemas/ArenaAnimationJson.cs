@@ -138,7 +138,7 @@ namespace ArenaUnity.Schemas
         private static EasingType defEasing = EasingType.EaseInQuad;
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(PropertyName = "easing")]
-        [Tooltip("Easing function of animation. To ease in, ease out, ease in and out (https://easings.net).")]
+        [Tooltip("Easing function of animation. To ease in, ease out, ease in and out.")]
         public EasingType Easing = defEasing;
         public bool ShouldSerializeEasing()
         {
@@ -186,10 +186,10 @@ namespace ArenaUnity.Schemas
             return (IsRawProperty != defIsRawProperty);
         }
 
-        private static string defLoop = "0";
+        private static float defLoop = 0f;
         [JsonProperty(PropertyName = "loop")]
         [Tooltip("How many times the animation should repeat. If the value is true, the animation will repeat infinitely.")]
-        public string Loop = defLoop;
+        public float Loop = defLoop;
         public bool ShouldSerializeLoop()
         {
             if (_token != null && _token.SelectToken("loop") != null) return true;
