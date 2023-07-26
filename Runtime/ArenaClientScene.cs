@@ -741,7 +741,7 @@ namespace ArenaUnity
                 string localpath = checkLocalAsset((string)data.headModelPath);
                 if (localpath != null)
                 {
-                    string headModelId = $"head-model_{object_id}";
+                    string headModelId = $"head-model-{object_id}";
                     Transform foundHeadModel = gobj.transform.Find(headModelId);
                     if (!foundHeadModel)
                     {
@@ -755,7 +755,7 @@ namespace ArenaUnity
                         hmobj.transform.SetParent(gobj.transform, worldPositionStays);
                     }
 
-                    string headTextId = $"headtext_{object_id}";
+                    string headTextId = $"head-text-{object_id}";
                     Transform foundHeadText = gobj.transform.Find(headTextId);
                     if (foundHeadText)
                     {
