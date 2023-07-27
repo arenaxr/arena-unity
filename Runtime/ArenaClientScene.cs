@@ -237,7 +237,7 @@ namespace ArenaUnity
                     }
                     var random = UnityEngine.Random.Range(0, 100000000);
                     cam.userid = $"{random:D8}_unity";
-                    cam.camid = $"camera_{random:D8}_unity";
+                    cam.camid = $"camera-{random:D8}_unity";
                 }
                 localCameraIds.Add(cam.camid);
             }
@@ -741,7 +741,7 @@ namespace ArenaUnity
                 string localpath = checkLocalAsset((string)data.headModelPath);
                 if (localpath != null)
                 {
-                    string headModelId = $"head-model_{object_id}";
+                    string headModelId = $"head-model-{object_id}";
                     Transform foundHeadModel = gobj.transform.Find(headModelId);
                     if (!foundHeadModel)
                     {
@@ -755,7 +755,7 @@ namespace ArenaUnity
                         hmobj.transform.SetParent(gobj.transform, worldPositionStays);
                     }
 
-                    string headTextId = $"headtext_{object_id}";
+                    string headTextId = $"headtext-{object_id}";
                     Transform foundHeadText = gobj.transform.Find(headTextId);
                     if (foundHeadText)
                     {
@@ -791,7 +791,7 @@ namespace ArenaUnity
                 string localpath = checkLocalAsset((string)data.url);
                 if (localpath != null)
                 {
-                    string handModelId = $"hand-model_{object_id}";
+                    string handModelId = $"hand-model-{object_id}";
                     Transform foundHandModel = gobj.transform.Find(handModelId);
                     if (!foundHandModel)
                     {
