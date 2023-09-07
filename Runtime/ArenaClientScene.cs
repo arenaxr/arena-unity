@@ -10,6 +10,7 @@ using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using ArenaUnity.Components;
 using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
@@ -37,7 +38,6 @@ namespace ArenaUnity
         {
             base.Awake();
             Instance = this;
-            name = "ARENA (Starting...)";
         }
 
         [Tooltip("Name of the topic realm for the scene (runtime changes ignored).")]
@@ -50,6 +50,8 @@ namespace ArenaUnity
         [Header("Presence")]
         [Tooltip("Display other camera avatars in the scene")]
         public bool renderCameras = true;
+        [Tooltip("Display VR Controller Rays")]
+        public bool drawControllerRays = false;
 
         [Header("Performance")]
         [Tooltip("Console log MQTT object messages")]
@@ -60,19 +62,21 @@ namespace ArenaUnity
         public bool logMqttEvents = false;
         [Tooltip("Console log MQTT non-persist messages")]
         public bool logMqttNonPersist = false;
-        [Tooltip("Publish interval frequency to publish detected transform changes (milliseconds)")]
+        [Tooltip("Global publish frequency to publish detected transform changes (milliseconds)")]
         [Range(100, 1000)]
-        public int camUpdateIntervalMs = 100;
+        public int globalUpdateMs = 100;
 
         /// <summary>
         /// Browser URL for the scene.
         /// </summary>
         public string sceneUrl { get; private set; }
 
-        internal bool sceneObjectRights { get; private set; }
+        internal bool sceneObjectRights { get; private set; } = false;
+
+        public bool persistLoaded { get; private set; } = false;
 
         private string sceneTopic = null;
-        internal Dictionary<string, GameObject> arenaObjs = new Dictionary<string, GameObject>();
+        public Dictionary<string, GameObject> arenaObjs { get; private set; } = new Dictionary<string, GameObject>();
         internal Dictionary<string, GameObject> childObjs = new Dictionary<string, GameObject>();
         internal List<string> pendingDelete = new List<string>();
         internal List<string> downloadQueue = new List<string>();
@@ -82,6 +86,8 @@ namespace ArenaUnity
         // Define callbacks
         public delegate void DecodeMessageDelegate(string topic, byte[] message);
         public DecodeMessageDelegate OnMessageCallback = null; // null, until library user instantiates.
+
+        public string originalName { get; private set; }
 
         static string importPath = null;
 
@@ -137,6 +143,9 @@ namespace ArenaUnity
         // Start is called before the first frame update
         protected override void Start()
         {
+            originalName = name;
+            name = $"{originalName} (Starting...)";
+
             importPath = Path.Combine(appFilesPath, "Assets", "ArenaUnity", "import");
 
             var requiredShaders = requiredShadersStandardRP;
@@ -169,7 +178,7 @@ namespace ArenaUnity
             {
                 if (!arenaObjs.ContainsKey(aobj.name))
                 {
-                    arenaObjs.Add(aobj.name, aobj.gameObject);
+                    arenaObjs[aobj.name] = aobj.gameObject;
                 }
                 else
                 {
@@ -186,15 +195,20 @@ namespace ArenaUnity
 
             // start auth flow and MQTT connection
             ArenaCamera[] camlist = FindObjectsOfType<ArenaCamera>();
-            name = "ARENA (Authenticating...)";
+            name = $"{originalName} (Authenticating...)";
             CoroutineWithData cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, camlist.Length > 0));
             yield return cd.coroutine;
-            name = "ARENA (MQTT Connecting...)";
+            name = $"{originalName} (MQTT Connecting...)";
             if (cd.result != null)
             {
                 if (string.IsNullOrWhiteSpace(namespaceName)) namespaceName = cd.result.ToString();
                 sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
                 sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
+            }
+            if (permissions == null)
+            {   // fail when permissions not set
+                LogAndExit("Permissions not received.");
+                yield break;
             }
             dynamic perms = JsonConvert.DeserializeObject(permissions);
             foreach (dynamic pubperm in perms.publ)
@@ -223,7 +237,7 @@ namespace ArenaUnity
                     }
                     var random = UnityEngine.Random.Range(0, 100000000);
                     cam.userid = $"{random:D8}_unity";
-                    cam.camid = $"camera_{random:D8}_unity";
+                    cam.camid = $"camera-{random:D8}_unity";
                 }
                 localCameraIds.Add(cam.camid);
             }
@@ -313,7 +327,7 @@ namespace ArenaUnity
                 string msg_type = (string)msg.type;
                 float ttl = isElement(msg.ttl) ? (float)msg.ttl : 0f;
 
-                if (!arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
+                if (arenaObjs != null && !arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
                 {
                     // there isnt already an object in the scene created by the user with the same object_id
                     if (GameObject.Find((string)(msg.object_id)) == null)
@@ -332,6 +346,7 @@ namespace ArenaUnity
                 }
                 objects_num++;
             }
+            persistLoaded = true;
         }
 
         private static IEnumerable<string> ExtractAssetUris(dynamic data, string[] urlTags)
@@ -405,15 +420,10 @@ namespace ArenaUnity
                 if (isCrdSuccess(cd.result))
                 {
                     byte[] urlData = (byte[])cd.result;
-                    SaveAsset(urlData, localPath);
                     // get gltf sub-assets
                     if (".gltf" == Path.GetExtension(localPath).ToLower())
                     {
-                        string json;
-                        using (StreamReader r = new StreamReader(localPath))
-                        {
-                            json = r.ReadToEnd();
-                        }
+                        string json = System.Text.Encoding.UTF8.GetString(urlData);
                         IEnumerable<string> uris = new string[] { };
                         try
                         {
@@ -458,6 +468,7 @@ namespace ArenaUnity
                             }
                         }
                     }
+                    SaveAsset(urlData, localPath);
                 }
                 else allPathsValid = false;
 
@@ -528,16 +539,19 @@ namespace ArenaUnity
 #if !UNITY_EDITOR
                 Debug.Log($"Loading object '{object_id}'..."); // show new objects in log
 #endif
-                // check if theres already an object in unity, if so dont make a new one
+                // check if theres already an object in unity, if so don't make a new one
                 gobj = GameObject.Find((string)object_id);
                 if (gobj == null)
                 {
                     gobj = new GameObject();
                     gobj.name = object_id;
                 }
-
-                arenaObjs.Add(object_id, gobj);
-                aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
+                aobj = gobj.GetComponent<ArenaObject>();
+                if (aobj == null)
+                {
+                    aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
+                    arenaObjs[object_id] = gobj;
+                }
                 aobj.Created = true;
                 aobj.persist = persist;
                 aobj.messageType = storeType;
@@ -560,10 +574,9 @@ namespace ArenaUnity
             // modify Unity attributes
             bool worldPositionStays = false; // default: most children need relative position
             string parent = (string)data.parent;
-            switch ((string)data.object_type)
+            string object_type = (string)data.object_type;
+            switch (object_type)
             {
-                case "handLeft":
-                case "handRight":
                 case "gltf-model":
                     // load main model
                     if (data.url != null && aobj.gltfUrl == null)
@@ -572,8 +585,8 @@ namespace ArenaUnity
                         string assetPath = checkLocalAsset((string)data.url);
                         if (assetPath != null)
                         {
-                            AttachGltf(assetPath, gobj, aobj);
                             aobj.gltfUrl = (string)data.url;
+                            AttachGltf(assetPath, gobj, aobj);
                         }
                     }
                     // load on-demand-model (LOD) as well
@@ -600,15 +613,63 @@ namespace ArenaUnity
                         AttachAvatar(object_id, data, displayName, gobj);
                     }
                     break;
+                case "handLeft":
+                case "handRight":
+                    AttachHand(object_id, data, gobj);
+                    break;
                 case "text":
                     ArenaUnity.ToUnityText(data, ref gobj);
                     break;
+                case "line":
                 case "thickline":
-                    ArenaUnity.ToUnityThickline(data, ref gobj);
+                    ArenaUnity.ToUnityLine(data, ref gobj);
                     break;
                 case "light":
                     ArenaUnity.ToUnityLight(data, ref gobj);
                     break;
+            }
+
+            // handle data.parent BEFORE setting transform in case object becomes unparented
+            if (parent != null)
+            {
+                // establish parent/child relationships
+                if (arenaObjs.ContainsKey(parent))
+                {
+                    gobj.SetActive(true);
+                    // makes the child keep its local orientation rather than its global orientation
+                    gobj.transform.SetParent(arenaObjs[parent].transform, worldPositionStays);
+                }
+                else
+                {
+                    gobj.SetActive(false);
+                    parentalQueue.Add(parent);
+                    childObjs.Add(object_id, gobj);
+                }
+            }
+            else
+            {
+                if (gobj.transform.parent != null)
+                {
+                    gobj.transform.SetParent(null);
+                }
+            }
+
+            if (parentalQueue.Contains(object_id))
+            {
+                // find children awaiting a parent
+                foreach (KeyValuePair<string, GameObject> cgobj in childObjs)
+                {
+                    string cparent = cgobj.Value.GetComponent<ArenaObject>().parentId;
+                    if (cparent != null && cparent == object_id)
+                    {
+                        cgobj.Value.SetActive(true);
+                        // makes the child keep its local orientation rather than its global orientation
+                        cgobj.Value.transform.SetParent(arenaObjs[object_id].transform, worldPositionStays);
+                        cgobj.Value.transform.hasChanged = false;
+                        //childObjs.Remove(cgobj.Key);
+                    }
+                }
+                parentalQueue.Remove(object_id);
             }
 
             // update transform properties, only apply if updated in mqtt message
@@ -628,41 +689,6 @@ namespace ArenaUnity
             if (isElement(data.scale))
                 gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
 
-            // data.parent
-            if (parent != null)
-            {
-                // establish parent/child relationships
-                if (arenaObjs.ContainsKey(parent))
-                {
-                    gobj.SetActive(true);
-                    // makes the child keep its local orientation rather than its global orientation
-                    gobj.transform.SetParent(arenaObjs[parent].transform, worldPositionStays);
-                }
-                else
-                {
-                    gobj.SetActive(false);
-                    parentalQueue.Add(parent);
-                    childObjs.Add(object_id, gobj);
-                }
-            }
-            if (parentalQueue.Contains(object_id))
-            {
-                // find children awaiting a parent
-                foreach (KeyValuePair<string, GameObject> cgobj in childObjs)
-                {
-                    string cparent = cgobj.Value.GetComponent<ArenaObject>().parentId;
-                    if (cparent != null && cparent == object_id)
-                    {
-                        cgobj.Value.SetActive(true);
-                        // makes the child keep its local orientation rather than its global orientation
-                        cgobj.Value.transform.SetParent(arenaObjs[object_id].transform, worldPositionStays);
-                        cgobj.Value.transform.hasChanged = false;
-                        //childObjs.Remove(cgobj.Key);
-                    }
-                }
-                parentalQueue.Remove(object_id);
-            }
-
             gobj.transform.hasChanged = false;
 
             // geometry (mesh)
@@ -674,11 +700,26 @@ namespace ArenaUnity
             if (isElement(data.material) && isElement(data.material.src))
                 AttachMaterialTexture(checkLocalAsset((string)data.material.src), gobj);
 
+            // data.visible
+            if (isElement(data.visible))
+            {
+                // TODO: handle realtime renderer changes from unity.
+                // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
+                var renderer = gobj.GetComponent<Renderer>();
+                if (renderer != null)
+                    renderer.enabled = Convert.ToBoolean(data.visible);
+            }
+
             // data.animation-mixer
-            JToken amObj = jData.SelectToken("animation-mixer");
-            if (amObj != null)
+            if (jData.SelectToken("animation-mixer") != null)
             {
                 ArenaUnity.ToUnityAnimationMixer(jData, ref gobj);
+            }
+
+            // data.click-listener
+            if (jData.SelectToken("click-listener") != null)
+            {
+                ArenaUnity.ToUnityClickListener(jData, ref gobj);
             }
 
             if (aobj != null)
@@ -700,7 +741,7 @@ namespace ArenaUnity
                 string localpath = checkLocalAsset((string)data.headModelPath);
                 if (localpath != null)
                 {
-                    string headModelId = $"head-model_{object_id}";
+                    string headModelId = $"head-model-{object_id}";
                     Transform foundHeadModel = gobj.transform.Find(headModelId);
                     if (!foundHeadModel)
                     {
@@ -714,7 +755,7 @@ namespace ArenaUnity
                         hmobj.transform.SetParent(gobj.transform, worldPositionStays);
                     }
 
-                    string headTextId = $"headtext_{object_id}";
+                    string headTextId = $"headtext-{object_id}";
                     Transform foundHeadText = gobj.transform.Find(headTextId);
                     if (foundHeadText)
                     {
@@ -737,6 +778,36 @@ namespace ArenaUnity
                         htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                         // makes the child keep its local orientation rather than its global orientation
                         htobj.transform.SetParent(gobj.transform, worldPositionStays);
+                    }
+                }
+            }
+        }
+
+        internal void AttachHand(string object_id, dynamic data, GameObject gobj)
+        {
+            bool worldPositionStays = false;
+            if (data.url != null)
+            {
+                string localpath = checkLocalAsset((string)data.url);
+                if (localpath != null)
+                {
+                    string handModelId = $"hand-model-{object_id}";
+                    Transform foundHandModel = gobj.transform.Find(handModelId);
+                    if (!foundHandModel)
+                    {
+                        // add model child to camera
+                        GameObject hmobj = new GameObject(handModelId);
+                        AttachGltf(localpath, hmobj);
+                        hmobj.transform.localPosition = Vector3.zero;
+                        hmobj.transform.localRotation = Quaternion.identity;
+                        hmobj.transform.localScale = Vector3.one;
+                        // makes the child keep its local orientation rather than its global orientation
+                        hmobj.transform.SetParent(gobj.transform, worldPositionStays);
+
+                        if (drawControllerRays)
+                        {
+                            gobj.AddComponent<ArenaHand>();
+                        }
                     }
                 }
             }
@@ -837,7 +908,14 @@ namespace ArenaUnity
         {
             if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
             {
-                gobj.GetComponent<ArenaObject>().externalDelete = true;
+                // recursively remove children if any
+                foreach (Transform child in gobj.transform)
+                {
+                    RemoveObject(child.name);
+                }
+                // remove this
+                ArenaObject aobj = gobj.GetComponent<ArenaObject>();
+                aobj.externalDelete = true;
                 Destroy(gobj);
             }
             arenaObjs.Remove(object_id);
@@ -895,52 +973,47 @@ namespace ArenaUnity
         /// <summary>
         /// Camera events are published using a ObjectId-only topic, a user might only have permissions for their camid.
         /// </summary>
-        public void PublishEvent(string object_id, string eventType, string msgJsonData, bool hasPermissions = true)
+        public void PublishEvent(string object_id, string eventType, string source, string msgJsonData, bool hasPermissions = true)
         {
             dynamic msg = new ExpandoObject();
-            msg.object_id = camid;
+            msg.object_id = object_id;
             msg.action = "clientEvent";
             msg.type = eventType;
             msg.data = JsonConvert.DeserializeObject(msgJsonData);
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{object_id}", JsonConvert.SerializeObject(msg), hasPermissions);
+            PublishSceneMessage($"{sceneTopic}/{source}", JsonConvert.SerializeObject(msg), hasPermissions);
         }
 
         private void PublishSceneMessage(string topic, string msg, bool hasPermissions)
         {
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
-            Publish(topic, payload);
+            Publish(topic, payload); // remote
             LogMessage("Sending", JsonConvert.DeserializeObject(msg), hasPermissions);
         }
 
         private static string GetTimestamp()
-        {
-            return DateTime.Now.ToString("yyyy-MM-dd' 'HH:mm:ss.fffZ", CultureInfo.InvariantCulture);
+        {   // o Format Specifier 2008-10-31T17:04:32.0000000Z
+            return DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
         }
 
         protected override void OnConnected()
         {
             base.OnConnected();
             Subscribe(new string[] { $"{sceneTopic}/#" });
-            name = "ARENA (MQTT Connected)";
+            name = $"{originalName} (MQTT Connected)";
         }
 
         protected override void OnDisconnected()
         {
             base.OnDisconnected();
-            name = "ARENA (MQTT Disconnected)";
+            name = $"{originalName} (MQTT Disconnected)";
         }
 
         protected override void DecodeMessage(string topic, byte[] message)
         {
             // Call the delegate if a user has defined it
             if (OnMessageCallback != null) OnMessageCallback(topic, message);
-
-            // ignore this client's messages
-            if (!topic.Contains(client.ClientId))
-            {
-                ProcessMessage(message);
-            }
+            ProcessMessage(message);
         }
 
         internal void ProcessMessage(string message, object menuCommand = null)
@@ -1001,10 +1074,25 @@ namespace ArenaUnity
                             RemoveObject(hand_right_id);
                         }
                         break;
+                    case "clientEvent":
+                        object_id = (string)msg.object_id;
+                        msg_type = (string)msg.type;
+                        ClientEventOnObject(object_id, msg_type, JsonConvert.SerializeObject(msg));
+                        break;
                     default:
                         break;
                 }
                 yield break;
+            }
+        }
+
+        private void ClientEventOnObject(string object_id, string msg_type, string msg)
+        {
+            if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
+            {
+                // pass event on to click-listener is defined
+                ArenaClickListener acl = gobj.GetComponent<ArenaClickListener>();
+                if (acl != null && acl.OnEventCallback != null) acl.OnEventCallback(msg_type, msg);
             }
         }
 

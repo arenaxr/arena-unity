@@ -131,7 +131,7 @@
         "object_type": "thickline",
         "path": "-2 -1 0, 0 20 0, 10 -1 10",
         "lineWidth": 5,
-        "lineWidthStyle": 1,
+        "lineWidthStyler": 1,
         "color": "#ffa500"
     },
     "type": "object"

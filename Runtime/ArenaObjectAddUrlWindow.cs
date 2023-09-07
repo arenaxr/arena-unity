@@ -60,8 +60,7 @@ namespace ArenaUnity
                 data.position = ArenaUnity.ToArenaPosition(cameraPoint);
                 msg.data = data;
                 string payload = JsonConvert.SerializeObject(msg);
-                client.PublishObject(msg.object_id, payload, client.sceneObjectRights); // remote
-                client.ProcessMessage(payload, menuCommand); // local
+                client.PublishObject(msg.object_id, payload, client.sceneObjectRights);
                 Close();
             }
 

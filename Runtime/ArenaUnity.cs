@@ -20,7 +20,15 @@ namespace ArenaUnity
     /// </summary>
     public static class ArenaUnity
     {
+        public const float LineSinglePixelInMeters = 0.005f;
         private static string ColorPropertyName = (!GraphicsSettings.renderPipelineAsset ? "_Color" : "_BaseColor");
+        public enum MatRendMode
+        {   // TODO: the standards for "_Mode" seem to be missing?
+            Opaque = 0,
+            Cutout = 1,
+            Fade = 2,
+            Transparent = 3
+        }
 
         private static float ArenaFloat(float n) { return (float)Math.Round(n, 3); }
 
@@ -45,9 +53,12 @@ namespace ArenaUnity
             TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
             Light light = gobj.GetComponent<Light>();
             SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
+            LineRenderer lr = gobj.GetComponent<LineRenderer>();
             // initial priority is primitive
             if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0f)
                 objectType = "image";
+            else if (lr)
+                objectType = "thickline";
             else if (tm)
                 objectType = "text";
             else if (light)
@@ -74,13 +85,13 @@ namespace ArenaUnity
             }
             switch (type)
             {
-                // build your own meshes, defaults here should reflect ARENA/AFRAME/THREE defaults
+                // build your own meshes, defaults here should reflect ARENA/AFRAME defaults
                 case "capsule":
                     ArenaMeshCapsule capsule = gobj.GetComponent<ArenaMeshCapsule>() ?? gobj.AddComponent<ArenaMeshCapsule>();
                     capsule.radius = data.radius != null ? (float)data.radius : 1f;
                     capsule.length = data.length != null ? (float)data.length : 1f;
                     capsule.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
-                    capsule.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
+                    capsule.heightSegments = data.segmentsCap != null ? (int)data.segmentsCap : 18;
                     break;
                 case "box":
                 case "cube": // support legacy arena 'cube' == 'box'
@@ -88,15 +99,20 @@ namespace ArenaUnity
                     cube.width = data.width != null ? (float)data.width : 1f;
                     cube.height = data.height != null ? (float)data.height : 1f;
                     cube.depth = data.depth != null ? (float)data.depth : 1f;
-                    cube.widthSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 2;
-                    cube.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 2;
-                    cube.depthSegments = data.segmentsDepth != null ? (int)data.segmentsDepth : 2;
+                    cube.widthSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 1;
+                    cube.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 1;
+                    cube.depthSegments = data.segmentsDepth != null ? (int)data.segmentsDepth : 1;
                     break;
                 case "cone":
                     ArenaMeshCone cone = gobj.GetComponent<ArenaMeshCone>() ?? gobj.AddComponent<ArenaMeshCone>();
                     cone.radius = data.radiusBottom != null ? (float)data.radiusBottom : 1f;
+                    //cone.radiusTop = data.radiusTop != null ? (float)data.radiusTop : 0.01f;
                     cone.height = data.height != null ? (float)data.height : 1f;
                     cone.subdivision = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
+                    //cone.segmentsHeight = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
+                    //cone.openEnded = data.openEnded != null ? Convert.ToBoolean(data.openEnded) : false;
+                    //cone.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
+                    //cone.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
                     break;
                 case "cylinder":
                     ArenaMeshCylinder cylinder = gobj.GetComponent<ArenaMeshCylinder>() ?? gobj.AddComponent<ArenaMeshCylinder>();
@@ -105,33 +121,35 @@ namespace ArenaUnity
                     cylinder.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     cylinder.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
                     cylinder.openEnded = data.openEnded != null ? Convert.ToBoolean(data.openEnded) : false;
+                    //cylinder.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
+                    //cylinder.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
                     break;
                 case "dodecahedron":
                     ArenaMeshDodecahedron dodecahedron = gobj.GetComponent<ArenaMeshDodecahedron>() ?? gobj.AddComponent<ArenaMeshDodecahedron>();
                     dodecahedron.radius = data.radius != null ? (float)data.radius : 1f;
-                    dodecahedron.details = 0;
+                    dodecahedron.details = data.detail != null ? (int)data.detail : 0;
                     break;
                 case "tetrahedron":
                     ArenaMeshTetrahedron tetrahedron = gobj.GetComponent<ArenaMeshTetrahedron>() ?? gobj.AddComponent<ArenaMeshTetrahedron>();
                     tetrahedron.radius = data.radius != null ? (float)data.radius : 1f;
-                    tetrahedron.details = 0;
+                    tetrahedron.details = data.detail != null ? (int)data.detail : 0;
                     break;
                 case "icosahedron":
                     ArenaMeshIcosahedron icosahedron = gobj.GetComponent<ArenaMeshIcosahedron>() ?? gobj.AddComponent<ArenaMeshIcosahedron>();
                     icosahedron.radius = data.radius != null ? (float)data.radius : 1f;
-                    icosahedron.details = 0;
+                    icosahedron.details = data.detail != null ? (int)data.detail : 0;
                     break;
                 case "octahedron":
                     ArenaMeshOctahedron octahedron = gobj.GetComponent<ArenaMeshOctahedron>() ?? gobj.AddComponent<ArenaMeshOctahedron>();
                     octahedron.radius = data.radius != null ? (float)data.radius : 1f;
-                    octahedron.details = 0;
+                    octahedron.details = data.detail != null ? (int)data.detail : 0;
                     break;
                 case "plane":
                     ArenaMeshPlane plane = gobj.GetComponent<ArenaMeshPlane>() ?? gobj.AddComponent<ArenaMeshPlane>();
                     plane.width = data.width != null ? (float)data.width : 1f;
                     plane.height = data.height != null ? (float)data.height : 1f;
-                    plane.wSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 2;
-                    plane.hSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 2;
+                    plane.wSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 1;
+                    plane.hSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 1;
                     break;
                 case "prism":
                     ArenaMeshPrism prism = gobj.GetComponent<ArenaMeshPrism>() ?? gobj.AddComponent<ArenaMeshPrism>();
@@ -141,9 +159,9 @@ namespace ArenaUnity
                     break;
                 case "ring":
                     ArenaMeshRing ring = gobj.GetComponent<ArenaMeshRing>() ?? gobj.AddComponent<ArenaMeshRing>();
-                    ring.outerRadius = data.radiusOuter != null ? (float)data.radiusOuter : 1f;
-                    ring.innerRadius = data.radiusInner != null ? (float)data.radiusInner : 0.5f;
-                    ring.phiSegments = data.segmentsPhi != null ? (int)data.segmentsPhi : 8;
+                    ring.outerRadius = data.radiusOuter != null ? (float)data.radiusOuter : 1.2f;
+                    ring.innerRadius = data.radiusInner != null ? (float)data.radiusInner : 0.8f;
+                    ring.phiSegments = data.segmentsPhi != null ? (int)data.segmentsPhi : 10;
                     ring.thetaSegments = data.segmentsTheta != null ? (int)data.segmentsTheta : 32;
                     ring.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
                     ring.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
@@ -159,13 +177,17 @@ namespace ArenaUnity
                 case "sphere":
                     ArenaMeshSphere sphere = gobj.GetComponent<ArenaMeshSphere>() ?? gobj.AddComponent<ArenaMeshSphere>();
                     sphere.radius = data.radius != null ? (float)data.radius : 1f;
-                    sphere.lonSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 18;
-                    sphere.latSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 36;
+                    sphere.latSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 18;
+                    sphere.lonSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 36;
+                    //sphere.phiStart = (float)(data.phiStart != null ? Mathf.PI / 180 * (float)data.phiStart : 0f);
+                    //sphere.phiLength = (float)(data.phiLength != null ? Mathf.PI / 180 * (float)data.phiLength : Mathf.PI * 2f);
+                    //sphere.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
+                    //sphere.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI);
                     break;
                 case "torus":
                     ArenaMeshTorus torus = gobj.GetComponent<ArenaMeshTorus>() ?? gobj.AddComponent<ArenaMeshTorus>();
                     torus.radius = data.radius != null ? (float)data.radius : 1f;
-                    torus.radiusTubular = data.radiusTubular != null ? (float)data.radiusTubular : 0.4f;
+                    torus.radiusTubular = data.radiusTubular != null ? (float)data.radiusTubular : 0.2f;
                     torus.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
                     torus.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 32;
                     torus.thetaStart = 0f;
@@ -174,11 +196,11 @@ namespace ArenaUnity
                 case "torusKnot":
                     ArenaMeshTorusKnot torusKnot = gobj.GetComponent<ArenaMeshTorusKnot>() ?? gobj.AddComponent<ArenaMeshTorusKnot>();
                     torusKnot.radius = data.radius != null ? (float)data.radius : 1f;
-                    torusKnot.radiusTubular = data.radiusTubular != null ? (float)data.radiusTubular : 0.4f;
-                    torusKnot.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
-                    torusKnot.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 32;
-                    torusKnot.p = data.p != null ? (int)data.p : 2;
-                    torusKnot.q = data.q != null ? (int)data.q : 3;
+                    torusKnot.radiusTubular = data.radiusTubular != null ? (float)data.radiusTubular : 0.2f;
+                    torusKnot.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 8;
+                    torusKnot.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 100;
+                    torusKnot.p = data.p != null ? (float)data.p : 2f;
+                    torusKnot.q = data.q != null ? (float)data.q : 3f;
                     break;
                 case "triangle":
                     ArenaMeshTriangle triangle = gobj.GetComponent<ArenaMeshTriangle>() ?? gobj.AddComponent<ArenaMeshTriangle>();
@@ -285,11 +307,11 @@ namespace ArenaUnity
         }
 
         // position
-        private static string ToArenaPositionString(Vector3 position)
+        public static string ToArenaPositionString(Vector3 position)
         {
             return $"{ArenaFloat(position.x)} {ArenaFloat(position.y)} {ArenaFloat(-position.z)}";
         }
-        private static Vector3 ToUnityPositionString(string strPos)
+        public static Vector3 ToUnityPositionString(string strPos)
         {
             string[] axis = strPos.Split(new char[] { ' ' }, 3, StringSplitOptions.RemoveEmptyEntries);
             return new Vector3(
@@ -456,33 +478,120 @@ namespace ArenaUnity
             ColorUtility.TryParseHtmlString(color, out Color colorObj);
             return colorObj;
         }
+        public static Color ToUnityColor(string color, float opacity)
+        {
+            Color c = ToUnityColor(color);
+            return new Color(c.r, c.g, c.b, opacity);
+        }
         public static Color ColorRandom()
         {
             return UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         }
 
         // line/thickline
-        public static void ToUnityThickline(dynamic data, ref GameObject gobj)
+        public static void ToArenaLine(GameObject gobj, ref dynamic data)
+        {
+            // TODO: support Material opacity/visibility
+            LineRenderer line = gobj.GetComponent<LineRenderer>();
+            // always use thickline, too many variables otherwise
+            data.object_type = "thickline";
+            string[] positions = new string[line.positionCount];
+            Vector3[] vertices = new Vector3[line.positionCount];
+            line.GetPositions(vertices);
+            if (line.useWorldSpace)
+            {   // line.useWorldSpace does not match arena thickline which always uses position
+                for (var i = 0; i < line.positionCount; i++)
+                {
+                    // arena ignores line position transform, so translate every position?...
+                    positions[i] = ToArenaPositionString(vertices[i] - gobj.transform.localPosition);
+                }
+                // TODO: does arena ignores thickline rotation?
+            }
+            else
+            {   // !line.useWorldSpace matches arena thickline which always uses position
+                for (var i = 0; i < line.positionCount; i++)
+                {
+                    positions[i] = ToArenaPositionString(vertices[i]);
+                }
+            }
+            data.path = string.Join(",", positions);
+            data.lineWidth = (int)(line.startWidth / LineSinglePixelInMeters); // TODO: support endWidth
+            data.color = ToArenaColor(line.startColor); // TODO: support endColor
+        }
+        public static void ToUnityLine(dynamic data, ref GameObject gobj)
         {
             LineRenderer line = gobj.GetComponent<LineRenderer>();
             if (line == null)
                 line = gobj.AddComponent<LineRenderer>();
 
+            float pixelWidth = 1f; // default
+            switch ((string)data.object_type)
+            {
+                case "line":
+                    line.useWorldSpace = true; // match arena line which always ignores position
+                    if (data.start != null && data.end != null)
+                    {
+                        Vector3[] nodes = {
+                            ToUnityPosition(data.start),
+                            ToUnityPosition(data.end),
+                        };
+                        line.SetPositions(nodes);
+                    }
+                    break;
+                case "thickline":
+                    line.useWorldSpace = false; // match arena thickline which always uses position
+                    if (data.path != null)
+                    {
+                        string[] nodes = ((string)data.path).Split(new char[] { ',' });
+                        line.positionCount = nodes.Length;
+                        for (var i = 0; i < nodes.Length; i++)
+                        {
+                            Vector3 position = ToUnityPositionString(nodes[i]);
+                            line.SetPosition(i, position);
+                        }
+                    }
+                    if (data.lineWidth != null)
+                        pixelWidth = (float)data.lineWidth;
+                    break;
+            }
             if (data.color != null)
                 line.startColor = line.endColor = ToUnityColor((string)data.color);
-            if (data.lineWidth != null)
-                line.startWidth = line.endWidth = (float)data.lineWidth / 100f; // pixels vs meters
-            // TODO update constant width in pixels: line.widthMultiplier = trackWidth;
-            if (data.path != null)
+            // convert arena thickline pixels vs unity meters
+            float numkeys = 2;
+            float w = 1;
+            AnimationCurve curve = new AnimationCurve();
+            string lineWidthStyler = (string)data.lineWidthStyler;
+            switch (lineWidthStyler)
             {
-                string[] nodes = ((string)data.path).Split(new char[] { ',' });
-                line.positionCount = nodes.Length;
-                for (var i = 0; i < nodes.Length; i++)
-                {
-                    Vector3 position = ToUnityPositionString(nodes[i]);
-                    line.SetPosition(i, position);
-                }
+                case "center-sharp": numkeys = 3; break;
+                case "center-smooth": numkeys = 10; break;
+                case "sine-wave": numkeys = 10; break;
             }
+            for (int i = 0; i < numkeys; i++)
+            {
+                float p = i / (numkeys - 1);
+                switch (lineWidthStyler)
+                {
+                    case "grow":
+                        w = p;
+                        break;
+                    case "shrink":
+                        w = 1 - p;
+                        break;
+                    case "center-sharp":
+                        w = 1 - Math.Abs(2 * p - 1);
+                        break;
+                    case "center-smooth":
+                        w = (float)Math.Sin(p * 3.1415);
+                        break;
+                    case "sine-wave":
+                        w = (float)(0.5 + 0.5 * Math.Sin((p - 0.5) * 2 * 3.1415 * 10));
+                        break;
+                }
+                curve.AddKey(p, w);
+            }
+            line.widthCurve = curve;
+            line.widthMultiplier = pixelWidth * LineSinglePixelInMeters;
         }
 
         // text
@@ -691,60 +800,35 @@ namespace ArenaUnity
             dynamic material = new ExpandoObject();
             data.material = material;
             // shaders only
-            if (mat.shader.name == "Standard")
+            switch (mat.shader.name)
             {
-                data.material.shader = "standard";
-                //data.url = ToArenaTexture(mat);
-                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
+                default:
+                case "Standard":
+                    data.material.shader = "standard"; break;
+                case "Unlit/Color":
+                case "Unlit/Texture":
+                case "Unlit/Texture Colored":
+                case "Legacy Shaders/Transparent/Diffuse":
+                    data.material.shader = "flat"; break;
+            }
+            //data.url = ToArenaTexture(mat);
+            if (mat.HasProperty(ColorPropertyName))
                 data.material.color = ToArenaColor(mat.color);
-                //data.material.metalness = ArenaFloat(mat.GetFloat("_Metallic"));
-                //data.material.roughness = ArenaFloat(1f - mat.GetFloat("_Glossiness"));
-                data.material.transparent = mat.GetFloat("_Mode") == 3f ? true : false;
-                data.material.opacity = ArenaFloat(mat.color.a);
-                //if (mat.color.a == 1f)
-                //    data.material.side = "double";
-            }
-            else if (mat.shader.name == "Unlit/Color")
+            //data.material.metalness = ArenaFloat(mat.GetFloat("_Metallic"));
+            //data.material.roughness = ArenaFloat(1f - mat.GetFloat("_Glossiness"));
+            //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
+            //data.material.side = "double";
+            switch ((MatRendMode)mat.GetFloat("_Mode"))
             {
-                data.material.shader = "flat";
-                //data.material.side = "double";
+                case MatRendMode.Opaque:
+                case MatRendMode.Fade:
+                    data.material.transparent = false; break;
+                case MatRendMode.Transparent:
+                case MatRendMode.Cutout:
+                    data.material.transparent = true; break;
             }
-            else if (mat.shader.name == "Unlit/Texture")
-            {
-                data.material.shader = "flat";
-                //data.url = ToArenaTexture(mat);
-                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
-                //data.material.side = "double";
-            }
-            else if (mat.shader.name == "Unlit/Texture Colored")
-            {
-                data.material.shader = "flat";
-                //data.url = ToArenaTexture(mat);
-                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
-                data.material.color = ToArenaColor(mat.color);
-                //data.material.side = "double";
-            }
-            else if (mat.shader.name == "Legacy Shaders/Transparent/Diffuse")
-            {
-                data.material.shader = "flat";
-                //data.url = ToArenaTexture(mat);
-                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
-                data.material.color = ToArenaColor(mat.color);
-                data.material.transparent = true;
-                data.material.opacity = ArenaFloat(mat.color.a);
-                //if (mat.color.a == 1f)
-                //    data.material.side = "double";
-            }
-            else
-            {
-                // other shaders
-                data.material.shader = "standard";
-                //data.url = ToArenaTexture(mat);
-                //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
-                if (mat.HasProperty(ColorPropertyName))
-                    data.material.color = ToArenaColor(mat.color);
-                //data.material.side = "double";
-            }
+            data.material.opacity = ArenaFloat(mat.color.a);
+
         }
         public static void ToUnityMaterial(dynamic data, ref GameObject gobj)
         {
@@ -768,46 +852,57 @@ namespace ArenaUnity
                     else
                         material.shader = Shader.Find("Universal Render Pipeline/Lit");
                 }
+                float opacity = (data.material != null && data.material.opacity != null) ? (float)data.material.opacity : 1f;
                 // legacy color overrides material color in the arena
                 if (data.color != null) // support legacy arena color
-                    material.SetColor(ColorPropertyName, ToUnityColor((string)data.color));
-                else if (data.material != null && data.material.color != null)
-                    material.SetColor(ColorPropertyName, ToUnityColor((string)data.material.color));
+                    material.SetColor(ColorPropertyName, ToUnityColor((string)data.color, opacity));
                 if (data.material != null)
                 {
-                    if (data.material.shader != null)
-                        material.shader.name = (string)data.material.shader == "flat" ? "Unlit/Color" : "Standard";
+                    bool transparent = Convert.ToBoolean(data.material.transparent);
+                    bool opaque = opacity >= 1f;
+                    if (data.material.color != null)
+                        material.SetColor(ColorPropertyName, ToUnityColor((string)data.material.color, opacity));
                     if (data.material.opacity != null)
                     {
                         Color c = material.GetColor(ColorPropertyName);
-                        material.SetColor(ColorPropertyName, new Color(c.r, c.g, c.b, (float)data.material.opacity));
+                        material.SetColor(ColorPropertyName, new Color(c.r, c.g, c.b, opacity));
                     }
-                    if (data.material.transparent != null)
-                    {
-                        // For runtime set/change transparency mode, follow GUI params
-                        // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/StandardShaderGUI.cs#L344
-                        if (Convert.ToBoolean(data.material.transparent))
-                        {
-                            material.SetFloat("_Mode", 3f); // StandardShaderGUI.BlendMode.Transparent
-                            material.SetInt("_SrcBlend", (int)BlendMode.One);
-                            material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
-                            material.SetInt("_ZWrite", 0);
-                            material.DisableKeyword("_ALPHATEST_ON");
-                            material.DisableKeyword("_ALPHABLEND_ON");
-                            material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                            material.renderQueue = 3000;
-                        }
-                        else
-                        {
-                            material.SetFloat("_Mode", 0f); // StandardShaderGUI.BlendMode.Opaque
-                            material.SetInt("_SrcBlend", (int)BlendMode.One);
-                            material.SetInt("_DstBlend", (int)BlendMode.Zero);
-                            material.SetInt("_ZWrite", 1);
-                            material.DisableKeyword("_ALPHATEST_ON");
-                            material.DisableKeyword("_ALPHABLEND_ON");
-                            material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                            material.renderQueue = -1;
-                        }
+                    if (data.material.shader != null)
+                        material.shader.name = (string)data.material.shader == "flat" ? "Unlit/Color" : "Standard";
+                    // For runtime set/change transparency mode, follow GUI params
+                    // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/StandardShaderGUI.cs#L344
+                    if (opacity >= 1f)
+                    {   // op == 1
+                        material.SetFloat("_Mode", (float)MatRendMode.Opaque);
+                        material.SetInt("_SrcBlend", (int)BlendMode.One);
+                        material.SetInt("_DstBlend", (int)BlendMode.Zero);
+                        material.SetInt("_ZWrite", 1);
+                        material.DisableKeyword("_ALPHATEST_ON");
+                        material.DisableKeyword("_ALPHABLEND_ON");
+                        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                        material.renderQueue = -1;
+                    }
+                    if (opacity <= 0f)
+                    {   // op == 0
+                        material.SetFloat("_Mode", (float)MatRendMode.Transparent);
+                        material.SetInt("_SrcBlend", (int)BlendMode.One);
+                        material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+                        material.SetInt("_ZWrite", 0);
+                        material.EnableKeyword("_ALPHATEST_ON");
+                        material.EnableKeyword("_ALPHABLEND_ON");
+                        material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                        material.renderQueue = 3000;
+                    }
+                    else
+                    {   // op 0-1
+                        material.SetFloat("_Mode", (float)MatRendMode.Fade);
+                        material.SetInt("_SrcBlend", (int)BlendMode.One);
+                        material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+                        material.SetInt("_ZWrite", 0);
+                        material.DisableKeyword("_ALPHATEST_ON");
+                        material.DisableKeyword("_ALPHABLEND_ON");
+                        material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                        material.renderQueue = 3000;
                     }
                 }
             }
@@ -820,14 +915,31 @@ namespace ArenaUnity
         }
         internal static void ToUnityAnimationMixer(JObject jData, ref GameObject gobj)
         {
-            JToken amObj = jData.SelectToken("animation-mixer");
-            if (amObj != null && amObj.Type != JTokenType.Null)
+            JToken jToken = jData.SelectToken("animation-mixer");
+            if (jToken != null && jToken.Type != JTokenType.Null)
             {
                 ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
                 if (am == null)
                     am = gobj.AddComponent<ArenaAnimationMixer>();
-                am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(amObj), amObj);
+                am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(jToken), jToken);
                 am.apply = true;
+            }
+        }
+        // click-listener
+        internal static void ToArenaClickListener(GameObject gobj, ref JObject jData)
+        {
+            ArenaClickListener am = gobj.GetComponent<ArenaClickListener>();
+            jData["click-listener"] = true;
+        }
+        internal static void ToUnityClickListener(JObject jData, ref GameObject gobj)
+        {
+            JToken jToken = jData.SelectToken("click-listener");
+            // we accept any string or boolean true
+            if ((jToken != null && jToken.Type != JTokenType.Null) || (jToken.Type == JTokenType.Boolean && jToken.Value<bool>()))
+            {
+                ArenaClickListener cl = gobj.GetComponent<ArenaClickListener>();
+                if (cl == null)
+                    cl = gobj.AddComponent<ArenaClickListener>();
             }
         }
     }

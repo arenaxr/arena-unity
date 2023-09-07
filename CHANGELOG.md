@@ -2,6 +2,76 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.9.3](https://github.com/arenaxr/arena-unity/compare/v0.9.2...v0.9.3) (2023-06-06)
+
+
+### Bug Fixes
+
+* **renderer:** enable/diable renderer from data.visible ([c143444](https://github.com/arenaxr/arena-unity/commit/c143444978fe389a39ec923368a00b1e632face6))
+
+## [0.9.2](https://github.com/arenaxr/arena-unity/compare/v0.9.1...v0.9.2) (2023-06-02)
+
+
+### Bug Fixes
+
+* **click-listener:** do not auto-add ArenaCamera component ([c2b3b81](https://github.com/arenaxr/arena-unity/commit/c2b3b81ac2c09062a3830571ec3b35285c51444d))
+* **object:** check for existing arena object component ([b134689](https://github.com/arenaxr/arena-unity/commit/b134689fca066982170381bca65620a59d4815eb))
+* **object:** recursively remove children if any parents are deleted ([d1d81f9](https://github.com/arenaxr/arena-unity/commit/d1d81f92bed972e9fec0c19fce8fc1df3f2f4e4a))
+* **object:** use dict update rathar than add arenaObjs ([b20e82d](https://github.com/arenaxr/arena-unity/commit/b20e82ddf289e5b1239926a4a08a6870e52f4126))
+
+## [0.9.1](https://github.com/arenaxr/arena-unity/compare/v0.9.0...v0.9.1) (2023-05-30)
+
+
+### Bug Fixes
+
+* **auth:** check for failed permissions from bad hostname ([3243872](https://github.com/arenaxr/arena-unity/commit/3243872d2cc7178af202b658e522bf94ae1c958a))
+* **click-listener:** accept both legacy string or boolean values ([2b2efd8](https://github.com/arenaxr/arena-unity/commit/2b2efd8cc3ddc6f6e4334f98edf9b6c53b0c91d5))
+* **gltf:** fixed runtime loading of multiple .gltf files and assets ([760f977](https://github.com/arenaxr/arena-unity/commit/760f97744d4fdc735fa4c7521d8aabab79cae0f7))
+* **hand:** add drawControllerRay option, and fix hand model position ([#70](https://github.com/arenaxr/arena-unity/issues/70)) ([bd3b564](https://github.com/arenaxr/arena-unity/commit/bd3b5640fb2345fbf3a0772aa6de5774c5de33b8))
+
+## [0.9.0](https://github.com/arenaxr/arena-unity/compare/v0.8.0...v0.9.0) (2023-03-07)
+
+
+### Features
+
+* **line/thickline:** support  object type, also LineRenderer to ([07d832f](https://github.com/arenaxr/arena-unity/commit/07d832f6de8eae2d304ab1943fd22d779b4a15c4))
+* **mqtt:** add publish frequency override values per object/camera ([#66](https://github.com/arenaxr/arena-unity/issues/66)) ([370ebac](https://github.com/arenaxr/arena-unity/commit/370ebac6b71151ffdee4b0ea9ad3ec9a42d64e87))
+* **thickline:** support prescreened lineWidthStyler algorithms ([f156394](https://github.com/arenaxr/arena-unity/commit/f1563948eda86b7cf4839b88db521d2996a322c9))
+
+
+### Bug Fixes
+
+* **laser:** add program choice to use laser line or thickline ([0b71b8a](https://github.com/arenaxr/arena-unity/commit/0b71b8aae2084427583db1b5bf0efd58f205f895))
+* **material:** improved opacity irregularity in rendering ([1f02a4b](https://github.com/arenaxr/arena-unity/commit/1f02a4b604d8210dd851a0b1bcf361a9a87bd948))
+* **material:** use Fade mode for opacity&lt;1 trans==true ([d104a39](https://github.com/arenaxr/arena-unity/commit/d104a39ebe1daa35756167387931d6bfc898e48f))
+* **mqtt:** fixed timestamp format ([aec6434](https://github.com/arenaxr/arena-unity/commit/aec6434634450c2e31b0d23b09d0bf673508d207))
+* **mqtt:** fixed UTC Zulu timestamp ([0ee16fe](https://github.com/arenaxr/arena-unity/commit/0ee16fe7c25e01afbd12c2fce22c9c20fc10bdce))
+
+## [0.8.0](https://github.com/arenaxr/arena-unity/compare/v0.7.1...v0.8.0) (2023-03-02)
+
+
+### Features
+
+* **click-listener:** added ArenaClickListener component, added LaserPointer example ([#64](https://github.com/arenaxr/arena-unity/issues/64)) ([b06bd8c](https://github.com/arenaxr/arena-unity/commit/b06bd8cdf81d8beef37de9590fd38c2321371a91))
+* **json:** add several json-serializable component classes ([#62](https://github.com/arenaxr/arena-unity/issues/62)) ([632121b](https://github.com/arenaxr/arena-unity/commit/632121b3edadebf049598571134306e9c40e35e1))
+* **scene:** preserve ArenaClientScene name during runtime ([57cfdf5](https://github.com/arenaxr/arena-unity/commit/57cfdf532bcce82a0288fc9944ce386515c8b372))
+
+
+### Bug Fixes
+
+* add deserialization failure check ([12a2872](https://github.com/arenaxr/arena-unity/commit/12a2872e11a79cbbb1b5811fe3467721d5b1746a))
+* **animation-mixer:** fixed repetitions default ([e7a412f](https://github.com/arenaxr/arena-unity/commit/e7a412f5cfab6ba8f8d193b3601083b239d31a77))
+* **animation-mixer:** handle null property without crashing ([906f4b9](https://github.com/arenaxr/arena-unity/commit/906f4b96dadbc8c83e89446455554733db9dcd4d))
+* **animation-mixer:** pub wire msg on edit, fix loop control, require clip ([e1bf687](https://github.com/arenaxr/arena-unity/commit/e1bf6877c6fa6cff1cee35827278687fd23ec734))
+* **click-listener:** convert OnEventCallback to pass full msg json as string ([9879ce4](https://github.com/arenaxr/arena-unity/commit/9879ce43c7cef53781c588ca918d688e6b55e696))
+* **click-listener:** fixed gltf model collision mesh ([917d597](https://github.com/arenaxr/arena-unity/commit/917d597591b117e88c32e42bc4c6804869552d6f))
+* **click-listener:** simplify primitive mesh colliders as convex ([2439ab4](https://github.com/arenaxr/arena-unity/commit/2439ab44580aadc70a73da968be3760398c18e7f))
+* **click-listener:** update collision mesh when mesh changes ([a2da15a](https://github.com/arenaxr/arena-unity/commit/a2da15aaa5283eff45b633c901447d90b2d27454))
+* **events/persist:** fixed events publish topic and id, added persist complete event ([363c198](https://github.com/arenaxr/arena-unity/commit/363c19813ad2cb2d40defd16cb29b18a96d8e8f5))
+* fixed runtime crash while checking permissions ([3a80c97](https://github.com/arenaxr/arena-unity/commit/3a80c975b7648d6b19f4c93ec289094b4120c5f5))
+* **mesh:** fixed arena defaults for several geometries ([3bb06f2](https://github.com/arenaxr/arena-unity/commit/3bb06f22eb4f41d82febc5140fb0e9a43eb0f95e))
+* **mqtt:** always process locally generated messages ([9266cf7](https://github.com/arenaxr/arena-unity/commit/9266cf7124e1cb5c936dcb443e4670d0c91443b0))
+
 ## [0.7.1](https://github.com/arenaxr/arena-unity/compare/v0.7.0...v0.7.1) (2023-02-16)
 
 

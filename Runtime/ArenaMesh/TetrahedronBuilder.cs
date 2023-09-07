@@ -1,4 +1,4 @@
-﻿//https://github.com/mrdoob/three.js/blob/dev/src/geometries/TetrahedronGeometry.js
+﻿// Modified from: https://github.com/mrdoob/three.js/blob/dev/src/geometries/TetrahedronGeometry.js
 
 using System.Collections.Generic;
 using MeshBuilder;
