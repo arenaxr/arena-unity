@@ -197,6 +197,11 @@ namespace ArenaUnity
             string mqttToken = null;
             CoroutineWithData cd;
 
+            if (hostAddress == "localhost")
+            {
+                verifyCertificate = false;
+            }
+
             string localMqttPath = Path.Combine(appFilesPath, mqttTokenFile);
             if (File.Exists(localMqttPath))
             {

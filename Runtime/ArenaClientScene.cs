@@ -116,6 +116,44 @@ namespace ArenaUnity
             "GLTFUtility/URP/Standard Transparent (Specular)",
         };
 
+        public class ARENADefaults
+        {
+            // public bool authenticated { get; set; }
+            // public string username { get; set; }
+            // public string fullname { get; set; }
+            // public string email { get; set; }
+            // public string type { get; set; }
+            //         }
+            // {
+            //   "ARENADefaults": {
+            //     "realm": "realm",
+            //     "camUpdateIntervalMs": 100,
+            //     "namespace": "public",
+            //     "sceneName": "lobby",
+            //     "userName": "Anonymous",
+            //     "startCoords": {
+            //       "x": 0,
+            //       "y": 0,
+            //       "z": 0
+            //     },
+            //     "camHeight": 1.6,
+            //     "mqttHost": "localhost",
+            //     "jitsiHost": "mr.andrew.cmu.edu",
+            //     "ATLASurl": "//atlas.conix.io",
+            //     "vioTopic": "/topic/vio/",
+            //     "graphTopic": "$NETWORK",
+            //     "latencyTopic": "$NETWORK/latency",
+            //     "mqttPath": [
+            //       "/mqtt/"
+            //     ],
+            //     "persistHost": "localhost",
+            //     "persistPath": "/persist/",
+            //     "devInstance": true,
+            //     "headModelPath": "/static/models/avatars/robobit.glb"
+            //   }
+            // }
+        }
+
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -192,6 +230,17 @@ namespace ArenaUnity
                 LogAndExit("All ArenaObjects must have unique names.");
                 yield break;
             }
+
+            // get arena default settings
+            CoroutineWithData cd;
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/conf/defaults.json"));
+            yield return cd.coroutine;
+            if (!isCrdSuccess(cd.result)) yield break;
+            string jsonString = cd.result.ToString();
+            Debug.Log(jsonString);
+            JObject jsonVal = JObject.Parse(jsonString);
+            var arenaDefaults = JsonConvert.DeserializeObject<ARENADefaults>(cd.result.ToString());
+            yield break; // TODO remove debug
 
             // start auth flow and MQTT connection
             ArenaCamera[] camlist = FindObjectsOfType<ArenaCamera>();
@@ -927,7 +976,9 @@ namespace ArenaUnity
             www.downloadHandler = new DownloadHandlerBuffer();
             //www.timeout = 5; // TODO: when fails like 443 hang, need to prevent curl 28 crash, this should just skip
             if (!verifyCertificate)
+            {   // TODO: should check for arena/not-arena host when debugging on localhost
                 www.certificateHandler = new SelfSignedCertificateHandler();
+            }
             www.SendWebRequest();
             while (!www.isDone)
             {
