@@ -25,6 +25,8 @@ SOFTWARE.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
@@ -49,6 +51,8 @@ namespace M2MqttUnity
         protected bool isEncrypted = false;
         [Tooltip("SSL protocol to use when isEncrypted is true.")]
         protected MqttSslProtocols sslProtocol = MqttSslProtocols.TLSv1_0;
+        [Tooltip("Wether to verify the encryption certificate")]
+        protected bool verifyCertificate = true;
         [Header("Connection parameters")]
         [Tooltip("Connection to the broker is delayed by the the given milliseconds")]
         protected int connectionDelay = 500;
@@ -291,9 +295,14 @@ namespace M2MqttUnity
 #if (!UNITY_EDITOR && UNITY_WSA_10_0 && !ENABLE_IL2CPP)
                     client = new MqttClient(brokerAddress, brokerPort, isEncrypted, isEncrypted ? sslProtocol: MqttSslProtocols.None);
 #else
-                    client = new MqttClient(brokerAddress, brokerPort, isEncrypted, null, null, isEncrypted ? sslProtocol : MqttSslProtocols.None);
-                    //System.Security.Cryptography.X509Certificates.X509Certificate cert = new System.Security.Cryptography.X509Certificates.X509Certificate();
-                    //client = new MqttClient(brokerAddress, brokerPort, isEncrypted, cert, null, sslProtocol, MyRemoteCertificateValidationCallback);
+                    if (verifyCertificate)
+                    {
+                        client = new MqttClient(brokerAddress, brokerPort, isEncrypted, null, null, isEncrypted ? sslProtocol : MqttSslProtocols.None);
+                    }
+                    else
+                    {
+                        client = new MqttClient(brokerAddress, brokerPort, isEncrypted, null, null, isEncrypted ? sslProtocol : MqttSslProtocols.None, SelfSignedCertValidationCallback);
+                    }
 #endif
                 }
                 catch (Exception e)
@@ -346,6 +355,13 @@ namespace M2MqttUnity
             {
                 OnConnectionFailed("CONNECTION FAILED!");
             }
+        }
+
+        private bool SelfSignedCertValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            string host = certificate.GetName();
+            Debug.LogWarning($"Excepting server certificate without verification for MQTT on {host}!");
+            return true;
         }
 
         private IEnumerator DoDisconnect()

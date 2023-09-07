@@ -926,6 +926,8 @@ namespace ArenaUnity
             UnityWebRequest www = UnityWebRequest.Get(url);
             www.downloadHandler = new DownloadHandlerBuffer();
             //www.timeout = 5; // TODO: when fails like 443 hang, need to prevent curl 28 crash, this should just skip
+            if (!verifyCertificate)
+                www.certificateHandler = new SelfSignedCertificateHandler();
             www.SendWebRequest();
             while (!www.isDone)
             {

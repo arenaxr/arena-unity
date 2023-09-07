@@ -104,6 +104,10 @@ namespace ArenaUnity
             brokerPort = 8883;
             isEncrypted = true;
             sslProtocol = MqttSslProtocols.TLSv1_2;
+            if (hostAddress == "localhost")
+            {
+                verifyCertificate = false;
+            }
         }
 
         protected override void Update()
@@ -287,10 +291,12 @@ namespace ArenaUnity
                 }
                 if (string.IsNullOrWhiteSpace(namespaceName))
                 {
-                    if (user.authenticated){
+                    if (user.authenticated)
+                    {
                         namespaceName = user.username;
                     }
-                    else{
+                    else
+                    {
                         namespaceName = "public";
                     }
                 }
@@ -350,7 +356,8 @@ namespace ArenaUnity
             var handler = new JwtSecurityTokenHandler();
             JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
             permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
-            if (string.IsNullOrWhiteSpace(namespaceName)){
+            if (string.IsNullOrWhiteSpace(namespaceName))
+            {
                 namespaceName = payloadJson.Sub;
             }
             mqttExpires = (long)payloadJson.Exp;
@@ -387,6 +394,8 @@ namespace ArenaUnity
             }
             if (mqttPassword != null)
                 www.SetRequestHeader("Cookie", $"mqtt_token={mqttPassword}");
+            if (!verifyCertificate)
+                www.certificateHandler = new SelfSignedCertificateHandler();
             yield return www.SendWebRequest();
 #if UNITY_2020_1_OR_NEWER
             if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
@@ -428,5 +437,4 @@ namespace ArenaUnity
         }
 
     }
-
 }
