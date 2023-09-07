@@ -55,10 +55,10 @@ namespace ArenaUnity.Schemas
             return (DistanceModel != defDistanceModel);
         }
 
-        private static string[] defSceneHeadModels = {};
+        private static object[] defSceneHeadModels = {};
         [JsonProperty(PropertyName = "sceneHeadModels")]
         [Tooltip("Define the default head model(s) for the scene in a list. Users may still choose from the ARENA default list of head models as well.")]
-        public string[] SceneHeadModels = defSceneHeadModels;
+        public object[] SceneHeadModels = defSceneHeadModels;
         public bool ShouldSerializeSceneHeadModels()
         {
             if (_token != null && _token.SelectToken("sceneHeadModels") != null) return true;
