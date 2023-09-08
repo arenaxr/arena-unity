@@ -59,6 +59,8 @@ namespace ArenaUnity
         public string appFilesPath { get; private set; }
         public string userid { get; private set; }
         public string camid { get; private set; }
+        public string networkLatencyTopic { get; private set; } // network graph latency update
+        static readonly int networkLatencyIntervalMs = 10000; // run network latency update every 10s
 
         static readonly string[] Scopes = {
             Oauth2Service.Scope.UserinfoProfile,
@@ -107,6 +109,20 @@ namespace ArenaUnity
             if (hostAddress == "localhost")
             {
                 verifyCertificate = false;
+            }
+            StartCoroutine(PublishTickLatency());
+        }
+
+        IEnumerator PublishTickLatency()
+        {
+            while (true)
+            {
+                if (mqttClientConnected && !string.IsNullOrEmpty(networkLatencyTopic))
+                {
+                    // publish empty message with QoS of 2 to update latency
+                    client.Publish(networkLatencyTopic, new byte[] { }, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
+                }
+                yield return new WaitForSeconds(networkLatencyIntervalMs / 1000);
             }
         }
 
@@ -176,9 +192,9 @@ namespace ArenaUnity
         /// <summary>
         /// Sign into the ARENA for a specific scene, optionally using a user avatar camera, per user account.
         /// </summary>
-        protected IEnumerator SigninScene(string sceneName, string namespaceName, string realm, bool camera)
+        protected IEnumerator SigninScene(string sceneName, string namespaceName, string realm, bool camera, string latencyTopic = null)
         {
-            return Signin(sceneName, namespaceName, realm, camera);
+            return Signin(sceneName, namespaceName, realm, camera, latencyTopic);
         }
 
         /// <summary>
@@ -186,11 +202,12 @@ namespace ArenaUnity
         /// </summary>
         protected IEnumerator Signin()
         {
-            return Signin(null, null, null, false);
+            return Signin(null, null, null, false, null);
         }
 
-        private IEnumerator Signin(string sceneName, string namespaceName, string realm, bool camera)
+        private IEnumerator Signin(string sceneName, string namespaceName, string realm, bool camera, string latencyTopic)
         {
+            networkLatencyTopic = latencyTopic;
             string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, hostAddress, "s");
             string userGAuthPath = sceneAuthDir;
             string userMqttPath = Path.Combine(sceneAuthDir, mqttTokenFile);

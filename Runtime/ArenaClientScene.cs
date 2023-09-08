@@ -11,7 +11,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using ArenaUnity.Components;
-using ArenaUnity.Schemas;
 using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
@@ -206,7 +205,7 @@ namespace ArenaUnity
             // start auth flow and MQTT connection
             ArenaCamera[] camlist = FindObjectsOfType<ArenaCamera>();
             name = $"{originalName} (Authenticating...)";
-            cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, arenaDefaults.realm, camlist.Length > 0));
+            cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, arenaDefaults.realm, camlist.Length > 0, arenaDefaults.latencyTopic));
             yield return cd.coroutine;
             name = $"{originalName} (MQTT Connecting...)";
             if (cd.result != null)
