@@ -151,12 +151,6 @@ namespace ArenaUnity
                     plane.wSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 1;
                     plane.hSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 1;
                     break;
-                case "prism":
-                    ArenaMeshPrism prism = gobj.GetComponent<ArenaMeshPrism>() ?? gobj.AddComponent<ArenaMeshPrism>();
-                    prism.width = data.width != null ? (float)data.width : 1f;
-                    prism.height = data.height != null ? (float)data.height : 1f;
-                    prism.depth = data.depth != null ? (float)data.depth : 1f;
-                    break;
                 case "ring":
                     ArenaMeshRing ring = gobj.GetComponent<ArenaMeshRing>() ?? gobj.AddComponent<ArenaMeshRing>();
                     ring.outerRadius = data.radiusOuter != null ? (float)data.radiusOuter : 1.2f;
@@ -260,12 +254,6 @@ namespace ArenaUnity
                     var plane = gobj.GetComponent<ArenaMeshPlane>();
                     data.width = ArenaFloat(plane.width);
                     data.height = ArenaFloat(plane.height);
-                    break;
-                case "ArenaUnity.ArenaMeshPrism":
-                    var prism = gobj.GetComponent<ArenaMeshPrism>();
-                    data.width = ArenaFloat(prism.width);
-                    data.height = ArenaFloat(prism.height);
-                    data.depth = ArenaFloat(prism.depth);
                     break;
                 case "ArenaUnity.ArenaMeshSphere":
                     var sphere = gobj.GetComponent<ArenaMeshSphere>();
