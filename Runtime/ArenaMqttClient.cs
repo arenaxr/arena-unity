@@ -73,6 +73,7 @@ namespace ArenaUnity
             public string fullname { get; set; }
             public string email { get; set; }
             public string type { get; set; }
+            public bool is_staff { get; set; }
         }
 
         public class MqttAuth
@@ -100,7 +101,6 @@ namespace ArenaUnity
         {
             base.Awake();
             // initialize arena-specific mqtt parameters
-            brokerAddress = hostAddress;
             brokerPort = 8883;
             isEncrypted = true;
             sslProtocol = MqttSslProtocols.TLSv1_2;
@@ -191,7 +191,7 @@ namespace ArenaUnity
 
         private IEnumerator Signin(string sceneName, string namespaceName, string realm, bool camera)
         {
-            string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, brokerAddress, "s");
+            string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, hostAddress, "s");
             string userGAuthPath = sceneAuthDir;
             string userMqttPath = Path.Combine(sceneAuthDir, mqttTokenFile);
             string mqttToken = null;
@@ -238,7 +238,7 @@ namespace ArenaUnity
                     case Auth.Google:
                         // get oauth app credentials
                         Debug.Log("Using remote-authenticated MQTT token.");
-                        cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/conf/gauth.json"));
+                        cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/conf/gauth.json"));
                         yield return cd.coroutine;
                         if (!isCrdSuccess(cd.result)) yield break;
                         string gauthId = cd.result.ToString();
@@ -281,12 +281,12 @@ namespace ArenaUnity
                 }
 
                 // get arena CSRF token
-                yield return HttpRequestAuth($"https://{brokerAddress}/user/login");
+                yield return HttpRequestAuth($"https://{hostAddress}/user/login");
 
                 // get arena user account state
                 WWWForm form = new WWWForm();
                 if (idToken != null) form.AddField("id_token", idToken);
-                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/user_state", csrfToken, form));
+                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/user_state", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
                 var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
@@ -322,7 +322,7 @@ namespace ArenaUnity
                 {
                     form.AddField("scene", $"{namespaceName}/{sceneName}");
                 }
-                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/user/mqtt_auth", csrfToken, form));
+                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/mqtt_auth", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
                 mqttToken = cd.result.ToString();

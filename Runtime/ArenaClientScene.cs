@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using ArenaUnity.Components;
+using ArenaUnity.Schemas;
 using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
@@ -40,8 +41,6 @@ namespace ArenaUnity
             Instance = this;
         }
 
-        [Tooltip("Name of the topic realm for the scene (runtime changes ignored).")]
-        private string realm = "realm";
         [Tooltip("Namespace (automated with username), but can be overridden (runtime changes ignored).")]
         public string namespaceName = null;
         [Tooltip("Name of the scene, without namespace ('example', not 'username/example', runtime changes ignored).")]
@@ -82,6 +81,7 @@ namespace ArenaUnity
         internal List<string> downloadQueue = new List<string>();
         internal List<string> parentalQueue = new List<string>();
         internal List<string> localCameraIds = new List<string>();
+        internal ArenaDefaults arenaDefaults { get; private set; }
 
         // Define callbacks
         public delegate void DecodeMessageDelegate(string topic, byte[] message);
@@ -115,44 +115,6 @@ namespace ArenaUnity
             "GLTFUtility/URP/Standard (Specular)",
             "GLTFUtility/URP/Standard Transparent (Specular)",
         };
-
-        public class ARENADefaults
-        {
-            // public bool authenticated { get; set; }
-            // public string username { get; set; }
-            // public string fullname { get; set; }
-            // public string email { get; set; }
-            // public string type { get; set; }
-            //         }
-            // {
-            //   "ARENADefaults": {
-            //     "realm": "realm",
-            //     "camUpdateIntervalMs": 100,
-            //     "namespace": "public",
-            //     "sceneName": "lobby",
-            //     "userName": "Anonymous",
-            //     "startCoords": {
-            //       "x": 0,
-            //       "y": 0,
-            //       "z": 0
-            //     },
-            //     "camHeight": 1.6,
-            //     "mqttHost": "localhost",
-            //     "jitsiHost": "mr.andrew.cmu.edu",
-            //     "ATLASurl": "//atlas.conix.io",
-            //     "vioTopic": "/topic/vio/",
-            //     "graphTopic": "$NETWORK",
-            //     "latencyTopic": "$NETWORK/latency",
-            //     "mqttPath": [
-            //       "/mqtt/"
-            //     ],
-            //     "persistHost": "localhost",
-            //     "persistPath": "/persist/",
-            //     "devInstance": true,
-            //     "headModelPath": "/static/models/avatars/robobit.glb"
-            //   }
-            // }
-        }
 
         protected override void OnEnable()
         {
@@ -233,26 +195,25 @@ namespace ArenaUnity
 
             // get arena default settings
             CoroutineWithData cd;
-            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/conf/defaults.json"));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/conf/defaults.json"));
             yield return cd.coroutine;
             if (!isCrdSuccess(cd.result)) yield break;
             string jsonString = cd.result.ToString();
-            Debug.Log(jsonString);
             JObject jsonVal = JObject.Parse(jsonString);
-            var arenaDefaults = JsonConvert.DeserializeObject<ARENADefaults>(cd.result.ToString());
-            yield break; // TODO remove debug
+            arenaDefaults = jsonVal.SelectToken("ARENADefaults").ToObject<ArenaDefaults>();
+            brokerAddress = arenaDefaults.mqttHost;
 
             // start auth flow and MQTT connection
             ArenaCamera[] camlist = FindObjectsOfType<ArenaCamera>();
             name = $"{originalName} (Authenticating...)";
-            CoroutineWithData cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, camlist.Length > 0));
+            cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, arenaDefaults.realm, camlist.Length > 0));
             yield return cd.coroutine;
             name = $"{originalName} (MQTT Connecting...)";
             if (cd.result != null)
             {
                 if (string.IsNullOrWhiteSpace(namespaceName)) namespaceName = cd.result.ToString();
-                sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
-                sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
+                sceneTopic = $"{arenaDefaults.realm}/s/{namespaceName}/{sceneName}";
+                sceneUrl = $"https://{hostAddress}/{namespaceName}/{sceneName}";
             }
             if (permissions == null)
             {   // fail when permissions not set
@@ -357,7 +318,7 @@ namespace ArenaUnity
         private IEnumerator SceneLoadPersist()
         {
             CoroutineWithData cd;
-            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{arenaDefaults.persistHost}{arenaDefaults.persistPath}{namespaceName}/{sceneName}", csrfToken));
             yield return cd.coroutine;
             if (!isCrdSuccess(cd.result)) yield break;
             string jsonString = cd.result.ToString();
@@ -424,7 +385,7 @@ namespace ArenaUnity
             }
             string objUrl = srcUrl.TrimStart('/');
             objUrl = Uri.EscapeUriString(objUrl);
-            if (Uri.IsWellFormedUriString(objUrl, UriKind.Relative)) objUrl = $"https://{brokerAddress}/{objUrl}";
+            if (Uri.IsWellFormedUriString(objUrl, UriKind.Relative)) objUrl = $"https://{hostAddress}/{objUrl}";
             else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
             if (string.IsNullOrWhiteSpace(objUrl)) return null;
             if (!Uri.IsWellFormedUriString(objUrl, UriKind.Absolute))
