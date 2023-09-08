@@ -27,6 +27,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
@@ -357,10 +358,21 @@ namespace M2MqttUnity
             }
         }
 
+
         private bool SelfSignedCertValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
-            string host = certificate.GetName();
-            Debug.LogWarning($"Excepting server certificate without verification for MQTT on {host}!");
+            Regex regex = new Regex(@"CN\s*=\s*(?<name>\*?\.?\w*\.?\w+)");
+            try
+            {
+                var match = regex.Match(certificate.Subject);
+                string host = match.Groups["name"].Value;
+                Debug.LogWarning($"Excepting server certificate without verification for MQTT on {host}!");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"Excepting server certificate without verification for MQTT! Read cert host: {ex.Message}");
+                Console.WriteLine();
+            }
             return true;
         }
 
