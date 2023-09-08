@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using ArenaUnity.Components;
+using ArenaUnity.Schemas;
 using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
@@ -40,8 +41,6 @@ namespace ArenaUnity
             Instance = this;
         }
 
-        [Tooltip("Name of the topic realm for the scene (runtime changes ignored).")]
-        private string realm = "realm";
         [Tooltip("Namespace (automated with username), but can be overridden (runtime changes ignored).")]
         public string namespaceName = null;
         [Tooltip("Name of the scene, without namespace ('example', not 'username/example', runtime changes ignored).")]
@@ -82,6 +81,7 @@ namespace ArenaUnity
         internal List<string> downloadQueue = new List<string>();
         internal List<string> parentalQueue = new List<string>();
         internal List<string> localCameraIds = new List<string>();
+        internal ArenaDefaults arenaDefaults { get; private set; }
 
         // Define callbacks
         public delegate void DecodeMessageDelegate(string topic, byte[] message);
@@ -193,17 +193,27 @@ namespace ArenaUnity
                 yield break;
             }
 
+            // get arena default settings
+            CoroutineWithData cd;
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/conf/defaults.json"));
+            yield return cd.coroutine;
+            if (!isCrdSuccess(cd.result)) yield break;
+            string jsonString = cd.result.ToString();
+            JObject jsonVal = JObject.Parse(jsonString);
+            arenaDefaults = jsonVal.SelectToken("ARENADefaults").ToObject<ArenaDefaults>();
+            brokerAddress = arenaDefaults.mqttHost;
+
             // start auth flow and MQTT connection
             ArenaCamera[] camlist = FindObjectsOfType<ArenaCamera>();
             name = $"{originalName} (Authenticating...)";
-            CoroutineWithData cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, camlist.Length > 0));
+            cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, arenaDefaults.realm, camlist.Length > 0));
             yield return cd.coroutine;
             name = $"{originalName} (MQTT Connecting...)";
             if (cd.result != null)
             {
                 if (string.IsNullOrWhiteSpace(namespaceName)) namespaceName = cd.result.ToString();
-                sceneTopic = $"{realm}/s/{namespaceName}/{sceneName}";
-                sceneUrl = $"https://{brokerAddress}/{namespaceName}/{sceneName}";
+                sceneTopic = $"{arenaDefaults.realm}/s/{namespaceName}/{sceneName}";
+                sceneUrl = $"https://{hostAddress}/{namespaceName}/{sceneName}";
             }
             if (permissions == null)
             {   // fail when permissions not set
@@ -308,7 +318,7 @@ namespace ArenaUnity
         private IEnumerator SceneLoadPersist()
         {
             CoroutineWithData cd;
-            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{brokerAddress}/persist/{namespaceName}/{sceneName}", csrfToken));
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{arenaDefaults.persistHost}{arenaDefaults.persistPath}{namespaceName}/{sceneName}", csrfToken));
             yield return cd.coroutine;
             if (!isCrdSuccess(cd.result)) yield break;
             string jsonString = cd.result.ToString();
@@ -375,7 +385,7 @@ namespace ArenaUnity
             }
             string objUrl = srcUrl.TrimStart('/');
             objUrl = Uri.EscapeUriString(objUrl);
-            if (Uri.IsWellFormedUriString(objUrl, UriKind.Relative)) objUrl = $"https://{brokerAddress}/{objUrl}";
+            if (Uri.IsWellFormedUriString(objUrl, UriKind.Relative)) objUrl = $"https://{hostAddress}/{objUrl}";
             else objUrl = objUrl.Replace("www.dropbox.com", "dl.dropboxusercontent.com"); // replace dropbox links to direct links
             if (string.IsNullOrWhiteSpace(objUrl)) return null;
             if (!Uri.IsWellFormedUriString(objUrl, UriKind.Absolute))
@@ -927,7 +937,9 @@ namespace ArenaUnity
             www.downloadHandler = new DownloadHandlerBuffer();
             //www.timeout = 5; // TODO: when fails like 443 hang, need to prevent curl 28 crash, this should just skip
             if (!verifyCertificate)
+            {   // TODO: should check for arena/not-arena host when debugging on localhost
                 www.certificateHandler = new SelfSignedCertificateHandler();
+            }
             www.SendWebRequest();
             while (!www.isDone)
             {
