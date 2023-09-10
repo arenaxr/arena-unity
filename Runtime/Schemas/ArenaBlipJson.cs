@@ -44,6 +44,25 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema 
         }
 
+        public enum GeometryType
+        {
+            [EnumMember(Value = "rect")]
+            Rect,
+            [EnumMember(Value = "disk")]
+            Disk,
+            [EnumMember(Value = "ring")]
+            Ring,
+        }
+        private static GeometryType defGeometry = GeometryType.Rect;
+        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty(PropertyName = "geometry")]
+        [Tooltip("Geometry of the blipout plane")]
+        public GeometryType Geometry = defGeometry;
+        public bool ShouldSerializeGeometry()
+        {
+            return true; // required in json schema 
+        }
+
         public enum PlanesType
         {
             [EnumMember(Value = "both")]

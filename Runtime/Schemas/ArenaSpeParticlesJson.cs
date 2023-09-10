@@ -522,6 +522,16 @@ namespace ArenaUnity.Schemas
             return (Relative != defRelative);
         }
 
+        private static float defRotation = 0f;
+        [JsonProperty(PropertyName = "rotation")]
+        [Tooltip("rotation in degrees")]
+        public float Rotation = defRotation;
+        public bool ShouldSerializeRotation()
+        {
+            if (_token != null && _token.SelectToken("rotation") != null) return true;
+            return (Rotation != defRotation);
+        }
+
         private static object defRotationAxis = JsonConvert.DeserializeObject("{x: 0, y: 0, z: 0}");
         [JsonProperty(PropertyName = "rotationAxis")]
         [Tooltip("local axis when using rotation")]

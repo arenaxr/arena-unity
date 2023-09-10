@@ -13,5 +13,6 @@ namespace ArenaUnity
         public int ttl { get; set; }
         [JsonProperty(PropertyName = "override")]
         public bool _override { get; set; }
+        public ArenaObjectDataJson data { get; set; }
     }
 }

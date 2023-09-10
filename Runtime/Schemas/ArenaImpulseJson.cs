@@ -46,6 +46,16 @@ namespace ArenaUnity.Schemas
             return (On != defOn);
         }
 
+        private static string defPosition = "";
+        [JsonProperty(PropertyName = "position")]
+        [Tooltip("position")]
+        public string Position = defPosition;
+        public bool ShouldSerializePosition()
+        {
+            if (_token != null && _token.SelectToken("position") != null) return true;
+            return (Position != defPosition);
+        }
+
         // General json object management
 
         [JsonExtensionData]
