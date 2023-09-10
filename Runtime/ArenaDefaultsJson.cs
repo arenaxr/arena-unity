@@ -3,7 +3,7 @@ using ArenaUnity.Schemas;
 
 namespace ArenaUnity
 {
-    public class ArenaDefaults
+    public class ArenaDefaultsJson
     {
         public string realm { get; set; } // e.g. "realm"
         public int camUpdateIntervalMs { get; set; } // e.g. 100

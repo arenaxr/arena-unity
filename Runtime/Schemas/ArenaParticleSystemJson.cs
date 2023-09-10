@@ -60,7 +60,7 @@ namespace ArenaUnity.Schemas
 
         private static object defPositionSpread = JsonConvert.DeserializeObject("{x: 0, y: 0, z: 0}");
         [JsonProperty(PropertyName = "positionSpread")]
-        [Tooltip("Vector3")]
+        [Tooltip("Describes this emitter's position variance on a per-particle basis.")]
         public object PositionSpread = defPositionSpread;
         public bool ShouldSerializePositionSpread()
         {
@@ -120,7 +120,7 @@ namespace ArenaUnity.Schemas
 
         private static object defAccelerationValue = JsonConvert.DeserializeObject("{x: 0, y: -10, z: 0}");
         [JsonProperty(PropertyName = "accelerationValue")]
-        [Tooltip("Vector3")]
+        [Tooltip("Describes this emitter's base acceleration.")]
         public object AccelerationValue = defAccelerationValue;
         public bool ShouldSerializeAccelerationValue()
         {
@@ -130,7 +130,7 @@ namespace ArenaUnity.Schemas
 
         private static object defAccelerationSpread = JsonConvert.DeserializeObject("{x: 10, y: 0, z: 10}");
         [JsonProperty(PropertyName = "accelerationSpread")]
-        [Tooltip("Vector3")]
+        [Tooltip("Describes this emitter's acceleration variance on a per-particle basis.")]
         public object AccelerationSpread = defAccelerationSpread;
         public bool ShouldSerializeAccelerationSpread()
         {
@@ -140,7 +140,7 @@ namespace ArenaUnity.Schemas
 
         private static object defVelocityValue = JsonConvert.DeserializeObject("{x: 0, y: 25, z: 0}");
         [JsonProperty(PropertyName = "velocityValue")]
-        [Tooltip("Vector3")]
+        [Tooltip("Describes this emitter's base velocity.")]
         public object VelocityValue = defVelocityValue;
         public bool ShouldSerializeVelocityValue()
         {
@@ -150,7 +150,7 @@ namespace ArenaUnity.Schemas
 
         private static object defVelocitySpread = JsonConvert.DeserializeObject("{x: 10, y: 7.5, z: 10}");
         [JsonProperty(PropertyName = "velocitySpread")]
-        [Tooltip("Vector3")]
+        [Tooltip("Describes this emitter's acceleration variance on a per-particle basis.")]
         public object VelocitySpread = defVelocitySpread;
         public bool ShouldSerializeVelocitySpread()
         {
@@ -204,7 +204,7 @@ namespace ArenaUnity.Schemas
         public float[] Size = defSize;
         public bool ShouldSerializeSize()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float[] defSizeSpread = {0};
@@ -263,7 +263,7 @@ namespace ArenaUnity.Schemas
         public string Texture = defTexture;
         public bool ShouldSerializeTexture()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defRandomise = false;

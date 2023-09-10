@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public bool Active = defActive;
         public bool ShouldSerializeActive()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum DressingType
@@ -125,7 +125,7 @@ namespace ArenaUnity.Schemas
 
         private static object defDressingVariance = JsonConvert.DeserializeObject("{'x': 1, 'y': 1, 'z': 1}");
         [JsonProperty(PropertyName = "dressingVariance")]
-        [Tooltip("vector3")]
+        [Tooltip("Maximum x,y,z meters to randomize the size and rotation of each dressing object. Use 0 0 0 for no variation in size nor rotation.")]
         public object DressingVariance = defDressingVariance;
         public bool ShouldSerializeDressingVariance()
         {
@@ -239,7 +239,7 @@ namespace ArenaUnity.Schemas
 
         private static object defGroundScale = JsonConvert.DeserializeObject("{'x': 1, 'y': 1, 'z': 1}");
         [JsonProperty(PropertyName = "groundScale")]
-        [Tooltip("vector3")]
+        [Tooltip("Ground dimensions (in meters).")]
         public object GroundScale = defGroundScale;
         public bool ShouldSerializeGroundScale()
         {
@@ -321,7 +321,7 @@ namespace ArenaUnity.Schemas
 
         private static object defLightPosition = JsonConvert.DeserializeObject("{'x': 0, 'y': 1, 'z': -0.2}");
         [JsonProperty(PropertyName = "lightPosition")]
-        [Tooltip("vector3")]
+        [Tooltip("Position of the main light. If skyType is atmospheric, only the orientation matters (is a directional light) and it can turn the scene into night when lowered towards the horizon.")]
         public object LightPosition = defLightPosition;
         public bool ShouldSerializeLightPosition()
         {
@@ -385,7 +385,7 @@ namespace ArenaUnity.Schemas
         public PresetType Preset = defPreset;
         public bool ShouldSerializePreset()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defSeed = 1f;

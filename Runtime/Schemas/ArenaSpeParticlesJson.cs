@@ -28,7 +28,7 @@ namespace ArenaUnity.Schemas
 
         private static object defAcceleration = JsonConvert.DeserializeObject("{x: 0, y: 0, z: 0}");
         [JsonProperty(PropertyName = "acceleration")]
-        [Tooltip("Vector3")]
+        [Tooltip("for sphere and disc distributions, only the x axis is used")]
         public object Acceleration = defAcceleration;
         public bool ShouldSerializeAcceleration()
         {
@@ -60,7 +60,7 @@ namespace ArenaUnity.Schemas
 
         private static object defAccelerationSpread = JsonConvert.DeserializeObject("{x: 0, y: 0, z: 0}");
         [JsonProperty(PropertyName = "accelerationSpread")]
-        [Tooltip("Vector3")]
+        [Tooltip("spread of the particle's acceleration. for sphere and disc distributions, only the x axis is used")]
         public object AccelerationSpread = defAccelerationSpread;
         public bool ShouldSerializeAccelerationSpread()
         {
@@ -376,7 +376,7 @@ namespace ArenaUnity.Schemas
 
         private static object defPositionOffset = JsonConvert.DeserializeObject("{x: 0, y: 0, z: 0}");
         [JsonProperty(PropertyName = "positionOffset")]
-        [Tooltip("Vector3")]
+        [Tooltip("fixed offset to the apply to the emitter relative to its parent entity")]
         public object PositionOffset = defPositionOffset;
         public bool ShouldSerializePositionOffset()
         {
@@ -386,7 +386,7 @@ namespace ArenaUnity.Schemas
 
         private static object defPositionSpread = JsonConvert.DeserializeObject("{x: 0, y: 0, z: 0}");
         [JsonProperty(PropertyName = "positionSpread")]
-        [Tooltip("Vector3")]
+        [Tooltip("particles are positioned within +- of these local bounds. for sphere and disc distributions only the x axis is used")]
         public object PositionSpread = defPositionSpread;
         public bool ShouldSerializePositionSpread()
         {
@@ -406,7 +406,7 @@ namespace ArenaUnity.Schemas
 
         private static object defRadiusScale = JsonConvert.DeserializeObject("{x: 1, y: 1, z: 1}");
         [JsonProperty(PropertyName = "radiusScale")]
-        [Tooltip("Vector3")]
+        [Tooltip("scales the emitter for sphere and disc shapes to form oblongs and ellipses")]
         public object RadiusScale = defRadiusScale;
         public bool ShouldSerializeRadiusScale()
         {
@@ -524,7 +524,7 @@ namespace ArenaUnity.Schemas
 
         private static object defRotationAxis = JsonConvert.DeserializeObject("{x: 0, y: 0, z: 0}");
         [JsonProperty(PropertyName = "rotationAxis")]
-        [Tooltip("Vector3")]
+        [Tooltip("local axis when using rotation")]
         public object RotationAxis = defRotationAxis;
         public bool ShouldSerializeRotationAxis()
         {
@@ -534,7 +534,7 @@ namespace ArenaUnity.Schemas
 
         private static object defRotationAxisSpread = JsonConvert.DeserializeObject("{x: 0, y: 0, z: 0}");
         [JsonProperty(PropertyName = "rotationAxisSpread")]
-        [Tooltip("Vector3")]
+        [Tooltip("variance in the axis of rotation")]
         public object RotationAxisSpread = defRotationAxisSpread;
         public bool ShouldSerializeRotationAxisSpread()
         {
@@ -634,7 +634,7 @@ namespace ArenaUnity.Schemas
 
         private static object defVelocity = JsonConvert.DeserializeObject("{x: 0, y: 0, z: 0}");
         [JsonProperty(PropertyName = "velocity")]
-        [Tooltip("Vector3")]
+        [Tooltip("for sphere and disc distributions, only the x axis is used")]
         public object Velocity = defVelocity;
         public bool ShouldSerializeVelocity()
         {
@@ -666,7 +666,7 @@ namespace ArenaUnity.Schemas
 
         private static object defVelocitySpread = JsonConvert.DeserializeObject("{x: 0, y: 0, z: 0}");
         [JsonProperty(PropertyName = "velocitySpread")]
-        [Tooltip("Vector3")]
+        [Tooltip("variance for the velocity")]
         public object VelocitySpread = defVelocitySpread;
         public bool ShouldSerializeVelocitySpread()
         {

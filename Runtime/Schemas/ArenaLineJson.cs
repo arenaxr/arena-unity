@@ -28,11 +28,11 @@ namespace ArenaUnity.Schemas
 
         private static object defEnd = JsonConvert.DeserializeObject("{'x': -0.5, 'y': -0.5, 'z': 0}");
         [JsonProperty(PropertyName = "end")]
-        [Tooltip("vector3")]
+        [Tooltip("vertex B (end)")]
         public object End = defEnd;
         public bool ShouldSerializeEnd()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defOpacity = 1f;
@@ -47,11 +47,11 @@ namespace ArenaUnity.Schemas
 
         private static object defStart = JsonConvert.DeserializeObject("{'x': 0, 'y': 0.5, 'z': 0}");
         [JsonProperty(PropertyName = "start")]
-        [Tooltip("vector3")]
+        [Tooltip("vertex A (start)")]
         public object Start = defStart;
         public bool ShouldSerializeStart()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defVisible = true;

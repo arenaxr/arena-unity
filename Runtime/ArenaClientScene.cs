@@ -80,7 +80,7 @@ namespace ArenaUnity
         internal List<string> downloadQueue = new List<string>();
         internal List<string> parentalQueue = new List<string>();
         internal List<string> localCameraIds = new List<string>();
-        internal ArenaDefaults arenaDefaults { get; private set; }
+        internal ArenaDefaultsJson arenaDefaults { get; private set; }
 
         // Define callbacks
         public delegate void DecodeMessageDelegate(string topic, byte[] message);
@@ -199,7 +199,7 @@ namespace ArenaUnity
             if (!isCrdSuccess(cd.result)) yield break;
             string jsonString = cd.result.ToString();
             JObject jsonVal = JObject.Parse(jsonString);
-            arenaDefaults = jsonVal.SelectToken("ARENADefaults").ToObject<ArenaDefaults>();
+            arenaDefaults = jsonVal.SelectToken("ARENADefaults").ToObject<ArenaDefaultsJson>();
             brokerAddress = arenaDefaults.mqttHost;
 
             // start auth flow and MQTT connection

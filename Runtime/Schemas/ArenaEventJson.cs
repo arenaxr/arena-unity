@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string Source = defSource;
         public bool ShouldSerializeSource()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static object defPosition = JsonConvert.DeserializeObject("{'x': 0, 'y': 0, 'z': 0}");
@@ -41,12 +41,12 @@ namespace ArenaUnity.Schemas
         public object Position = defPosition;
         public bool ShouldSerializePosition()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static object defClickPos = JsonConvert.DeserializeObject("{'x': 0, 'y': 1.6, 'z': 0}");
         [JsonProperty(PropertyName = "clickPos")]
-        [Tooltip("vector3")]
+        [Tooltip("The event origination position in 3D.")]
         public object ClickPos = defClickPos;
         public bool ShouldSerializeClickPos()
         {
