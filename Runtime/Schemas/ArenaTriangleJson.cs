@@ -26,121 +26,31 @@ namespace ArenaUnity.Schemas
 
         // triangle member-fields
 
-        private static  defVertexA = {'x': 0, 'y': 0.5, 'z': 0};
+        private static object defVertexA = JsonConvert.DeserializeObject("{'x': 0, 'y': 0.5, 'z': 0}");
         [JsonProperty(PropertyName = "vertexA")]
-        [Tooltip("vertex A")]
-        public  VertexA = defVertexA;
+        [Tooltip("vector3")]
+        public object VertexA = defVertexA;
         public bool ShouldSerializeVertexA()
         {
             return true; // required in json schema 
         }
 
-        private static  defVertexB = {'x': -0.5, 'y': -0.5, 'z': 0};
+        private static object defVertexB = JsonConvert.DeserializeObject("{'x': -0.5, 'y': -0.5, 'z': 0}");
         [JsonProperty(PropertyName = "vertexB")]
-        [Tooltip("vertex B")]
-        public  VertexB = defVertexB;
+        [Tooltip("vector3")]
+        public object VertexB = defVertexB;
         public bool ShouldSerializeVertexB()
         {
             return true; // required in json schema 
         }
 
-        private static  defVertexC = {'x': 0.5, 'y': -0.5, 'z': 0};
+        private static object defVertexC = JsonConvert.DeserializeObject("{'x': 0.5, 'y': -0.5, 'z': 0}");
         [JsonProperty(PropertyName = "vertexC")]
-        [Tooltip("vertex C")]
-        public  VertexC = defVertexC;
+        [Tooltip("vector3")]
+        public object VertexC = defVertexC;
         public bool ShouldSerializeVertexC()
         {
             return true; // required in json schema 
-        }
-
-        private static string defCollisionListener = "";
-        [JsonProperty(PropertyName = "collision-listener")]
-        [Tooltip("Name of the collision-listener, default can be empty string. Collisions trigger click events")]
-        public string CollisionListener = defCollisionListener;
-        public bool ShouldSerializeCollisionListener()
-        {
-            if (_token != null && _token.SelectToken("collision-listener") != null) return true;
-            return (CollisionListener != defCollisionListener);
-        }
-
-        private static bool defHideOnEnterAr = true;
-        [JsonProperty(PropertyName = "hide-on-enter-ar")]
-        [Tooltip("Hide object when entering AR. Remove component to *not* hide")]
-        public bool HideOnEnterAr = defHideOnEnterAr;
-        public bool ShouldSerializeHideOnEnterAr()
-        {
-            if (_token != null && _token.SelectToken("hide-on-enter-ar") != null) return true;
-            return (HideOnEnterAr != defHideOnEnterAr);
-        }
-
-        private static bool defHideOnEnterVr = true;
-        [JsonProperty(PropertyName = "hide-on-enter-vr")]
-        [Tooltip("Hide object when entering VR. Remove component to *not* hide")]
-        public bool HideOnEnterVr = defHideOnEnterVr;
-        public bool ShouldSerializeHideOnEnterVr()
-        {
-            if (_token != null && _token.SelectToken("hide-on-enter-vr") != null) return true;
-            return (HideOnEnterVr != defHideOnEnterVr);
-        }
-
-        private static bool defShowOnEnterAr = true;
-        [JsonProperty(PropertyName = "show-on-enter-ar")]
-        [Tooltip("Show object when entering AR. Hidden otherwise")]
-        public bool ShowOnEnterAr = defShowOnEnterAr;
-        public bool ShouldSerializeShowOnEnterAr()
-        {
-            if (_token != null && _token.SelectToken("show-on-enter-ar") != null) return true;
-            return (ShowOnEnterAr != defShowOnEnterAr);
-        }
-
-        private static bool defShowOnEnterVr = true;
-        [JsonProperty(PropertyName = "show-on-enter-vr")]
-        [Tooltip("Show object when entering VR. Hidden otherwise")]
-        public bool ShowOnEnterVr = defShowOnEnterVr;
-        public bool ShouldSerializeShowOnEnterVr()
-        {
-            if (_token != null && _token.SelectToken("show-on-enter-vr") != null) return true;
-            return (ShowOnEnterVr != defShowOnEnterVr);
-        }
-
-        private static string defUrl = "";
-        [JsonProperty(PropertyName = "url")]
-        [Tooltip("Model URL. Store files paths under 'store/users/<username>' (e.g. store/users/wiselab/models/factory_robot_arm/scene.gltf); to use CDN, prefix with `https://arena-cdn.conix.io/` (e.g. https://arena-cdn.conix.io/store/users/wiselab/models/factory_robot_arm/scene.gltf)")]
-        public string Url = defUrl;
-        public bool ShouldSerializeUrl()
-        {
-            if (_token != null && _token.SelectToken("url") != null) return true;
-            return (Url != defUrl);
-        }
-
-        private static bool defScreenshareable = true;
-        [JsonProperty(PropertyName = "screenshareable")]
-        [Tooltip("Whether or not a user can screenshare on an object")]
-        public bool Screenshareable = defScreenshareable;
-        public bool ShouldSerializeScreenshareable()
-        {
-            if (_token != null && _token.SelectToken("screenshareable") != null) return true;
-            return (Screenshareable != defScreenshareable);
-        }
-
-        private static bool defBuffer = true;
-        [JsonProperty(PropertyName = "buffer")]
-        [Tooltip("Transform geometry into a BufferGeometry to reduce memory usage at the cost of being harder to manipulate (geometries only: box, circle, cone, ...).")]
-        public bool Buffer = defBuffer;
-        public bool ShouldSerializeBuffer()
-        {
-            if (_token != null && _token.SelectToken("buffer") != null) return true;
-            return (Buffer != defBuffer);
-        }
-
-        private static bool defSkipCache = true;
-        [JsonProperty(PropertyName = "skipCache")]
-        [Tooltip("Disable retrieving the shared geometry object from the cache. (geometries only: box, circle, cone, ...).")]
-        public bool SkipCache = defSkipCache;
-        public bool ShouldSerializeSkipCache()
-        {
-            if (_token != null && _token.SelectToken("skipCache") != null) return true;
-            return (SkipCache != defSkipCache);
         }
 
         // General json object management

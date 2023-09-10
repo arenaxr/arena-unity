@@ -96,26 +96,6 @@ namespace ArenaUnity.Schemas
             return (Src != defSrc);
         }
 
-        private static bool defBuffer = true;
-        [JsonProperty(PropertyName = "buffer")]
-        [Tooltip("Transform geometry into a BufferGeometry to reduce memory usage at the cost of being harder to manipulate (geometries only: box, circle, cone, ...).")]
-        public bool Buffer = defBuffer;
-        public bool ShouldSerializeBuffer()
-        {
-            if (_token != null && _token.SelectToken("buffer") != null) return true;
-            return (Buffer != defBuffer);
-        }
-
-        private static bool defSkipCache = true;
-        [JsonProperty(PropertyName = "skipCache")]
-        [Tooltip("Disable retrieving the shared geometry object from the cache. (geometries only: box, circle, cone, ...).")]
-        public bool SkipCache = defSkipCache;
-        public bool ShouldSerializeSkipCache()
-        {
-            if (_token != null && _token.SelectToken("skipCache") != null) return true;
-            return (SkipCache != defSkipCache);
-        }
-
         // General json object management
 
         [JsonExtensionData]

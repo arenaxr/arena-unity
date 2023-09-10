@@ -150,7 +150,7 @@ namespace ArenaUnity.Schemas
             return (FontImage != defFontImage);
         }
 
-        private static float defHeight = f;
+        private static float defHeight = 0f;  // TODO: (mwfarb) read-only?
         [JsonProperty(PropertyName = "height")]
         [Tooltip("Height of text block. (derived from text size)")]
         public float Height = defHeight;
@@ -170,7 +170,7 @@ namespace ArenaUnity.Schemas
             return (LetterSpacing != defLetterSpacing);
         }
 
-        private static float defLineHeight = f;
+        private static float defLineHeight = 0f;  // TODO: (mwfarb) read-only?
         [JsonProperty(PropertyName = "lineHeight")]
         [Tooltip("Line height in pixels. (derived from font file)")]
         public float LineHeight = defLineHeight;
@@ -320,7 +320,7 @@ namespace ArenaUnity.Schemas
             return (WrapCount != defWrapCount);
         }
 
-        private static float defWrapPixels = f;
+        private static float defWrapPixels = 0f;  // TODO: (mwfarb) read-only?
         [JsonProperty(PropertyName = "wrapPixels")]
         [Tooltip("Number of pixels before wrapping text. (derived from wrapCount)")]
         public float WrapPixels = defWrapPixels;

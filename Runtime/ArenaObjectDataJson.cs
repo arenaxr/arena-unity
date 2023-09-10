@@ -1,7 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using ArenaUnity.Schemas;
+using Newtonsoft.Json;
 using UnityEngine;
 
-namespace ArenaUnity.Schemas
+namespace ArenaUnity
 {
     public class ArenaObjectDataJson
     {

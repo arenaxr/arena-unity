@@ -125,7 +125,7 @@ namespace ArenaUnity.Schemas
 
         private static object defDressingVariance = JsonConvert.DeserializeObject("{'x': 1, 'y': 1, 'z': 1}");
         [JsonProperty(PropertyName = "dressingVariance")]
-        [Tooltip("Vector3")]
+        [Tooltip("vector3")]
         public object DressingVariance = defDressingVariance;
         public bool ShouldSerializeDressingVariance()
         {
@@ -239,7 +239,7 @@ namespace ArenaUnity.Schemas
 
         private static object defGroundScale = JsonConvert.DeserializeObject("{'x': 1, 'y': 1, 'z': 1}");
         [JsonProperty(PropertyName = "groundScale")]
-        [Tooltip("Vector3")]
+        [Tooltip("vector3")]
         public object GroundScale = defGroundScale;
         public bool ShouldSerializeGroundScale()
         {
@@ -321,7 +321,7 @@ namespace ArenaUnity.Schemas
 
         private static object defLightPosition = JsonConvert.DeserializeObject("{'x': 0, 'y': 1, 'z': -0.2}");
         [JsonProperty(PropertyName = "lightPosition")]
-        [Tooltip("Vector3")]
+        [Tooltip("vector3")]
         public object LightPosition = defLightPosition;
         public bool ShouldSerializeLightPosition()
         {
@@ -396,6 +396,16 @@ namespace ArenaUnity.Schemas
         {
             if (_token != null && _token.SelectToken("seed") != null) return true;
             return (Seed != defSeed);
+        }
+
+        private static bool defShadow = false;
+        [JsonProperty(PropertyName = "shadow")]
+        [Tooltip("Shadows on/off. Sky light casts shadows on the ground of all those objects with shadow component applied")]
+        public bool Shadow = defShadow;
+        public bool ShouldSerializeShadow()
+        {
+            if (_token != null && _token.SelectToken("shadow") != null) return true;
+            return (Shadow != defShadow);
         }
 
         private static float defShadowSize = 10f;

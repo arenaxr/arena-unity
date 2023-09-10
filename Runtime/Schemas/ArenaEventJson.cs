@@ -35,10 +35,19 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema 
         }
 
-        private static  defClickPos = {'x': 0, 'y': 1.6, 'z': 0};
+        private static object defPosition = JsonConvert.DeserializeObject("{'x': 0, 'y': 0, 'z': 0}");
+        [JsonProperty(PropertyName = "position")]
+        [Tooltip("The event destination position in 3D.")]
+        public object Position = defPosition;
+        public bool ShouldSerializePosition()
+        {
+            return true; // required in json schema 
+        }
+
+        private static object defClickPos = JsonConvert.DeserializeObject("{'x': 0, 'y': 1.6, 'z': 0}");
         [JsonProperty(PropertyName = "clickPos")]
-        [Tooltip("The event origination position in 3D.")]
-        public  ClickPos = defClickPos;
+        [Tooltip("vector3")]
+        public object ClickPos = defClickPos;
         public bool ShouldSerializeClickPos()
         {
             if (_token != null && _token.SelectToken("clickPos") != null) return true;

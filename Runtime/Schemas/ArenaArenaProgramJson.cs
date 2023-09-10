@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string Name = defName;
         public bool ShouldSerializeName()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum AffinityType
@@ -67,7 +67,7 @@ namespace ArenaUnity.Schemas
         public InstantiateType Instantiate = defInstantiate;
         public bool ShouldSerializeInstantiate()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defFilename = "";
@@ -76,7 +76,7 @@ namespace ArenaUnity.Schemas
         public string Filename = defFilename;
         public bool ShouldSerializeFilename()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum FiletypeType
@@ -93,10 +93,10 @@ namespace ArenaUnity.Schemas
         public FiletypeType Filetype = defFiletype;
         public bool ShouldSerializeFiletype()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
-        private static string[] defArgs = ;
+        private static string[] defArgs = { };
         [JsonProperty(PropertyName = "args")]
         [Tooltip("Command-line arguments (passed in argv). Supports variables: ${scene}, ${mqtth}, ${cameraid}, ${username}, ${runtimeid}, ${moduleid}, ${query-string-key}")]
         public string[] Args = defArgs;
@@ -112,10 +112,10 @@ namespace ArenaUnity.Schemas
         public string[] Env = defEnv;
         public bool ShouldSerializeEnv()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
-        private static object[] defChannels = {{"path": "/ch/${scene}", "type": "pubsub", "mode": "rw", "params": {"topic": "realm/s/${scene}"}}};
+        private static object[] defChannels = {JsonConvert.DeserializeObject("{'path': '/ch/${scene}', 'type': 'pubsub', 'mode': 'rw', 'params': {'topic': 'realm/s/${scene}'}}")};
         [JsonProperty(PropertyName = "channels")]
         [Tooltip("Channels describe files representing access to IO from pubsub and client sockets (possibly more in the future; currently only supported for WASM programs).")]
         public object[] Channels = defChannels;

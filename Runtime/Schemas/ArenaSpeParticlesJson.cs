@@ -614,7 +614,7 @@ namespace ArenaUnity.Schemas
 
         private static object defTextureFrames = JsonConvert.DeserializeObject("{x: 1, y: 1}");
         [JsonProperty(PropertyName = "textureFrames")]
-        [Tooltip("Vector2")]
+        [Tooltip("x and y frames for a spritesheet. each particle will transition through every frame of the spritesheet over its lifetime (see textureFramesLoop)")]
         public object TextureFrames = defTextureFrames;
         public bool ShouldSerializeTextureFrames()
         {
