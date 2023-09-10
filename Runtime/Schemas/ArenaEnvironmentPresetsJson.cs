@@ -398,16 +398,6 @@ namespace ArenaUnity.Schemas
             return (Seed != defSeed);
         }
 
-        private static bool defShadow = false;
-        [JsonProperty(PropertyName = "shadow")]
-        [Tooltip("Shadows on/off. Sky light casts shadows on the ground of all those objects with shadow component applied")]
-        public bool Shadow = defShadow;
-        public bool ShouldSerializeShadow()
-        {
-            if (_token != null && _token.SelectToken("shadow") != null) return true;
-            return (Shadow != defShadow);
-        }
-
         private static float defShadowSize = 10f;
         [JsonProperty(PropertyName = "shadowSize")]
         [Tooltip("Size of the shadow, if applied")]

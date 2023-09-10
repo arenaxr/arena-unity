@@ -11,7 +11,7 @@ namespace ArenaUnity
         public string nameSpace { get; set; } // e.g. "public"
         public string sceneName { get; set; } // e.g. "lobby"
         public string userName { get; set; } // e.g. "Anonymous"
-        public ArenaPositionJson startCoords { get; set; } // e.g. {"x": 0, "y": 0, "z": 0}
+        public ArenaVector3Json startCoords { get; set; } // e.g. {"x": 0, "y": 0, "z": 0}
         public float camHeight { get; set; } // e.g. 1.6
         public string mqttHost { get; set; } // e.g. "localhost"
         public string jitsiHost { get; set; } // e.g. "mr.andrew.cmu.edu"
