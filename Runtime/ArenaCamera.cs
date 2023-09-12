@@ -4,7 +4,6 @@
  */
 
 using System.Collections;
-using System.Dynamic;
 using Newtonsoft.Json;
 using PrettyHierarchy;
 using UnityEngine;
@@ -84,7 +83,7 @@ namespace ArenaUnity
             if (messageType != "object") return false;
 
             // message type information
-            dynamic msg = new ExpandoObject();
+            DYNAMIC msg = new ExpandoObject();
             msg.object_id = camid;
             msg.action = created ? "update" : "create";
             msg.type = messageType;
@@ -95,7 +94,7 @@ namespace ArenaUnity
             }
             msg.displayName = displayName;
 
-            dynamic dataUnity = new ExpandoObject();
+            DYNAMIC dataUnity = new ExpandoObject();
             dataUnity.object_type = "camera";
             dataUnity.headModelPath = headModelPath;
             dataUnity.color = ArenaUnity.ToArenaColor(displayColor);

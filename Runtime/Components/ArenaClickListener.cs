@@ -3,7 +3,6 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
-using System.Dynamic;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -110,7 +109,7 @@ namespace ArenaUnity.Components
             Vector3 camPosition = _camera.transform.localPosition;
             string camName = _arenaCam.camid;
 
-            dynamic data = new ExpandoObject();
+            DYNAMIC data = new ExpandoObject();
             data.clickPos = ArenaUnity.ToArenaPosition(camPosition);
             data.position = ArenaUnity.ToArenaPosition(hit.point);
             data.source = camName;

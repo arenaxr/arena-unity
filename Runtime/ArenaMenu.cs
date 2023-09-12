@@ -3,7 +3,6 @@
  * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
  */
 
-using System.Dynamic;
 using System.Globalization;
 using Newtonsoft.Json;
 using UnityEditor;
@@ -142,7 +141,7 @@ namespace ArenaUnity
             Camera cam = Camera.current ?? Camera.main;
             Vector3 cameraPoint = cam.transform.position + cam.transform.forward * distance;
 
-            dynamic msg = new ExpandoObject();
+            DYNAMIC msg = new ExpandoObject();
             var client = ArenaClientScene.Instance;
             if (client.arenaObjs.ContainsKey(object_id))
                 object_id = $"{object_id}-{UnityEngine.Random.Range(0, 1000000)}";
@@ -150,10 +149,10 @@ namespace ArenaUnity
             msg.action = "create";
             msg.type = "object";
             msg.persist = true;
-            dynamic data = new ExpandoObject();
+            DYNAMIC data = new ExpandoObject();
             data.object_type = object_type;
             data.position = ArenaUnity.ToArenaPosition(cameraPoint);
-            dynamic material = new ExpandoObject();
+            DYNAMIC material = new ExpandoObject();
             material.color = "#7f7f7f";
 
             data.material = material;

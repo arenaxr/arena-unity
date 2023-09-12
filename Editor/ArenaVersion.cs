@@ -96,10 +96,10 @@ namespace ArenaUnity.Editor
             }
             else
             {
-                dynamic git = JsonConvert.DeserializeObject(www.downloadHandler.text);
+                GitReleasesLatestJson git = JsonConvert.DeserializeObject<GitReleasesLatestJson>(www.downloadHandler.text);
                 if (git != null)
                 {
-                    if (Version.TryParse(((string)git.tag_name).Trim('v'), out var latest))
+                    if (Version.TryParse(git.tag_name.Trim('v'), out var latest))
                     {
                         PlayerPrefs.SetString("GitVersionLatest", latest.ToString());
                         if (local < latest)

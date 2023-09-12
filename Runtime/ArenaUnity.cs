@@ -68,9 +68,9 @@ namespace ArenaUnity
             return objectType;
         }
 
-        public static void ToUnityMesh(dynamic indata, ref GameObject gobj)
+        public static void ToUnityMesh(DYNAMIC indata, ref GameObject gobj)
         {
-            dynamic data;
+            DYNAMIC data;
             string type;
             if ((string)indata.object_type == "entity" && indata.geometry != null && indata.geometry.primitive != null)
             {
@@ -206,7 +206,7 @@ namespace ArenaUnity
                     break;
             };
         }
-        public static void ToArenaMesh(GameObject gobj, ref dynamic data)
+        public static void ToArenaMesh(GameObject gobj, ref DYNAMIC data)
         {
             ArenaMesh am = gobj.GetComponent<ArenaMesh>();
             if (am == null) return;
@@ -308,63 +308,63 @@ namespace ArenaUnity
                 -float.Parse(axis[2])
             );
         }
-        public static dynamic ToArenaPosition(Vector3 position)
+        public static ArenaPositionJson ToArenaPosition(Vector3 position)
         {
-            return new
+            return new ArenaPositionJson
             {
-                x = ArenaFloat(position.x),
-                y = ArenaFloat(position.y),
-                z = ArenaFloat(-position.z)
+                X = ArenaFloat(position.x),
+                Y = ArenaFloat(position.y),
+                Z = ArenaFloat(-position.z)
             };
         }
-        public static Vector3 ToUnityPosition(dynamic position)
+        public static Vector3 ToUnityPosition(ArenaPositionJson position)
         {
             return new Vector3(
-                (float)position.x,
-                (float)position.y,
-                -(float)position.z
+                (float)position.X,
+                (float)position.Y,
+                -(float)position.Z
             );
         }
 
         // rotation
-        public static dynamic ToArenaRotationQuat(Quaternion rotationQuat, bool invertY = true)
+        public static ArenaRotationJson ToArenaRotationQuat(Quaternion rotationQuat, bool invertY = true)
         {
-            return new
+            return new ArenaRotationJson
             {
-                x = ArenaFloat(-rotationQuat.x),
-                y = ArenaFloat(rotationQuat.y * (invertY ? -1 : 1)),
-                z = ArenaFloat(rotationQuat.z),
-                w = ArenaFloat(rotationQuat.w)
+                X = ArenaFloat(-rotationQuat.x),
+                Y = ArenaFloat(rotationQuat.y * (invertY ? -1 : 1)),
+                Z = ArenaFloat(rotationQuat.z),
+                W = ArenaFloat(rotationQuat.w)
             };
         }
-        public static Quaternion ToUnityRotationQuat(dynamic rotationQuat, bool invertY = true)
+        public static Quaternion ToUnityRotationQuat(ArenaRotationJson rotationQuat, bool invertY = true)
         {
             return new Quaternion(
-                -(float)rotationQuat.x,
-                (float)rotationQuat.y * (invertY ? -1 : 1),
-                (float)rotationQuat.z,
-                (float)rotationQuat.w
+                -(float)rotationQuat.X,
+                (float)rotationQuat.Y * (invertY ? -1 : 1),
+                (float)rotationQuat.Z,
+                (float)rotationQuat.W
             );
         }
         /// <summary>
-        /// Converts Vector3 rotationEuler to dynamic rotationEuler. CAUTION: Do not use for ARENA!
+        /// Converts Vector3 rotationEuler to DYNAMIC rotationEuler. CAUTION: Do not use for ARENA!
         /// A merge with quaternion type will leave a mix of xyz euler and w quaternion = badness.
         /// </summary>
-        public static dynamic ToArenaRotationEuler(Vector3 rotationEuler, bool invertY = true)
+        public static ArenaVector3Json ToArenaRotationEuler(Vector3 rotationEuler, bool invertY = true)
         {
-            return new
+            return new ArenaVector3Json
             {
-                x = ArenaFloat(-rotationEuler.x),
-                y = ArenaFloat(rotationEuler.y * (invertY ? -1 : 1)),
-                z = ArenaFloat(rotationEuler.z)
+                X = ArenaFloat(-rotationEuler.x),
+                Y = ArenaFloat(rotationEuler.y * (invertY ? -1 : 1)),
+                Z = ArenaFloat(rotationEuler.z)
             };
         }
-        public static Quaternion ToUnityRotationEuler(dynamic rotationEuler, bool invertY = true)
+        public static Quaternion ToUnityRotationEuler(ArenaVector3Json rotationEuler, bool invertY = true)
         {
             return Quaternion.Euler(
-                -(float)rotationEuler.x,
-                (float)rotationEuler.y * (invertY ? -1 : 1),
-                (float)rotationEuler.z
+                -(float)rotationEuler.X,
+                (float)rotationEuler.Y * (invertY ? -1 : 1),
+                (float)rotationEuler.Z
             );
         }
         public static Quaternion GltfToUnityRotationQuat(Quaternion rotationQuat)
@@ -378,25 +378,25 @@ namespace ArenaUnity
             return rotationQuat;
         }
         // scale
-        public static dynamic ToArenaScale(Vector3 scale)
+        public static ArenaScaleJson ToArenaScale(Vector3 scale)
         {
-            return new
+            return new ArenaScaleJson
             {
-                x = ArenaFloat(scale.x),
-                y = ArenaFloat(scale.y),
-                z = ArenaFloat(scale.z)
+                X = ArenaFloat(scale.x),
+                Y = ArenaFloat(scale.y),
+                Z = ArenaFloat(scale.z)
             };
         }
-        public static Vector3 ToUnityScale(dynamic scale)
+        public static Vector3 ToUnityScale(ArenaScaleJson scale)
         {
             return new Vector3(
-                (float)scale.x,
-                (float)scale.y,
-                (float)scale.z
+                (float)scale.X,
+                (float)scale.Y,
+                (float)scale.Z
             );
         }
         // size dimensions
-        public static void ToArenaDimensions(GameObject gobj, ref dynamic data)
+        public static void ToArenaDimensions(GameObject gobj, ref DYNAMIC data)
         {
             // used to collect unity-default render sizes
             string collider = gobj.GetComponent<Collider>().GetType().ToString();
@@ -477,7 +477,7 @@ namespace ArenaUnity
         }
 
         // line/thickline
-        public static void ToArenaLine(GameObject gobj, ref dynamic data)
+        public static void ToArenaThickline(GameObject gobj, ref ArenaThicklineJson data)
         {
             // TODO: support Material opacity/visibility
             LineRenderer line = gobj.GetComponent<LineRenderer>();
@@ -502,77 +502,79 @@ namespace ArenaUnity
                     positions[i] = ToArenaPositionString(vertices[i]);
                 }
             }
-            data.path = string.Join(",", positions);
-            data.lineWidth = (int)(line.startWidth / LineSinglePixelInMeters); // TODO: support endWidth
-            data.color = ToArenaColor(line.startColor); // TODO: support endColor
+            data.Path = string.Join(",", positions);
+            data.LineWidth = (int)(line.startWidth / LineSinglePixelInMeters); // TODO: support endWidth
+            data.Color = ToArenaColor(line.startColor); // TODO: support endColor
         }
-        public static void ToUnityLine(dynamic data, ref GameObject gobj)
+        public static void ToUnityLine(ArenaLineJson data, ref GameObject gobj)
         {
             LineRenderer line = gobj.GetComponent<LineRenderer>();
             if (line == null)
                 line = gobj.AddComponent<LineRenderer>();
 
             float pixelWidth = 1f; // default
-            switch ((string)data.object_type)
+            line.useWorldSpace = true; // match arena line which always ignores position
+            if (data.Start != null && data.End != null)
             {
-                case "line":
-                    line.useWorldSpace = true; // match arena line which always ignores position
-                    if (data.start != null && data.end != null)
-                    {
-                        Vector3[] nodes = {
-                            ToUnityPosition(data.start),
-                            ToUnityPosition(data.end),
+                Vector3[] nodes = {
+                            ToUnityPosition(data.Start),
+                            ToUnityPosition(data.End),
                         };
-                        line.SetPositions(nodes);
-                    }
-                    break;
-                case "thickline":
-                    line.useWorldSpace = false; // match arena thickline which always uses position
-                    if (data.path != null)
-                    {
-                        string[] nodes = ((string)data.path).Split(new char[] { ',' });
-                        line.positionCount = nodes.Length;
-                        for (var i = 0; i < nodes.Length; i++)
-                        {
-                            Vector3 position = ToUnityPositionString(nodes[i]);
-                            line.SetPosition(i, position);
-                        }
-                    }
-                    if (data.lineWidth != null)
-                        pixelWidth = (float)data.lineWidth;
-                    break;
+                line.SetPositions(nodes);
             }
-            if (data.color != null)
-                line.startColor = line.endColor = ToUnityColor((string)data.color);
+            if (data.Color != null)
+                line.startColor = line.endColor = ToUnityColor((string)data.Color);
+            line.widthMultiplier = pixelWidth * LineSinglePixelInMeters;
+        }
+        public static void ToUnityThickline(ArenaThicklineJson data, ref GameObject gobj)
+        {
+            LineRenderer line = gobj.GetComponent<LineRenderer>();
+            if (line == null)
+                line = gobj.AddComponent<LineRenderer>();
+
+            float pixelWidth = 1f; // default
+            line.useWorldSpace = false; // match arena thickline which always uses position
+            if (data.Path != null)
+            {
+                string[] nodes = ((string)data.Path).Split(new char[] { ',' });
+                line.positionCount = nodes.Length;
+                for (var i = 0; i < nodes.Length; i++)
+                {
+                    Vector3 position = ToUnityPositionString(nodes[i]);
+                    line.SetPosition(i, position);
+                }
+            }
+            pixelWidth = (float)data.LineWidth;
+            if (data.Color != null)
+                line.startColor = line.endColor = ToUnityColor((string)data.Color);
             // convert arena thickline pixels vs unity meters
             float numkeys = 2;
             float w = 1;
             AnimationCurve curve = new AnimationCurve();
-            string lineWidthStyler = (string)data.lineWidthStyler;
-            switch (lineWidthStyler)
+            switch (data.LineWidthStyler)
             {
-                case "center-sharp": numkeys = 3; break;
-                case "center-smooth": numkeys = 10; break;
-                case "sine-wave": numkeys = 10; break;
+                case ArenaThicklineJson.LineWidthStylerType.CenterSharp: numkeys = 3; break;
+                case ArenaThicklineJson.LineWidthStylerType.CenterSmooth: numkeys = 10; break;
+                case ArenaThicklineJson.LineWidthStylerType.SineWave: numkeys = 10; break;
             }
             for (int i = 0; i < numkeys; i++)
             {
                 float p = i / (numkeys - 1);
-                switch (lineWidthStyler)
+                switch (data.LineWidthStyler)
                 {
-                    case "grow":
+                    case ArenaThicklineJson.LineWidthStylerType.Grow:
                         w = p;
                         break;
-                    case "shrink":
+                    case ArenaThicklineJson.LineWidthStylerType.Shrink:
                         w = 1 - p;
                         break;
-                    case "center-sharp":
+                    case ArenaThicklineJson.LineWidthStylerType.CenterSharp:
                         w = 1 - Math.Abs(2 * p - 1);
                         break;
-                    case "center-smooth":
+                    case ArenaThicklineJson.LineWidthStylerType.CenterSmooth:
                         w = (float)Math.Sin(p * 3.1415);
                         break;
-                    case "sine-wave":
+                    case ArenaThicklineJson.LineWidthStylerType.SineWave:
                         w = (float)(0.5 + 0.5 * Math.Sin((p - 0.5) * 2 * 3.1415 * 10));
                         break;
                 }
@@ -583,124 +585,121 @@ namespace ArenaUnity
         }
 
         // text
-        public static void ToArenaText(GameObject gobj, ref dynamic data)
+        public static void ToArenaText(GameObject gobj, ref ArenaTextJson data)
         {
             TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
             //tm.fontSize;
-            data.value = tm.text;
-            data.color = ToArenaColor(tm.color);
-            data.width = tm.rectTransform.rect.width;
-            data.height = tm.rectTransform.rect.height;
-            switch (tm.alignment)
-            {
-                case TextAlignmentOptions.TopLeft:
-                    data.baseline = "top";
-                    data.anchor = "left";
-                    break;
-                case TextAlignmentOptions.Top:
-                    data.baseline = "top";
-                    data.anchor = "center";
-                    break;
-                case TextAlignmentOptions.TopRight:
-                    data.baseline = "top";
-                    data.anchor = "right";
-                    break;
-                case TextAlignmentOptions.TopGeoAligned:
-                    data.baseline = "top";
-                    data.anchor = "align";
-                    break;
-                case TextAlignmentOptions.BaselineLeft:
-                    data.baseline = "center";
-                    data.anchor = "left";
-                    break;
-                case TextAlignmentOptions.Center:
-                    data.baseline = "center";
-                    data.anchor = "center";
-                    break;
-                case TextAlignmentOptions.BaselineRight:
-                    data.baseline = "center";
-                    data.anchor = "right";
-                    break;
-                case TextAlignmentOptions.CenterGeoAligned:
-                    data.baseline = "center";
-                    data.anchor = "align";
-                    break;
-                case TextAlignmentOptions.BottomLeft:
-                    data.baseline = "bottom";
-                    data.anchor = "left";
-                    break;
-                case TextAlignmentOptions.Bottom:
-                    data.baseline = "bottom";
-                    data.anchor = "center";
-                    break;
-            }
+            data.Value = tm.text;
+            data.Color = ToArenaColor(tm.color);
+            data.Width = tm.rectTransform.rect.width;
+            data.Height = tm.rectTransform.rect.height;
+            // TODO (mwfarb): restore alignment
+            //switch (tm.alignment)
+            //{
+            //    case TextAlignmentOptions.TopLeft:
+            //        data.Baseline = "top";
+            //        data.Anchor = "left";
+            //        break;
+            //    case TextAlignmentOptions.Top:
+            //        data.Baseline = "top";
+            //        data.Anchor = "center";
+            //        break;
+            //    case TextAlignmentOptions.TopRight:
+            //        data.Baseline = "top";
+            //        data.Anchor = "right";
+            //        break;
+            //    case TextAlignmentOptions.TopGeoAligned:
+            //        data.Baseline = "top";
+            //        data.Anchor = "align";
+            //        break;
+            //    case TextAlignmentOptions.BaselineLeft:
+            //        data.Baseline = "center";
+            //        data.Anchor = "left";
+            //        break;
+            //    case TextAlignmentOptions.Center:
+            //        data.Baseline = "center";
+            //        data.Anchor = "center";
+            //        break;
+            //    case TextAlignmentOptions.BaselineRight:
+            //        data.Baseline = "center";
+            //        data.Anchor = "right";
+            //        break;
+            //    case TextAlignmentOptions.CenterGeoAligned:
+            //        data.Baseline = "center";
+            //        data.Anchor = "align";
+            //        break;
+            //    case TextAlignmentOptions.BottomLeft:
+            //        data.Baseline = "bottom";
+            //        data.Anchor = "left";
+            //        break;
+            //    case TextAlignmentOptions.Bottom:
+            //        data.Baseline = "bottom";
+            //        data.Anchor = "center";
+            //        break;
+            //}
         }
-        public static void ToUnityText(dynamic data, ref GameObject gobj)
+        public static void ToUnityText(ArenaTextJson data, ref GameObject gobj)
         {
             TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
             if (tm == null)
                 tm = gobj.AddComponent<TextMeshPro>();
             tm.fontSize = 2;
 
-            if (data.value != null)
-                tm.text = (string)data.value;
-            else if (data.text != null)
-                tm.text = (string)data.text;
-            if (data.color != null)
-                tm.color = ToUnityColor((string)data.color);
+            if (data.Value != null)
+                tm.text = (string)data.Value;
+            if (data.Color != null)
+                tm.color = ToUnityColor((string)data.Color);
 
             RectTransform rt = gobj.GetComponent<RectTransform>();
-            if (data.width != null)
-                rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (float)data.width);
-            if (data.height != null)
-                rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (float)data.height);
+            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (float)data.Width);
+            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (float)data.Height);
             rt.ForceUpdateRectTransforms();
-
-            string anchor = data.anchor != null ? (string)data.anchor : "center";
-            string baseline = data.baseline != null ? (string)data.baseline : "center";
-            switch ($"{baseline} {anchor}")
-            {
-                case "top left":
-                    tm.alignment = TextAlignmentOptions.TopLeft;
-                    break;
-                case "top center":
-                    tm.alignment = TextAlignmentOptions.Top;
-                    break;
-                case "top right":
-                    tm.alignment = TextAlignmentOptions.TopRight;
-                    break;
-                case "top align":
-                    tm.alignment = TextAlignmentOptions.TopGeoAligned;
-                    break;
-                case "center left":
-                    tm.alignment = TextAlignmentOptions.BaselineLeft;
-                    break;
-                case "center center":
-                    tm.alignment = TextAlignmentOptions.Center;
-                    break;
-                case "center right":
-                    tm.alignment = TextAlignmentOptions.BaselineRight;
-                    break;
-                case "center align":
-                    tm.alignment = TextAlignmentOptions.CenterGeoAligned;
-                    break;
-                case "bottom left":
-                    tm.alignment = TextAlignmentOptions.BottomLeft;
-                    break;
-                case "bottom center":
-                    tm.alignment = TextAlignmentOptions.Bottom;
-                    break;
-                case "bottom right":
-                    tm.alignment = TextAlignmentOptions.BottomRight;
-                    break;
-                case "bottom align":
-                    tm.alignment = TextAlignmentOptions.BottomGeoAligned;
-                    break;
-            }
+            // TODO (mwfarb): restore alignment
+            //string anchor = data.Anchor != null ? data.Anchor : ArenaTextJson.AnchorType.Center;
+            //string baseline = data.Baseline != null ? data.Baseline : ArenaTextJson.BaselineType.Center;
+            //switch ($"{baseline} {anchor}")
+            //{
+            //    case "top left":
+            //        tm.alignment = TextAlignmentOptions.TopLeft;
+            //        break;
+            //    case "top center":
+            //        tm.alignment = TextAlignmentOptions.Top;
+            //        break;
+            //    case "top right":
+            //        tm.alignment = TextAlignmentOptions.TopRight;
+            //        break;
+            //    case "top align":
+            //        tm.alignment = TextAlignmentOptions.TopGeoAligned;
+            //        break;
+            //    case "center left":
+            //        tm.alignment = TextAlignmentOptions.BaselineLeft;
+            //        break;
+            //    case "center center":
+            //        tm.alignment = TextAlignmentOptions.Center;
+            //        break;
+            //    case "center right":
+            //        tm.alignment = TextAlignmentOptions.BaselineRight;
+            //        break;
+            //    case "center align":
+            //        tm.alignment = TextAlignmentOptions.CenterGeoAligned;
+            //        break;
+            //    case "bottom left":
+            //        tm.alignment = TextAlignmentOptions.BottomLeft;
+            //        break;
+            //    case "bottom center":
+            //        tm.alignment = TextAlignmentOptions.Bottom;
+            //        break;
+            //    case "bottom right":
+            //        tm.alignment = TextAlignmentOptions.BottomRight;
+            //        break;
+            //    case "bottom align":
+            //        tm.alignment = TextAlignmentOptions.BottomGeoAligned;
+            //        break;
+            //}
         }
 
         // light
-        public static void ToArenaLight(GameObject gobj, ref dynamic data)
+        public static void ToArenaLight(GameObject gobj, ref ArenaLightJson data)
         {
             // TODO: translate from RenderSettings.ambientMode, may need centralized one-time publish
 
@@ -708,129 +707,101 @@ namespace ArenaUnity
             switch (light.type)
             {
                 case LightType.Directional:
-                    data.type = "directional";
+                    data.Type = ArenaLightJson.TypeType.Directional;
                     break;
                 case LightType.Point:
-                    data.type = "point";
-                    data.distance = ArenaFloat(light.range);
+                    data.Type = ArenaLightJson.TypeType.Point;
+                    data.Distance = ArenaFloat(light.range);
                     break;
                 case LightType.Spot:
-                    data.type = "spot";
-                    data.distance = ArenaFloat(light.range);
-                    data.angle = ArenaFloat(light.spotAngle);
+                    data.Type = ArenaLightJson.TypeType.Spot;
+                    data.Distance = ArenaFloat(light.range);
+                    data.Angle = ArenaFloat(light.spotAngle);
                     break;
             }
-            data.intensity = ArenaFloat(light.intensity);
-            data.color = ToArenaColor(light.color);
-            data.castShadow = light.shadows != LightShadows.None;
+            data.Intensity = ArenaFloat(light.intensity);
+            data.Color = ToArenaColor(light.color);
+            data.CastShadow = light.shadows != LightShadows.None;
         }
-        public static void ToUnityLight(dynamic data, ref GameObject gobj)
+        public static void ToUnityLight(ArenaLightJson data, ref GameObject gobj)
         {
-            // support legacy lights
-            dynamic ldata = data.light ?? data;
-            if (ldata.type != null)
-            {
-                if ((string)ldata.type == "ambient")
+                if (data.Type == ArenaLightJson.TypeType.Ambient)
                 {
                     RenderSettings.ambientMode = AmbientMode.Flat;
-                    if (ldata.intensity != null)
-                        RenderSettings.ambientIntensity = (float)ldata.intensity;
-                    if (ldata.color != null)
-                        RenderSettings.ambientLight = ToUnityColor((string)ldata.color);
+                    RenderSettings.ambientIntensity = (float)data.Intensity;
+                    if (data.Color != null)
+                        RenderSettings.ambientLight = ToUnityColor((string)data.Color);
                 }
                 else
                 {
                     Light light = gobj.GetComponent<Light>();
                     if (light == null)
                         light = gobj.AddComponent<Light>();
-                    switch ((string)ldata.type)
+                    switch (data.Type)
                     {
-                        case "directional":
+                        case ArenaLightJson.TypeType.Directional:
                             light.type = LightType.Directional;
                             break;
-                        case "point":
+                        case ArenaLightJson.TypeType.Point:
                             light.type = LightType.Point;
-                            if (ldata.distance != null)
-                                light.range = (float)ldata.distance;
+                            light.range = (float)data.Distance;
                             break;
-                        case "spot":
+                        case ArenaLightJson.TypeType.Spot:
                             light.type = LightType.Spot;
-                            if (ldata.distance != null)
-                                light.range = (float)ldata.distance;
-                            if (ldata.angle != null)
-                                light.spotAngle = (float)ldata.angle;
+                            light.range = (float)data.Distance;
+                            light.spotAngle = (float)data.Angle;
                             break;
                     }
-                    if (ldata.intensity != null)
-                        light.intensity = (float)ldata.intensity;
-                    if (ldata.color != null)
-                        light.color = ToUnityColor((string)ldata.color);
-                    light.shadows = ldata.castShadow == null ? LightShadows.None : LightShadows.Hard;
+                    light.intensity = (float)data.Intensity;
+                    if (data.Color != null)
+                        light.color = ToUnityColor((string)data.Color);
+                    light.shadows = !data.CastShadow ? LightShadows.None : LightShadows.Hard;
                 }
-            }
         }
         // material
-        public static void ToArenaMaterial(GameObject obj, ref dynamic data)
+        public static void ToArenaMaterial(GameObject obj, ref ArenaMaterialJson data)
         {
             Renderer renderer = obj.GetComponent<Renderer>();
-            // object shadows
-            if (renderer != null)
-            {
-                dynamic shadow = new ExpandoObject();
-                data.shadow = shadow;
-                data.shadow.cast = renderer.shadowCastingMode != ShadowCastingMode.Off;
-                data.shadow.receive = renderer.receiveShadows;
-            }
             // object material
             Material mat = renderer.material;
             if (!mat)
                 return;
-            dynamic material = new ExpandoObject();
-            data.material = material;
             // shaders only
             switch (mat.shader.name)
             {
                 default:
                 case "Standard":
-                    data.material.shader = "standard"; break;
+                    data.Shader = "standard"; break;
                 case "Unlit/Color":
                 case "Unlit/Texture":
                 case "Unlit/Texture Colored":
                 case "Legacy Shaders/Transparent/Diffuse":
-                    data.material.shader = "flat"; break;
+                    data.Shader = "flat"; break;
             }
             //data.url = ToArenaTexture(mat);
             if (mat.HasProperty(ColorPropertyName))
-                data.material.color = ToArenaColor(mat.color);
-            //data.material.metalness = ArenaFloat(mat.GetFloat("_Metallic"));
-            //data.material.roughness = ArenaFloat(1f - mat.GetFloat("_Glossiness"));
-            //data.material.repeat = ArenaFloat(mat.mainTextureScale.x);
-            //data.material.side = "double";
+                data.Color = ToArenaColor(mat.color);
+            //data.metalness = ArenaFloat(mat.GetFloat("_Metallic"));
+            //data.roughness = ArenaFloat(1f - mat.GetFloat("_Glossiness"));
+            //data.repeat = ArenaFloat(mat.mainTextureScale.x);
+            //data.side = "double";
             switch ((MatRendMode)mat.GetFloat("_Mode"))
             {
                 case MatRendMode.Opaque:
                 case MatRendMode.Fade:
-                    data.material.transparent = false; break;
+                    data.Transparent = false; break;
                 case MatRendMode.Transparent:
                 case MatRendMode.Cutout:
-                    data.material.transparent = true; break;
+                    data.Transparent = true; break;
             }
-            data.material.opacity = ArenaFloat(mat.color.a);
+            data.Opacity = ArenaFloat(mat.color.a);
 
         }
-        public static void ToUnityMaterial(dynamic data, ref GameObject gobj)
+        public static void ToUnityMaterial(ArenaMaterialJson data, ref GameObject gobj)
         {
             var renderer = gobj.GetComponent<Renderer>();
             if (renderer != null)
             {
-                // object shadows
-                if (data.shadow != null)
-                {
-                    if (data.shadow.cast != null)
-                        renderer.shadowCastingMode = Convert.ToBoolean(data.shadow.cast) ? ShadowCastingMode.On : ShadowCastingMode.Off;
-                    if (data.shadow.receive != null)
-                        renderer.receiveShadows = Convert.ToBoolean(data.shadow.receive);
-                }
                 // object material
                 var material = renderer.material;
                 if (GraphicsSettings.renderPipelineAsset)
@@ -840,23 +811,20 @@ namespace ArenaUnity
                     else
                         material.shader = Shader.Find("Universal Render Pipeline/Lit");
                 }
-                float opacity = (data.material != null && data.material.opacity != null) ? (float)data.material.opacity : 1f;
-                // legacy color overrides material color in the arena
-                if (data.color != null) // support legacy arena color
-                    material.SetColor(ColorPropertyName, ToUnityColor((string)data.color, opacity));
-                if (data.material != null)
+                float opacity = (data != null && data.Opacity != null) ? (float)data.Opacity : 1f;
+                if (data != null)
                 {
-                    bool transparent = Convert.ToBoolean(data.material.transparent);
+                    bool transparent = Convert.ToBoolean(data.Transparent);
                     bool opaque = opacity >= 1f;
-                    if (data.material.color != null)
-                        material.SetColor(ColorPropertyName, ToUnityColor((string)data.material.color, opacity));
-                    if (data.material.opacity != null)
+                    if (data.Color != null)
+                        material.SetColor(ColorPropertyName, ToUnityColor((string)data.Color, opacity));
+                    if (data.Opacity != null)
                     {
                         Color c = material.GetColor(ColorPropertyName);
                         material.SetColor(ColorPropertyName, new Color(c.r, c.g, c.b, opacity));
                     }
-                    if (data.material.shader != null)
-                        material.shader.name = (string)data.material.shader == "flat" ? "Unlit/Color" : "Standard";
+                    if (data.Shader != null)
+                        material.shader.name = (string)data.Shader == "flat" ? "Unlit/Color" : "Standard";
                     // For runtime set/change transparency mode, follow GUI params
                     // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/StandardShaderGUI.cs#L344
                     if (opacity >= 1f)

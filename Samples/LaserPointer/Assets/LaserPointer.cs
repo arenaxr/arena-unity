@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Dynamic;
 using ArenaUnity;
 using ArenaUnity.Components;
 using Newtonsoft.Json;
@@ -47,13 +46,13 @@ public class LaserPointer : MonoBehaviour
         // TODO (error) Received: {"object_id":"guac-cube_1_1","action":"clientEvent","type":"mousedown","data":{"position":{"x":1,"y":1,"z":-3},"source":"pyClient-144637"},"timestamp":"2023-03-06T16:30:06.368Z"}
 
         // TODO: provide better serialization
-        dynamic m = JsonConvert.DeserializeObject(message);
-        dynamic start = m.data.clickPos;
-        dynamic end = m.data.position;
+        DYNAMIC m = JsonConvert.DeserializeObject(message);
+        DYNAMIC start = m.data.clickPos;
+        DYNAMIC end = m.data.position;
         start.y = (float)start.y - .1f; // lower position for visibility
 
         // laser
-        dynamic msg = new ExpandoObject();
+        DYNAMIC msg = new ExpandoObject();
         msg.object_id = $"line-{instance}";
         msg.action = "create";
         msg.type = "object";

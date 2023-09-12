@@ -4,7 +4,6 @@
  */
 
 using System;
-using System.Dynamic;
 using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
@@ -44,7 +43,7 @@ namespace ArenaUnity
                 Camera cam = Camera.current ?? Camera.main;
                 Vector3 cameraPoint = cam.transform.position + cam.transform.forward * distance;
 
-                dynamic msg = new ExpandoObject();
+                DYNAMIC msg = new ExpandoObject();
                 var client = ArenaClientScene.Instance;
                 if (client.arenaObjs.ContainsKey(object_id))
                     object_id = $"{object_id}-{UnityEngine.Random.Range(0, 1000000)}";
@@ -52,7 +51,7 @@ namespace ArenaUnity
                 msg.action = "create";
                 msg.type = "object";
                 msg.persist = true;
-                dynamic data = new ExpandoObject();
+                DYNAMIC data = new ExpandoObject();
                 data.object_type = object_type;
                 data.url = object_url;
                 Quaternion rotOut = object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(Quaternion.identity) : Quaternion.identity;

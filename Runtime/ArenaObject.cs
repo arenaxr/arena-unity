@@ -5,7 +5,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using ArenaUnity.Components;
 using Newtonsoft.Json;
@@ -36,7 +35,7 @@ namespace ArenaUnity
         public string jsonData = null;
 
         [HideInInspector]
-        public dynamic data = null; // original message data for object, if any
+        public DYNAMIC data = null; // original message data for object, if any
         [HideInInspector]
         public string parentId = null;
 
@@ -131,7 +130,7 @@ namespace ArenaUnity
             if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return;
             // pub delete old
-            dynamic msg = new
+            DYNAMIC msg = new
             {
                 object_id = oldName,
                 action = "delete",
@@ -155,13 +154,13 @@ namespace ArenaUnity
                 ArenaClientScene.Instance.arenaObjs[name] = gameObject;
 
             // message type information
-            dynamic msg = new ExpandoObject();
+            DYNAMIC msg = new ExpandoObject();
             msg.object_id = name;
             msg.action = created ? "update" : "create";
             msg.type = messageType;
             msg.persist = persist;
             transformOnly = created ? transformOnly : false;
-            dynamic dataUnity = new ExpandoObject();
+            DYNAMIC dataUnity = new ExpandoObject();
             if (data == null || data.object_type == null)
                 dataUnity.object_type = ArenaUnity.ToArenaObjectType(gameObject);
             else
@@ -216,7 +215,7 @@ namespace ArenaUnity
             if (data != null)
                 updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(data)));
             updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(dataUnity)));
-            // TODO: temp location until JObject completely replaces dynamic object
+            // TODO: temp location until JObject completely replaces DYNAMIC object
             if (GetComponent<ArenaAnimationMixer>())
                 ArenaUnity.ToArenaAnimationMixer(gameObject, ref updatedData);
             if (GetComponent<ArenaClickListener>())
@@ -236,7 +235,7 @@ namespace ArenaUnity
 
         internal void PublishUpdate(string objData, bool all = false, bool overwrite = false)
         {
-            dynamic msg = new ExpandoObject();
+            DYNAMIC msg = new ExpandoObject();
             msg.object_id = name;
             msg.action = "update";
             msg.type = messageType;

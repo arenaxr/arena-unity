@@ -13,6 +13,13 @@ namespace ArenaUnity
         public int ttl { get; set; }
         [JsonProperty(PropertyName = "override")]
         public bool _override { get; set; }
-        public ArenaObjectDataJson data { get; set; }
+        public string timestamp { get; set; }
+
+        // TODO (mwfarb): consolidate handling of data vs attributes since they are the same
+        public object data { get; set; }
+        public object attributes { get; set; }
+
+        // TODO (mwfarb): remove displayName from transaction level object
+        public string displayName = null;
     }
 }

@@ -344,7 +344,7 @@ namespace ArenaUnity
 
                 willFlag = camera;
                 willTopic = $"{realm}/s/{namespaceName}/{sceneName}/{camid}";
-                dynamic msg = new
+                DYNAMIC msg = new
                 {
                     object_id = camid,
                     action = "delete",

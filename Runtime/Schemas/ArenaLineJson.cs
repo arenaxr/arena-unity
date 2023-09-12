@@ -26,6 +26,16 @@ namespace ArenaUnity.Schemas
 
         // line member-fields
 
+        private static string defColor = "#7f7f7f";
+        [JsonProperty(PropertyName = "color")]
+        [Tooltip("color")]
+        public string Color = defColor;
+        public bool ShouldSerializeColor()
+        {
+            if (_token != null && _token.SelectToken("color") != null) return true;
+            return (Color != defColor);
+        }
+
         private static object defEnd = JsonConvert.DeserializeObject("{'x': -0.5, 'y': -0.5, 'z': 0}");
         [JsonProperty(PropertyName = "end")]
         [Tooltip("vertex B (end)")]
