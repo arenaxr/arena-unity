@@ -68,29 +68,6 @@ namespace ArenaUnity
             Oauth2Service.Scope.Openid
         };
 
-        public class UserState
-        {
-            public bool authenticated { get; set; }
-            public string username { get; set; }
-            public string fullname { get; set; }
-            public string email { get; set; }
-            public string type { get; set; }
-            public bool is_staff { get; set; }
-        }
-
-        public class MqttAuth
-        {
-            public string username { get; set; }
-            public string token { get; set; }
-            public MqttAuthIds ids { get; set; }
-        }
-
-        public class MqttAuthIds
-        {
-            public string userid { get; set; }
-            public string camid { get; set; }
-        }
-
         public enum Auth { Anonymous, Google, Manual };
         public bool IsShuttingDown { get; internal set; }
 
@@ -306,7 +283,7 @@ namespace ArenaUnity
                 cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/user_state", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
-                var user = JsonConvert.DeserializeObject<UserState>(cd.result.ToString());
+                var user = JsonConvert.DeserializeObject<ArenaUserStateJson>(cd.result.ToString());
                 if (user.authenticated)
                 {
                     userName = user.username;
@@ -349,7 +326,7 @@ namespace ArenaUnity
                 writer.Close();
             }
 
-            var auth = JsonConvert.DeserializeObject<MqttAuth>(mqttToken);
+            var auth = JsonConvert.DeserializeObject<ArenaMqttAuthJson>(mqttToken);
             mqttUserName = auth.username;
             mqttPassword = auth.token;
 

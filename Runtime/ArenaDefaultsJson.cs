@@ -8,7 +8,7 @@ namespace ArenaUnity
         public string realm { get; set; } // e.g. "realm"
         public int camUpdateIntervalMs { get; set; } // e.g. 100
         [JsonProperty(PropertyName = "namespace")]
-        public string nameSpace { get; set; } // e.g. "public"
+        public string _namespace { get; set; } // e.g. "public"
         public string sceneName { get; set; } // e.g. "lobby"
         public string userName { get; set; } // e.g. "Anonymous"
         public ArenaVector3Json startCoords { get; set; } // e.g. {"x": 0, "y": 0, "z": 0}

@@ -95,7 +95,7 @@ namespace ArenaUnity
                     break;
                 case "box":
                 case "cube": // support legacy arena 'cube' == 'box'
-                    ArenaMeshCube cube = gobj.GetComponent<ArenaMeshCube>() ?? gobj.AddComponent<ArenaMeshCube>();
+                    ArenaMeshBox cube = gobj.GetComponent<ArenaMeshBox>() ?? gobj.AddComponent<ArenaMeshBox>();
                     cube.width = data.width != null ? (float)data.width : 1f;
                     cube.height = data.height != null ? (float)data.height : 1f;
                     cube.depth = data.depth != null ? (float)data.depth : 1f;
@@ -217,8 +217,8 @@ namespace ArenaUnity
                     data.radius = ArenaFloat(capsule.radius);
                     data.length = ArenaFloat(capsule.length);
                     break;
-                case "ArenaUnity.ArenaMeshCube":
-                    var cube = gobj.GetComponent<ArenaMeshCube>();
+                case "ArenaUnity.ArenaMeshBox":
+                    var cube = gobj.GetComponent<ArenaMeshBox>();
                     data.width = ArenaFloat(cube.width);
                     data.height = ArenaFloat(cube.height);
                     data.depth = ArenaFloat(cube.depth);

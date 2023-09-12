@@ -50,7 +50,7 @@ namespace ArenaUnity
             switch (am.GetType().ToString())
             {
                 case "ArenaUnity.ArenaMeshCube":
-                    HandleSizeCube(aobj, go.GetComponent<ArenaMeshCube>());
+                    HandleSizeCube(aobj, go.GetComponent<ArenaMeshBox>());
                     break;
                 case "ArenaUnity.ArenaMeshCone":
                     HandleSizeCone(aobj, go.GetComponent<ArenaMeshCone>());
@@ -97,7 +97,7 @@ namespace ArenaUnity
             }
         }
 
-        private static void HandleSizeCube(ArenaObject aobj, ArenaMeshCube cube)
+        private static void HandleSizeCube(ArenaObject aobj, ArenaMeshBox cube)
         {
             float size = HandleUtility.GetHandleSize(cube.transform.position) * 1f;
             float snap = 0.5f;
@@ -123,7 +123,7 @@ namespace ArenaUnity
                 //Undo.RecordObjects(Selection.gameObjects, "Size Arena Cube");
                 foreach (var o in Selection.gameObjects)
                 {
-                    var amesh = o.GetComponent<ArenaMeshCube>();
+                    var amesh = o.GetComponent<ArenaMeshBox>();
                     amesh.width = width;
                     amesh.height = height;
                     amesh.depth = depth;
