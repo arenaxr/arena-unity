@@ -16,15 +16,15 @@ namespace ArenaUnity.Components
     [RequireComponent(typeof(ArenaObject))]
     public class ArenaAnimationMixer : MonoBehaviour
     {
-        // STATUS
-        // DONE clip: * Name of the animation clip(s) to play. Accepts wildcards.
-        // TODO duration: AUTO    Duration of the animation, in seconds.
-        // DONE crossFadeDuration:   0   Duration of cross - fades between clips, in seconds.
-        // DONE loop:  once, repeat, or pingpong. In repeat and pingpong modes, the clip plays once plus the specified number of repetitions. For pingpong, every second clip plays in reverse.
-        // TODO repetitions: Infinity    Number of times to play the clip, in addition to the first play.Repetitions are ignored for loop: once.
-        // DONE timeScale:   1   Scaling factor for playback speed. A value of 0 causes the animation to pause.Negative values cause the animation to play backwards.
-        // DONE clampWhenFinished:   false   If true, halts the animation at the last frame.
-        // DONE startAt: 0   Sets the start of an animation to a specific time(in milliseconds).This is useful when you need to jump to an exact time in an animation.The input parameter will be scaled by the mixer's timeScale.
+        // ARENA Property Handling Status
+        // DONE clip
+        // TODO duration
+        // DONE crossFadeDuration
+        // DONE loop
+        // TODO repetitions
+        // DONE timeScale
+        // DONE clampWhenFinished
+        // DONE startAt
 
         // NOTE: There is an easy clip parser but only #if UNITY_EDITOR (AnimationUtility.GetAnimationClips()).
 

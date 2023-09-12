@@ -49,7 +49,7 @@ namespace ArenaUnity
             if (am == null) return;
             switch (am.GetType().ToString())
             {
-                case "ArenaUnity.ArenaMeshCube":
+                case "ArenaUnity.ArenaMeshBox":
                     HandleSizeCube(aobj, go.GetComponent<ArenaMeshBox>());
                     break;
                 case "ArenaUnity.ArenaMeshCone":

@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using ArenaUnity.Schemas;
+using System;
 
 namespace ArenaUnity
 {
+    [Serializable]
     public class ArenaDefaultsJson
     {
         public string realm { get; set; } // e.g. "realm"

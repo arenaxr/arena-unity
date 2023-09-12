@@ -2,6 +2,7 @@
 
 namespace ArenaUnity
 {
+    [Serializable]
     public class ArenaUserStateJson
     {
         public bool authenticated { get; set; }

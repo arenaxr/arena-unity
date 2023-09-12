@@ -2,6 +2,7 @@
 
 namespace ArenaUnity
 {
+    [Serializable]
     public class ArenaMqttAuthIdsJson
     {
         public string userid { get; set; }

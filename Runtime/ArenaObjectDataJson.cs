@@ -1,9 +1,11 @@
-﻿using ArenaUnity.Schemas;
+﻿using System;
+using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ArenaUnity
 {
+    [Serializable]
     public class ArenaObjectDataJson
     {
         private static string defObjectType = "entity";
@@ -11,10 +13,9 @@ namespace ArenaUnity
         [Tooltip("3D object type.")]
         public string ObjectType = defObjectType;
 
-        private static string defParent = "";
         [JsonProperty(PropertyName = "parent")]
         [Tooltip("Parent's object_id. Child objects inherit attributes of their parent, for example scale and translation.")]
-        public string Parent = defParent;
+        public string Parent;
 
         [JsonProperty(PropertyName = "position")]
         [Tooltip("3D object position")]
@@ -44,10 +45,9 @@ namespace ArenaUnity
         [Tooltip("Listen for bounding-box collisions with user camera and hands. Must be applied to an object or model with geometric mesh. Collisions are determined by course bounding-box overlaps")]
         public ArenaBoxCollisionListenerJson BoxCollisionListener;
 
-        private static string defCollisionListener = "";
         [JsonProperty(PropertyName = "collision-listener")]
         [Tooltip("Name of the collision-listener, default can be empty string. Collisions trigger click events")]
-        public string CollisionListener = defCollisionListener;
+        public string CollisionListener;
 
         [JsonProperty(PropertyName = "blip")]
         [Tooltip("When the object is created or deleted, it will animate in/out of the scene instead of appearing/disappearing instantly. Must have a geometric mesh.")]
@@ -65,25 +65,21 @@ namespace ArenaUnity
         [Tooltip("Goto given URL; Requires click-listener")]
         public ArenaGotoUrlJson GotoUrl;
 
-        private static bool defHideOnEnterAr = true;
         [JsonProperty(PropertyName = "hide-on-enter-ar")]
         [Tooltip("Hide object when entering AR. Remove component to *not* hide")]
-        public bool HideOnEnterAr = defHideOnEnterAr;
+        public bool HideOnEnterAr;
 
-        private static bool defHideOnEnterVr = true;
         [JsonProperty(PropertyName = "hide-on-enter-vr")]
         [Tooltip("Hide object when entering VR. Remove component to *not* hide")]
-        public bool HideOnEnterVr = defHideOnEnterVr;
+        public bool HideOnEnterVr;
 
-        private static bool defShowOnEnterAr = true;
         [JsonProperty(PropertyName = "show-on-enter-ar")]
         [Tooltip("Show object when entering AR. Hidden otherwise")]
-        public bool ShowOnEnterAr = defShowOnEnterAr;
+        public bool ShowOnEnterAr;
 
-        private static bool defShowOnEnterVr = true;
         [JsonProperty(PropertyName = "show-on-enter-vr")]
         [Tooltip("Show object when entering VR. Hidden otherwise")]
-        public bool ShowOnEnterVr = defShowOnEnterVr;
+        public bool ShowOnEnterVr;
 
         [JsonProperty(PropertyName = "impulse")]
         [Tooltip("The force applied using physics. Requires click-listener")]
@@ -109,15 +105,13 @@ namespace ArenaUnity
         [Tooltip("Opens an HTML prompt when clicked. Sends text input as an event on MQTT. Requires click-listener.")]
         public ArenaTextinputJson Textinput;
 
-        private static string defUrl = "";
         [JsonProperty(PropertyName = "url")]
         [Tooltip("Model URL. Store files paths under 'store/users/<username>' (e.g. store/users/wiselab/models/factory_robot_arm/scene.gltf); to use CDN, prefix with `https://arena-cdn.conix.io/` (e.g. https://arena-cdn.conix.io/store/users/wiselab/models/factory_robot_arm/scene.gltf)")]
-        public string Url = defUrl;
+        public string Url;
 
-        private static bool defScreenshareable = true;
         [JsonProperty(PropertyName = "screenshareable")]
         [Tooltip("Whether or not a user can screenshare on an object")]
-        public bool Screenshareable = defScreenshareable;
+        public bool Screenshareable;
 
         [JsonProperty(PropertyName = "remote-render")]
         [Tooltip("Whether or not an object should be remote rendered [Experimental]")]
@@ -139,10 +133,9 @@ namespace ArenaUnity
         [Tooltip("GPU based particle systems in A-Frame. ")]
         public ArenaSpeParticlesJson SpeParticles;
 
-        private static bool defBuffer = true;
         [JsonProperty(PropertyName = "buffer")]
         [Tooltip("Transform geometry into a BufferGeometry to reduce memory usage at the cost of being harder to manipulate (geometries only: box, circle, cone, ...).")]
-        public bool Buffer = defBuffer;
+        public bool Buffer;
 
         [JsonProperty(PropertyName = "jitsi-video")]
         [Tooltip("Apply a jitsi video source to the geometry")]
@@ -156,10 +149,9 @@ namespace ArenaUnity
         [Tooltip("Define multiple visual sources applied to an object.")]
         public ArenaMultisrcJson Multisrc;
 
-        private static bool defSkipCache = true;
         [JsonProperty(PropertyName = "skipCache")]
         [Tooltip("Disable retrieving the shared geometry object from the cache. (geometries only: box, circle, cone, ...).")]
-        public bool SkipCache = defSkipCache;
+        public bool SkipCache;
     }
 
 }

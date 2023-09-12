@@ -1,9 +1,9 @@
-﻿using ArenaUnity.Schemas;
+﻿using System;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace ArenaUnity
 {
+    [Serializable]
     public class ArenaObjectJson
     {
         public string object_id { get; set; }
