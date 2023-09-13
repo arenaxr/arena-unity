@@ -9,7 +9,7 @@ namespace ArenaUnity
 {
     public class ArenaMeshTorus : ArenaMesh
     {
-        public ArenaTorusJson json;
+        public ArenaTorusJson json = new ArenaTorusJson();
 
         protected override void Build(MeshFilter filter)
         {

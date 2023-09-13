@@ -10,7 +10,7 @@ namespace ArenaUnity
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class ArenaMeshSphere : ArenaMesh
     {
-        public ArenaSphereJson json;
+        public ArenaSphereJson json = new ArenaSphereJson();
 
         protected override void Build(MeshFilter filter)
         {

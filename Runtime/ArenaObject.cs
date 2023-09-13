@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ArenaUnity.Components;
+using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PrettyHierarchy;
@@ -186,9 +187,13 @@ namespace ArenaUnity
                 parentId = null;
             }
 
+            var updatedData = new JObject();
+
             if (meshChanged)
             {
-                ArenaUnity.ToArenaDimensions(gameObject, ref dataUnity);
+                object dataObj = new object();
+                ArenaUnity.ToArenaDimensions(gameObject, ref dataObj);
+                updatedData.Merge(dataObj);
                 //if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
                 //{
                 //    dataUnity.geometry = new ExpandoObject();
@@ -196,27 +201,44 @@ namespace ArenaUnity
                 //}
                 //else
                 //{
-                ArenaUnity.ToArenaMesh(gameObject, ref dataUnity);
+                dataObj = new object();
+                ArenaUnity.ToArenaMesh(gameObject, ref dataObj);
+                updatedData.Merge(dataObj);
                 //}
             }
             // other attributes information
             if (!transformOnly)
             {
                 if (GetComponent<Light>())
-                    ArenaUnity.ToArenaLight(gameObject, ref dataUnity);
+                {
+                    ArenaLightJson dataObj = new ArenaLightJson();
+                    ArenaUnity.ToArenaLight(gameObject, ref dataObj);
+                    updatedData.Merge(dataObj);
+                }
                 if (GetComponent<Renderer>())
-                    ArenaUnity.ToArenaMaterial(gameObject, ref dataUnity);
+                {
+                    ArenaMaterialJson dataObj = new ArenaMaterialJson();
+                    ArenaUnity.ToArenaMaterial(gameObject, ref dataObj);
+                    updatedData.Merge(dataObj);
+                }
                 if (GetComponent<TextMeshPro>())
-                    ArenaUnity.ToArenaText(gameObject, ref dataUnity);
+                {
+                    ArenaTextJson dataObj = new ArenaTextJson();
+                    ArenaUnity.ToArenaText(gameObject, ref dataObj);
+                    updatedData.Merge(dataObj);
+                }
                 if (GetComponent<LineRenderer>())
-                    ArenaUnity.ToArenaThickline(gameObject, ref dataUnity);
+                {
+                    ArenaThicklineJson dataObj = new ArenaThicklineJson();
+                    ArenaUnity.ToArenaThickline(gameObject, ref dataObj);
+                    updatedData.Merge(dataObj);
+                }
             }
 
             // merge unity data with original message data
-            var updatedData = new JObject();
             if (data != null)
-                updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(data)));
-            updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(dataUnity)));
+                updatedData.Merge(data);
+            updatedData.Merge(dataUnity);
             // TODO: temp location until JObject completely replaces dynamic object
             if (GetComponent<ArenaAnimationMixer>())
                 ArenaUnity.ToArenaAnimationMixer(gameObject, ref updatedData);
@@ -226,7 +248,7 @@ namespace ArenaUnity
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
 
             // publish
-            msg.data = transformOnly ? dataUnity : updatedData;
+            msg.data = transformOnly ? (object)dataUnity : updatedData;
             string payload = JsonConvert.SerializeObject(msg);
             ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
             if (!created)

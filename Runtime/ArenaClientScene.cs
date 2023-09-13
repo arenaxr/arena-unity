@@ -541,7 +541,8 @@ namespace ArenaUnity
 
             ArenaObject aobj = null;
             JObject jData = JObject.Parse(JsonConvert.SerializeObject(indata));
-            ArenaObjectDataJson data = (ArenaObjectDataJson)indata;
+            ArenaObjectDataJson data = new ArenaObjectDataJson();
+            data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
             if (arenaObjs.TryGetValue(msg.object_id, out GameObject gobj))
             {   // update local
                 if (gobj != null)
@@ -999,7 +1000,7 @@ namespace ArenaUnity
             msg.type = eventType;
             msg.data = JsonConvert.DeserializeObject(msgJsonData);
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{source}", JsonConvert.SerializeObject(msg), hasPermissions);
+           // PublishSceneMessage($"{sceneTopic}/{source}", JsonConvert.SerializeObject(msg), hasPermissions);
         }
 
         private void PublishSceneMessage(string topic, string msg, bool hasPermissions)

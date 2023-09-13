@@ -81,65 +81,65 @@ namespace ArenaUnity
                 // build your own meshes, defaults here should reflect ARENA/AFRAME defaults
                 case "capsule":
                     ArenaMeshCapsule capsule = gobj.GetComponent<ArenaMeshCapsule>() ?? gobj.AddComponent<ArenaMeshCapsule>();
-                    capsule.json = (ArenaCapsuleJson)indata;
+                    capsule.json = JsonConvert.DeserializeObject<ArenaCapsuleJson>(indata.ToString());
                     break;
                 case "box":
                 case "cube": // support legacy arena 'cube' == 'box'
                     ArenaMeshBox box = gobj.GetComponent<ArenaMeshBox>() ?? gobj.AddComponent<ArenaMeshBox>();
-                    box.json = (ArenaBoxJson)indata;
+                    box.json = JsonConvert.DeserializeObject<ArenaBoxJson>(indata.ToString());
                     break;
                 case "cone":
                     ArenaMeshCone cone = gobj.GetComponent<ArenaMeshCone>() ?? gobj.AddComponent<ArenaMeshCone>();
-                    cone.json = (ArenaConeJson)indata;
+                    cone.json = JsonConvert.DeserializeObject<ArenaConeJson>(indata.ToString());
                     break;
                 case "cylinder":
                     ArenaMeshCylinder cylinder = gobj.GetComponent<ArenaMeshCylinder>() ?? gobj.AddComponent<ArenaMeshCylinder>();
-                    cylinder.json = (ArenaCylinderJson)indata;
+                    cylinder.json = JsonConvert.DeserializeObject<ArenaCylinderJson>(indata.ToString());
                     break;
                 case "dodecahedron":
                     ArenaMeshDodecahedron dodecahedron = gobj.GetComponent<ArenaMeshDodecahedron>() ?? gobj.AddComponent<ArenaMeshDodecahedron>();
-                    dodecahedron.json = (ArenaDodecahedronJson)indata;
+                    dodecahedron.json = JsonConvert.DeserializeObject<ArenaDodecahedronJson>(indata.ToString());
                     break;
                 case "tetrahedron":
                     ArenaMeshTetrahedron tetrahedron = gobj.GetComponent<ArenaMeshTetrahedron>() ?? gobj.AddComponent<ArenaMeshTetrahedron>();
-                    tetrahedron.json = (ArenaTetrahedronJson)indata;
+                    tetrahedron.json = JsonConvert.DeserializeObject<ArenaTetrahedronJson>(indata.ToString());
                     break;
                 case "icosahedron":
                     ArenaMeshIcosahedron icosahedron = gobj.GetComponent<ArenaMeshIcosahedron>() ?? gobj.AddComponent<ArenaMeshIcosahedron>();
-                    icosahedron.json = (ArenaIcosahedronJson)indata;
+                    icosahedron.json = JsonConvert.DeserializeObject<ArenaIcosahedronJson>(indata.ToString());
                     break;
                 case "octahedron":
                     ArenaMeshOctahedron octahedron = gobj.GetComponent<ArenaMeshOctahedron>() ?? gobj.AddComponent<ArenaMeshOctahedron>();
-                    octahedron.json = (ArenaOctahedronJson)indata;
+                    octahedron.json = JsonConvert.DeserializeObject<ArenaOctahedronJson>(indata.ToString());
                     break;
                 case "plane":
                     ArenaMeshPlane plane = gobj.GetComponent<ArenaMeshPlane>() ?? gobj.AddComponent<ArenaMeshPlane>();
-                    plane.json = (ArenaPlaneJson)indata;
+                    plane.json = JsonConvert.DeserializeObject<ArenaPlaneJson>(indata.ToString());
                     break;
                 case "ring":
                     ArenaMeshRing ring = gobj.GetComponent<ArenaMeshRing>() ?? gobj.AddComponent<ArenaMeshRing>();
-                    ring.json = (ArenaRingJson)indata;
+                    ring.json = JsonConvert.DeserializeObject<ArenaRingJson>(indata.ToString());
                     break;
                 case "circle":
                     ArenaMeshCircle circle = gobj.GetComponent<ArenaMeshCircle>() ?? gobj.AddComponent<ArenaMeshCircle>();
-                    circle.json = (ArenaCircleJson)indata;
+                    circle.json = JsonConvert.DeserializeObject<ArenaCircleJson>(indata.ToString());
                     break;
                 case "videosphere": // use sphere as a videosphere placeholder
                 case "sphere":
                     ArenaMeshSphere sphere = gobj.GetComponent<ArenaMeshSphere>() ?? gobj.AddComponent<ArenaMeshSphere>();
-                    sphere.json = (ArenaSphereJson)indata;
+                    sphere.json = JsonConvert.DeserializeObject<ArenaSphereJson>(indata.ToString());
                     break;
                 case "torus":
                     ArenaMeshTorus torus = gobj.GetComponent<ArenaMeshTorus>() ?? gobj.AddComponent<ArenaMeshTorus>();
-                    torus.json = (ArenaTorusJson)indata;
+                    torus.json = JsonConvert.DeserializeObject<ArenaTorusJson>(indata.ToString());
                     break;
                 case "torusKnot":
                     ArenaMeshTorusKnot torusKnot = gobj.GetComponent<ArenaMeshTorusKnot>() ?? gobj.AddComponent<ArenaMeshTorusKnot>();
-                    torusKnot.json = (ArenaTorusKnotJson)indata;
+                    torusKnot.json = JsonConvert.DeserializeObject<ArenaTorusKnotJson>(indata.ToString());
                     break;
                 case "triangle":
                     ArenaMeshTriangle triangle = gobj.GetComponent<ArenaMeshTriangle>() ?? gobj.AddComponent<ArenaMeshTriangle>();
-                    triangle.json = (ArenaTriangleJson)indata;
+                    triangle.json = JsonConvert.DeserializeObject<ArenaTriangleJson>(indata.ToString());
                     break;
                 default:
                     break;

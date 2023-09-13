@@ -10,7 +10,7 @@ namespace ArenaUnity
 {
     public class ArenaMeshTorusKnot : ArenaMesh
     {
-        public ArenaTorusKnotJson json;
+        public ArenaTorusKnotJson json = new ArenaTorusKnotJson();
 
         protected override void Build(MeshFilter filter)
         {

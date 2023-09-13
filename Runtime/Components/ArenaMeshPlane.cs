@@ -18,7 +18,7 @@ namespace ArenaUnity
         };
 
         [SerializeField] internal PlaneType type = PlaneType.Default;
-        public ArenaPlaneJson json;
+        public ArenaPlaneJson json = new ArenaPlaneJson();
 
         protected override void Build(MeshFilter filter)
         {

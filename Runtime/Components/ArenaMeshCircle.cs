@@ -8,7 +8,7 @@ namespace ArenaUnity
 {
     public class ArenaMeshCircle : ArenaMesh
     {
-        public ArenaCircleJson json;
+        public ArenaCircleJson json = new ArenaCircleJson();
 
         protected override void Build(MeshFilter filter)
         {

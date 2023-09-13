@@ -12,7 +12,7 @@ namespace ArenaUnity
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class ArenaMeshDodecahedron : ArenaMesh
     {
-        public ArenaDodecahedronJson json;
+        public ArenaDodecahedronJson json = new ArenaDodecahedronJson();
 
         protected override void Build(MeshFilter filter)
         {

@@ -5,6 +5,7 @@
 
 using ArenaUnity;
 using ArenaUnity.Schemas;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -14,14 +15,14 @@ namespace ArenaUnity
 
     public class ArenaMeshTriangle : ArenaMesh
     {
-        public ArenaTriangleJson json;
+        public ArenaTriangleJson json = new ArenaTriangleJson();
 
         protected override void Build(MeshFilter filter)
         {
             filter.sharedMesh = TriangleBuilder.Build(
-                ArenaUnity.ToUnityPosition((ArenaPositionJson)json.VertexA),
-                ArenaUnity.ToUnityPosition((ArenaPositionJson)json.VertexB),
-                ArenaUnity.ToUnityPosition((ArenaPositionJson)json.VertexC)
+                ArenaUnity.ToUnityPosition(JsonConvert.DeserializeObject<ArenaPositionJson>(json.VertexA.ToString())),
+                ArenaUnity.ToUnityPosition(JsonConvert.DeserializeObject<ArenaPositionJson>(json.VertexB.ToString())),
+                ArenaUnity.ToUnityPosition(JsonConvert.DeserializeObject<ArenaPositionJson>(json.VertexC.ToString()))
             );
         }
     }

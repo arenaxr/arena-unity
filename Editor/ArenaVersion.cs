@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEditor.PackageManager;
@@ -96,10 +97,12 @@ namespace ArenaUnity.Editor
             }
             else
             {
-                GitReleasesLatestJson git = JsonConvert.DeserializeObject<GitReleasesLatestJson>(www.downloadHandler.text);
+
+                //GitReleasesLatestJson git = JsonConvert.DeserializeObject<GitReleasesLatestJson>(www.downloadHandler.text);
+                var git = JObject.Parse(www.downloadHandler.text);
                 if (git != null)
                 {
-                    if (Version.TryParse(git.tag_name.Trim('v'), out var latest))
+                    if (Version.TryParse(git["tag_name"].ToString().Trim('v'), out var latest))
                     {
                         PlayerPrefs.SetString("GitVersionLatest", latest.ToString());
                         if (local < latest)
