@@ -16,7 +16,16 @@ namespace ArenaUnity
 
         protected override void Build(MeshFilter filter)
         {
-            filter.sharedMesh = FrustumBuilder.Build(Vector3.forward, Vector3.up, nearClip, farClip, fieldOfView, aspectRatio);
+            filter.sharedMesh = FrustumBuilder.Build(
+                Vector3.forward,
+                Vector3.up,
+                nearClip,
+                farClip,
+                fieldOfView,
+                aspectRatio
+            );
+            // TODO (mwfarb): introduce frustum to arena
+            Debug.LogWarning("Frustum rendering not yet supported in ARENA A-Frame!!!!");
         }
     }
 }

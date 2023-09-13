@@ -4,7 +4,6 @@
  */
 
 using System;
-using System.Dynamic;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
@@ -68,145 +67,85 @@ namespace ArenaUnity
             return objectType;
         }
 
-        public static void ToUnityMesh(DYNAMIC indata, ref GameObject gobj)
+        public static void ToUnityMesh(object indata, ref GameObject gobj)
         {
-            DYNAMIC data;
-            string type;
-            if ((string)indata.object_type == "entity" && indata.geometry != null && indata.geometry.primitive != null)
-            {
-                // handle raw geometry
-                data = indata.geometry;
-                type = (string)indata.geometry.primitive;
-            }
-            else
-            {
-                data = indata;
-                type = (string)indata.object_type;
-            }
+            //if ((string)indata.object_type == "entity" && indata.geometry != null && indata.geometry.primitive != null)
+            //{
+            //    // handle raw geometry
+            //    data = indata.geometry;
+            //    type = (string)indata.geometry.primitive;
+            //}
+            string type = ((ArenaObjectDataJson)indata).object_type;
             switch (type)
             {
                 // build your own meshes, defaults here should reflect ARENA/AFRAME defaults
                 case "capsule":
                     ArenaMeshCapsule capsule = gobj.GetComponent<ArenaMeshCapsule>() ?? gobj.AddComponent<ArenaMeshCapsule>();
-                    capsule.radius = data.radius != null ? (float)data.radius : 1f;
-                    capsule.length = data.length != null ? (float)data.length : 1f;
-                    capsule.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
-                    capsule.heightSegments = data.segmentsCap != null ? (int)data.segmentsCap : 18;
+                    capsule.json = (ArenaCapsuleJson)indata;
                     break;
                 case "box":
                 case "cube": // support legacy arena 'cube' == 'box'
-                    ArenaMeshBox cube = gobj.GetComponent<ArenaMeshBox>() ?? gobj.AddComponent<ArenaMeshBox>();
-                    cube.width = data.width != null ? (float)data.width : 1f;
-                    cube.height = data.height != null ? (float)data.height : 1f;
-                    cube.depth = data.depth != null ? (float)data.depth : 1f;
-                    cube.widthSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 1;
-                    cube.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 1;
-                    cube.depthSegments = data.segmentsDepth != null ? (int)data.segmentsDepth : 1;
+                    ArenaMeshBox box = gobj.GetComponent<ArenaMeshBox>() ?? gobj.AddComponent<ArenaMeshBox>();
+                    box.json = (ArenaBoxJson)indata;
                     break;
                 case "cone":
                     ArenaMeshCone cone = gobj.GetComponent<ArenaMeshCone>() ?? gobj.AddComponent<ArenaMeshCone>();
-                    cone.radius = data.radiusBottom != null ? (float)data.radiusBottom : 1f;
-                    //cone.radiusTop = data.radiusTop != null ? (float)data.radiusTop : 0.01f;
-                    cone.height = data.height != null ? (float)data.height : 1f;
-                    cone.subdivision = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
-                    //cone.segmentsHeight = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
-                    //cone.openEnded = data.openEnded != null ? Convert.ToBoolean(data.openEnded) : false;
-                    //cone.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
-                    //cone.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
+                    cone.json = (ArenaConeJson)indata;
                     break;
                 case "cylinder":
                     ArenaMeshCylinder cylinder = gobj.GetComponent<ArenaMeshCylinder>() ?? gobj.AddComponent<ArenaMeshCylinder>();
-                    cylinder.radius = data.radius != null ? (float)data.radius : 1f;
-                    cylinder.height = data.height != null ? (float)data.height : 1f;
-                    cylinder.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
-                    cylinder.heightSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 18;
-                    cylinder.openEnded = data.openEnded != null ? Convert.ToBoolean(data.openEnded) : false;
-                    //cylinder.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
-                    //cylinder.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
+                    cylinder.json = (ArenaCylinderJson)indata;
                     break;
                 case "dodecahedron":
                     ArenaMeshDodecahedron dodecahedron = gobj.GetComponent<ArenaMeshDodecahedron>() ?? gobj.AddComponent<ArenaMeshDodecahedron>();
-                    dodecahedron.radius = data.radius != null ? (float)data.radius : 1f;
-                    dodecahedron.details = data.detail != null ? (int)data.detail : 0;
+                    dodecahedron.json = (ArenaDodecahedronJson)indata;
                     break;
                 case "tetrahedron":
                     ArenaMeshTetrahedron tetrahedron = gobj.GetComponent<ArenaMeshTetrahedron>() ?? gobj.AddComponent<ArenaMeshTetrahedron>();
-                    tetrahedron.radius = data.radius != null ? (float)data.radius : 1f;
-                    tetrahedron.details = data.detail != null ? (int)data.detail : 0;
+                    tetrahedron.json = (ArenaTetrahedronJson)indata;
                     break;
                 case "icosahedron":
                     ArenaMeshIcosahedron icosahedron = gobj.GetComponent<ArenaMeshIcosahedron>() ?? gobj.AddComponent<ArenaMeshIcosahedron>();
-                    icosahedron.radius = data.radius != null ? (float)data.radius : 1f;
-                    icosahedron.details = data.detail != null ? (int)data.detail : 0;
+                    icosahedron.json = (ArenaIcosahedronJson)indata;
                     break;
                 case "octahedron":
                     ArenaMeshOctahedron octahedron = gobj.GetComponent<ArenaMeshOctahedron>() ?? gobj.AddComponent<ArenaMeshOctahedron>();
-                    octahedron.radius = data.radius != null ? (float)data.radius : 1f;
-                    octahedron.details = data.detail != null ? (int)data.detail : 0;
+                    octahedron.json = (ArenaOctahedronJson)indata;
                     break;
                 case "plane":
                     ArenaMeshPlane plane = gobj.GetComponent<ArenaMeshPlane>() ?? gobj.AddComponent<ArenaMeshPlane>();
-                    plane.width = data.width != null ? (float)data.width : 1f;
-                    plane.height = data.height != null ? (float)data.height : 1f;
-                    plane.wSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 1;
-                    plane.hSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 1;
+                    plane.json = (ArenaPlaneJson)indata;
                     break;
                 case "ring":
                     ArenaMeshRing ring = gobj.GetComponent<ArenaMeshRing>() ?? gobj.AddComponent<ArenaMeshRing>();
-                    ring.outerRadius = data.radiusOuter != null ? (float)data.radiusOuter : 1.2f;
-                    ring.innerRadius = data.radiusInner != null ? (float)data.radiusInner : 0.8f;
-                    ring.phiSegments = data.segmentsPhi != null ? (int)data.segmentsPhi : 10;
-                    ring.thetaSegments = data.segmentsTheta != null ? (int)data.segmentsTheta : 32;
-                    ring.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
-                    ring.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
+                    ring.json = (ArenaRingJson)indata;
                     break;
                 case "circle":
                     ArenaMeshCircle circle = gobj.GetComponent<ArenaMeshCircle>() ?? gobj.AddComponent<ArenaMeshCircle>();
-                    circle.radius = data.radius != null ? (float)data.radius : 1f;
-                    circle.segments = data.segments != null ? (int)data.segments : 32;
-                    circle.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
-                    circle.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI * 2f);
+                    circle.json = (ArenaCircleJson)indata;
                     break;
                 case "videosphere": // use sphere as a videosphere placeholder
                 case "sphere":
                     ArenaMeshSphere sphere = gobj.GetComponent<ArenaMeshSphere>() ?? gobj.AddComponent<ArenaMeshSphere>();
-                    sphere.radius = data.radius != null ? (float)data.radius : 1f;
-                    sphere.latSegments = data.segmentsWidth != null ? (int)data.segmentsWidth : 18;
-                    sphere.lonSegments = data.segmentsHeight != null ? (int)data.segmentsHeight : 36;
-                    //sphere.phiStart = (float)(data.phiStart != null ? Mathf.PI / 180 * (float)data.phiStart : 0f);
-                    //sphere.phiLength = (float)(data.phiLength != null ? Mathf.PI / 180 * (float)data.phiLength : Mathf.PI * 2f);
-                    //sphere.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);
-                    //sphere.thetaLength = (float)(data.thetaLength != null ? Mathf.PI / 180 * (float)data.thetaLength : Mathf.PI);
+                    sphere.json = (ArenaSphereJson)indata;
                     break;
                 case "torus":
                     ArenaMeshTorus torus = gobj.GetComponent<ArenaMeshTorus>() ?? gobj.AddComponent<ArenaMeshTorus>();
-                    torus.radius = data.radius != null ? (float)data.radius : 1f;
-                    torus.radiusTubular = data.radiusTubular != null ? (float)data.radiusTubular : 0.2f;
-                    torus.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 36;
-                    torus.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 32;
-                    torus.thetaStart = 0f;
-                    torus.thetaEnd = (float)(data.arc != null ? Mathf.PI / 180 * (float)data.arc : Mathf.PI * 2f);
+                    torus.json = (ArenaTorusJson)indata;
                     break;
                 case "torusKnot":
                     ArenaMeshTorusKnot torusKnot = gobj.GetComponent<ArenaMeshTorusKnot>() ?? gobj.AddComponent<ArenaMeshTorusKnot>();
-                    torusKnot.radius = data.radius != null ? (float)data.radius : 1f;
-                    torusKnot.radiusTubular = data.radiusTubular != null ? (float)data.radiusTubular : 0.2f;
-                    torusKnot.radialSegments = data.segmentsRadial != null ? (int)data.segmentsRadial : 8;
-                    torusKnot.thetaSegments = data.segmentsTubular != null ? (int)data.segmentsTubular : 100;
-                    torusKnot.p = data.p != null ? (float)data.p : 2f;
-                    torusKnot.q = data.q != null ? (float)data.q : 3f;
+                    torusKnot.json = (ArenaTorusKnotJson)indata;
                     break;
                 case "triangle":
                     ArenaMeshTriangle triangle = gobj.GetComponent<ArenaMeshTriangle>() ?? gobj.AddComponent<ArenaMeshTriangle>();
-                    triangle.vertexA = data.vertexA != null ? ToUnityPosition(data.vertexA) : new Vector3(0f, 0.5f);
-                    triangle.vertexB = data.vertexB != null ? ToUnityPosition(data.vertexB) : new Vector3(-0.5f, -0.5f);
-                    triangle.vertexC = data.vertexC != null ? ToUnityPosition(data.vertexC) : new Vector3(0.5f, -0.5f);
+                    triangle.json = (ArenaTriangleJson)indata;
                     break;
                 default:
                     break;
             };
         }
-        public static void ToArenaMesh(GameObject gobj, ref DYNAMIC data)
+        public static void ToArenaMesh(GameObject gobj, ref object data)
         {
             ArenaMesh am = gobj.GetComponent<ArenaMesh>();
             if (am == null) return;
@@ -214,82 +153,63 @@ namespace ArenaUnity
             {
                 case "ArenaUnity.ArenaMeshCapsule":
                     var capsule = gobj.GetComponent<ArenaMeshCapsule>();
-                    data.radius = ArenaFloat(capsule.radius);
-                    data.length = ArenaFloat(capsule.length);
+                    data = capsule.json;
                     break;
                 case "ArenaUnity.ArenaMeshBox":
-                    var cube = gobj.GetComponent<ArenaMeshBox>();
-                    data.width = ArenaFloat(cube.width);
-                    data.height = ArenaFloat(cube.height);
-                    data.depth = ArenaFloat(cube.depth);
+                    var box = gobj.GetComponent<ArenaMeshBox>();
+                    data = box.json;
                     break;
                 case "ArenaUnity.ArenaMeshCone":
                     var cone = gobj.GetComponent<ArenaMeshCone>();
-                    data.radiusBottom = ArenaFloat(cone.radius);
-                    data.height = ArenaFloat(cone.height);
+                    data = cone.json;
                     break;
                 case "ArenaUnity.ArenaMeshCylinder":
                     var cylinder = gobj.GetComponent<ArenaMeshCylinder>();
-                    data.radius = ArenaFloat(cylinder.radius);
-                    data.height = ArenaFloat(cylinder.height);
-                    data.openEnded = cylinder.openEnded;
+                    data = cylinder.json;
                     break;
                 case "ArenaUnity.ArenaMeshDodecahedron":
                     var dodecahedron = gobj.GetComponent<ArenaMeshDodecahedron>();
-                    data.radius = ArenaFloat(dodecahedron.radius);
+                    data = dodecahedron.json;
                     break;
                 case "ArenaUnity.ArenaMeshTetrahedron":
                     var tetrahedron = gobj.GetComponent<ArenaMeshTetrahedron>();
-                    data.radius = ArenaFloat(tetrahedron.radius);
+                    data = tetrahedron.json;
                     break;
                 case "ArenaUnity.ArenaMeshIcosahedron":
                     var icosahedron = gobj.GetComponent<ArenaMeshIcosahedron>();
-                    data.radius = ArenaFloat(icosahedron.radius);
+                    data = icosahedron.json;
                     break;
                 case "ArenaUnity.ArenaMeshOctahedron":
                     var octahedron = gobj.GetComponent<ArenaMeshOctahedron>();
-                    data.radius = ArenaFloat(octahedron.radius);
+                    data = octahedron.json;
                     break;
                 case "ArenaUnity.ArenaMeshPlane":
                     var plane = gobj.GetComponent<ArenaMeshPlane>();
-                    data.width = ArenaFloat(plane.width);
-                    data.height = ArenaFloat(plane.height);
+                    data = plane.json;
                     break;
                 case "ArenaUnity.ArenaMeshSphere":
                     var sphere = gobj.GetComponent<ArenaMeshSphere>();
-                    data.radius = ArenaFloat(sphere.radius);
+                    data = sphere.json;
                     break;
                 case "ArenaUnity.ArenaMeshCircle":
                     var circle = gobj.GetComponent<ArenaMeshCircle>();
-                    data.radius = ArenaFloat(circle.radius);
-                    data.thetaStart = ArenaFloat(circle.thetaStart * 180 / Mathf.PI);
-                    data.thetaLength = ArenaFloat(circle.thetaLength * 180 / Mathf.PI);
+                    data = circle.json;
                     break;
                 case "ArenaUnity.ArenaMeshRing":
                     var ring = gobj.GetComponent<ArenaMeshRing>();
-                    data.radiusOuter = ArenaFloat(ring.outerRadius);
-                    data.radiusInner = ArenaFloat(ring.innerRadius);
-                    data.thetaStart = ArenaFloat(ring.thetaStart * 180 / Mathf.PI);
-                    data.thetaLength = ArenaFloat(ring.thetaLength * 180 / Mathf.PI);
+                    data = ring.json;
                     break;
                 case "ArenaUnity.ArenaMeshTorus":
                     var torus = gobj.GetComponent<ArenaMeshTorus>();
-                    data.radius = ArenaFloat(torus.radius);
-                    data.radiusTubular = ArenaFloat(torus.radiusTubular);
-                    data.arc = ArenaFloat(torus.thetaEnd * 180 / Mathf.PI);
+                    data = torus.json;
                     break;
                 case "ArenaUnity.ArenaMeshTorusKnot":
                     var torusKnot = gobj.GetComponent<ArenaMeshTorusKnot>();
-                    data.radius = ArenaFloat(torusKnot.radius);
-                    data.radiusTubular = ArenaFloat(torusKnot.radiusTubular);
-                    data.p = torusKnot.p;
-                    data.q = torusKnot.q;
+                    data = torusKnot.json;
                     break;
                 case "ArenaUnity.ArenaMeshTriangle":
                     var triangle = gobj.GetComponent<ArenaMeshTriangle>();
-                    data.vertexA = ToArenaPosition(triangle.vertexA);
-                    data.vertexB = ToArenaPosition(triangle.vertexB);
-                    data.vertexC = ToArenaPosition(triangle.vertexC);
+                    data = triangle.json;
                     break;
             }
         }
@@ -347,7 +267,7 @@ namespace ArenaUnity
             );
         }
         /// <summary>
-        /// Converts Vector3 rotationEuler to DYNAMIC rotationEuler. CAUTION: Do not use for ARENA!
+        /// Converts Vector3 rotationEuler to dynamic rotationEuler. CAUTION: Do not use for ARENA!
         /// A merge with quaternion type will leave a mix of xyz euler and w quaternion = badness.
         /// </summary>
         public static ArenaVector3Json ToArenaRotationEuler(Vector3 rotationEuler, bool invertY = true)
@@ -396,7 +316,7 @@ namespace ArenaUnity
             );
         }
         // size dimensions
-        public static void ToArenaDimensions(GameObject gobj, ref DYNAMIC data)
+        public static void ToArenaDimensions(GameObject gobj, ref object data)
         {
             // used to collect unity-default render sizes
             string collider = gobj.GetComponent<Collider>().GetType().ToString();
@@ -410,50 +330,60 @@ namespace ArenaUnity
             {
                 case "UnityEngine.BoxCollider":
                     BoxCollider bc = gobj.GetComponent<BoxCollider>();
-                    data.width = ArenaFloat(bc.size.x);
-                    data.height = ArenaFloat(bc.size.y);
-                    data.depth = ArenaFloat(bc.size.z);
+                    data = new ArenaBoxJson {
+                        Width = ArenaFloat(bc.size.x),
+                        Height = ArenaFloat(bc.size.y),
+                        Depth = ArenaFloat(bc.size.z),
+                    };
                     break;
                 case "UnityEngine.SphereCollider":
                     SphereCollider sc = gobj.GetComponent<SphereCollider>();
-                    data.radius = ArenaFloat(sc.radius);
+                    data = new ArenaSphereJson {
+                        Radius = ArenaFloat(sc.radius),
+                    };
                     break;
                 case "UnityEngine.CapsuleCollider":
                     CapsuleCollider cc = gobj.GetComponent<CapsuleCollider>();
                     switch (mesh)
                     {
                         case "Cylinder":
-                            data.height = ArenaFloat(cc.height);
+                            data = new ArenaCylinderJson
+                            {
+                                Height = ArenaFloat(cc.height),
+                                Radius = ArenaFloat(cc.radius),
+                            };
                             break;
                         case "Capsule":
-                            data.length = ArenaFloat(cc.height - (cc.radius * 2));
+                            data = new ArenaCapsuleJson{
+                                Length = ArenaFloat(cc.height - (cc.radius * 2)),
+                                Radius = ArenaFloat(cc.radius),
+                            };
                             break;
                     }
-                    data.radius = ArenaFloat(cc.radius);
                     break;
                 default:
                     break;
             }
-            switch (mesh)
-            {
-                case "Cube":
-                    data.object_type = "box";
-                    break;
-                case "Quad":
-                    data.object_type = "plane";
-                    data.width = 1f;
-                    data.height = 1f;
-                    break;
-                case "Plane":
-                    Quaternion rotOut = gobj.transform.localRotation;
-                    rotOut *= Quaternion.Euler(90, 0, 0);
-                    data.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
-                    data.width = 10f;
-                    data.height = 10f;
-                    break;
-                default:
-                    break;
-            }
+            //switch (mesh)
+            //{
+            //    case "Cube":
+            //        data.object_type = "box";
+            //        break;
+            //    case "Quad":
+            //        data.object_type = "plane";
+            //        data.width = 1f;
+            //        data.height = 1f;
+            //        break;
+            //    case "Plane":
+            //        Quaternion rotOut = gobj.transform.localRotation;
+            //        rotOut *= Quaternion.Euler(90, 0, 0);
+            //        data.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
+            //        data.width = 10f;
+            //        data.height = 10f;
+            //        break;
+            //    default:
+            //        break;
+            //}
         }
 
         // color
@@ -481,8 +411,6 @@ namespace ArenaUnity
         {
             // TODO: support Material opacity/visibility
             LineRenderer line = gobj.GetComponent<LineRenderer>();
-            // always use thickline, too many variables otherwise
-            data.object_type = "thickline";
             string[] positions = new string[line.positionCount];
             Vector3[] vertices = new Vector3[line.positionCount];
             line.GetPositions(vertices);
@@ -517,8 +445,8 @@ namespace ArenaUnity
             if (data.Start != null && data.End != null)
             {
                 Vector3[] nodes = {
-                            ToUnityPosition(data.Start),
-                            ToUnityPosition(data.End),
+                            ToUnityPosition((ArenaPositionJson)data.Start),
+                            ToUnityPosition((ArenaPositionJson)data.End),
                         };
                 line.SetPositions(nodes);
             }

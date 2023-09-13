@@ -26,10 +26,10 @@ namespace ArenaUnity.Schemas
 
         // dodecahedron member-fields
 
-        private static float defDetail = 0f;
+        private static int defDetail = 0;
         [JsonProperty(PropertyName = "detail")]
         [Tooltip("detail")]
-        public float Detail = defDetail;
+        public int Detail = defDetail;
         public bool ShouldSerializeDetail()
         {
             if (_token != null && _token.SelectToken("detail") != null) return true;
@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public float Radius = defRadius;
         public bool ShouldSerializeRadius()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         // General json object management

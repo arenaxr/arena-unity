@@ -3,6 +3,7 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
+using ArenaUnity.Schemas;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -11,12 +12,14 @@ namespace ArenaUnity
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class ArenaMeshTetrahedron : ArenaMesh
     {
-        [SerializeField, Range(0.5f, 10f)] internal float radius = 1f;
-        [SerializeField, Range(0, 5)] internal int details = 1;
+        public ArenaTetrahedronJson json;
 
         protected override void Build(MeshFilter filter)
         {
-            filter.sharedMesh = TetrahedronBuilder.Build(radius, details);
+            filter.sharedMesh = TetrahedronBuilder.Build(
+                json.Radius,
+                json.Detail
+            );
         }
     }
 }

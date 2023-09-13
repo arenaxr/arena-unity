@@ -11,32 +11,32 @@ namespace ArenaUnity.Components
     [DisallowMultipleComponent]
     public class ArenaClickListenerModel : MonoBehaviour
     {
-        private ArenaClickListener _arenaCL;
+        //private ArenaClickListener _arenaCL;
 
-        private void Start()
-        {
-            _arenaCL = GetComponentInParent<ArenaClickListener>();
-        }
+        //private void Start()
+        //{
+        //    _arenaCL = GetComponentInParent<ArenaClickListener>();
+        //}
 
-        private void Update()
-        {
-        }
+        //private void Update()
+        //{
+        //}
 
-        internal void OnMouseDown()
-        {
-            _arenaCL.PublishMouseEvent("mousedown");
-        }
-        internal void OnMouseUp()
-        {
-            _arenaCL.PublishMouseEvent("mouseup");
-        }
-        internal void OnMouseEnter()
-        {
-            _arenaCL.PublishMouseEvent("mouseenter");
-        }
-        internal void OnMouseExit()
-        {
-            _arenaCL.PublishMouseEvent("mouseleave");
-        }
+        //internal void OnMouseDown()
+        //{
+        //    _arenaCL.PublishMouseEvent("mousedown");
+        //}
+        //internal void OnMouseUp()
+        //{
+        //    _arenaCL.PublishMouseEvent("mouseup");
+        //}
+        //internal void OnMouseEnter()
+        //{
+        //    _arenaCL.PublishMouseEvent("mouseenter");
+        //}
+        //internal void OnMouseExit()
+        //{
+        //    _arenaCL.PublishMouseEvent("mouseleave");
+        //}
     }
 }

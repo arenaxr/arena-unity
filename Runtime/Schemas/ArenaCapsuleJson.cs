@@ -44,20 +44,20 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema 
         }
 
-        private static float defSegmentsCap = 18f;
+        private static int defSegmentsCap = 18;
         [JsonProperty(PropertyName = "segmentsCap")]
         [Tooltip("segments capsule")]
-        public float SegmentsCap = defSegmentsCap;
+        public int SegmentsCap = defSegmentsCap;
         public bool ShouldSerializeSegmentsCap()
         {
             if (_token != null && _token.SelectToken("segmentsCap") != null) return true;
             return (SegmentsCap != defSegmentsCap);
         }
 
-        private static float defSegmentsRadial = 36f;
+        private static int defSegmentsRadial = 36;
         [JsonProperty(PropertyName = "segmentsRadial")]
         [Tooltip("segments radial")]
-        public float SegmentsRadial = defSegmentsRadial;
+        public int SegmentsRadial = defSegmentsRadial;
         public bool ShouldSerializeSegmentsRadial()
         {
             if (_token != null && _token.SelectToken("segmentsRadial") != null) return true;

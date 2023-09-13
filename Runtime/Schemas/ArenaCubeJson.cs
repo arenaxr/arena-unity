@@ -46,30 +46,30 @@ namespace ArenaUnity.Schemas
             return (Height != defHeight);
         }
 
-        private static float defSegmentsDepth = 1f;
+        private static int defSegmentsDepth = 1;
         [JsonProperty(PropertyName = "segmentsDepth")]
         [Tooltip("segments depth")]
-        public float SegmentsDepth = defSegmentsDepth;
+        public int SegmentsDepth = defSegmentsDepth;
         public bool ShouldSerializeSegmentsDepth()
         {
             if (_token != null && _token.SelectToken("segmentsDepth") != null) return true;
             return (SegmentsDepth != defSegmentsDepth);
         }
 
-        private static float defSegmentsHeight = 1f;
+        private static int defSegmentsHeight = 1;
         [JsonProperty(PropertyName = "segmentsHeight")]
         [Tooltip("segments height")]
-        public float SegmentsHeight = defSegmentsHeight;
+        public int SegmentsHeight = defSegmentsHeight;
         public bool ShouldSerializeSegmentsHeight()
         {
             if (_token != null && _token.SelectToken("segmentsHeight") != null) return true;
             return (SegmentsHeight != defSegmentsHeight);
         }
 
-        private static float defSegmentsWidth = 1f;
+        private static int defSegmentsWidth = 1;
         [JsonProperty(PropertyName = "segmentsWidth")]
         [Tooltip("segments width")]
-        public float SegmentsWidth = defSegmentsWidth;
+        public int SegmentsWidth = defSegmentsWidth;
         public bool ShouldSerializeSegmentsWidth()
         {
             if (_token != null && _token.SelectToken("segmentsWidth") != null) return true;

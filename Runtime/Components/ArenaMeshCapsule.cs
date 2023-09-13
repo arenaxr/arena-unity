@@ -3,6 +3,7 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
+using ArenaUnity.Schemas;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -11,14 +12,16 @@ namespace ArenaUnity
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class ArenaMeshCapsule : ArenaMesh
     {
-        [SerializeField, Range(0.5f, 10f)] internal float radius = 1f;
-        [SerializeField, Range(0.5f, 10f)] internal float length = 2f;
-        [SerializeField, Range(3, 16)] internal int radialSegments = 8, heightSegments = 4;
+        public ArenaCapsuleJson json;
 
         protected override void Build(MeshFilter filter)
         {
-            filter.sharedMesh = CapsuleBuilder.CapsuleData(radius, length, radialSegments, heightSegments);
+            filter.sharedMesh = CapsuleBuilder.CapsuleData(
+                json.Radius,
+                json.Length,
+                json.SegmentsRadial,
+                json.SegmentsCap
+            );
         }
-
     }
 }

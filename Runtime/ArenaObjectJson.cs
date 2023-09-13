@@ -11,8 +11,7 @@ namespace ArenaUnity
         public string type { get; set; }
         public string action { get; set; }
         public int ttl { get; set; }
-        [JsonProperty(PropertyName = "override")]
-        public bool _override { get; set; }
+        public bool overwrite { get; set; }
         public string timestamp { get; set; }
 
         // TODO (mwfarb): consolidate handling of data vs attributes since they are the same

@@ -1,5 +1,7 @@
 ﻿// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
 
+using System.Net.NetworkInformation;
+using ArenaUnity.Schemas;
 using MeshBuilder;
 using UnityEngine;
 
@@ -7,13 +9,18 @@ namespace ArenaUnity
 {
     public class ArenaMeshRing : ArenaMesh
     {
-        [SerializeField, Range(0f, 10f)] internal float innerRadius = 0.1f, outerRadius = 1f;
-        [SerializeField, Range(2, 64)] internal int thetaSegments = 16, phiSegments = 16;
-        [SerializeField, Range(0f, Mathf.PI * 2f)] internal float thetaStart = 0f, thetaLength = Mathf.PI * 2f;
+        public ArenaRingJson json;
 
         protected override void Build(MeshFilter filter)
         {
-            filter.sharedMesh = RingBuilder.Build(innerRadius, outerRadius, thetaSegments, phiSegments, thetaStart, thetaLength);
+            filter.sharedMesh = RingBuilder.Build(
+                json.RadiusInner,
+                json.RadiusOuter,
+                json.SegmentsTheta,
+                json.SegmentsPhi,
+                Mathf.PI / 180 * json.ThetaStart,
+                Mathf.PI / 180 * json.ThetaLength
+            );
         }
     }
 }

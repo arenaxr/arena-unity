@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public float Radius = defRadius;
         public bool ShouldSerializeRadius()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defRadiusTubular = 0.4f;
@@ -55,20 +55,20 @@ namespace ArenaUnity.Schemas
             return (RadiusTubular != defRadiusTubular);
         }
 
-        private static float defSegmentsRadial = 36f;
+        private static int defSegmentsRadial = 36;
         [JsonProperty(PropertyName = "segmentsRadial")]
         [Tooltip("segments radial")]
-        public float SegmentsRadial = defSegmentsRadial;
+        public int SegmentsRadial = defSegmentsRadial;
         public bool ShouldSerializeSegmentsRadial()
         {
             if (_token != null && _token.SelectToken("segmentsRadial") != null) return true;
             return (SegmentsRadial != defSegmentsRadial);
         }
 
-        private static float defSegmentsTubular = 32f;
+        private static int defSegmentsTubular = 32;
         [JsonProperty(PropertyName = "segmentsTubular")]
         [Tooltip("segments tubular")]
-        public float SegmentsTubular = defSegmentsTubular;
+        public int SegmentsTubular = defSegmentsTubular;
         public bool ShouldSerializeSegmentsTubular()
         {
             if (_token != null && _token.SelectToken("segmentsTubular") != null) return true;

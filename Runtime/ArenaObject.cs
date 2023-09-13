@@ -35,7 +35,7 @@ namespace ArenaUnity
         public string jsonData = null;
 
         [HideInInspector]
-        public DYNAMIC data = null; // original message data for object, if any
+        public object data = null; // original message data for object, if any
         [HideInInspector]
         public string parentId = null;
 
@@ -130,7 +130,7 @@ namespace ArenaUnity
             if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return;
             // pub delete old
-            DYNAMIC msg = new
+            ArenaObjectJson msg = new ArenaObjectJson
             {
                 object_id = oldName,
                 action = "delete",
@@ -154,17 +154,19 @@ namespace ArenaUnity
                 ArenaClientScene.Instance.arenaObjs[name] = gameObject;
 
             // message type information
-            DYNAMIC msg = new ExpandoObject();
-            msg.object_id = name;
-            msg.action = created ? "update" : "create";
-            msg.type = messageType;
-            msg.persist = persist;
+            ArenaObjectJson msg = new ArenaObjectJson
+            {
+                object_id = name,
+                action = created ? "update" : "create",
+                type = messageType,
+                persist = persist,
+            };
             transformOnly = created ? transformOnly : false;
-            DYNAMIC dataUnity = new ExpandoObject();
-            if (data == null || data.object_type == null)
+            ArenaObjectDataJson dataUnity = new ArenaObjectDataJson();
+            //if (data == null || data.object_type == null)
                 dataUnity.object_type = ArenaUnity.ToArenaObjectType(gameObject);
-            else
-                dataUnity.object_type = (string)data.object_type;
+            //else
+            //    dataUnity.object_type = (string)data.object_type;
 
             // minimum transform information
             dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
@@ -173,7 +175,6 @@ namespace ArenaUnity
                 ArenaUnity.UnityToGltfRotationQuat(transform.localRotation);
             dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(rotOut); // always send quaternions over the wire
             dataUnity.scale = ArenaUnity.ToArenaScale(transform.localScale);
-            ArenaUnity.ToArenaDimensions(gameObject, ref dataUnity);
             if (transform.parent && transform.parent.gameObject.GetComponent<ArenaObject>() != null)
             {   // parent
                 dataUnity.parent = transform.parent.name;
@@ -187,15 +188,16 @@ namespace ArenaUnity
 
             if (meshChanged)
             {
-                if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
-                {
-                    dataUnity.geometry = new ExpandoObject();
-                    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity.geometry);
-                }
-                else
-                {
-                    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity);
-                }
+                ArenaUnity.ToArenaDimensions(gameObject, ref dataUnity);
+                //if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
+                //{
+                //    dataUnity.geometry = new ExpandoObject();
+                //    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity.geometry);
+                //}
+                //else
+                //{
+                ArenaUnity.ToArenaMesh(gameObject, ref dataUnity);
+                //}
             }
             // other attributes information
             if (!transformOnly)
@@ -207,7 +209,7 @@ namespace ArenaUnity
                 if (GetComponent<TextMeshPro>())
                     ArenaUnity.ToArenaText(gameObject, ref dataUnity);
                 if (GetComponent<LineRenderer>())
-                    ArenaUnity.ToArenaLine(gameObject, ref dataUnity);
+                    ArenaUnity.ToArenaThickline(gameObject, ref dataUnity);
             }
 
             // merge unity data with original message data
@@ -215,7 +217,7 @@ namespace ArenaUnity
             if (data != null)
                 updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(data)));
             updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(dataUnity)));
-            // TODO: temp location until JObject completely replaces DYNAMIC object
+            // TODO: temp location until JObject completely replaces dynamic object
             if (GetComponent<ArenaAnimationMixer>())
                 ArenaUnity.ToArenaAnimationMixer(gameObject, ref updatedData);
             if (GetComponent<ArenaClickListener>())
@@ -235,12 +237,14 @@ namespace ArenaUnity
 
         internal void PublishUpdate(string objData, bool all = false, bool overwrite = false)
         {
-            DYNAMIC msg = new ExpandoObject();
-            msg.object_id = name;
-            msg.action = "update";
-            msg.type = messageType;
-            msg.persist = persist;
-            if (overwrite) msg.overwrite = overwrite;
+            ArenaObjectJson msg = new ArenaObjectJson
+            {
+                object_id = name,
+                action = "update",
+                type = messageType,
+                persist = persist,
+                overwrite = overwrite,
+            };
 
             // merge new data with original message data
             var updatedData = new JObject();

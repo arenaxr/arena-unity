@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public float Depth = defDepth;
         public bool ShouldSerializeDepth()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defHeight = 1f;
@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public float Height = defHeight;
         public bool ShouldSerializeHeight()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defWidth = 1f;
@@ -50,7 +50,7 @@ namespace ArenaUnity.Schemas
         public float Width = defWidth;
         public bool ShouldSerializeWidth()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defRadius = 0.15f;
@@ -59,13 +59,13 @@ namespace ArenaUnity.Schemas
         public float Radius = defRadius;
         public bool ShouldSerializeRadius()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
-        private static float defRadiusSegments = 10f;
+        private static int defRadiusSegments = 10;
         [JsonProperty(PropertyName = "radiusSegments")]
         [Tooltip("segments radius")]
-        public float RadiusSegments = defRadiusSegments;
+        public int RadiusSegments = defRadiusSegments;
         public bool ShouldSerializeRadiusSegments()
         {
             if (_token != null && _token.SelectToken("radiusSegments") != null) return true;

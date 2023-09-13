@@ -32,13 +32,13 @@ namespace ArenaUnity.Schemas
         public float Radius = defRadius;
         public bool ShouldSerializeRadius()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
-        private static float defSegments = 32f;
+        private static int defSegments = 32;
         [JsonProperty(PropertyName = "segments")]
         [Tooltip("segments")]
-        public float Segments = defSegments;
+        public int Segments = defSegments;
         public bool ShouldSerializeSegments()
         {
             if (_token != null && _token.SelectToken("segments") != null) return true;

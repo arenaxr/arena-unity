@@ -300,10 +300,12 @@ namespace ArenaUnity
                 {
                     foreach (string object_id in pendingDelete)
                     {
-                        ArenaObjectJson msg = new ArenaObjectJson();
-                        msg.object_id = object_id;
-                        msg.action = "delete";
-                        msg.persist = true;
+                        ArenaObjectJson msg = new ArenaObjectJson
+                        {
+                            object_id = object_id,
+                            action = "delete",
+                            persist = true,
+                        };
                         string payload = JsonConvert.SerializeObject(msg);
                         PublishObject(msg.object_id, payload, sceneObjectRights);
                     }
@@ -1133,9 +1135,11 @@ namespace ArenaUnity
             // send delete of local avatars before connection closes
             foreach (var camid in localCameraIds)
             {
-                ArenaObjectJson msg = new ArenaObjectJson();
-                msg.object_id = camid;
-                msg.action = "delete";
+                ArenaObjectJson msg = new ArenaObjectJson
+                {
+                    object_id = camid,
+                    action = "delete",
+                };
                 string delCamMsg = JsonConvert.SerializeObject(msg);
                 PublishCamera(camid, delCamMsg, sceneObjectRights);
             }

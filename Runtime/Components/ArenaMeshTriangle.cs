@@ -3,6 +3,8 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
+using ArenaUnity;
+using ArenaUnity.Schemas;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -12,13 +14,15 @@ namespace ArenaUnity
 
     public class ArenaMeshTriangle : ArenaMesh
     {
-        [SerializeField] internal Vector3 vertexA = new Vector3(0f, 0.5f);
-        [SerializeField] internal Vector3 vertexB = new Vector3(-0.5f, -0.5f);
-        [SerializeField] internal Vector3 vertexC = new Vector3(0.5f, -0.5f);
+        public ArenaTriangleJson json;
 
         protected override void Build(MeshFilter filter)
         {
-            filter.sharedMesh = TriangleBuilder.Build(vertexA, vertexB, vertexC);
+            filter.sharedMesh = TriangleBuilder.Build(
+                ArenaUnity.ToUnityPosition((ArenaPositionJson)json.VertexA),
+                ArenaUnity.ToUnityPosition((ArenaPositionJson)json.VertexB),
+                ArenaUnity.ToUnityPosition((ArenaPositionJson)json.VertexC)
+            );
         }
     }
 }
