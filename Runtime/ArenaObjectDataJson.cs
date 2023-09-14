@@ -67,19 +67,19 @@ namespace ArenaUnity
 
         [JsonProperty(PropertyName = "hide-on-enter-ar")]
         [Tooltip("Hide object when entering AR. Remove component to *not* hide")]
-        public bool hideOnEnterAr;
+        public bool? hideOnEnterAr;
 
         [JsonProperty(PropertyName = "hide-on-enter-vr")]
         [Tooltip("Hide object when entering VR. Remove component to *not* hide")]
-        public bool hideOnEnterVr;
+        public bool? hideOnEnterVr;
 
         [JsonProperty(PropertyName = "show-on-enter-ar")]
         [Tooltip("Show object when entering AR. Hidden otherwise")]
-        public bool showOnEnterAr;
+        public bool? showOnEnterAr;
 
         [JsonProperty(PropertyName = "show-on-enter-vr")]
         [Tooltip("Show object when entering VR. Hidden otherwise")]
-        public bool showOnEnterVr;
+        public bool? showOnEnterVr;
 
         [JsonProperty(PropertyName = "impulse")]
         [Tooltip("The force applied using physics. Requires click-listener")]
@@ -111,7 +111,7 @@ namespace ArenaUnity
 
         [JsonProperty(PropertyName = "screenshareable")]
         [Tooltip("Whether or not a user can screenshare on an object")]
-        public bool screenshareable;
+        public bool? screenshareable;
 
         [JsonProperty(PropertyName = "remote-render")]
         [Tooltip("Whether or not an object should be remote rendered [Experimental]")]
@@ -135,7 +135,7 @@ namespace ArenaUnity
 
         [JsonProperty(PropertyName = "buffer")]
         [Tooltip("Transform geometry into a BufferGeometry to reduce memory usage at the cost of being harder to manipulate (geometries only: box, circle, cone, ...).")]
-        public bool buffer;
+        public bool? buffer;
 
         [JsonProperty(PropertyName = "jitsi-video")]
         [Tooltip("Apply a jitsi video source to the geometry")]
@@ -151,11 +151,11 @@ namespace ArenaUnity
 
         [JsonProperty(PropertyName = "skipCache")]
         [Tooltip("Disable retrieving the shared geometry object from the cache. (geometries only: box, circle, cone, ...).")]
-        public bool skipCache;
+        public bool? skipCache;
 
         [JsonProperty(PropertyName = "visible")]
         [Tooltip("Wether to render the object.")]
-        public bool visible;
+        public bool? visible;
     }
 
 }

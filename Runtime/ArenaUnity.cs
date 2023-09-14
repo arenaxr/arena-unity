@@ -75,7 +75,9 @@ namespace ArenaUnity
             //    data = indata.geometry;
             //    type = (string)indata.geometry.primitive;
             //}
-            string type = ((ArenaObjectDataJson)indata).object_type;
+            Debug.Log(JsonConvert.SerializeObject(indata));
+            ArenaObjectDataJson data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
+            string type = data.object_type;
             switch (type)
             {
                 // build your own meshes, defaults here should reflect ARENA/AFRAME defaults

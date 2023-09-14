@@ -20,7 +20,7 @@ namespace ArenaUnity
                 json.Height,
                 json.SegmentsRadial,
                 json.SegmentsHeight,
-                json.OpenEnded // TODO (mwfarb): for some reason openEnded is inverted
+                !json.OpenEnded // TODO (mwfarb): for some reason openEnded is inverted
             );
             // TODO (mwfarb): can we support extra mesh construction from a-frame?
             //cylinder.thetaStart = (float)(data.thetaStart != null ? Mathf.PI / 180 * (float)data.thetaStart : 0f);

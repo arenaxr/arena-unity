@@ -624,7 +624,7 @@ namespace ArenaUnity
                             cam.fieldOfView = 80f; // match arena
                             cam.targetDisplay = 8; // render on least-used display
                         }
-                        AttachAvatar(msg.object_id, (ArenaCameraJson)indata, displayName, gobj);
+                        AttachAvatar(msg.object_id, JsonConvert.DeserializeObject<ArenaCameraJson>(indata.ToString()), displayName, gobj);
                     }
                     break;
                 case "handLeft":
@@ -632,16 +632,16 @@ namespace ArenaUnity
                     AttachHand(msg.object_id, data.url, gobj);
                     break;
                 case "text":
-                    ArenaUnity.ToUnityText((ArenaTextJson)indata, ref gobj);
+                    ArenaUnity.ToUnityText(JsonConvert.DeserializeObject<ArenaTextJson>(indata.ToString()), ref gobj);
                     break;
                 case "line":
-                    ArenaUnity.ToUnityLine((ArenaLineJson)indata, ref gobj);
+                    ArenaUnity.ToUnityLine(JsonConvert.DeserializeObject<ArenaLineJson>(indata.ToString()), ref gobj);
                     break;
                 case "thickline":
-                    ArenaUnity.ToUnityThickline((ArenaThicklineJson)indata, ref gobj);
+                    ArenaUnity.ToUnityThickline(JsonConvert.DeserializeObject<ArenaThicklineJson>(indata.ToString()), ref gobj);
                     break;
                 case "light":
-                    ArenaUnity.ToUnityLight((ArenaLightJson)indata, ref gobj);
+                    ArenaUnity.ToUnityLight(JsonConvert.DeserializeObject<ArenaLightJson>(indata.ToString()), ref gobj);
                     break;
             }
 
@@ -707,11 +707,11 @@ namespace ArenaUnity
             gobj.transform.hasChanged = false;
 
             // geometry (mesh)
-            ArenaUnity.ToUnityMesh(data, ref gobj);
+            ArenaUnity.ToUnityMesh(indata, ref gobj);
 
             // data.material
             if (isElement(data.material))
-                ArenaUnity.ToUnityMaterial((ArenaMaterialJson)indata, ref gobj);
+                ArenaUnity.ToUnityMaterial((ArenaMaterialJson)data.material, ref gobj);
             if (isElement(data.material) && isElement(data.material.Src))
                 AttachMaterialTexture(checkLocalAsset((string)data.material.Src), gobj);
 
