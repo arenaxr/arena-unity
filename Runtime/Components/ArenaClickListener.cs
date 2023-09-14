@@ -50,7 +50,7 @@ namespace ArenaUnity.Components
         //        }
         //        else
         //        {   // gltf-model
-        //            // TODO: test for "this arena object only"
+        //            // TODO (mwfarb): test for "this arena object only"
         //            foreach (MeshRenderer mr in GetComponentsInChildren<MeshRenderer>())
         //                AssignColliderMesh(mr);
         //            foreach (SkinnedMeshRenderer smr in GetComponentsInChildren<SkinnedMeshRenderer>())

@@ -541,6 +541,7 @@ namespace ArenaUnity
             ArenaObject aobj = null;
             JObject jData = JObject.Parse(JsonConvert.SerializeObject(indata));
             ArenaObjectDataJson data = new ArenaObjectDataJson();
+            Debug.Log(JsonConvert.SerializeObject(indata));
             data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
             if (arenaObjs.TryGetValue(msg.object_id, out GameObject gobj))
             {   // update local

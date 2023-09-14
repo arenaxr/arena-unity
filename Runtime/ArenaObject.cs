@@ -95,7 +95,7 @@ namespace ArenaUnity
 
         IEnumerator PublishTickThrottle()
         {
-            //TODO: prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
+            // TODO (mwfarb): prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
 
             while (true)
             {
