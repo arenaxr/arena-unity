@@ -123,7 +123,7 @@ namespace ArenaUnity.Schemas
         private static float defOpacity = 1f;
         [JsonProperty(PropertyName = "opacity")]
         [Tooltip("Extent of transparency. If the transparent property is not true, then the material will remain opaque and opacity will only affect color.")]
-        public float Opacity = defOpacity;
+        public float? Opacity = defOpacity;
         public bool ShouldSerializeOpacity()
         {
             if (_token != null && _token.SelectToken("opacity") != null) return true;

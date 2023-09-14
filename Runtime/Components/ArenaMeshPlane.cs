@@ -1,6 +1,5 @@
 ﻿// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
 
-//using System.Numerics;
 using ArenaUnity.Schemas;
 using MeshBuilder;
 using UnityEngine;
@@ -22,6 +21,7 @@ namespace ArenaUnity
 
         protected override void Build(MeshFilter filter)
         {
+            // Since this uses "triangles" = "segments", multiply by 2 so each "segment" gets 2 triangles
             switch (type)
             {
                 case PlaneType.Noise:
@@ -31,16 +31,16 @@ namespace ArenaUnity
                         new Vector2(2f, 2f), 0.5f),
                         json.Width,
                         json.Height,
-                        json.SegmentsWidth,
-                        json.SegmentsHeight
+                        json.SegmentsWidth * 2,
+                        json.SegmentsHeight * 2
                     );
                     break;
                 default:
                     filter.sharedMesh = PlaneBuilder.Build(
                         json.Width,
                         json.Height,
-                        json.SegmentsWidth,
-                        json.SegmentsHeight
+                        json.SegmentsWidth * 2,
+                        json.SegmentsHeight * 2
                     );
                     break;
             }

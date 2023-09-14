@@ -333,7 +333,6 @@ namespace ArenaUnity
             {
                 string object_id = msg.object_id;
                 string msg_type = msg.type;
-                float ttl = msg.ttl;
                 msg.persist = true; // always true coming from persist
 
                 if (arenaObjs != null && !arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
@@ -567,12 +566,13 @@ namespace ArenaUnity
                     arenaObjs[msg.object_id] = gobj;
                 }
                 aobj.Created = true;
-                aobj.persist = msg.persist;
+                if (msg.persist.HasValue)
+                    aobj.persist = (bool)msg.persist;
                 aobj.messageType = msg.type;
                 aobj.parentId = (string)data.parent;
                 if (msg.ttl > 0)
                 {
-                    aobj.SetTtlDeleteTimer(msg.ttl);
+                    aobj.SetTtlDeleteTimer((float)msg.ttl);
                 }
 #if UNITY_EDITOR
                 // local create context auto-select
