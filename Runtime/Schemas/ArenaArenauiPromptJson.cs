@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public string Description = defDescription;
         public bool ShouldSerializeDescription()
         {
-            if (_token != null && _token.SelectToken("description") != null) return true;
+            // description
             return (Description != defDescription);
         }
 
@@ -77,7 +77,7 @@ namespace ArenaUnity.Schemas
         public FontType Font = defFont;
         public bool ShouldSerializeFont()
         {
-            if (_token != null && _token.SelectToken("font") != null) return true;
+            // font
             return (Font != defFont);
         }
 
@@ -86,8 +86,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -95,7 +93,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaArenauiPromptJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaArenauiPromptJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaArenauiPromptJson>(Regex.Unescape(jsonString));

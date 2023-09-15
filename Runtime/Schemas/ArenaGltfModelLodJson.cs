@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string DetailedUrl = defDetailedUrl;
         public bool ShouldSerializeDetailedUrl()
         {
-            if (_token != null && _token.SelectToken("detailedUrl") != null) return true;
+            // detailedUrl
             return (DetailedUrl != defDetailedUrl);
         }
 
@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public float DetailedDistance = defDetailedDistance;
         public bool ShouldSerializeDetailedDistance()
         {
-            if (_token != null && _token.SelectToken("detailedDistance") != null) return true;
+            // detailedDistance
             return (DetailedDistance != defDetailedDistance);
         }
 
@@ -52,7 +52,7 @@ namespace ArenaUnity.Schemas
         public float UpdateRate = defUpdateRate;
         public bool ShouldSerializeUpdateRate()
         {
-            if (_token != null && _token.SelectToken("updateRate") != null) return true;
+            // updateRate
             return (UpdateRate != defUpdateRate);
         }
 
@@ -62,7 +62,7 @@ namespace ArenaUnity.Schemas
         public bool RetainCache = defRetainCache;
         public bool ShouldSerializeRetainCache()
         {
-            if (_token != null && _token.SelectToken("retainCache") != null) return true;
+            // retainCache
             return (RetainCache != defRetainCache);
         }
 
@@ -71,8 +71,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -80,7 +78,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaGltfModelLodJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaGltfModelLodJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaGltfModelLodJson>(Regex.Unescape(jsonString));

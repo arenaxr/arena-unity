@@ -44,7 +44,7 @@ namespace ArenaUnity.Schemas
         public PresetType Preset = defPreset;
         public bool ShouldSerializePreset()
         {
-            if (_token != null && _token.SelectToken("preset") != null) return true;
+            // preset
             return (Preset != defPreset);
         }
 
@@ -54,7 +54,7 @@ namespace ArenaUnity.Schemas
         public float MaxAge = defMaxAge;
         public bool ShouldSerializeMaxAge()
         {
-            if (_token != null && _token.SelectToken("maxAge") != null) return true;
+            // maxAge
             return (MaxAge != defMaxAge);
         }
 
@@ -64,7 +64,7 @@ namespace ArenaUnity.Schemas
         public object PositionSpread = defPositionSpread;
         public bool ShouldSerializePositionSpread()
         {
-            if (_token != null && _token.SelectToken("positionSpread") != null) return true;
+            // positionSpread
             return (PositionSpread != defPositionSpread);
         }
 
@@ -74,7 +74,7 @@ namespace ArenaUnity.Schemas
         public float Type = defType;
         public bool ShouldSerializeType()
         {
-            if (_token != null && _token.SelectToken("type") != null) return true;
+            // type
             return (Type != defType);
         }
 
@@ -94,7 +94,7 @@ namespace ArenaUnity.Schemas
         public RotationAxisType RotationAxis = defRotationAxis;
         public bool ShouldSerializeRotationAxis()
         {
-            if (_token != null && _token.SelectToken("rotationAxis") != null) return true;
+            // rotationAxis
             return (RotationAxis != defRotationAxis);
         }
 
@@ -104,7 +104,7 @@ namespace ArenaUnity.Schemas
         public float RotationAngle = defRotationAngle;
         public bool ShouldSerializeRotationAngle()
         {
-            if (_token != null && _token.SelectToken("rotationAngle") != null) return true;
+            // rotationAngle
             return (RotationAngle != defRotationAngle);
         }
 
@@ -114,7 +114,7 @@ namespace ArenaUnity.Schemas
         public float RotationAngleSpread = defRotationAngleSpread;
         public bool ShouldSerializeRotationAngleSpread()
         {
-            if (_token != null && _token.SelectToken("rotationAngleSpread") != null) return true;
+            // rotationAngleSpread
             return (RotationAngleSpread != defRotationAngleSpread);
         }
 
@@ -124,7 +124,7 @@ namespace ArenaUnity.Schemas
         public object AccelerationValue = defAccelerationValue;
         public bool ShouldSerializeAccelerationValue()
         {
-            if (_token != null && _token.SelectToken("accelerationValue") != null) return true;
+            // accelerationValue
             return (AccelerationValue != defAccelerationValue);
         }
 
@@ -134,7 +134,7 @@ namespace ArenaUnity.Schemas
         public object AccelerationSpread = defAccelerationSpread;
         public bool ShouldSerializeAccelerationSpread()
         {
-            if (_token != null && _token.SelectToken("accelerationSpread") != null) return true;
+            // accelerationSpread
             return (AccelerationSpread != defAccelerationSpread);
         }
 
@@ -144,7 +144,7 @@ namespace ArenaUnity.Schemas
         public object VelocityValue = defVelocityValue;
         public bool ShouldSerializeVelocityValue()
         {
-            if (_token != null && _token.SelectToken("velocityValue") != null) return true;
+            // velocityValue
             return (VelocityValue != defVelocityValue);
         }
 
@@ -154,7 +154,7 @@ namespace ArenaUnity.Schemas
         public object VelocitySpread = defVelocitySpread;
         public bool ShouldSerializeVelocitySpread()
         {
-            if (_token != null && _token.SelectToken("velocitySpread") != null) return true;
+            // velocitySpread
             return (VelocitySpread != defVelocitySpread);
         }
 
@@ -164,7 +164,7 @@ namespace ArenaUnity.Schemas
         public float DragValue = defDragValue;
         public bool ShouldSerializeDragValue()
         {
-            if (_token != null && _token.SelectToken("dragValue") != null) return true;
+            // dragValue
             return (DragValue != defDragValue);
         }
 
@@ -174,7 +174,7 @@ namespace ArenaUnity.Schemas
         public float DragSpread = defDragSpread;
         public bool ShouldSerializeDragSpread()
         {
-            if (_token != null && _token.SelectToken("dragSpread") != null) return true;
+            // dragSpread
             return (DragSpread != defDragSpread);
         }
 
@@ -184,7 +184,7 @@ namespace ArenaUnity.Schemas
         public bool DragRandomise = defDragRandomise;
         public bool ShouldSerializeDragRandomise()
         {
-            if (_token != null && _token.SelectToken("dragRandomise") != null) return true;
+            // dragRandomise
             return (DragRandomise != defDragRandomise);
         }
 
@@ -194,7 +194,7 @@ namespace ArenaUnity.Schemas
         public string[] Color = defColor;
         public bool ShouldSerializeColor()
         {
-            if (_token != null && _token.SelectToken("color") != null) return true;
+            // color
             return (Color != defColor);
         }
 
@@ -213,7 +213,7 @@ namespace ArenaUnity.Schemas
         public float[] SizeSpread = defSizeSpread;
         public bool ShouldSerializeSizeSpread()
         {
-            if (_token != null && _token.SelectToken("sizeSpread") != null) return true;
+            // sizeSpread
             return (SizeSpread != defSizeSpread);
         }
 
@@ -223,7 +223,7 @@ namespace ArenaUnity.Schemas
         public float Direction = defDirection;
         public bool ShouldSerializeDirection()
         {
-            if (_token != null && _token.SelectToken("direction") != null) return true;
+            // direction
             return (Direction != defDirection);
         }
 
@@ -233,7 +233,7 @@ namespace ArenaUnity.Schemas
         public float Duration = defDuration;
         public bool ShouldSerializeDuration()
         {
-            if (_token != null && _token.SelectToken("duration") != null) return true;
+            // duration
             return (Duration != defDuration);
         }
 
@@ -243,7 +243,7 @@ namespace ArenaUnity.Schemas
         public bool Enabled = defEnabled;
         public bool ShouldSerializeEnabled()
         {
-            if (_token != null && _token.SelectToken("enabled") != null) return true;
+            // enabled
             return (Enabled != defEnabled);
         }
 
@@ -253,7 +253,7 @@ namespace ArenaUnity.Schemas
         public float ParticleCount = defParticleCount;
         public bool ShouldSerializeParticleCount()
         {
-            if (_token != null && _token.SelectToken("particleCount") != null) return true;
+            // particleCount
             return (ParticleCount != defParticleCount);
         }
 
@@ -272,7 +272,7 @@ namespace ArenaUnity.Schemas
         public bool Randomise = defRandomise;
         public bool ShouldSerializeRandomise()
         {
-            if (_token != null && _token.SelectToken("randomise") != null) return true;
+            // randomise
             return (Randomise != defRandomise);
         }
 
@@ -282,7 +282,7 @@ namespace ArenaUnity.Schemas
         public float[] Opacity = defOpacity;
         public bool ShouldSerializeOpacity()
         {
-            if (_token != null && _token.SelectToken("opacity") != null) return true;
+            // opacity
             return (Opacity != defOpacity);
         }
 
@@ -292,7 +292,7 @@ namespace ArenaUnity.Schemas
         public float[] OpacitySpread = defOpacitySpread;
         public bool ShouldSerializeOpacitySpread()
         {
-            if (_token != null && _token.SelectToken("opacitySpread") != null) return true;
+            // opacitySpread
             return (OpacitySpread != defOpacitySpread);
         }
 
@@ -316,7 +316,7 @@ namespace ArenaUnity.Schemas
         public BlendingType Blending = defBlending;
         public bool ShouldSerializeBlending()
         {
-            if (_token != null && _token.SelectToken("blending") != null) return true;
+            // blending
             return (Blending != defBlending);
         }
 
@@ -326,7 +326,7 @@ namespace ArenaUnity.Schemas
         public float MaxParticleCount = defMaxParticleCount;
         public bool ShouldSerializeMaxParticleCount()
         {
-            if (_token != null && _token.SelectToken("maxParticleCount") != null) return true;
+            // maxParticleCount
             return (MaxParticleCount != defMaxParticleCount);
         }
 
@@ -335,8 +335,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -344,7 +342,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaParticleSystemJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaParticleSystemJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaParticleSystemJson>(Regex.Unescape(jsonString));

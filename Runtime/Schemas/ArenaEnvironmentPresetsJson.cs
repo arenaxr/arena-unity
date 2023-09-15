@@ -69,7 +69,7 @@ namespace ArenaUnity.Schemas
         public DressingType Dressing = defDressing;
         public bool ShouldSerializeDressing()
         {
-            if (_token != null && _token.SelectToken("dressing") != null) return true;
+            // dressing
             return (Dressing != defDressing);
         }
 
@@ -79,7 +79,7 @@ namespace ArenaUnity.Schemas
         public float DressingAmount = defDressingAmount;
         public bool ShouldSerializeDressingAmount()
         {
-            if (_token != null && _token.SelectToken("dressingAmount") != null) return true;
+            // dressingAmount
             return (DressingAmount != defDressingAmount);
         }
 
@@ -89,7 +89,7 @@ namespace ArenaUnity.Schemas
         public string DressingColor = defDressingColor;
         public bool ShouldSerializeDressingColor()
         {
-            if (_token != null && _token.SelectToken("dressingColor") != null) return true;
+            // dressingColor
             return (DressingColor != defDressingColor);
         }
 
@@ -99,7 +99,7 @@ namespace ArenaUnity.Schemas
         public float DressingOnPlayArea = defDressingOnPlayArea;
         public bool ShouldSerializeDressingOnPlayArea()
         {
-            if (_token != null && _token.SelectToken("dressingOnPlayArea") != null) return true;
+            // dressingOnPlayArea
             return (DressingOnPlayArea != defDressingOnPlayArea);
         }
 
@@ -109,7 +109,7 @@ namespace ArenaUnity.Schemas
         public float DressingScale = defDressingScale;
         public bool ShouldSerializeDressingScale()
         {
-            if (_token != null && _token.SelectToken("dressingScale") != null) return true;
+            // dressingScale
             return (DressingScale != defDressingScale);
         }
 
@@ -119,7 +119,7 @@ namespace ArenaUnity.Schemas
         public bool DressingUniformScale = defDressingUniformScale;
         public bool ShouldSerializeDressingUniformScale()
         {
-            if (_token != null && _token.SelectToken("dressingUniformScale") != null) return true;
+            // dressingUniformScale
             return (DressingUniformScale != defDressingUniformScale);
         }
 
@@ -129,7 +129,7 @@ namespace ArenaUnity.Schemas
         public object DressingVariance = defDressingVariance;
         public bool ShouldSerializeDressingVariance()
         {
-            if (_token != null && _token.SelectToken("dressingVariance") != null) return true;
+            // dressingVariance
             return (DressingVariance != defDressingVariance);
         }
 
@@ -139,7 +139,7 @@ namespace ArenaUnity.Schemas
         public bool FlatShading = defFlatShading;
         public bool ShouldSerializeFlatShading()
         {
-            if (_token != null && _token.SelectToken("flatShading") != null) return true;
+            // flatShading
             return (FlatShading != defFlatShading);
         }
 
@@ -149,7 +149,7 @@ namespace ArenaUnity.Schemas
         public float Fog = defFog;
         public bool ShouldSerializeFog()
         {
-            if (_token != null && _token.SelectToken("fog") != null) return true;
+            // fog
             return (Fog != defFog);
         }
 
@@ -177,7 +177,7 @@ namespace ArenaUnity.Schemas
         public GridType Grid = defGrid;
         public bool ShouldSerializeGrid()
         {
-            if (_token != null && _token.SelectToken("grid") != null) return true;
+            // grid
             return (Grid != defGrid);
         }
 
@@ -187,7 +187,7 @@ namespace ArenaUnity.Schemas
         public string GridColor = defGridColor;
         public bool ShouldSerializeGridColor()
         {
-            if (_token != null && _token.SelectToken("gridColor") != null) return true;
+            // gridColor
             return (GridColor != defGridColor);
         }
 
@@ -213,7 +213,7 @@ namespace ArenaUnity.Schemas
         public GroundType Ground = defGround;
         public bool ShouldSerializeGround()
         {
-            if (_token != null && _token.SelectToken("ground") != null) return true;
+            // ground
             return (Ground != defGround);
         }
 
@@ -223,7 +223,7 @@ namespace ArenaUnity.Schemas
         public string GroundColor = defGroundColor;
         public bool ShouldSerializeGroundColor()
         {
-            if (_token != null && _token.SelectToken("groundColor") != null) return true;
+            // groundColor
             return (GroundColor != defGroundColor);
         }
 
@@ -233,7 +233,7 @@ namespace ArenaUnity.Schemas
         public string GroundColor2 = defGroundColor2;
         public bool ShouldSerializeGroundColor2()
         {
-            if (_token != null && _token.SelectToken("groundColor2") != null) return true;
+            // groundColor2
             return (GroundColor2 != defGroundColor2);
         }
 
@@ -243,7 +243,7 @@ namespace ArenaUnity.Schemas
         public object GroundScale = defGroundScale;
         public bool ShouldSerializeGroundScale()
         {
-            if (_token != null && _token.SelectToken("groundScale") != null) return true;
+            // groundScale
             return (GroundScale != defGroundScale);
         }
 
@@ -265,7 +265,7 @@ namespace ArenaUnity.Schemas
         public GroundTextureType GroundTexture = defGroundTexture;
         public bool ShouldSerializeGroundTexture()
         {
-            if (_token != null && _token.SelectToken("groundTexture") != null) return true;
+            // groundTexture
             return (GroundTexture != defGroundTexture);
         }
 
@@ -275,7 +275,7 @@ namespace ArenaUnity.Schemas
         public float GroundYScale = defGroundYScale;
         public bool ShouldSerializeGroundYScale()
         {
-            if (_token != null && _token.SelectToken("groundYScale") != null) return true;
+            // groundYScale
             return (GroundYScale != defGroundYScale);
         }
 
@@ -285,7 +285,7 @@ namespace ArenaUnity.Schemas
         public bool HideInAR = defHideInAR;
         public bool ShouldSerializeHideInAR()
         {
-            if (_token != null && _token.SelectToken("hideInAR") != null) return true;
+            // hideInAR
             return (HideInAR != defHideInAR);
         }
 
@@ -295,7 +295,7 @@ namespace ArenaUnity.Schemas
         public string HorizonColor = defHorizonColor;
         public bool ShouldSerializeHorizonColor()
         {
-            if (_token != null && _token.SelectToken("horizonColor") != null) return true;
+            // horizonColor
             return (HorizonColor != defHorizonColor);
         }
 
@@ -315,7 +315,7 @@ namespace ArenaUnity.Schemas
         public LightingType Lighting = defLighting;
         public bool ShouldSerializeLighting()
         {
-            if (_token != null && _token.SelectToken("lighting") != null) return true;
+            // lighting
             return (Lighting != defLighting);
         }
 
@@ -325,7 +325,7 @@ namespace ArenaUnity.Schemas
         public object LightPosition = defLightPosition;
         public bool ShouldSerializeLightPosition()
         {
-            if (_token != null && _token.SelectToken("lightPosition") != null) return true;
+            // lightPosition
             return (LightPosition != defLightPosition);
         }
 
@@ -335,7 +335,7 @@ namespace ArenaUnity.Schemas
         public float PlayArea = defPlayArea;
         public bool ShouldSerializePlayArea()
         {
-            if (_token != null && _token.SelectToken("playArea") != null) return true;
+            // playArea
             return (PlayArea != defPlayArea);
         }
 
@@ -394,7 +394,7 @@ namespace ArenaUnity.Schemas
         public float Seed = defSeed;
         public bool ShouldSerializeSeed()
         {
-            if (_token != null && _token.SelectToken("seed") != null) return true;
+            // seed
             return (Seed != defSeed);
         }
 
@@ -404,7 +404,7 @@ namespace ArenaUnity.Schemas
         public bool Shadow = defShadow;
         public bool ShouldSerializeShadow()
         {
-            if (_token != null && _token.SelectToken("shadow") != null) return true;
+            // shadow
             return (Shadow != defShadow);
         }
 
@@ -414,7 +414,7 @@ namespace ArenaUnity.Schemas
         public float ShadowSize = defShadowSize;
         public bool ShouldSerializeShadowSize()
         {
-            if (_token != null && _token.SelectToken("shadowSize") != null) return true;
+            // shadowSize
             return (ShadowSize != defShadowSize);
         }
 
@@ -424,7 +424,7 @@ namespace ArenaUnity.Schemas
         public string SkyColor = defSkyColor;
         public bool ShouldSerializeSkyColor()
         {
-            if (_token != null && _token.SelectToken("skyColor") != null) return true;
+            // skyColor
             return (SkyColor != defSkyColor);
         }
 
@@ -446,7 +446,7 @@ namespace ArenaUnity.Schemas
         public SkyTypeType SkyType = defSkyType;
         public bool ShouldSerializeSkyType()
         {
-            if (_token != null && _token.SelectToken("skyType") != null) return true;
+            // skyType
             return (SkyType != defSkyType);
         }
 
@@ -455,8 +455,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -464,7 +462,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaEnvironmentPresetsJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaEnvironmentPresetsJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaEnvironmentPresetsJson>(Regex.Unescape(jsonString));

@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public bool Enabled = defEnabled;
         public bool ShouldSerializeEnabled()
         {
-            if (_token != null && _token.SelectToken("enabled") != null) return true;
+            // enabled
             return (Enabled != defEnabled);
         }
 
@@ -50,8 +50,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -59,7 +57,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaBoxCollisionListenerJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaBoxCollisionListenerJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaBoxCollisionListenerJson>(Regex.Unescape(jsonString));

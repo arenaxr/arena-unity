@@ -50,7 +50,7 @@ namespace ArenaUnity.Schemas
         public string PointColor = defPointColor;
         public bool ShouldSerializePointColor()
         {
-            if (_token != null && _token.SelectToken("pointColor") != null) return true;
+            // pointColor
             return (PointColor != defPointColor);
         }
 
@@ -59,8 +59,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -68,7 +66,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaPcdModelJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaPcdModelJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaPcdModelJson>(Regex.Unescape(jsonString));

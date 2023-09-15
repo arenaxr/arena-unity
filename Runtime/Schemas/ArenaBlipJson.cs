@@ -97,7 +97,7 @@ namespace ArenaUnity.Schemas
         public bool ApplyDescendants = defApplyDescendants;
         public bool ShouldSerializeApplyDescendants()
         {
-            if (_token != null && _token.SelectToken("applyDescendants") != null) return true;
+            // applyDescendants
             return (ApplyDescendants != defApplyDescendants);
         }
 
@@ -106,8 +106,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -115,7 +113,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaBlipJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaBlipJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaBlipJson>(Regex.Unescape(jsonString));

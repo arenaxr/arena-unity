@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public object RendererSettings = defRendererSettings;
         public bool ShouldSerializeRendererSettings()
         {
-            if (_token != null && _token.SelectToken("renderer-settings") != null) return true;
+            // renderer-settings
             return (RendererSettings != defRendererSettings);
         }
 
@@ -60,7 +60,7 @@ namespace ArenaUnity.Schemas
         public object PostProcessing = defPostProcessing;
         public bool ShouldSerializePostProcessing()
         {
-            if (_token != null && _token.SelectToken("post-processing") != null) return true;
+            // post-processing
             return (PostProcessing != defPostProcessing);
         }
 
@@ -69,8 +69,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -78,7 +76,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaArenaSceneOptionsJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaArenaSceneOptionsJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaArenaSceneOptionsJson>(Regex.Unescape(jsonString));

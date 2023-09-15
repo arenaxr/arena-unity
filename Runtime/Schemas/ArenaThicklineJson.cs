@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string Color = defColor;
         public bool ShouldSerializeColor()
         {
-            if (_token != null && _token.SelectToken("color") != null) return true;
+            // color
             return (Color != defColor);
         }
 
@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public float LineWidth = defLineWidth;
         public bool ShouldSerializeLineWidth()
         {
-            if (_token != null && _token.SelectToken("lineWidth") != null) return true;
+            // lineWidth
             return (LineWidth != defLineWidth);
         }
 
@@ -68,7 +68,7 @@ namespace ArenaUnity.Schemas
         public LineWidthStylerType LineWidthStyler = defLineWidthStyler;
         public bool ShouldSerializeLineWidthStyler()
         {
-            if (_token != null && _token.SelectToken("lineWidthStyler") != null) return true;
+            // lineWidthStyler
             return (LineWidthStyler != defLineWidthStyler);
         }
 
@@ -86,8 +86,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -95,7 +93,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaThicklineJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaThicklineJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaThicklineJson>(Regex.Unescape(jsonString));

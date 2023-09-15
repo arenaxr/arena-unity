@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public bool OpenEnded = defOpenEnded;
         public bool ShouldSerializeOpenEnded()
         {
-            if (_token != null && _token.SelectToken("openEnded") != null) return true;
+            // openEnded
             return (OpenEnded != defOpenEnded);
         }
 
@@ -60,7 +60,7 @@ namespace ArenaUnity.Schemas
         public float RadiusTop = defRadiusTop;
         public bool ShouldSerializeRadiusTop()
         {
-            if (_token != null && _token.SelectToken("radiusTop") != null) return true;
+            // radiusTop
             return (RadiusTop != defRadiusTop);
         }
 
@@ -70,7 +70,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsHeight = defSegmentsHeight;
         public bool ShouldSerializeSegmentsHeight()
         {
-            if (_token != null && _token.SelectToken("segmentsHeight") != null) return true;
+            // segmentsHeight
             return (SegmentsHeight != defSegmentsHeight);
         }
 
@@ -80,7 +80,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsRadial = defSegmentsRadial;
         public bool ShouldSerializeSegmentsRadial()
         {
-            if (_token != null && _token.SelectToken("segmentsRadial") != null) return true;
+            // segmentsRadial
             return (SegmentsRadial != defSegmentsRadial);
         }
 
@@ -90,7 +90,7 @@ namespace ArenaUnity.Schemas
         public float ThetaLength = defThetaLength;
         public bool ShouldSerializeThetaLength()
         {
-            if (_token != null && _token.SelectToken("thetaLength") != null) return true;
+            // thetaLength
             return (ThetaLength != defThetaLength);
         }
 
@@ -100,7 +100,7 @@ namespace ArenaUnity.Schemas
         public float ThetaStart = defThetaStart;
         public bool ShouldSerializeThetaStart()
         {
-            if (_token != null && _token.SelectToken("thetaStart") != null) return true;
+            // thetaStart
             return (ThetaStart != defThetaStart);
         }
 
@@ -109,8 +109,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -118,7 +116,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaConeJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaConeJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaConeJson>(Regex.Unescape(jsonString));

@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public float Height = defHeight;
         public bool ShouldSerializeHeight()
         {
-            if (_token != null && _token.SelectToken("height") != null) return true;
+            // height
             return (Height != defHeight);
         }
 
@@ -51,7 +51,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsHeight = defSegmentsHeight;
         public bool ShouldSerializeSegmentsHeight()
         {
-            if (_token != null && _token.SelectToken("segmentsHeight") != null) return true;
+            // segmentsHeight
             return (SegmentsHeight != defSegmentsHeight);
         }
 
@@ -61,7 +61,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsWidth = defSegmentsWidth;
         public bool ShouldSerializeSegmentsWidth()
         {
-            if (_token != null && _token.SelectToken("segmentsWidth") != null) return true;
+            // segmentsWidth
             return (SegmentsWidth != defSegmentsWidth);
         }
 
@@ -71,7 +71,7 @@ namespace ArenaUnity.Schemas
         public float Width = defWidth;
         public bool ShouldSerializeWidth()
         {
-            if (_token != null && _token.SelectToken("width") != null) return true;
+            // width
             return (Width != defWidth);
         }
 
@@ -80,8 +80,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -89,7 +87,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaImageJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaImageJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaImageJson>(Regex.Unescape(jsonString));

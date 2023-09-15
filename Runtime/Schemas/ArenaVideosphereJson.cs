@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public bool Autoplay = defAutoplay;
         public bool ShouldSerializeAutoplay()
         {
-            if (_token != null && _token.SelectToken("autoplay") != null) return true;
+            // autoplay
             return (Autoplay != defAutoplay);
         }
 
@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public string CrossOrigin = defCrossOrigin;
         public bool ShouldSerializeCrossOrigin()
         {
-            if (_token != null && _token.SelectToken("crossOrigin") != null) return true;
+            // crossOrigin
             return (CrossOrigin != defCrossOrigin);
         }
 
@@ -52,7 +52,7 @@ namespace ArenaUnity.Schemas
         public bool Loop = defLoop;
         public bool ShouldSerializeLoop()
         {
-            if (_token != null && _token.SelectToken("loop") != null) return true;
+            // loop
             return (Loop != defLoop);
         }
 
@@ -62,7 +62,7 @@ namespace ArenaUnity.Schemas
         public float Radius = defRadius;
         public bool ShouldSerializeRadius()
         {
-            if (_token != null && _token.SelectToken("radius") != null) return true;
+            // radius
             return (Radius != defRadius);
         }
 
@@ -72,7 +72,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsHeight = defSegmentsHeight;
         public bool ShouldSerializeSegmentsHeight()
         {
-            if (_token != null && _token.SelectToken("segmentsHeight") != null) return true;
+            // segmentsHeight
             return (SegmentsHeight != defSegmentsHeight);
         }
 
@@ -82,7 +82,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsWidth = defSegmentsWidth;
         public bool ShouldSerializeSegmentsWidth()
         {
-            if (_token != null && _token.SelectToken("segmentsWidth") != null) return true;
+            // segmentsWidth
             return (SegmentsWidth != defSegmentsWidth);
         }
 
@@ -92,7 +92,7 @@ namespace ArenaUnity.Schemas
         public string Src = defSrc;
         public bool ShouldSerializeSrc()
         {
-            if (_token != null && _token.SelectToken("src") != null) return true;
+            // src
             return (Src != defSrc);
         }
 
@@ -101,8 +101,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -110,7 +108,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaVideosphereJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaVideosphereJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaVideosphereJson>(Regex.Unescape(jsonString));

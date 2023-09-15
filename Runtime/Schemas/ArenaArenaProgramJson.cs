@@ -49,7 +49,7 @@ namespace ArenaUnity.Schemas
         public AffinityType Affinity = defAffinity;
         public bool ShouldSerializeAffinity()
         {
-            if (_token != null && _token.SelectToken("affinity") != null) return true;
+            // affinity
             return (Affinity != defAffinity);
         }
 
@@ -102,7 +102,7 @@ namespace ArenaUnity.Schemas
         public string[] Args = defArgs;
         public bool ShouldSerializeArgs()
         {
-            if (_token != null && _token.SelectToken("args") != null) return true;
+            // args
             return (Args != defArgs);
         }
 
@@ -121,7 +121,7 @@ namespace ArenaUnity.Schemas
         public object[] Channels = defChannels;
         public bool ShouldSerializeChannels()
         {
-            if (_token != null && _token.SelectToken("channels") != null) return true;
+            // channels
             return (Channels != defChannels);
         }
 
@@ -130,8 +130,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -139,7 +137,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaArenaProgramJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaArenaProgramJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaArenaProgramJson>(Regex.Unescape(jsonString));

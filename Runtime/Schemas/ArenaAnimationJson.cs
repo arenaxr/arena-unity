@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public bool Autoplay = defAutoplay;
         public bool ShouldSerializeAutoplay()
         {
-            if (_token != null && _token.SelectToken("autoplay") != null) return true;
+            // autoplay
             return (Autoplay != defAutoplay);
         }
 
@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public float Delay = defDelay;
         public bool ShouldSerializeDelay()
         {
-            if (_token != null && _token.SelectToken("delay") != null) return true;
+            // delay
             return (Delay != defDelay);
         }
 
@@ -62,7 +62,7 @@ namespace ArenaUnity.Schemas
         public DirType Dir = defDir;
         public bool ShouldSerializeDir()
         {
-            if (_token != null && _token.SelectToken("dir") != null) return true;
+            // dir
             return (Dir != defDir);
         }
 
@@ -72,7 +72,7 @@ namespace ArenaUnity.Schemas
         public float Dur = defDur;
         public bool ShouldSerializeDur()
         {
-            if (_token != null && _token.SelectToken("dur") != null) return true;
+            // dur
             return (Dur != defDur);
         }
 
@@ -142,7 +142,7 @@ namespace ArenaUnity.Schemas
         public EasingType Easing = defEasing;
         public bool ShouldSerializeEasing()
         {
-            if (_token != null && _token.SelectToken("easing") != null) return true;
+            // easing
             return (Easing != defEasing);
         }
 
@@ -152,7 +152,7 @@ namespace ArenaUnity.Schemas
         public float Elasticity = defElasticity;
         public bool ShouldSerializeElasticity()
         {
-            if (_token != null && _token.SelectToken("elasticity") != null) return true;
+            // elasticity
             return (Elasticity != defElasticity);
         }
 
@@ -162,7 +162,7 @@ namespace ArenaUnity.Schemas
         public bool Enabled = defEnabled;
         public bool ShouldSerializeEnabled()
         {
-            if (_token != null && _token.SelectToken("enabled") != null) return true;
+            // enabled
             return (Enabled != defEnabled);
         }
 
@@ -172,7 +172,7 @@ namespace ArenaUnity.Schemas
         public string From = defFrom;
         public bool ShouldSerializeFrom()
         {
-            if (_token != null && _token.SelectToken("from") != null) return true;
+            // from
             return (From != defFrom);
         }
 
@@ -182,7 +182,7 @@ namespace ArenaUnity.Schemas
         public bool IsRawProperty = defIsRawProperty;
         public bool ShouldSerializeIsRawProperty()
         {
-            if (_token != null && _token.SelectToken("isRawProperty") != null) return true;
+            // isRawProperty
             return (IsRawProperty != defIsRawProperty);
         }
 
@@ -192,7 +192,7 @@ namespace ArenaUnity.Schemas
         public string Loop = defLoop;
         public bool ShouldSerializeLoop()
         {
-            if (_token != null && _token.SelectToken("loop") != null) return true;
+            // loop
             return (Loop != defLoop);
         }
 
@@ -202,7 +202,7 @@ namespace ArenaUnity.Schemas
         public string[] PauseEvents = defPauseEvents;
         public bool ShouldSerializePauseEvents()
         {
-            if (_token != null && _token.SelectToken("pauseEvents") != null) return true;
+            // pauseEvents
             return (PauseEvents != defPauseEvents);
         }
 
@@ -212,7 +212,7 @@ namespace ArenaUnity.Schemas
         public string Property = defProperty;
         public bool ShouldSerializeProperty()
         {
-            if (_token != null && _token.SelectToken("property") != null) return true;
+            // property
             return (Property != defProperty);
         }
 
@@ -222,7 +222,7 @@ namespace ArenaUnity.Schemas
         public string[] ResumeEvents = defResumeEvents;
         public bool ShouldSerializeResumeEvents()
         {
-            if (_token != null && _token.SelectToken("resumeEvents") != null) return true;
+            // resumeEvents
             return (ResumeEvents != defResumeEvents);
         }
 
@@ -232,7 +232,7 @@ namespace ArenaUnity.Schemas
         public bool Round = defRound;
         public bool ShouldSerializeRound()
         {
-            if (_token != null && _token.SelectToken("round") != null) return true;
+            // round
             return (Round != defRound);
         }
 
@@ -242,7 +242,7 @@ namespace ArenaUnity.Schemas
         public string[] StartEvents = defStartEvents;
         public bool ShouldSerializeStartEvents()
         {
-            if (_token != null && _token.SelectToken("startEvents") != null) return true;
+            // startEvents
             return (StartEvents != defStartEvents);
         }
 
@@ -252,7 +252,7 @@ namespace ArenaUnity.Schemas
         public object To = defTo;
         public bool ShouldSerializeTo()
         {
-            if (_token != null && _token.SelectToken("to") != null) return true;
+            // to
             return (To != defTo);
         }
 
@@ -262,7 +262,7 @@ namespace ArenaUnity.Schemas
         public string Type = defType;
         public bool ShouldSerializeType()
         {
-            if (_token != null && _token.SelectToken("type") != null) return true;
+            // type
             return (Type != defType);
         }
 
@@ -271,8 +271,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -280,7 +278,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaAnimationJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaAnimationJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaAnimationJson>(Regex.Unescape(jsonString));

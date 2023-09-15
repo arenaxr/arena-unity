@@ -64,7 +64,7 @@ namespace ArenaUnity.Schemas
         public OnType On = defOn;
         public bool ShouldSerializeOn()
         {
-            if (_token != null && _token.SelectToken("on") != null) return true;
+            // on
             return (On != defOn);
         }
 
@@ -74,7 +74,7 @@ namespace ArenaUnity.Schemas
         public string Title = defTitle;
         public bool ShouldSerializeTitle()
         {
-            if (_token != null && _token.SelectToken("title") != null) return true;
+            // title
             return (Title != defTitle);
         }
 
@@ -84,7 +84,7 @@ namespace ArenaUnity.Schemas
         public string Label = defLabel;
         public bool ShouldSerializeLabel()
         {
-            if (_token != null && _token.SelectToken("label") != null) return true;
+            // label
             return (Label != defLabel);
         }
 
@@ -94,7 +94,7 @@ namespace ArenaUnity.Schemas
         public string Placeholder = defPlaceholder;
         public bool ShouldSerializePlaceholder()
         {
-            if (_token != null && _token.SelectToken("placeholder") != null) return true;
+            // placeholder
             return (Placeholder != defPlaceholder);
         }
 
@@ -103,8 +103,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -112,7 +110,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaTextinputJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaTextinputJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaTextinputJson>(Regex.Unescape(jsonString));

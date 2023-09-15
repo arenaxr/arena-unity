@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string JitsiId = defJitsiId;
         public bool ShouldSerializeJitsiId()
         {
-            if (_token != null && _token.SelectToken("jitsiId") != null) return true;
+            // jitsiId
             return (JitsiId != defJitsiId);
         }
 
@@ -50,8 +50,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -59,7 +57,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaJitsiVideoJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaJitsiVideoJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaJitsiVideoJson>(Regex.Unescape(jsonString));

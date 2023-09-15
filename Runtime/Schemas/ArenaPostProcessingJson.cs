@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public object Bloom = defBloom;
         public bool ShouldSerializeBloom()
         {
-            if (_token != null && _token.SelectToken("bloom") != null) return true;
+            // bloom
             return (Bloom != defBloom);
         }
 
@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public object Sao = defSao;
         public bool ShouldSerializeSao()
         {
-            if (_token != null && _token.SelectToken("sao") != null) return true;
+            // sao
             return (Sao != defSao);
         }
 
@@ -52,7 +52,7 @@ namespace ArenaUnity.Schemas
         public object Ssao = defSsao;
         public bool ShouldSerializeSsao()
         {
-            if (_token != null && _token.SelectToken("ssao") != null) return true;
+            // ssao
             return (Ssao != defSsao);
         }
 
@@ -62,7 +62,7 @@ namespace ArenaUnity.Schemas
         public object Pixel = defPixel;
         public bool ShouldSerializePixel()
         {
-            if (_token != null && _token.SelectToken("pixel") != null) return true;
+            // pixel
             return (Pixel != defPixel);
         }
 
@@ -72,7 +72,7 @@ namespace ArenaUnity.Schemas
         public object Glitch = defGlitch;
         public bool ShouldSerializeGlitch()
         {
-            if (_token != null && _token.SelectToken("glitch") != null) return true;
+            // glitch
             return (Glitch != defGlitch);
         }
 
@@ -82,7 +82,7 @@ namespace ArenaUnity.Schemas
         public object Fxaa = defFxaa;
         public bool ShouldSerializeFxaa()
         {
-            if (_token != null && _token.SelectToken("fxaa") != null) return true;
+            // fxaa
             return (Fxaa != defFxaa);
         }
 
@@ -92,7 +92,7 @@ namespace ArenaUnity.Schemas
         public object Smaa = defSmaa;
         public bool ShouldSerializeSmaa()
         {
-            if (_token != null && _token.SelectToken("smaa") != null) return true;
+            // smaa
             return (Smaa != defSmaa);
         }
 
@@ -101,8 +101,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -110,7 +108,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaPostProcessingJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaPostProcessingJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaPostProcessingJson>(Regex.Unescape(jsonString));

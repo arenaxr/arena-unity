@@ -49,8 +49,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -58,7 +56,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaClickListenerJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaClickListenerJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaClickListenerJson>(Regex.Unescape(jsonString));

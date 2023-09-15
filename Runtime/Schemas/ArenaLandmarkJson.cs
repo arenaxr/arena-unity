@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public float RandomRadiusMin = defRandomRadiusMin;
         public bool ShouldSerializeRandomRadiusMin()
         {
-            if (_token != null && _token.SelectToken("randomRadiusMin") != null) return true;
+            // randomRadiusMin
             return (RandomRadiusMin != defRandomRadiusMin);
         }
 
@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public float RandomRadiusMax = defRandomRadiusMax;
         public bool ShouldSerializeRandomRadiusMax()
         {
-            if (_token != null && _token.SelectToken("randomRadiusMax") != null) return true;
+            // randomRadiusMax
             return (RandomRadiusMax != defRandomRadiusMax);
         }
 
@@ -52,7 +52,7 @@ namespace ArenaUnity.Schemas
         public object OffsetPosition = defOffsetPosition;
         public bool ShouldSerializeOffsetPosition()
         {
-            if (_token != null && _token.SelectToken("offsetPosition") != null) return true;
+            // offsetPosition
             return (OffsetPosition != defOffsetPosition);
         }
 
@@ -72,7 +72,7 @@ namespace ArenaUnity.Schemas
         public ConstrainToNavMeshType ConstrainToNavMesh = defConstrainToNavMesh;
         public bool ShouldSerializeConstrainToNavMesh()
         {
-            if (_token != null && _token.SelectToken("constrainToNavMesh") != null) return true;
+            // constrainToNavMesh
             return (ConstrainToNavMesh != defConstrainToNavMesh);
         }
 
@@ -82,7 +82,7 @@ namespace ArenaUnity.Schemas
         public bool StartingPosition = defStartingPosition;
         public bool ShouldSerializeStartingPosition()
         {
-            if (_token != null && _token.SelectToken("startingPosition") != null) return true;
+            // startingPosition
             return (StartingPosition != defStartingPosition);
         }
 
@@ -92,7 +92,7 @@ namespace ArenaUnity.Schemas
         public bool LookAtLandmark = defLookAtLandmark;
         public bool ShouldSerializeLookAtLandmark()
         {
-            if (_token != null && _token.SelectToken("lookAtLandmark") != null) return true;
+            // lookAtLandmark
             return (LookAtLandmark != defLookAtLandmark);
         }
 
@@ -110,8 +110,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -119,7 +117,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaLandmarkJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaLandmarkJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaLandmarkJson>(Regex.Unescape(jsonString));

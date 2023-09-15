@@ -68,7 +68,7 @@ namespace ArenaUnity.Schemas
         public int RadiusSegments = defRadiusSegments;
         public bool ShouldSerializeRadiusSegments()
         {
-            if (_token != null && _token.SelectToken("radiusSegments") != null) return true;
+            // radiusSegments
             return (RadiusSegments != defRadiusSegments);
         }
 
@@ -77,8 +77,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -86,7 +84,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaRoundedboxJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaRoundedboxJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaRoundedboxJson>(Regex.Unescape(jsonString));

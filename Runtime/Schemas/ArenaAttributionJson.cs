@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string Author = defAuthor;
         public bool ShouldSerializeAuthor()
         {
-            if (_token != null && _token.SelectToken("author") != null) return true;
+            // author
             return (Author != defAuthor);
         }
 
@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public string AuthorURL = defAuthorURL;
         public bool ShouldSerializeAuthorURL()
         {
-            if (_token != null && _token.SelectToken("authorURL") != null) return true;
+            // authorURL
             return (AuthorURL != defAuthorURL);
         }
 
@@ -52,7 +52,7 @@ namespace ArenaUnity.Schemas
         public string License = defLicense;
         public bool ShouldSerializeLicense()
         {
-            if (_token != null && _token.SelectToken("license") != null) return true;
+            // license
             return (License != defLicense);
         }
 
@@ -62,7 +62,7 @@ namespace ArenaUnity.Schemas
         public string LicenseURL = defLicenseURL;
         public bool ShouldSerializeLicenseURL()
         {
-            if (_token != null && _token.SelectToken("licenseURL") != null) return true;
+            // licenseURL
             return (LicenseURL != defLicenseURL);
         }
 
@@ -72,7 +72,7 @@ namespace ArenaUnity.Schemas
         public string Source = defSource;
         public bool ShouldSerializeSource()
         {
-            if (_token != null && _token.SelectToken("source") != null) return true;
+            // source
             return (Source != defSource);
         }
 
@@ -82,7 +82,7 @@ namespace ArenaUnity.Schemas
         public string SourceURL = defSourceURL;
         public bool ShouldSerializeSourceURL()
         {
-            if (_token != null && _token.SelectToken("sourceURL") != null) return true;
+            // sourceURL
             return (SourceURL != defSourceURL);
         }
 
@@ -92,7 +92,7 @@ namespace ArenaUnity.Schemas
         public string Title = defTitle;
         public bool ShouldSerializeTitle()
         {
-            if (_token != null && _token.SelectToken("title") != null) return true;
+            // title
             return (Title != defTitle);
         }
 
@@ -102,7 +102,7 @@ namespace ArenaUnity.Schemas
         public bool ExtractAssetExtras = defExtractAssetExtras;
         public bool ShouldSerializeExtractAssetExtras()
         {
-            if (_token != null && _token.SelectToken("extractAssetExtras") != null) return true;
+            // extractAssetExtras
             return (ExtractAssetExtras != defExtractAssetExtras);
         }
 
@@ -111,8 +111,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -120,7 +118,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaAttributionJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaAttributionJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaAttributionJson>(Regex.Unescape(jsonString));

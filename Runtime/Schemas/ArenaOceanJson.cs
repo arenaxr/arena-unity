@@ -50,7 +50,7 @@ namespace ArenaUnity.Schemas
         public float Density = defDensity;
         public bool ShouldSerializeDensity()
         {
-            if (_token != null && _token.SelectToken("density") != null) return true;
+            // density
             return (Density != defDensity);
         }
 
@@ -60,7 +60,7 @@ namespace ArenaUnity.Schemas
         public float Amplitude = defAmplitude;
         public bool ShouldSerializeAmplitude()
         {
-            if (_token != null && _token.SelectToken("amplitude") != null) return true;
+            // amplitude
             return (Amplitude != defAmplitude);
         }
 
@@ -70,7 +70,7 @@ namespace ArenaUnity.Schemas
         public float AmplitudeVariance = defAmplitudeVariance;
         public bool ShouldSerializeAmplitudeVariance()
         {
-            if (_token != null && _token.SelectToken("amplitudeVariance") != null) return true;
+            // amplitudeVariance
             return (AmplitudeVariance != defAmplitudeVariance);
         }
 
@@ -80,7 +80,7 @@ namespace ArenaUnity.Schemas
         public float Speed = defSpeed;
         public bool ShouldSerializeSpeed()
         {
-            if (_token != null && _token.SelectToken("speed") != null) return true;
+            // speed
             return (Speed != defSpeed);
         }
 
@@ -90,7 +90,7 @@ namespace ArenaUnity.Schemas
         public float SpeedVariance = defSpeedVariance;
         public bool ShouldSerializeSpeedVariance()
         {
-            if (_token != null && _token.SelectToken("speedVariance") != null) return true;
+            // speedVariance
             return (SpeedVariance != defSpeedVariance);
         }
 
@@ -109,7 +109,7 @@ namespace ArenaUnity.Schemas
         public float Opacity = defOpacity;
         public bool ShouldSerializeOpacity()
         {
-            if (_token != null && _token.SelectToken("opacity") != null) return true;
+            // opacity
             return (Opacity != defOpacity);
         }
 
@@ -118,8 +118,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -127,7 +125,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaOceanJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaOceanJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaOceanJson>(Regex.Unescape(jsonString));

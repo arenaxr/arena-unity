@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public float P = defP;
         public bool ShouldSerializeP()
         {
-            if (_token != null && _token.SelectToken("p") != null) return true;
+            // p
             return (P != defP);
         }
 
@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public float Q = defQ;
         public bool ShouldSerializeQ()
         {
-            if (_token != null && _token.SelectToken("q") != null) return true;
+            // q
             return (Q != defQ);
         }
 
@@ -61,7 +61,7 @@ namespace ArenaUnity.Schemas
         public float RadiusTubular = defRadiusTubular;
         public bool ShouldSerializeRadiusTubular()
         {
-            if (_token != null && _token.SelectToken("radiusTubular") != null) return true;
+            // radiusTubular
             return (RadiusTubular != defRadiusTubular);
         }
 
@@ -71,7 +71,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsRadial = defSegmentsRadial;
         public bool ShouldSerializeSegmentsRadial()
         {
-            if (_token != null && _token.SelectToken("segmentsRadial") != null) return true;
+            // segmentsRadial
             return (SegmentsRadial != defSegmentsRadial);
         }
 
@@ -81,7 +81,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsTubular = defSegmentsTubular;
         public bool ShouldSerializeSegmentsTubular()
         {
-            if (_token != null && _token.SelectToken("segmentsTubular") != null) return true;
+            // segmentsTubular
             return (SegmentsTubular != defSegmentsTubular);
         }
 
@@ -90,8 +90,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -99,7 +97,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaTorusKnotJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaTorusKnotJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaTorusKnotJson>(Regex.Unescape(jsonString));

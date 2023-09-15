@@ -50,7 +50,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsDepth = defSegmentsDepth;
         public bool ShouldSerializeSegmentsDepth()
         {
-            if (_token != null && _token.SelectToken("segmentsDepth") != null) return true;
+            // segmentsDepth
             return (SegmentsDepth != defSegmentsDepth);
         }
 
@@ -60,7 +60,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsHeight = defSegmentsHeight;
         public bool ShouldSerializeSegmentsHeight()
         {
-            if (_token != null && _token.SelectToken("segmentsHeight") != null) return true;
+            // segmentsHeight
             return (SegmentsHeight != defSegmentsHeight);
         }
 
@@ -70,7 +70,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsWidth = defSegmentsWidth;
         public bool ShouldSerializeSegmentsWidth()
         {
-            if (_token != null && _token.SelectToken("segmentsWidth") != null) return true;
+            // segmentsWidth
             return (SegmentsWidth != defSegmentsWidth);
         }
 
@@ -88,8 +88,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -97,7 +95,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaBoxJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaBoxJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaBoxJson>(Regex.Unescape(jsonString));

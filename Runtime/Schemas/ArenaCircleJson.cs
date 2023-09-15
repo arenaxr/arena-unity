@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public int Segments = defSegments;
         public bool ShouldSerializeSegments()
         {
-            if (_token != null && _token.SelectToken("segments") != null) return true;
+            // segments
             return (Segments != defSegments);
         }
 
@@ -51,7 +51,7 @@ namespace ArenaUnity.Schemas
         public float ThetaLength = defThetaLength;
         public bool ShouldSerializeThetaLength()
         {
-            if (_token != null && _token.SelectToken("thetaLength") != null) return true;
+            // thetaLength
             return (ThetaLength != defThetaLength);
         }
 
@@ -61,7 +61,7 @@ namespace ArenaUnity.Schemas
         public float ThetaStart = defThetaStart;
         public bool ShouldSerializeThetaStart()
         {
-            if (_token != null && _token.SelectToken("thetaStart") != null) return true;
+            // thetaStart
             return (ThetaStart != defThetaStart);
         }
 
@@ -70,8 +70,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -79,7 +77,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaCircleJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaCircleJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaCircleJson>(Regex.Unescape(jsonString));

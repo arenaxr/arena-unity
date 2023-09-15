@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public float Angle = defAngle;
         public bool ShouldSerializeAngle()
         {
-            if (_token != null && _token.SelectToken("angle") != null) return true;
+            // angle
             return (Angle != defAngle);
         }
 
@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public bool CastShadow = defCastShadow;
         public bool ShouldSerializeCastShadow()
         {
-            if (_token != null && _token.SelectToken("castShadow") != null) return true;
+            // castShadow
             return (CastShadow != defCastShadow);
         }
 
@@ -52,7 +52,7 @@ namespace ArenaUnity.Schemas
         public string Color = defColor;
         public bool ShouldSerializeColor()
         {
-            if (_token != null && _token.SelectToken("color") != null) return true;
+            // color
             return (Color != defColor);
         }
 
@@ -62,7 +62,7 @@ namespace ArenaUnity.Schemas
         public float Decay = defDecay;
         public bool ShouldSerializeDecay()
         {
-            if (_token != null && _token.SelectToken("decay") != null) return true;
+            // decay
             return (Decay != defDecay);
         }
 
@@ -72,7 +72,7 @@ namespace ArenaUnity.Schemas
         public float Distance = defDistance;
         public bool ShouldSerializeDistance()
         {
-            if (_token != null && _token.SelectToken("distance") != null) return true;
+            // distance
             return (Distance != defDistance);
         }
 
@@ -82,7 +82,7 @@ namespace ArenaUnity.Schemas
         public string GroundColor = defGroundColor;
         public bool ShouldSerializeGroundColor()
         {
-            if (_token != null && _token.SelectToken("groundColor") != null) return true;
+            // groundColor
             return (GroundColor != defGroundColor);
         }
 
@@ -92,7 +92,7 @@ namespace ArenaUnity.Schemas
         public float Intensity = defIntensity;
         public bool ShouldSerializeIntensity()
         {
-            if (_token != null && _token.SelectToken("intensity") != null) return true;
+            // intensity
             return (Intensity != defIntensity);
         }
 
@@ -102,7 +102,7 @@ namespace ArenaUnity.Schemas
         public float Penumbra = defPenumbra;
         public bool ShouldSerializePenumbra()
         {
-            if (_token != null && _token.SelectToken("penumbra") != null) return true;
+            // penumbra
             return (Penumbra != defPenumbra);
         }
 
@@ -112,7 +112,7 @@ namespace ArenaUnity.Schemas
         public float ShadowBias = defShadowBias;
         public bool ShouldSerializeShadowBias()
         {
-            if (_token != null && _token.SelectToken("shadowBias") != null) return true;
+            // shadowBias
             return (ShadowBias != defShadowBias);
         }
 
@@ -122,7 +122,7 @@ namespace ArenaUnity.Schemas
         public float ShadowCameraBottom = defShadowCameraBottom;
         public bool ShouldSerializeShadowCameraBottom()
         {
-            if (_token != null && _token.SelectToken("shadowCameraBottom") != null) return true;
+            // shadowCameraBottom
             return (ShadowCameraBottom != defShadowCameraBottom);
         }
 
@@ -132,7 +132,7 @@ namespace ArenaUnity.Schemas
         public float ShadowCameraFar = defShadowCameraFar;
         public bool ShouldSerializeShadowCameraFar()
         {
-            if (_token != null && _token.SelectToken("shadowCameraFar") != null) return true;
+            // shadowCameraFar
             return (ShadowCameraFar != defShadowCameraFar);
         }
 
@@ -142,7 +142,7 @@ namespace ArenaUnity.Schemas
         public float ShadowCameraFov = defShadowCameraFov;
         public bool ShouldSerializeShadowCameraFov()
         {
-            if (_token != null && _token.SelectToken("shadowCameraFov") != null) return true;
+            // shadowCameraFov
             return (ShadowCameraFov != defShadowCameraFov);
         }
 
@@ -152,7 +152,7 @@ namespace ArenaUnity.Schemas
         public float ShadowCameraLeft = defShadowCameraLeft;
         public bool ShouldSerializeShadowCameraLeft()
         {
-            if (_token != null && _token.SelectToken("shadowCameraLeft") != null) return true;
+            // shadowCameraLeft
             return (ShadowCameraLeft != defShadowCameraLeft);
         }
 
@@ -162,7 +162,7 @@ namespace ArenaUnity.Schemas
         public float ShadowCameraNear = defShadowCameraNear;
         public bool ShouldSerializeShadowCameraNear()
         {
-            if (_token != null && _token.SelectToken("shadowCameraNear") != null) return true;
+            // shadowCameraNear
             return (ShadowCameraNear != defShadowCameraNear);
         }
 
@@ -172,7 +172,7 @@ namespace ArenaUnity.Schemas
         public float ShadowCameraRight = defShadowCameraRight;
         public bool ShouldSerializeShadowCameraRight()
         {
-            if (_token != null && _token.SelectToken("shadowCameraRight") != null) return true;
+            // shadowCameraRight
             return (ShadowCameraRight != defShadowCameraRight);
         }
 
@@ -182,7 +182,7 @@ namespace ArenaUnity.Schemas
         public float ShadowCameraTop = defShadowCameraTop;
         public bool ShouldSerializeShadowCameraTop()
         {
-            if (_token != null && _token.SelectToken("shadowCameraTop") != null) return true;
+            // shadowCameraTop
             return (ShadowCameraTop != defShadowCameraTop);
         }
 
@@ -192,7 +192,7 @@ namespace ArenaUnity.Schemas
         public bool ShadowCameraVisible = defShadowCameraVisible;
         public bool ShouldSerializeShadowCameraVisible()
         {
-            if (_token != null && _token.SelectToken("shadowCameraVisible") != null) return true;
+            // shadowCameraVisible
             return (ShadowCameraVisible != defShadowCameraVisible);
         }
 
@@ -202,7 +202,7 @@ namespace ArenaUnity.Schemas
         public float ShadowMapHeight = defShadowMapHeight;
         public bool ShouldSerializeShadowMapHeight()
         {
-            if (_token != null && _token.SelectToken("shadowMapHeight") != null) return true;
+            // shadowMapHeight
             return (ShadowMapHeight != defShadowMapHeight);
         }
 
@@ -212,7 +212,7 @@ namespace ArenaUnity.Schemas
         public float ShadowMapWidth = defShadowMapWidth;
         public bool ShouldSerializeShadowMapWidth()
         {
-            if (_token != null && _token.SelectToken("shadowMapWidth") != null) return true;
+            // shadowMapWidth
             return (ShadowMapWidth != defShadowMapWidth);
         }
 
@@ -222,7 +222,7 @@ namespace ArenaUnity.Schemas
         public float ShadowRadius = defShadowRadius;
         public bool ShouldSerializeShadowRadius()
         {
-            if (_token != null && _token.SelectToken("shadowRadius") != null) return true;
+            // shadowRadius
             return (ShadowRadius != defShadowRadius);
         }
 
@@ -232,7 +232,7 @@ namespace ArenaUnity.Schemas
         public string Target = defTarget;
         public bool ShouldSerializeTarget()
         {
-            if (_token != null && _token.SelectToken("target") != null) return true;
+            // target
             return (Target != defTarget);
         }
 
@@ -256,7 +256,7 @@ namespace ArenaUnity.Schemas
         public TypeType Type = defType;
         public bool ShouldSerializeType()
         {
-            if (_token != null && _token.SelectToken("type") != null) return true;
+            // type
             return (Type != defType);
         }
 
@@ -265,8 +265,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -274,7 +272,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaLightJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaLightJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaLightJson>(Regex.Unescape(jsonString));

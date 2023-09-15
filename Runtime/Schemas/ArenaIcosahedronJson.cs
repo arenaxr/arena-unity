@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public int Detail = defDetail;
         public bool ShouldSerializeDetail()
         {
-            if (_token != null && _token.SelectToken("detail") != null) return true;
+            // detail
             return (Detail != defDetail);
         }
 
@@ -50,8 +50,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -59,7 +57,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaIcosahedronJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaIcosahedronJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaIcosahedronJson>(Regex.Unescape(jsonString));

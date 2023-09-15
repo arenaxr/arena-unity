@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public float Arc = defArc;
         public bool ShouldSerializeArc()
         {
-            if (_token != null && _token.SelectToken("arc") != null) return true;
+            // arc
             return (Arc != defArc);
         }
 
@@ -51,7 +51,7 @@ namespace ArenaUnity.Schemas
         public float RadiusTubular = defRadiusTubular;
         public bool ShouldSerializeRadiusTubular()
         {
-            if (_token != null && _token.SelectToken("radiusTubular") != null) return true;
+            // radiusTubular
             return (RadiusTubular != defRadiusTubular);
         }
 
@@ -61,7 +61,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsRadial = defSegmentsRadial;
         public bool ShouldSerializeSegmentsRadial()
         {
-            if (_token != null && _token.SelectToken("segmentsRadial") != null) return true;
+            // segmentsRadial
             return (SegmentsRadial != defSegmentsRadial);
         }
 
@@ -71,7 +71,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsTubular = defSegmentsTubular;
         public bool ShouldSerializeSegmentsTubular()
         {
-            if (_token != null && _token.SelectToken("segmentsTubular") != null) return true;
+            // segmentsTubular
             return (SegmentsTubular != defSegmentsTubular);
         }
 
@@ -80,8 +80,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -89,7 +87,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaTorusJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaTorusJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaTorusJson>(Regex.Unescape(jsonString));

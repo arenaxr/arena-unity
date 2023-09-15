@@ -50,7 +50,7 @@ namespace ArenaUnity.Schemas
         public object ClickPos = defClickPos;
         public bool ShouldSerializeClickPos()
         {
-            if (_token != null && _token.SelectToken("clickPos") != null) return true;
+            // clickPos
             return (ClickPos != defClickPos);
         }
 
@@ -59,8 +59,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -68,7 +66,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaEventJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaEventJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaEventJson>(Regex.Unescape(jsonString));

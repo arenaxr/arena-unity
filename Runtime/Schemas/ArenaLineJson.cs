@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string Color = defColor;
         public bool ShouldSerializeColor()
         {
-            if (_token != null && _token.SelectToken("color") != null) return true;
+            // color
             return (Color != defColor);
         }
 
@@ -51,7 +51,7 @@ namespace ArenaUnity.Schemas
         public float Opacity = defOpacity;
         public bool ShouldSerializeOpacity()
         {
-            if (_token != null && _token.SelectToken("opacity") != null) return true;
+            // opacity
             return (Opacity != defOpacity);
         }
 
@@ -70,7 +70,7 @@ namespace ArenaUnity.Schemas
         public bool Visible = defVisible;
         public bool ShouldSerializeVisible()
         {
-            if (_token != null && _token.SelectToken("visible") != null) return true;
+            // visible
             return (Visible != defVisible);
         }
 
@@ -79,8 +79,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -88,7 +86,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaLineJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaLineJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaLineJson>(Regex.Unescape(jsonString));

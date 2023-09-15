@@ -59,7 +59,7 @@ namespace ArenaUnity.Schemas
         public bool AnyoneClicks = defAnyoneClicks;
         public bool ShouldSerializeAnyoneClicks()
         {
-            if (_token != null && _token.SelectToken("anyone_clicks") != null) return true;
+            // anyone_clicks
             return (AnyoneClicks != defAnyoneClicks);
         }
 
@@ -69,7 +69,7 @@ namespace ArenaUnity.Schemas
         public bool VideoLoop = defVideoLoop;
         public bool ShouldSerializeVideoLoop()
         {
-            if (_token != null && _token.SelectToken("video_loop") != null) return true;
+            // video_loop
             return (VideoLoop != defVideoLoop);
         }
 
@@ -79,7 +79,7 @@ namespace ArenaUnity.Schemas
         public bool Autoplay = defAutoplay;
         public bool ShouldSerializeAutoplay()
         {
-            if (_token != null && _token.SelectToken("autoplay") != null) return true;
+            // autoplay
             return (Autoplay != defAutoplay);
         }
 
@@ -89,7 +89,7 @@ namespace ArenaUnity.Schemas
         public float Volume = defVolume;
         public bool ShouldSerializeVolume()
         {
-            if (_token != null && _token.SelectToken("volume") != null) return true;
+            // volume
             return (Volume != defVolume);
         }
 
@@ -99,7 +99,7 @@ namespace ArenaUnity.Schemas
         public bool Cleanup = defCleanup;
         public bool ShouldSerializeCleanup()
         {
-            if (_token != null && _token.SelectToken("cleanup") != null) return true;
+            // cleanup
             return (Cleanup != defCleanup);
         }
 
@@ -108,8 +108,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -117,7 +115,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaVideoControlJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaVideoControlJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaVideoControlJson>(Regex.Unescape(jsonString));

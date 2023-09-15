@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string Force = defForce;
         public bool ShouldSerializeForce()
         {
-            if (_token != null && _token.SelectToken("force") != null) return true;
+            // force
             return (Force != defForce);
         }
 
@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public string On = defOn;
         public bool ShouldSerializeOn()
         {
-            if (_token != null && _token.SelectToken("on") != null) return true;
+            // on
             return (On != defOn);
         }
 
@@ -52,7 +52,7 @@ namespace ArenaUnity.Schemas
         public string Position = defPosition;
         public bool ShouldSerializePosition()
         {
-            if (_token != null && _token.SelectToken("position") != null) return true;
+            // position
             return (Position != defPosition);
         }
 
@@ -61,8 +61,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -70,7 +68,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaImpulseJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaImpulseJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaImpulseJson>(Regex.Unescape(jsonString));

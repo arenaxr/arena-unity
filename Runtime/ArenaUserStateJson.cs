@@ -12,5 +12,4 @@ namespace ArenaUnity
         public string type { get; set; }
         public bool is_staff { get; set; }
     }
-
 }

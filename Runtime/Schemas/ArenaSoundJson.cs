@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public bool Autoplay = defAutoplay;
         public bool ShouldSerializeAutoplay()
         {
-            if (_token != null && _token.SelectToken("autoplay") != null) return true;
+            // autoplay
             return (Autoplay != defAutoplay);
         }
 
@@ -52,7 +52,7 @@ namespace ArenaUnity.Schemas
         public DistanceModelType DistanceModel = defDistanceModel;
         public bool ShouldSerializeDistanceModel()
         {
-            if (_token != null && _token.SelectToken("distanceModel") != null) return true;
+            // distanceModel
             return (DistanceModel != defDistanceModel);
         }
 
@@ -62,7 +62,7 @@ namespace ArenaUnity.Schemas
         public bool Loop = defLoop;
         public bool ShouldSerializeLoop()
         {
-            if (_token != null && _token.SelectToken("loop") != null) return true;
+            // loop
             return (Loop != defLoop);
         }
 
@@ -72,7 +72,7 @@ namespace ArenaUnity.Schemas
         public float MaxDistance = defMaxDistance;
         public bool ShouldSerializeMaxDistance()
         {
-            if (_token != null && _token.SelectToken("maxDistance") != null) return true;
+            // maxDistance
             return (MaxDistance != defMaxDistance);
         }
 
@@ -114,7 +114,7 @@ namespace ArenaUnity.Schemas
         public OnType On = defOn;
         public bool ShouldSerializeOn()
         {
-            if (_token != null && _token.SelectToken("on") != null) return true;
+            // on
             return (On != defOn);
         }
 
@@ -124,7 +124,7 @@ namespace ArenaUnity.Schemas
         public float PoolSize = defPoolSize;
         public bool ShouldSerializePoolSize()
         {
-            if (_token != null && _token.SelectToken("poolSize") != null) return true;
+            // poolSize
             return (PoolSize != defPoolSize);
         }
 
@@ -134,7 +134,7 @@ namespace ArenaUnity.Schemas
         public bool Positional = defPositional;
         public bool ShouldSerializePositional()
         {
-            if (_token != null && _token.SelectToken("positional") != null) return true;
+            // positional
             return (Positional != defPositional);
         }
 
@@ -144,7 +144,7 @@ namespace ArenaUnity.Schemas
         public float RefDistance = defRefDistance;
         public bool ShouldSerializeRefDistance()
         {
-            if (_token != null && _token.SelectToken("refDistance") != null) return true;
+            // refDistance
             return (RefDistance != defRefDistance);
         }
 
@@ -154,7 +154,7 @@ namespace ArenaUnity.Schemas
         public float RolloffFactor = defRolloffFactor;
         public bool ShouldSerializeRolloffFactor()
         {
-            if (_token != null && _token.SelectToken("rolloffFactor") != null) return true;
+            // rolloffFactor
             return (RolloffFactor != defRolloffFactor);
         }
 
@@ -164,7 +164,7 @@ namespace ArenaUnity.Schemas
         public string Src = defSrc;
         public bool ShouldSerializeSrc()
         {
-            if (_token != null && _token.SelectToken("src") != null) return true;
+            // src
             return (Src != defSrc);
         }
 
@@ -174,7 +174,7 @@ namespace ArenaUnity.Schemas
         public float Volume = defVolume;
         public bool ShouldSerializeVolume()
         {
-            if (_token != null && _token.SelectToken("volume") != null) return true;
+            // volume
             return (Volume != defVolume);
         }
 
@@ -183,8 +183,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -192,7 +190,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaSoundJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaSoundJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaSoundJson>(Regex.Unescape(jsonString));

@@ -50,7 +50,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsCap = defSegmentsCap;
         public bool ShouldSerializeSegmentsCap()
         {
-            if (_token != null && _token.SelectToken("segmentsCap") != null) return true;
+            // segmentsCap
             return (SegmentsCap != defSegmentsCap);
         }
 
@@ -60,7 +60,7 @@ namespace ArenaUnity.Schemas
         public int SegmentsRadial = defSegmentsRadial;
         public bool ShouldSerializeSegmentsRadial()
         {
-            if (_token != null && _token.SelectToken("segmentsRadial") != null) return true;
+            // segmentsRadial
             return (SegmentsRadial != defSegmentsRadial);
         }
 
@@ -69,8 +69,6 @@ namespace ArenaUnity.Schemas
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
-        private static JToken _token;
-
         public string SaveToString()
         {
             return Regex.Unescape(JsonConvert.SerializeObject(this));
@@ -78,7 +76,6 @@ namespace ArenaUnity.Schemas
 
         public static ArenaCapsuleJson CreateFromJSON(string jsonString, JToken token)
         {
-            _token = token; // save updated wire json
             ArenaCapsuleJson json = null;
             try {
                 json = JsonConvert.DeserializeObject<ArenaCapsuleJson>(Regex.Unescape(jsonString));
