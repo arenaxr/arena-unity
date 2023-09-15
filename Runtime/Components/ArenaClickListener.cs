@@ -29,95 +29,97 @@ namespace ArenaUnity.Components
 
         private void Update()
         {
-           // discover which camera to use for collisions
-           _camera = Camera.main;
-           if (_camera != null && _arenaCam == null) {
-               // if user has chosen to add ArenaCamera, only then publish clientEvent events,
-               // do not auto-add ArenaCamera component
-               _arenaCam = _camera.GetComponent<ArenaCamera>();
-           }
+            // discover which camera to use for collisions
+            _camera = Camera.main;
+            if (_camera != null && _arenaCam == null)
+            {
+                // if user has chosen to add ArenaCamera, only then publish clientEvent events,
+                // do not auto-add ArenaCamera component
+                _arenaCam = _camera.GetComponent<ArenaCamera>();
+            }
 
-           // update colliders
-           if (!meshAvailable)
-           {
-               MeshFilter mf = GetComponent<MeshFilter>();
-               if (mf != null)
-               {   // primitive geometry
-                   MeshCollider mc = gameObject.AddComponent<MeshCollider>();
-                   mc.sharedMesh = mf.mesh;
-                   mc.convex = true; // simplify collision mesh when possible
-                   meshAvailable = true;
-               }
-               else
-               {   // gltf-model
-                   // TODO (mwfarb): test for "this arena object only"
-                   foreach (MeshRenderer mr in GetComponentsInChildren<MeshRenderer>())
-                       AssignColliderMesh(mr);
-                   foreach (SkinnedMeshRenderer smr in GetComponentsInChildren<SkinnedMeshRenderer>())
-                       AssignColliderSkinnedMesh(smr);
-                   meshAvailable = true;
-               }
-           }
+            // update colliders
+            if (!meshAvailable)
+            {
+                MeshFilter mf = GetComponent<MeshFilter>();
+                if (mf != null)
+                {   // primitive geometry
+                    MeshCollider mc = gameObject.AddComponent<MeshCollider>();
+                    mc.sharedMesh = mf.mesh;
+                    mc.convex = true; // simplify collision mesh when possible
+                    meshAvailable = true;
+                }
+                else
+                {   // gltf-model
+                    // TODO (mwfarb): test for "this arena object only"
+                    foreach (MeshRenderer mr in GetComponentsInChildren<MeshRenderer>())
+                        AssignColliderMesh(mr);
+                    foreach (SkinnedMeshRenderer smr in GetComponentsInChildren<SkinnedMeshRenderer>())
+                        AssignColliderSkinnedMesh(smr);
+                    meshAvailable = true;
+                }
+            }
         }
 
         private void AssignColliderMesh(MeshRenderer mr)
         {
-           MeshCollider mcChild = mr.gameObject.AddComponent<MeshCollider>();
-           if (mcChild != null)
-           {
-               MeshFilter mf = mr.GetComponent<MeshFilter>();
-               mcChild.sharedMesh = mf.sharedMesh;
-               ArenaClickListenerModel aclm = mr.gameObject.AddComponent<ArenaClickListenerModel>();
-           }
+            MeshCollider mcChild = mr.gameObject.AddComponent<MeshCollider>();
+            if (mcChild != null)
+            {
+                MeshFilter mf = mr.GetComponent<MeshFilter>();
+                mcChild.sharedMesh = mf.sharedMesh;
+                ArenaClickListenerModel aclm = mr.gameObject.AddComponent<ArenaClickListenerModel>();
+            }
         }
 
         private void AssignColliderSkinnedMesh(SkinnedMeshRenderer smr)
         {
-           MeshCollider mcChild = smr.gameObject.AddComponent<MeshCollider>();
-           if (mcChild != null)
-           {
-               mcChild.sharedMesh = smr.sharedMesh;
-               ArenaClickListenerModel aclm = smr.gameObject.AddComponent<ArenaClickListenerModel>();
-           }
+            MeshCollider mcChild = smr.gameObject.AddComponent<MeshCollider>();
+            if (mcChild != null)
+            {
+                mcChild.sharedMesh = smr.sharedMesh;
+                ArenaClickListenerModel aclm = smr.gameObject.AddComponent<ArenaClickListenerModel>();
+            }
         }
 
         internal void OnMouseDown()
         {
-           PublishMouseEvent("mousedown");
+            PublishMouseEvent("mousedown");
         }
         internal void OnMouseUp()
         {
-           PublishMouseEvent("mouseup");
+            PublishMouseEvent("mouseup");
         }
         internal void OnMouseEnter()
         {
-           PublishMouseEvent("mouseenter");
+            PublishMouseEvent("mouseenter");
         }
         internal void OnMouseExit()
         {
-           PublishMouseEvent("mouseleave");
+            PublishMouseEvent("mouseleave");
         }
 
         internal void PublishMouseEvent(string eventType)
         {
-           // if user has chosen to add ArenaCamera, only then publish clientEvent events
-           if (_camera == null || _arenaCam == null) return;
+            // if user has chosen to add ArenaCamera, only then publish clientEvent events
+            if (_camera == null || _arenaCam == null) return;
 
-           RaycastHit hit;
-           Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-           Physics.Raycast(ray, out hit);
+            RaycastHit hit;
+            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+            Physics.Raycast(ray, out hit);
 
-           Vector3 camPosition = _camera.transform.localPosition;
-           string camName = _arenaCam.camid;
+            Vector3 camPosition = _camera.transform.localPosition;
+            string camName = _arenaCam.camid;
 
-           ArenaEventJson data = new ArenaEventJson{
-               ClickPos = ArenaUnity.ToArenaPosition(camPosition),
-               Position = ArenaUnity.ToArenaPosition(hit.point),
-               Source = camName,
-           };
-           string payload = JsonConvert.SerializeObject(data);
+            ArenaEventJson data = new ArenaEventJson
+            {
+                ClickPos = ArenaUnity.ToArenaPosition(camPosition),
+                Position = ArenaUnity.ToArenaPosition(hit.point),
+                Source = camName,
+            };
+            string payload = JsonConvert.SerializeObject(data);
 
-           ArenaClientScene.Instance.PublishEvent(name, eventType, camName, payload);
+            ArenaClientScene.Instance.PublishEvent(name, eventType, camName, payload);
         }
     }
 }

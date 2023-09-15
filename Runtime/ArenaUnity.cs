@@ -331,7 +331,8 @@ namespace ArenaUnity
             {
                 case "UnityEngine.BoxCollider":
                     BoxCollider bc = gobj.GetComponent<BoxCollider>();
-                    data = new ArenaBoxJson {
+                    data = new ArenaBoxJson
+                    {
                         Width = ArenaFloat(bc.size.x),
                         Height = ArenaFloat(bc.size.y),
                         Depth = ArenaFloat(bc.size.z),
@@ -339,7 +340,8 @@ namespace ArenaUnity
                     break;
                 case "UnityEngine.SphereCollider":
                     SphereCollider sc = gobj.GetComponent<SphereCollider>();
-                    data = new ArenaSphereJson {
+                    data = new ArenaSphereJson
+                    {
                         Radius = ArenaFloat(sc.radius),
                     };
                     break;
@@ -355,7 +357,8 @@ namespace ArenaUnity
                             };
                             break;
                         case "Capsule":
-                            data = new ArenaCapsuleJson{
+                            data = new ArenaCapsuleJson
+                            {
                                 Length = ArenaFloat(cc.height - (cc.radius * 2)),
                                 Radius = ArenaFloat(cc.radius),
                             };
@@ -654,38 +657,38 @@ namespace ArenaUnity
         }
         public static void ToUnityLight(ArenaLightJson data, ref GameObject gobj)
         {
-                if (data.Type == ArenaLightJson.TypeType.Ambient)
+            if (data.Type == ArenaLightJson.TypeType.Ambient)
+            {
+                RenderSettings.ambientMode = AmbientMode.Flat;
+                RenderSettings.ambientIntensity = (float)data.Intensity;
+                if (data.Color != null)
+                    RenderSettings.ambientLight = ToUnityColor((string)data.Color);
+            }
+            else
+            {
+                Light light = gobj.GetComponent<Light>();
+                if (light == null)
+                    light = gobj.AddComponent<Light>();
+                switch (data.Type)
                 {
-                    RenderSettings.ambientMode = AmbientMode.Flat;
-                    RenderSettings.ambientIntensity = (float)data.Intensity;
-                    if (data.Color != null)
-                        RenderSettings.ambientLight = ToUnityColor((string)data.Color);
+                    case ArenaLightJson.TypeType.Directional:
+                        light.type = LightType.Directional;
+                        break;
+                    case ArenaLightJson.TypeType.Point:
+                        light.type = LightType.Point;
+                        light.range = (float)data.Distance;
+                        break;
+                    case ArenaLightJson.TypeType.Spot:
+                        light.type = LightType.Spot;
+                        light.range = (float)data.Distance;
+                        light.spotAngle = (float)data.Angle;
+                        break;
                 }
-                else
-                {
-                    Light light = gobj.GetComponent<Light>();
-                    if (light == null)
-                        light = gobj.AddComponent<Light>();
-                    switch (data.Type)
-                    {
-                        case ArenaLightJson.TypeType.Directional:
-                            light.type = LightType.Directional;
-                            break;
-                        case ArenaLightJson.TypeType.Point:
-                            light.type = LightType.Point;
-                            light.range = (float)data.Distance;
-                            break;
-                        case ArenaLightJson.TypeType.Spot:
-                            light.type = LightType.Spot;
-                            light.range = (float)data.Distance;
-                            light.spotAngle = (float)data.Angle;
-                            break;
-                    }
-                    light.intensity = (float)data.Intensity;
-                    if (data.Color != null)
-                        light.color = ToUnityColor((string)data.Color);
-                    light.shadows = !data.CastShadow ? LightShadows.None : LightShadows.Hard;
-                }
+                light.intensity = (float)data.Intensity;
+                if (data.Color != null)
+                    light.color = ToUnityColor((string)data.Color);
+                light.shadows = !data.CastShadow ? LightShadows.None : LightShadows.Hard;
+            }
         }
         // material
         public static void ToArenaMaterial(GameObject obj, ref ArenaMaterialJson data)

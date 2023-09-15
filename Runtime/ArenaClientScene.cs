@@ -1001,7 +1001,7 @@ namespace ArenaUnity
             msg.type = eventType;
             msg.data = JsonConvert.DeserializeObject(msgJsonData);
             msg.timestamp = GetTimestamp();
-           // PublishSceneMessage($"{sceneTopic}/{source}", JsonConvert.SerializeObject(msg), hasPermissions);
+            // PublishSceneMessage($"{sceneTopic}/{source}", JsonConvert.SerializeObject(msg), hasPermissions);
         }
 
         private void PublishSceneMessage(string topic, string msg, bool hasPermissions)
@@ -1127,7 +1127,7 @@ namespace ArenaUnity
             //}
             //if (msg.action == "clientEvent" && !logMqttEvents) return;
             //if (hasPermissions)
-                Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
+            Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
             //else
             //    Debug.LogWarning($"Permissions FAILED {dir}: {JsonConvert.SerializeObject(msg)}");
         }

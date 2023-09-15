@@ -15,7 +15,7 @@ namespace ArenaUnity.Components
 
         private void Start()
         {
-           _arenaCL = GetComponentInParent<ArenaClickListener>();
+            _arenaCL = GetComponentInParent<ArenaClickListener>();
         }
 
         private void Update()
@@ -24,19 +24,19 @@ namespace ArenaUnity.Components
 
         internal void OnMouseDown()
         {
-           _arenaCL.PublishMouseEvent("mousedown");
+            _arenaCL.PublishMouseEvent("mousedown");
         }
         internal void OnMouseUp()
         {
-           _arenaCL.PublishMouseEvent("mouseup");
+            _arenaCL.PublishMouseEvent("mouseup");
         }
         internal void OnMouseEnter()
         {
-           _arenaCL.PublishMouseEvent("mouseenter");
+            _arenaCL.PublishMouseEvent("mouseenter");
         }
         internal void OnMouseExit()
         {
-           _arenaCL.PublishMouseEvent("mouseleave");
+            _arenaCL.PublishMouseEvent("mouseleave");
         }
     }
 }

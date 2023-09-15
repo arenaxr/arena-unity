@@ -154,7 +154,7 @@ namespace ArenaUnity
         public bool? skipCache;
 
         [JsonProperty(PropertyName = "visible")]
-        [Tooltip("Wether to render the object.")]
+        [Tooltip("Whether to render the object.")]
         public bool? visible;
     }
 

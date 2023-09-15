@@ -165,7 +165,7 @@ namespace ArenaUnity
             transformOnly = created ? transformOnly : false;
             ArenaObjectDataJson dataUnity = new ArenaObjectDataJson();
             //if (data == null || data.object_type == null)
-                dataUnity.object_type = ArenaUnity.ToArenaObjectType(gameObject);
+            dataUnity.object_type = ArenaUnity.ToArenaObjectType(gameObject);
             //else
             //    dataUnity.object_type = (string)data.object_type;
 
