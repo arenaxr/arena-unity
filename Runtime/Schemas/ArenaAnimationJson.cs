@@ -196,7 +196,7 @@ namespace ArenaUnity.Schemas
             return (Loop != defLoop);
         }
 
-        private static string[] defPauseEvents = {};
+        private static string[] defPauseEvents = { };
         [JsonProperty(PropertyName = "pauseEvents")]
         [Tooltip("Comma-separated list of events to listen to trigger pause. Can be resumed with resumeEvents.")]
         public string[] PauseEvents = defPauseEvents;
@@ -216,7 +216,7 @@ namespace ArenaUnity.Schemas
             return (Property != defProperty);
         }
 
-        private static string[] defResumeEvents = {};
+        private static string[] defResumeEvents = { };
         [JsonProperty(PropertyName = "resumeEvents")]
         [Tooltip("Comma-separated list of events to listen to trigger resume after pausing.")]
         public string[] ResumeEvents = defResumeEvents;
@@ -236,7 +236,7 @@ namespace ArenaUnity.Schemas
             return (Round != defRound);
         }
 
-        private static string[] defStartEvents = {};
+        private static string[] defStartEvents = { };
         [JsonProperty(PropertyName = "startEvents")]
         [Tooltip("Comma-separated list of events to listen to trigger a restart and play. Animation will not autoplay if specified. startEvents will restart the animation, use pauseEvents to resume it. If there are other animation components on the entity animating the same property, those animations will be automatically paused to not conflict.")]
         public string[] StartEvents = defStartEvents;

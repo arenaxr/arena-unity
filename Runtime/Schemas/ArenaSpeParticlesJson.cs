@@ -154,7 +154,7 @@ namespace ArenaUnity.Schemas
             return (Color != defColor);
         }
 
-        private static string[] defColorSpread = {};
+        private static string[] defColorSpread = { };
         [JsonProperty(PropertyName = "colorSpread")]
         [Tooltip("spread to apply to colors, spread an array of vec3 (r g b) with 0 for no spread. note the spread will be re-applied through-out the lifetime of the particle")]
         public string[] ColorSpread = defColorSpread;
