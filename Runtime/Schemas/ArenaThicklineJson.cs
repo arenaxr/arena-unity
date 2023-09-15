@@ -78,7 +78,7 @@ namespace ArenaUnity.Schemas
         public string Path = defPath;
         public bool ShouldSerializePath()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         // General json object management

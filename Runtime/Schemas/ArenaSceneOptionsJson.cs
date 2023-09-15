@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public bool ClickableOnlyEvents = defClickableOnlyEvents;
         public bool ShouldSerializeClickableOnlyEvents()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum DistanceModelType
@@ -81,7 +81,7 @@ namespace ArenaUnity.Schemas
         public float MaxAVDist = defMaxAVDist;
         public bool ShouldSerializeMaxAVDist()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defNavMesh = "";
@@ -110,7 +110,7 @@ namespace ArenaUnity.Schemas
         public bool PrivateScene = defPrivateScene;
         public bool ShouldSerializePrivateScene()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defRefDistance = 1f;
@@ -149,7 +149,7 @@ namespace ArenaUnity.Schemas
         public bool VideoFrustumCulling = defVideoFrustumCulling;
         public bool ShouldSerializeVideoFrustumCulling()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defVideoDistanceConstraints = true;
@@ -158,7 +158,7 @@ namespace ArenaUnity.Schemas
         public bool VideoDistanceConstraints = defVideoDistanceConstraints;
         public bool ShouldSerializeVideoDistanceConstraints()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defVideoDefaultResolutionConstraint = 180f;
@@ -167,7 +167,7 @@ namespace ArenaUnity.Schemas
         public float VideoDefaultResolutionConstraint = defVideoDefaultResolutionConstraint;
         public bool ShouldSerializeVideoDefaultResolutionConstraint()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defVolume = 1f;
@@ -186,7 +186,7 @@ namespace ArenaUnity.Schemas
         public bool Physics = defPhysics;
         public bool ShouldSerializePhysics()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static object defArHitTest = JsonConvert.DeserializeObject("");

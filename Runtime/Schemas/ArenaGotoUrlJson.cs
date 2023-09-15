@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public DestType Dest = defDest;
         public bool ShouldSerializeDest()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum OnType
@@ -59,7 +59,7 @@ namespace ArenaUnity.Schemas
         public OnType On = defOn;
         public bool ShouldSerializeOn()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defUrl = "";
@@ -68,7 +68,7 @@ namespace ArenaUnity.Schemas
         public string Url = defUrl;
         public bool ShouldSerializeUrl()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         // General json object management

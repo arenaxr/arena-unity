@@ -40,7 +40,7 @@ namespace ArenaUnity.Schemas
         public OnType On = defOn;
         public bool ShouldSerializeOn()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defLandmark = "";
@@ -49,7 +49,7 @@ namespace ArenaUnity.Schemas
         public string Landmark = defLandmark;
         public bool ShouldSerializeLandmark()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         // General json object management

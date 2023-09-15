@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string Title = defTitle;
         public bool ShouldSerializeTitle()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defDescription = "This is a prompt. Please confirm or cancel.";
@@ -51,7 +51,7 @@ namespace ArenaUnity.Schemas
         public string[] Buttons = defButtons;
         public bool ShouldSerializeButtons()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defWidth = 1.5f;
@@ -60,7 +60,7 @@ namespace ArenaUnity.Schemas
         public float Width = defWidth;
         public bool ShouldSerializeWidth()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum FontType

@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string Url = defUrl;
         public bool ShouldSerializeUrl()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defPointSize = 0.01f;
@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public float PointSize = defPointSize;
         public bool ShouldSerializePointSize()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defPointColor = "#7f7f7f";

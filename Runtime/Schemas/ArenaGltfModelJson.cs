@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string Url = defUrl;
         public bool ShouldSerializeUrl()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         // General json object management

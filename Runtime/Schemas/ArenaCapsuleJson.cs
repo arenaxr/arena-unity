@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public float Length = defLength;
         public bool ShouldSerializeLength()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defRadius = 1f;
@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public float Radius = defRadius;
         public bool ShouldSerializeRadius()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static int defSegmentsCap = 18;

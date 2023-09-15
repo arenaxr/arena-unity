@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string Srcs = defSrcs;
         public bool ShouldSerializeSrcs()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defSrcspath = "";
@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public string Srcspath = defSrcspath;
         public bool ShouldSerializeSrcspath()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         // General json object management

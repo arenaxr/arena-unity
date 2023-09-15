@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public bool Blipin = defBlipin;
         public bool ShouldSerializeBlipin()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defBlipout = true;
@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public bool Blipout = defBlipout;
         public bool ShouldSerializeBlipout()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum GeometryType
@@ -60,7 +60,7 @@ namespace ArenaUnity.Schemas
         public GeometryType Geometry = defGeometry;
         public bool ShouldSerializeGeometry()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum PlanesType
@@ -79,7 +79,7 @@ namespace ArenaUnity.Schemas
         public PlanesType Planes = defPlanes;
         public bool ShouldSerializePlanes()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defDuration = 750f;
@@ -88,7 +88,7 @@ namespace ArenaUnity.Schemas
         public float Duration = defDuration;
         public bool ShouldSerializeDuration()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defApplyDescendants = false;

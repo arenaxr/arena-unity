@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public object EnvPresets = defEnvPresets;
         public bool ShouldSerializeEnvPresets()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static object defRendererSettings = JsonConvert.DeserializeObject("");
@@ -51,7 +51,7 @@ namespace ArenaUnity.Schemas
         public object SceneOptions = defSceneOptions;
         public bool ShouldSerializeSceneOptions()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static object defPostProcessing = JsonConvert.DeserializeObject("");

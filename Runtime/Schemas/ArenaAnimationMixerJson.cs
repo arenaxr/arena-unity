@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public string Clip = defClip;
         public bool ShouldSerializeClip()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defCrossFadeDuration = 0f;

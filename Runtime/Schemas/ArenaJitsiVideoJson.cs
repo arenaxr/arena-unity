@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public string DisplayName = defDisplayName;
         public bool ShouldSerializeDisplayName()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         // General json object management

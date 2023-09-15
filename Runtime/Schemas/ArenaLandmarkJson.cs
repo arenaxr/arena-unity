@@ -102,7 +102,7 @@ namespace ArenaUnity.Schemas
         public string Label = defLabel;
         public bool ShouldSerializeLabel()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         // General json object management

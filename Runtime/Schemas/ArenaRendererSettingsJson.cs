@@ -54,7 +54,7 @@ namespace ArenaUnity.Schemas
         public OutputColorSpaceType OutputColorSpace = defOutputColorSpace;
         public bool ShouldSerializeOutputColorSpace()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defPhysicallyCorrectLights = false;

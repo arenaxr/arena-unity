@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string Title = defTitle;
         public bool ShouldSerializeTitle()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defBody = "";
@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public string Body = defBody;
         public bool ShouldSerializeBody()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum BodyAlignType
@@ -72,7 +72,7 @@ namespace ArenaUnity.Schemas
         public string Img = defImg;
         public bool ShouldSerializeImg()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defImgCaption = "";

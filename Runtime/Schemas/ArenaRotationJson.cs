@@ -32,10 +32,10 @@ namespace ArenaUnity.Schemas
         private static float defW = 1f;
         [JsonProperty(PropertyName = "w")]
         [Tooltip("w")]
-        public float? W = defW; 
+        public float? W = defW;
         public bool ShouldSerializeW()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defX = 0f;
@@ -44,7 +44,7 @@ namespace ArenaUnity.Schemas
         public float X = defX;
         public bool ShouldSerializeX()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defY = 0f;
@@ -53,7 +53,7 @@ namespace ArenaUnity.Schemas
         public float Y = defY;
         public bool ShouldSerializeY()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defZ = 0f;
@@ -62,7 +62,7 @@ namespace ArenaUnity.Schemas
         public float Z = defZ;
         public bool ShouldSerializeZ()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         // General json object management

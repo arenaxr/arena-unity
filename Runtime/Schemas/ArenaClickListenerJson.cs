@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public bool Enabled = defEnabled;
         public bool ShouldSerializeEnabled()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defBubble = true;
@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public bool Bubble = defBubble;
         public bool ShouldSerializeBubble()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         // General json object management

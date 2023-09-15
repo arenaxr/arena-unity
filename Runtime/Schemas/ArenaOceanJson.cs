@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public float Width = defWidth;
         public bool ShouldSerializeWidth()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defDepth = 10f;
@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public float Depth = defDepth;
         public bool ShouldSerializeDepth()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defDensity = 10f;
@@ -100,7 +100,7 @@ namespace ArenaUnity.Schemas
         public string Color = defColor;
         public bool ShouldSerializeColor()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defOpacity = 0.8f;

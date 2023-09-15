@@ -32,7 +32,7 @@ namespace ArenaUnity.Schemas
         public string FrameObject = defFrameObject;
         public bool ShouldSerializeFrameObject()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defVideoObject = "";
@@ -41,7 +41,7 @@ namespace ArenaUnity.Schemas
         public string VideoObject = defVideoObject;
         public bool ShouldSerializeVideoObject()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defVideoPath = "";
@@ -50,7 +50,7 @@ namespace ArenaUnity.Schemas
         public string VideoPath = defVideoPath;
         public bool ShouldSerializeVideoPath()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defAnyoneClicks = true;

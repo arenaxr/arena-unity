@@ -42,7 +42,7 @@ namespace ArenaUnity.Schemas
         public bool Dynamic = defDynamic;
         public bool ShouldSerializeDynamic()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         // General json object management

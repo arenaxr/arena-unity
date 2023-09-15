@@ -82,7 +82,7 @@ namespace ArenaUnity.Schemas
         public string Markerid = defMarkerid;
         public bool ShouldSerializeMarkerid()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum MarkertypeType
@@ -101,7 +101,7 @@ namespace ArenaUnity.Schemas
         public MarkertypeType Markertype = defMarkertype;
         public bool ShouldSerializeMarkertype()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defSize = 150f;
@@ -110,7 +110,7 @@ namespace ArenaUnity.Schemas
         public float Size = defSize;
         public bool ShouldSerializeSize()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defUrl = "";
