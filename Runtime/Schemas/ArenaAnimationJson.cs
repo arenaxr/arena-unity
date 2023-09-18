@@ -247,10 +247,10 @@ namespace ArenaUnity.Schemas
             return (StartEvents != defStartEvents);
         }
 
-        private static object defTo = JsonConvert.DeserializeObject("");
+        private static string defTo = "";
         [JsonProperty(PropertyName = "to")]
         [Tooltip("Target value at end of animation.")]
-        public object To = defTo;
+        public string To = defTo;
         public bool ShouldSerializeTo()
         {
             // to

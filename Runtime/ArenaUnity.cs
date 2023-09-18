@@ -152,63 +152,63 @@ namespace ArenaUnity
             if (am == null) return;
             switch (am.GetType().ToString())
             {
-                case "ArenaUnity.Components.ArenaMeshCapsule":
+                case "ArenaUnity.ArenaMeshCapsule":
                     var capsule = gobj.GetComponent<ArenaMeshCapsule>();
                     data = capsule.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshBox":
+                case "ArenaUnity.ArenaMeshBox":
                     var box = gobj.GetComponent<ArenaMeshBox>();
                     data = box.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshCone":
+                case "ArenaUnity.ArenaMeshCone":
                     var cone = gobj.GetComponent<ArenaMeshCone>();
                     data = cone.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshCylinder":
+                case "ArenaUnity.ArenaMeshCylinder":
                     var cylinder = gobj.GetComponent<ArenaMeshCylinder>();
                     data = cylinder.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshDodecahedron":
+                case "ArenaUnity.ArenaMeshDodecahedron":
                     var dodecahedron = gobj.GetComponent<ArenaMeshDodecahedron>();
                     data = dodecahedron.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshTetrahedron":
+                case "ArenaUnity.ArenaMeshTetrahedron":
                     var tetrahedron = gobj.GetComponent<ArenaMeshTetrahedron>();
                     data = tetrahedron.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshIcosahedron":
+                case "ArenaUnity.ArenaMeshIcosahedron":
                     var icosahedron = gobj.GetComponent<ArenaMeshIcosahedron>();
                     data = icosahedron.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshOctahedron":
+                case "ArenaUnity.ArenaMeshOctahedron":
                     var octahedron = gobj.GetComponent<ArenaMeshOctahedron>();
                     data = octahedron.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshPlane":
+                case "ArenaUnity.ArenaMeshPlane":
                     var plane = gobj.GetComponent<ArenaMeshPlane>();
                     data = plane.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshSphere":
+                case "ArenaUnity.ArenaMeshSphere":
                     var sphere = gobj.GetComponent<ArenaMeshSphere>();
                     data = sphere.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshCircle":
+                case "ArenaUnity.ArenaMeshCircle":
                     var circle = gobj.GetComponent<ArenaMeshCircle>();
                     data = circle.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshRing":
+                case "ArenaUnity.ArenaMeshRing":
                     var ring = gobj.GetComponent<ArenaMeshRing>();
                     data = ring.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshTorus":
+                case "ArenaUnity.ArenaMeshTorus":
                     var torus = gobj.GetComponent<ArenaMeshTorus>();
                     data = torus.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshTorusKnot":
+                case "ArenaUnity.ArenaMeshTorusKnot":
                     var torusKnot = gobj.GetComponent<ArenaMeshTorusKnot>();
                     data = torusKnot.json;
                     break;
-                case "ArenaUnity.Components.ArenaMeshTriangle":
+                case "ArenaUnity.ArenaMeshTriangle":
                     var triangle = gobj.GetComponent<ArenaMeshTriangle>();
                     data = triangle.json;
                     break;

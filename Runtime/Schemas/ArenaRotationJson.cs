@@ -27,13 +27,10 @@ namespace ArenaUnity.Schemas
 
         // rotation member-fields
 
-        /// <summary>
-        /// W in old wire format allowed unit mixing, so we might need to allow nullable to check
-        /// </summary>
         private static float defW = 1f;
         [JsonProperty(PropertyName = "w")]
         [Tooltip("w")]
-        public float? W = defW;
+        public float W = defW;
         public bool ShouldSerializeW()
         {
             return true; // required in json schema

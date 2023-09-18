@@ -9,15 +9,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using Siccity.GLTFUtility;
 using TMPro;
 using UnityEditor;
@@ -98,7 +95,7 @@ namespace ArenaUnity
         const string prefixHandR = "handRight_";
         internal List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
 
-        static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl", "headModelPath" };
+        static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl", "headModelPath", "texture" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
         static readonly string[] requiredShadersStandardRP = {
@@ -537,14 +534,9 @@ namespace ArenaUnity
 
         private void CreateUpdateObject(ArenaObjectJson msg, object indata, string displayName = null, object menuCommand = null)
         {
-            // TODO (mwfarb): ignoring program/scene-options for now, revisit after object type is settled
-            if (msg.type != "object") return;
-
             ArenaObject aobj = null;
-            JObject jData = JObject.Parse(JsonConvert.SerializeObject(indata));
-            ArenaObjectDataJson data = new ArenaObjectDataJson();
             Debug.Log(JsonConvert.SerializeObject(indata));
-            data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
+
             if (arenaObjs.TryGetValue(msg.object_id, out GameObject gobj))
             {   // update local
                 if (gobj != null)
@@ -572,7 +564,6 @@ namespace ArenaUnity
                 if (msg.persist.HasValue)
                     aobj.persist = (bool)msg.persist;
                 aobj.messageType = msg.type;
-                aobj.parentId = (string)data.parent;
                 if (msg.ttl > 0)
                 {
                     aobj.SetTtlDeleteTimer((float)msg.ttl);
@@ -588,8 +579,32 @@ namespace ArenaUnity
 #endif
             }
 
+            JObject jData = JObject.Parse(JsonConvert.SerializeObject(indata));
+            ArenaObjectDataJson data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
+            //new JsonSerializerSettings
+            //{
+            //    Error = (sender, args) => {
+            //        Debug.LogWarning($"{args.ErrorContext.Error.Message}: {args.ErrorContext.OriginalObject}");
+            //        args.ErrorContext.Handled = true;
+            //    },
+            //});
+
+            //switch (msg.type)
+            //{
+            //    case "object":
+            //        data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
+            //        break;
+            //    case "program":
+            //        data = JsonConvert.DeserializeObject<ArenaArenaProgramJson>(indata.ToString());
+            //        break;
+            //    case "scene-options":
+            //        data = JsonConvert.DeserializeObject<ArenaArenaSceneOptionsJson>(indata.ToString());
+            //        break;
+            //}
+
             // modify Unity attributes
             bool worldPositionStays = false; // default: most children need relative position
+            aobj.parentId = (string)data.parent;
             string parent = (string)data.parent;
             string object_type = (string)data.object_type;
             switch (object_type)
@@ -743,7 +758,7 @@ namespace ArenaUnity
             if (aobj != null)
             {
                 aobj.data = data;
-                var updatedData = new JObject();
+                var updatedData = jData;
                 if (aobj.jsonData != null)
                     updatedData.Merge(JObject.Parse(aobj.jsonData));
                 updatedData.Merge(data);
