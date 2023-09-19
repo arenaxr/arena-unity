@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaCubeJson
     {
-        public const string componentName = "cube";
+        [JsonIgnore]
+        public readonly string componentName = "cube";
 
         // cube member-fields
 

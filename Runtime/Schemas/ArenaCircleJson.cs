@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaCircleJson
     {
-        public const string componentName = "circle";
+        [JsonIgnore]
+        public readonly string componentName = "circle";
 
         // circle member-fields
 

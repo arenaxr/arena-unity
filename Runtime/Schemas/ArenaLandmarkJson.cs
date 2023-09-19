@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaLandmarkJson
     {
-        public const string componentName = "landmark";
+        [JsonIgnore]
+        public readonly string componentName = "landmark";
 
         // landmark member-fields
 

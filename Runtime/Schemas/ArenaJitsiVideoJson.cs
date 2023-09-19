@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaJitsiVideoJson
     {
-        public const string componentName = "jitsi-video";
+        [JsonIgnore]
+        public readonly string componentName = "jitsi-video";
 
         // jitsi-video member-fields
 

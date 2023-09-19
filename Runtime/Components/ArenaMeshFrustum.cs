@@ -1,6 +1,7 @@
 ﻿// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
 
 using MeshBuilder;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -26,6 +27,21 @@ namespace ArenaUnity
             );
             // TODO (mwfarb): introduce frustum to arena
             Debug.LogWarning("Frustum rendering not yet supported in ARENA A-Frame!!!!");
+        }
+
+        public override void UpdateObject()
+        {
+            //var newJson = JsonConvert.SerializeObject(json);
+            //if (updatedJson != newJson)
+            //{
+            //    var aobj = GetComponent<ArenaObject>();
+            //    if (aobj != null)
+            //    {
+            //        aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
+            //        apply = true;
+            //    }
+            //}
+            //updatedJson = newJson;
         }
     }
 }

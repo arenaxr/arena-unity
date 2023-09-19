@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaMaterialExtrasJson
     {
-        public const string componentName = "material-extras";
+        [JsonIgnore]
+        public readonly string componentName = "material-extras";
 
         // material-extras member-fields
 

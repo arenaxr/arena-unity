@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaGltfModelJson
     {
-        public const string componentName = "gltf-model";
+        [JsonIgnore]
+        public readonly string componentName = "gltf-model";
 
         // gltf-model member-fields
 

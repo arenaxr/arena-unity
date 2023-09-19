@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaPositionJson
     {
-        public const string componentName = "position";
+        [JsonIgnore]
+        public readonly string componentName = "position";
 
         // position member-fields
 

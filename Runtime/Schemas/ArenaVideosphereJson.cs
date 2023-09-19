@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaVideosphereJson
     {
-        public const string componentName = "videosphere";
+        [JsonIgnore]
+        public readonly string componentName = "videosphere";
 
         // videosphere member-fields
 

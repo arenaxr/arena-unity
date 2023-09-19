@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaShadowJson
     {
-        public const string componentName = "shadow";
+        [JsonIgnore]
+        public readonly string componentName = "shadow";
 
         // shadow member-fields
 

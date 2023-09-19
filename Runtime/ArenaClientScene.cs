@@ -744,15 +744,23 @@ namespace ArenaUnity
             }
 
             // data.animation-mixer
-            if (jData.SelectToken("animation-mixer") != null)
+            if (data.animationMixer != null)
             {
-                ArenaUnity.ToUnityAnimationMixer(jData, ref gobj);
+                ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
+                if (am == null)
+                    am = gobj.AddComponent<ArenaAnimationMixer>();
+                am.json = data.animationMixer;
+                am.apply = true;
             }
 
             // data.click-listener
-            if (jData.SelectToken("click-listener") != null)
+            if (data.clickListener != null)
             {
-                ArenaUnity.ToUnityClickListener(jData, ref gobj);
+                ArenaClickListener am = gobj.GetComponent<ArenaClickListener>();
+                if (am == null)
+                    am = gobj.AddComponent<ArenaClickListener>();
+                am.json = data.clickListener;
+                am.apply = true;
             }
 
             if (aobj != null)
@@ -760,7 +768,7 @@ namespace ArenaUnity
                 aobj.data = data;
                 var updatedData = jData;
                 if (aobj.jsonData != null)
-                    updatedData.Merge(JObject.Parse(aobj.jsonData));
+                    updatedData.Merge(Newtonsoft.Json.Linq.JObject.Parse(aobj.jsonData));
                 updatedData.Merge(data);
                 aobj.jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
             }
@@ -1144,7 +1152,7 @@ namespace ArenaUnity
             //}
             //if (msg.action == "clientEvent" && !logMqttEvents) return;
             //if (hasPermissions)
-            Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
+            Debug.Log($"{dir}: {msg}");
             //else
             //    Debug.LogWarning($"Permissions FAILED {dir}: {JsonConvert.SerializeObject(msg)}");
         }

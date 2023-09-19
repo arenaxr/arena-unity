@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaRotationJson
     {
-        public const string componentName = "rotation";
+        [JsonIgnore]
+        public readonly string componentName = "rotation";
 
         // rotation member-fields
 

@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaRendererSettingsJson
     {
-        public const string componentName = "renderer-settings";
+        [JsonIgnore]
+        public readonly string componentName = "renderer-settings";
 
         // renderer-settings member-fields
 

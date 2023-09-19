@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaAttributionJson
     {
-        public const string componentName = "attribution";
+        [JsonIgnore]
+        public readonly string componentName = "attribution";
 
         // attribution member-fields
 

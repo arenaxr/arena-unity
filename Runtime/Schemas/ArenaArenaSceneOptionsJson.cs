@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaArenaSceneOptionsJson
     {
-        public const string componentName = "arena-scene-options";
+        [JsonIgnore]
+        public readonly string componentName = "arena-scene-options";
 
         // arena-scene-options member-fields
 

@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaPanelJson
     {
-        public const string componentName = "panel";
+        [JsonIgnore]
+        public readonly string componentName = "panel";
 
         // panel member-fields
 

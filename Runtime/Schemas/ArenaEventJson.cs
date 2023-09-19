@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaEventJson
     {
-        public const string componentName = "event";
+        [JsonIgnore]
+        public readonly string componentName = "event";
 
         // event member-fields
 

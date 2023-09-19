@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaTextJson
     {
-        public const string componentName = "text";
+        [JsonIgnore]
+        public readonly string componentName = "text";
 
         // text member-fields
 

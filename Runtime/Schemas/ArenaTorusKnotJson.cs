@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaTorusKnotJson
     {
-        public const string componentName = "torusKnot";
+        [JsonIgnore]
+        public readonly string componentName = "torusKnot";
 
         // torusKnot member-fields
 

@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaLightJson
     {
-        public const string componentName = "light";
+        [JsonIgnore]
+        public readonly string componentName = "light";
 
         // light member-fields
 

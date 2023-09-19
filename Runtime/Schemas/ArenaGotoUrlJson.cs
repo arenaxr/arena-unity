@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaGotoUrlJson
     {
-        public const string componentName = "goto-url";
+        [JsonIgnore]
+        public readonly string componentName = "goto-url";
 
         // goto-url member-fields
 

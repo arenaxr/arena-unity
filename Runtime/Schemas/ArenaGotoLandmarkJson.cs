@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaGotoLandmarkJson
     {
-        public const string componentName = "goto-landmark";
+        [JsonIgnore]
+        public readonly string componentName = "goto-landmark";
 
         // goto-landmark member-fields
 

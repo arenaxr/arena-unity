@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaVector3Json
     {
-        public const string componentName = "vector3";
+        [JsonIgnore]
+        public readonly string componentName = "vector3";
 
         // vector3 member-fields
 

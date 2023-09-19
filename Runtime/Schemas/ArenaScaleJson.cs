@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaScaleJson
     {
-        public const string componentName = "scale";
+        [JsonIgnore]
+        public readonly string componentName = "scale";
 
         // scale member-fields
 

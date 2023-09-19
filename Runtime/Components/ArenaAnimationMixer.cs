@@ -6,15 +6,13 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ArenaUnity.Schemas;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ArenaUnity.Components
 {
-    [ExecuteInEditMode]
-    [DisallowMultipleComponent]
     [HelpURL("https://docs.arenaxr.org/content/schemas/message/animation-mixer")]
-    [RequireComponent(typeof(ArenaObject))]
-    public class ArenaAnimationMixer : MonoBehaviour
+    public class ArenaAnimationMixer : ArenaComponent
     {
         // ARENA Property Handling Status
         // DONE clip
@@ -31,27 +29,6 @@ namespace ArenaUnity.Components
         [Tooltip("Serializable JSON attributes for Arena animation-mixer")]
         public ArenaAnimationMixerJson json = new ArenaAnimationMixerJson();
         internal List<string> animations = null;
-
-        internal bool apply = false;
-        internal bool scriptLoaded = false;
-        internal string updatedJson = null;
-
-        protected virtual void Start()
-        {
-            apply = true;
-        }
-
-        protected void OnValidate()
-        {
-            if (!scriptLoaded)
-            {
-                scriptLoaded = true;
-            }
-            else
-            {   // do not publish update on script load
-                UpdateObject();
-            }
-        }
 
         protected void Update()
         {
@@ -119,15 +96,15 @@ namespace ArenaUnity.Components
             }
         }
 
-        internal void UpdateObject()
+        public override void UpdateObject()
         {
-            var newJson = json.SaveToString();
+            var newJson = JsonConvert.SerializeObject(json);
             if (updatedJson != newJson)
             {
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null)
                 {
-                    aobj.PublishUpdate($"{{\"{ArenaAnimationMixerJson.componentName}\":{newJson}}}");
+                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
                     apply = true;
                 }
             }

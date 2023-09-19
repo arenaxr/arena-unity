@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaDynamicBodyJson
     {
-        public const string componentName = "dynamic-body";
+        [JsonIgnore]
+        public readonly string componentName = "dynamic-body";
 
         // dynamic-body member-fields
 

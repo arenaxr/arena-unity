@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaBoxCollisionListenerJson
     {
-        public const string componentName = "box-collision-listener";
+        [JsonIgnore]
+        public readonly string componentName = "box-collision-listener";
 
         // box-collision-listener member-fields
 

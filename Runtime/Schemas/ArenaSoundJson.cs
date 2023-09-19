@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaSoundJson
     {
-        public const string componentName = "sound";
+        [JsonIgnore]
+        public readonly string componentName = "sound";
 
         // sound member-fields
 

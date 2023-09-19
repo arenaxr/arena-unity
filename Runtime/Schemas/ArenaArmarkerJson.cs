@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaArmarkerJson
     {
-        public const string componentName = "armarker";
+        [JsonIgnore]
+        public readonly string componentName = "armarker";
 
         // armarker member-fields
 

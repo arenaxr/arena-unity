@@ -25,5 +25,20 @@ namespace ArenaUnity
                 ArenaUnity.ToUnityPosition(JsonConvert.DeserializeObject<ArenaPositionJson>(json.VertexC.ToString()))
             );
         }
+
+        public override void UpdateObject()
+        {
+            var newJson = JsonConvert.SerializeObject(json);
+            if (updatedJson != newJson)
+            {
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null)
+                {
+                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
+                    apply = true;
+                }
+            }
+            updatedJson = newJson;
+        }
     }
 }

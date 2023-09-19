@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaModelUpdateJson
     {
-        public const string componentName = "modelUpdate";
+        [JsonIgnore]
+        public readonly string componentName = "modelUpdate";
 
         // modelUpdate member-fields
 

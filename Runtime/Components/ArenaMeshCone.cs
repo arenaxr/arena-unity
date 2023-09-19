@@ -2,6 +2,7 @@
 
 using ArenaUnity.Schemas;
 using MeshBuilder;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -25,6 +26,21 @@ namespace ArenaUnity
             //cone.openEnded = json.openEnded != null ? Convert.ToBoolean(json.openEnded) : false;
             //cone.thetaStart = (float)(json.thetaStart != null ? Mathf.PI / 180 * (float)json.thetaStart : 0f);
             //cone.thetaLength = (float)(json.thetaLength != null ? Mathf.PI / 180 * (float)json.thetaLength : Mathf.PI * 2f);
+        }
+
+        public override void UpdateObject()
+        {
+            var newJson = JsonConvert.SerializeObject(json);
+            if (updatedJson != newJson)
+            {
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null)
+                {
+                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
+                    apply = true;
+                }
+            }
+            updatedJson = newJson;
         }
     }
 }

@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaPostProcessingJson
     {
-        public const string componentName = "post-processing";
+        [JsonIgnore]
+        public readonly string componentName = "post-processing";
 
         // post-processing member-fields
 

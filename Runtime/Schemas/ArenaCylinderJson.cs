@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaCylinderJson
     {
-        public const string componentName = "cylinder";
+        [JsonIgnore]
+        public readonly string componentName = "cylinder";
 
         // cylinder member-fields
 

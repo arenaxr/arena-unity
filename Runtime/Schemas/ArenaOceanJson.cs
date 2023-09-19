@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaOceanJson
     {
-        public const string componentName = "ocean";
+        [JsonIgnore]
+        public readonly string componentName = "ocean";
 
         // ocean member-fields
 

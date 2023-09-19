@@ -9,11 +9,8 @@ using UnityEngine;
 
 namespace ArenaUnity.Components
 {
-    [ExecuteInEditMode]
-    [DisallowMultipleComponent]
     [HelpURL("https://docs.arenaxr.org/content/schemas/arena-aframe-components.html#click-listener")]
-    [RequireComponent(typeof(ArenaObject))]
-    public class ArenaClickListener : MonoBehaviour
+    public class ArenaClickListener : ArenaComponent
     {
         private Camera _camera;
         private ArenaCamera _arenaCam;
@@ -23,9 +20,7 @@ namespace ArenaUnity.Components
         public delegate void ClientEventMessageDelegate(string event_type, string msg);
         public ClientEventMessageDelegate OnEventCallback = null; // null, until user instantiates.
 
-        private void Start()
-        {
-        }
+        public ArenaClickListenerJson json = new ArenaClickListenerJson();
 
         private void Update()
         {
@@ -120,6 +115,11 @@ namespace ArenaUnity.Components
             string payload = JsonConvert.SerializeObject(data);
 
             ArenaClientScene.Instance.PublishEvent(name, eventType, camName, payload);
+        }
+
+        public override void UpdateObject()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaIcosahedronJson
     {
-        public const string componentName = "icosahedron";
+        [JsonIgnore]
+        public readonly string componentName = "icosahedron";
 
         // icosahedron member-fields
 

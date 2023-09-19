@@ -1,17 +1,17 @@
 ﻿// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
 
 using UnityEngine;
+using ArenaUnity.Components;
 
 namespace ArenaUnity
 {
     [ExecuteInEditMode]
     [RequireComponent(typeof(ArenaObject), typeof(MeshFilter), typeof(MeshRenderer))]
-    public abstract class ArenaMesh : MonoBehaviour
+    public abstract class ArenaMesh : ArenaComponent
     {
         protected MeshFilter filter;
         protected MeshCollider mc;
         internal bool build = false;
-        internal bool scriptLoaded = false;
 
         protected virtual void Start()
         {

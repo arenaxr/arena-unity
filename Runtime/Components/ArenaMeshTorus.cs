@@ -3,6 +3,7 @@
 using ArenaUnity.Schemas;
 using MeshBuilder;
 using UnityEditor;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -21,6 +22,21 @@ namespace ArenaUnity
                 0f,
                 Mathf.PI / 180 * json.Arc
             );
+        }
+
+        public override void UpdateObject()
+        {
+            var newJson = JsonConvert.SerializeObject(json);
+            if (updatedJson != newJson)
+            {
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null)
+                {
+                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
+                    apply = true;
+                }
+            }
+            updatedJson = newJson;
         }
     }
 }

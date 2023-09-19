@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaMultisrcJson
     {
-        public const string componentName = "multisrc";
+        [JsonIgnore]
+        public readonly string componentName = "multisrc";
 
         // multisrc member-fields
 

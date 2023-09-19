@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaRoundedboxJson
     {
-        public const string componentName = "roundedbox";
+        [JsonIgnore]
+        public readonly string componentName = "roundedbox";
 
         // roundedbox member-fields
 

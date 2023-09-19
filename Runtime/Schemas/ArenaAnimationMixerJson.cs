@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaAnimationMixerJson
     {
-        public const string componentName = "animation-mixer";
+        [JsonIgnore]
+        public readonly string componentName = "animation-mixer";
 
         // animation-mixer member-fields
 

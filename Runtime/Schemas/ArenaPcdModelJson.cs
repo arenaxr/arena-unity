@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaPcdModelJson
     {
-        public const string componentName = "pcd-model";
+        [JsonIgnore]
+        public readonly string componentName = "pcd-model";
 
         // pcd-model member-fields
 

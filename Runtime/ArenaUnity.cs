@@ -795,40 +795,40 @@ namespace ArenaUnity
                 }
             }
         }
-        // animation-mixer
-        internal static void ToArenaAnimationMixer(GameObject gobj, ref JObject jData)
-        {
-            ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
-            jData["animation-mixer"] = am.json.SaveToString();
-        }
-        internal static void ToUnityAnimationMixer(JObject jData, ref GameObject gobj)
-        {
-            JToken jToken = jData.SelectToken("animation-mixer");
-            if (jToken != null && jToken.Type != JTokenType.Null)
-            {
-                ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
-                if (am == null)
-                    am = gobj.AddComponent<ArenaAnimationMixer>();
-                am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(jToken), jToken);
-                am.apply = true;
-            }
-        }
-        // click-listener
-        internal static void ToArenaClickListener(GameObject gobj, ref JObject jData)
-        {
-            ArenaClickListener am = gobj.GetComponent<ArenaClickListener>();
-            jData["click-listener"] = true;
-        }
-        internal static void ToUnityClickListener(JObject jData, ref GameObject gobj)
-        {
-            JToken jToken = jData.SelectToken("click-listener");
-            // we accept any string or boolean true
-            if ((jToken != null && jToken.Type != JTokenType.Null) || (jToken.Type == JTokenType.Boolean && jToken.Value<bool>()))
-            {
-                ArenaClickListener cl = gobj.GetComponent<ArenaClickListener>();
-                if (cl == null)
-                    cl = gobj.AddComponent<ArenaClickListener>();
-            }
-        }
+        //// animation-mixer
+        //internal static void ToArenaAnimationMixer(GameObject gobj, ref JObject jData)
+        //{
+        //    ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
+        //    jData["animation-mixer"] = am.json.SaveToString();
+        //}
+        //internal static void ToUnityAnimationMixer(JObject jData, ref GameObject gobj)
+        //{
+        //    JToken jToken = jData.SelectToken("animation-mixer");
+        //    if (jToken != null && jToken.Type != JTokenType.Null)
+        //    {
+        //        ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
+        //        if (am == null)
+        //            am = gobj.AddComponent<ArenaAnimationMixer>();
+        //        am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(jToken), jToken);
+        //        am.apply = true;
+        //    }
+        //}
+        //// click-listener
+        //internal static void ToArenaClickListener(GameObject gobj, ref JObject jData)
+        //{
+        //    ArenaClickListener am = gobj.GetComponent<ArenaClickListener>();
+        //    jData["click-listener"] = true;
+        //}
+        //internal static void ToUnityClickListener(JObject jData, ref GameObject gobj)
+        //{
+        //    JToken jToken = jData.SelectToken("click-listener");
+        //    // we accept any string or boolean true
+        //    if ((jToken != null && jToken.Type != JTokenType.Null) || (jToken.Type == JTokenType.Boolean && jToken.Value<bool>()))
+        //    {
+        //        ArenaClickListener cl = gobj.GetComponent<ArenaClickListener>();
+        //        if (cl == null)
+        //            cl = gobj.AddComponent<ArenaClickListener>();
+        //    }
+        //}
     }
 }

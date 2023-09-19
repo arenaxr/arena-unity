@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaBlipJson
     {
-        public const string componentName = "blip";
+        [JsonIgnore]
+        public readonly string componentName = "blip";
 
         // blip member-fields
 

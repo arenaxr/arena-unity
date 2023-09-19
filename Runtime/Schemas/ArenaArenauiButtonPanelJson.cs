@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaArenauiButtonPanelJson
     {
-        public const string componentName = "arenaui-button-panel";
+        [JsonIgnore]
+        public readonly string componentName = "arenaui-button-panel";
 
         // arenaui-button-panel member-fields
 

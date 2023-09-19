@@ -4,6 +4,7 @@
  */
 
 using ArenaUnity.Schemas;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -16,6 +17,21 @@ namespace ArenaUnity
         {
             // TODO (mwfarb): filter.sharedMesh = TorusKnotBuilder.Build(json.radius, json.thickness, json.radialSegments, json.thetaSegments, json.p, json.q);
             Debug.LogWarning("TorusKnot rendering not yet supported in ARENA Unity!!!!");
+        }
+
+        public override void UpdateObject()
+        {
+            var newJson = JsonConvert.SerializeObject(json);
+            if (updatedJson != newJson)
+            {
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null)
+                {
+                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
+                    apply = true;
+                }
+            }
+            updatedJson = newJson;
         }
     }
 }

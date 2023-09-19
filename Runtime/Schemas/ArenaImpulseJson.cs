@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaImpulseJson
     {
-        public const string componentName = "impulse";
+        [JsonIgnore]
+        public readonly string componentName = "impulse";
 
         // impulse member-fields
 

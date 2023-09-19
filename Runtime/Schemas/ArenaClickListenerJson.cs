@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaClickListenerJson
     {
-        public const string componentName = "click-listener";
+        [JsonIgnore]
+        public readonly string componentName = "click-listener";
 
         // click-listener member-fields
 

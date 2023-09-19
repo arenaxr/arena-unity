@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaRingJson
     {
-        public const string componentName = "ring";
+        [JsonIgnore]
+        public readonly string componentName = "ring";
 
         // ring member-fields
 

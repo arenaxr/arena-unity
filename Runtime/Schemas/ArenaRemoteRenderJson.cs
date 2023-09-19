@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaRemoteRenderJson
     {
-        public const string componentName = "remote-render";
+        [JsonIgnore]
+        public readonly string componentName = "remote-render";
 
         // remote-render member-fields
 

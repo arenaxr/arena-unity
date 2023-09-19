@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaTetrahedronJson
     {
-        public const string componentName = "tetrahedron";
+        [JsonIgnore]
+        public readonly string componentName = "tetrahedron";
 
         // tetrahedron member-fields
 

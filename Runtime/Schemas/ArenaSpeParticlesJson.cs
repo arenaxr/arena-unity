@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaSpeParticlesJson
     {
-        public const string componentName = "spe-particles";
+        [JsonIgnore]
+        public readonly string componentName = "spe-particles";
 
         // spe-particles member-fields
 

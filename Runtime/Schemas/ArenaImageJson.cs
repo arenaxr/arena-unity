@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaImageJson
     {
-        public const string componentName = "image";
+        [JsonIgnore]
+        public readonly string componentName = "image";
 
         // image member-fields
 

@@ -189,23 +189,27 @@ namespace ArenaUnity
 
             var updatedData = new JObject();
 
-            if (meshChanged)
-            {
-                object dataObj = new object();
-                ArenaUnity.ToArenaDimensions(gameObject, ref dataObj);
-                updatedData.Merge(dataObj);
-                //if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
-                //{
-                //    dataUnity.geometry = new ExpandoObject();
-                //    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity.geometry);
-                //}
-                //else
-                //{
-                dataObj = new object();
-                ArenaUnity.ToArenaMesh(gameObject, ref dataObj);
-                updatedData.Merge(dataObj);
-                //}
-            }
+            // if (meshChanged)
+            // {
+            //     object dataObj = new JObject();
+            //     ArenaUnity.ToArenaDimensions(gameObject, ref dataObj);
+            //     Debug.Log(JsonConvert.SerializeObject(dataObj));
+            //     updatedData.Merge(dataObj);
+            //     Debug.Log(JsonConvert.SerializeObject(updatedData));
+            //     //if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
+            //     //{
+            //     //    dataUnity.geometry = new ExpandoObject();
+            //     //    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity.geometry);
+            //     //}
+            //     //else
+            //     //{
+            //     dataObj = new JObject();
+            //     ArenaUnity.ToArenaMesh(gameObject, ref dataObj);
+            //     Debug.Log(JsonConvert.SerializeObject(dataObj));
+            //     updatedData.Merge(dataObj);
+            //     Debug.Log(JsonConvert.SerializeObject(updatedData));
+            //     //}
+            // }
             // other attributes information
             if (!transformOnly)
             {
@@ -219,6 +223,7 @@ namespace ArenaUnity
                 {
                     ArenaMaterialJson dataObj = new ArenaMaterialJson();
                     ArenaUnity.ToArenaMaterial(gameObject, ref dataObj);
+                    Debug.Log(JsonConvert.SerializeObject(dataObj));
                     updatedData.Merge(dataObj);
                 }
                 if (GetComponent<TextMeshPro>())
@@ -234,16 +239,16 @@ namespace ArenaUnity
                     updatedData.Merge(dataObj);
                 }
             }
-
+            Debug.Log(JsonConvert.SerializeObject(updatedData));
             // merge unity data with original message data
             if (data != null)
                 updatedData.Merge(data);
             updatedData.Merge(dataUnity);
             // TODO: temp location until JObject completely replaces dynamic object
-            if (GetComponent<ArenaAnimationMixer>())
-                ArenaUnity.ToArenaAnimationMixer(gameObject, ref updatedData);
-            if (GetComponent<ArenaClickListener>())
-                ArenaUnity.ToArenaClickListener(gameObject, ref updatedData);
+            //if (GetComponent<ArenaAnimationMixer>())
+            //    ArenaUnity.ToArenaAnimationMixer(gameObject, ref updatedData);
+            //if (GetComponent<ArenaClickListener>())
+            //    ArenaUnity.ToArenaClickListener(gameObject, ref updatedData);
 
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
 

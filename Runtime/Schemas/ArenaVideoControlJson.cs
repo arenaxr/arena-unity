@@ -23,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaVideoControlJson
     {
-        public const string componentName = "video-control";
+        [JsonIgnore]
+        public readonly string componentName = "video-control";
 
         // video-control member-fields
 

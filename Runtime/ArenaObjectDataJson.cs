@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -304,6 +305,32 @@ namespace ArenaUnity
         public bool ShouldSerializevisible()
         {
             return (visible != null);
+        }
+
+        [JsonProperty(PropertyName = "animation-mixer")]
+        [Tooltip("A list of available animations can usually be found by inspecting the model file or its documentation. All animations will play by default. To play only a specific set of animations, use wildcards: animation-mixer='clip: run_*'. \n\nMore properties at <a href='https://github.com/n5ro/aframe-extras/tree/master/src/loaders#animation'>https://github.com/n5ro/aframe-extras/tree/master/src/loaders#animation</a>")]
+        public ArenaAnimationMixerJson animationMixer = null;
+        public bool ShouldSerializeanimationMixer()
+        {
+            return (animationMixer != null);
+        }
+
+
+        [JsonProperty(PropertyName = "gltf-model-lod")]
+        [Tooltip("Simple switch between the default gltf-model and a detailed one when a user camera is within specified distance")]
+        public ArenaGltfModelLodJson gltfModelLod = null;
+        public bool ShouldSerializegltfModelLod()
+        {
+            return (gltfModelLod != null);
+        }
+
+
+        [JsonProperty(PropertyName = "modelUpdate")]
+        [Tooltip("The GLTF-specific `modelUpdate` attribute is an object with child component names as keys. The top-level keys are the names of the child components to be updated. The values of each are nested `position` and `rotation` attributes to set as new values, respectively. Either `position` or `rotation` can be omitted if unchanged.")]
+        public ArenaModelUpdateJson modelUpdate = null;
+        public bool ShouldSerializemodelUpdate()
+        {
+            return (modelUpdate != null);
         }
 
         [OnError]
