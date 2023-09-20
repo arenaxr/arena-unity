@@ -23,8 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaEntityJson
     {
-        [JsonIgnore]
-        public readonly string componentName = "entity";
+        public readonly string object_type = "entity";
 
         // entity member-fields
 

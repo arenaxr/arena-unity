@@ -23,8 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaLineJson
     {
-        [JsonIgnore]
-        public readonly string componentName = "line";
+        public readonly string object_type = "line";
 
         // line member-fields
 

@@ -22,7 +22,7 @@ namespace ArenaUnity.Components
 
         public ArenaClickListenerJson json = new ArenaClickListenerJson();
 
-        private void Update()
+        private new void Update()
         {
             // discover which camera to use for collisions
             _camera = Camera.main;
@@ -117,9 +117,24 @@ namespace ArenaUnity.Components
             ArenaClientScene.Instance.PublishEvent(name, eventType, camName, payload);
         }
 
-        public override void UpdateObject()
+        protected override void ApplyRender()
         {
             throw new System.NotImplementedException();
+        }
+
+        public override void UpdateObject()
+        {
+            var newJson = JsonConvert.SerializeObject(json);
+            if (updatedJson != newJson)
+            {
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null)
+                {
+                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
+                    apply = true;
+                }
+            }
+            updatedJson = newJson;
         }
     }
 }

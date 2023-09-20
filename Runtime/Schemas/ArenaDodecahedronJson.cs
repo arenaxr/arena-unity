@@ -23,8 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaDodecahedronJson
     {
-        [JsonIgnore]
-        public readonly string componentName = "dodecahedron";
+        public readonly string object_type = "dodecahedron";
 
         // dodecahedron member-fields
 

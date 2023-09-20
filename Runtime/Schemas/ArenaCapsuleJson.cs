@@ -23,8 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaCapsuleJson
     {
-        [JsonIgnore]
-        public readonly string componentName = "capsule";
+        public readonly string object_type = "capsule";
 
         // capsule member-fields
 

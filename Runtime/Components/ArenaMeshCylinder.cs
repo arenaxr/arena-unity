@@ -1,21 +1,23 @@
-﻿// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
+
+// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
 
 using ArenaUnity.Schemas;
 using MeshBuilder;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace ArenaUnity
 {
-    [ExecuteInEditMode]
-    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class ArenaMeshCylinder : ArenaMesh
     {
         public ArenaCylinderJson json = new ArenaCylinderJson();
 
-        protected override void Build(MeshFilter filter)
+        protected override void ApplyRender()
         {
-            
+
             filter.sharedMesh = CylinderBuilder.Build(
                 json.Radius,
                 json.Height,
@@ -36,7 +38,7 @@ namespace ArenaUnity
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null)
                 {
-                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
+                    aobj.PublishUpdate($"{{{newJson}}}");
                     apply = true;
                 }
             }

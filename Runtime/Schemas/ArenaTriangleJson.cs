@@ -23,8 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaTriangleJson
     {
-        [JsonIgnore]
-        public readonly string componentName = "triangle";
+        public readonly string object_type = "triangle";
 
         // triangle member-fields
 

@@ -18,7 +18,7 @@ When you have to support properties like dashes in json names that aren’t allo
         public ArenaVideoControlJson videoControl = null;
 ```
 
-Another is the `from` and `to` of `animation-mixer`  which needs to deserialize successfully, both
+Another is the `from` and `to` of the `animation` component which needs to deserialize successfully, both
 ```json
 "to": "blue"
 ```
@@ -30,6 +30,6 @@ using the same class without throwing exceptions, such things start needing thir
 
 The json we use is fine, it just doesn’t easily fit in the C# style json Unity’s `JsonUtility` was built for.
 
-Also the `Newtonsoft.JSON` library was pulled into Unity’s `com.unity` namespace a few years back, I think in part because so many were already using it to support these non-C# more flexible Json use cases. https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@3.2/manual/index.html
+Also the `Newtonsoft.Json` library was pulled into Unity’s `com.unity` namespace a few years back, I think in part because so many were already using it to support these non-C# more flexible Json use cases. https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@3.2/manual/index.html
 
 I’d love to know if there is a way we can use `JsonUtility` only for our message schema, it would add a boost at large scale ingress parsing.

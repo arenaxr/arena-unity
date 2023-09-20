@@ -23,8 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaThreejsSceneJson
     {
-        [JsonIgnore]
-        public readonly string componentName = "threejs-scene";
+        public readonly string object_type = "threejs-scene";
 
         // threejs-scene member-fields
 

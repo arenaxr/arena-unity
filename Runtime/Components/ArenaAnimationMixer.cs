@@ -30,16 +30,7 @@ namespace ArenaUnity.Components
         public ArenaAnimationMixerJson json = new ArenaAnimationMixerJson();
         internal List<string> animations = null;
 
-        protected void Update()
-        {
-            if (apply)
-            {
-                ApplyAnimations();
-                apply = false;
-            }
-        }
-
-        internal void ApplyAnimations()
+        protected override void ApplyRender()
         {
             // apply changes to local unity object
             Animation anim = GetComponentInChildren<Animation>(true);

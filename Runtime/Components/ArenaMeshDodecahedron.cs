@@ -5,17 +5,14 @@
 
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace ArenaUnity
 {
-    [ExecuteInEditMode]
-    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class ArenaMeshDodecahedron : ArenaMesh
     {
         public ArenaDodecahedronJson json = new ArenaDodecahedronJson();
 
-        protected override void Build(MeshFilter filter)
+        protected override void ApplyRender()
         {
             filter.sharedMesh = DodecahedronBuilder.Build(
                 json.Radius,
@@ -31,7 +28,7 @@ namespace ArenaUnity
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null)
                 {
-                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
+                    aobj.PublishUpdate($"{{{newJson}}}");
                     apply = true;
                 }
             }

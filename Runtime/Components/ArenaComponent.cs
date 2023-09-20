@@ -1,8 +1,9 @@
-﻿using UnityEngine;
-using System.Collections;
-using ArenaUnity;
-using ArenaUnity.Schemas;
-using System.Text.RegularExpressions;
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
+
+using UnityEngine;
 
 namespace ArenaUnity.Components
 {
@@ -20,7 +21,16 @@ namespace ArenaUnity.Components
             apply = true;
         }
 
-        protected void OnValidate()
+        protected virtual void Update()
+        {
+            if (apply)
+            {
+                ApplyRender();
+                apply = false;
+            }
+        }
+
+        protected virtual void OnValidate()
         {
             if (!scriptLoaded)
             {
@@ -32,6 +42,14 @@ namespace ArenaUnity.Components
             }
         }
 
+        /// <summary>
+        /// Implement the updates from remote Arena Json to local Unity Objects
+        /// </summary>
+        protected abstract void ApplyRender();
+
+        /// <summary>
+        /// Implement the updates from local Unity Objects to remote Arena Json 
+        /// </summary>
         public abstract void UpdateObject();
     }
 }

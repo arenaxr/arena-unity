@@ -48,7 +48,6 @@ namespace ArenaUnity
         internal bool externalDelete = false;
         internal bool isJsonValidated = false;
         internal string gltfUrl = null;
-        internal bool meshChanged = false;
         internal List<string> animations = null; // TODO (mwfarb): ideal location: ArenaGltfModel component
 
         internal List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
@@ -100,14 +99,13 @@ namespace ArenaUnity
             while (true)
             {
                 // send only when changed, each publishInterval
-                if ((transform.hasChanged || meshChanged) && ArenaClientScene.Instance)
+                if ((transform.hasChanged) && ArenaClientScene.Instance)
                 {
                     int ms = objectUpdateMs != ArenaClientScene.Instance.globalUpdateMs ? objectUpdateMs : ArenaClientScene.Instance.globalUpdateMs;
                     publishInterval = (float)ms / 1000f;
                     if (PublishCreateUpdate(true))
                     {
                         transform.hasChanged = false;
-                        meshChanged = false;
                     }
                 }
                 yield return new WaitForSeconds(publishInterval);
@@ -189,27 +187,9 @@ namespace ArenaUnity
 
             var updatedData = new JObject();
 
-            // if (meshChanged)
-            // {
-            //     object dataObj = new JObject();
             //     ArenaUnity.ToArenaDimensions(gameObject, ref dataObj);
-            //     Debug.Log(JsonConvert.SerializeObject(dataObj));
-            //     updatedData.Merge(dataObj);
-            //     Debug.Log(JsonConvert.SerializeObject(updatedData));
-            //     //if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
-            //     //{
-            //     //    dataUnity.geometry = new ExpandoObject();
-            //     //    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity.geometry);
-            //     //}
-            //     //else
-            //     //{
-            //     dataObj = new JObject();
             //     ArenaUnity.ToArenaMesh(gameObject, ref dataObj);
-            //     Debug.Log(JsonConvert.SerializeObject(dataObj));
-            //     updatedData.Merge(dataObj);
-            //     Debug.Log(JsonConvert.SerializeObject(updatedData));
-            //     //}
-            // }
+
             // other attributes information
             if (!transformOnly)
             {
@@ -264,6 +244,7 @@ namespace ArenaUnity
 
         internal void PublishUpdate(string objData, bool all = false, bool overwrite = false)
         {
+            Debug.Log(objData);
             ArenaObjectJson msg = new ArenaObjectJson
             {
                 object_id = name,
@@ -284,7 +265,8 @@ namespace ArenaUnity
             // publish
             msg.data = all ? updatedData : JObject.Parse(objData);
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
+            if (ArenaClientScene.Instance)
+                ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
         }
 
         public void OnValidate()

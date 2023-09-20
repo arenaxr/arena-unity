@@ -1,4 +1,9 @@
-﻿// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
+
+// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
 
 using ArenaUnity.Schemas;
 using MeshBuilder;
@@ -7,9 +12,6 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
-    [ExecuteInEditMode]
-    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-
     public class ArenaMeshPlane : ArenaMesh
     {
         public enum PlaneType
@@ -20,7 +22,7 @@ namespace ArenaUnity
         [SerializeField] internal PlaneType type = PlaneType.Default;
         public ArenaPlaneJson json = new ArenaPlaneJson();
 
-        protected override void Build(MeshFilter filter)
+        protected override void ApplyRender()
         {
             // Since this uses "triangles" = "segments", multiply by 2 so each "segment" gets 2 triangles
             switch (type)
@@ -55,7 +57,7 @@ namespace ArenaUnity
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null)
                 {
-                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
+                    aobj.PublishUpdate($"{{{newJson}}}");
                     apply = true;
                 }
             }

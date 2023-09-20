@@ -23,8 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaCubeJson
     {
-        [JsonIgnore]
-        public readonly string componentName = "cube";
+        public readonly string object_type = "cube";
 
         // cube member-fields
 

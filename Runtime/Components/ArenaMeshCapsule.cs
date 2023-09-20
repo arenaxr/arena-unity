@@ -5,17 +5,14 @@
 
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace ArenaUnity
 {
-    [ExecuteInEditMode]
-    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class ArenaMeshCapsule : ArenaMesh
     {
         public ArenaCapsuleJson json = new ArenaCapsuleJson();
 
-        protected override void Build(MeshFilter filter)
+        protected override void ApplyRender()
         {
             filter.sharedMesh = CapsuleBuilder.CapsuleData(
                 json.Radius,

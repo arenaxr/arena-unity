@@ -13,7 +13,7 @@ namespace ArenaUnity
     {
         public ArenaTorusKnotJson json = new ArenaTorusKnotJson();
 
-        protected override void Build(MeshFilter filter)
+        protected override void ApplyRender()
         {
             // TODO (mwfarb): filter.sharedMesh = TorusKnotBuilder.Build(json.radius, json.thickness, json.radialSegments, json.thetaSegments, json.p, json.q);
             Debug.LogWarning("TorusKnot rendering not yet supported in ARENA Unity!!!!");
@@ -27,7 +27,7 @@ namespace ArenaUnity
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null)
                 {
-                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
+                    aobj.PublishUpdate($"{{{newJson}}}");
                     apply = true;
                 }
             }

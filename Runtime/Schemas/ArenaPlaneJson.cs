@@ -23,8 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaPlaneJson
     {
-        [JsonIgnore]
-        public readonly string componentName = "plane";
+        public readonly string object_type = "plane";
 
         // plane member-fields
 

@@ -23,8 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaSphereJson
     {
-        [JsonIgnore]
-        public readonly string componentName = "sphere";
+        public readonly string object_type = "sphere";
 
         // sphere member-fields
 

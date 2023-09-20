@@ -23,8 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaThicklineJson
     {
-        [JsonIgnore]
-        public readonly string componentName = "thickline";
+        public readonly string object_type = "thickline";
 
         // thickline member-fields
 

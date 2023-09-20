@@ -3,7 +3,6 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
-using ArenaUnity;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -17,7 +16,7 @@ namespace ArenaUnity
     {
         public ArenaTriangleJson json = new ArenaTriangleJson();
 
-        protected override void Build(MeshFilter filter)
+        protected override void ApplyRender()
         {
             filter.sharedMesh = TriangleBuilder.Build(
                 ArenaUnity.ToUnityPosition(JsonConvert.DeserializeObject<ArenaPositionJson>(json.VertexA.ToString())),
@@ -34,7 +33,7 @@ namespace ArenaUnity
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null)
                 {
-                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
+                    aobj.PublishUpdate($"{{{newJson}}}");
                     apply = true;
                 }
             }

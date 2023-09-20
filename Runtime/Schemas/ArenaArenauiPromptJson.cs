@@ -23,8 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaArenauiPromptJson
     {
-        [JsonIgnore]
-        public readonly string componentName = "arenaui-prompt";
+        public readonly string object_type = "arenaui-prompt";
 
         // arenaui-prompt member-fields
 

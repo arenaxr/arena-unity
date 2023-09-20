@@ -23,8 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaBoxJson
     {
-        [JsonIgnore]
-        public readonly string componentName = "box";
+        public readonly string object_type = "box";
 
         // box member-fields
 

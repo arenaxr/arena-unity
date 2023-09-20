@@ -23,8 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaArenauiCardJson
     {
-        [JsonIgnore]
-        public readonly string componentName = "arenaui-card";
+        public readonly string object_type = "arenaui-card";
 
         // arenaui-card member-fields
 

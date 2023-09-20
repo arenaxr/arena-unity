@@ -1,13 +1,15 @@
-﻿// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
+
+// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
 
 using MeshBuilder;
-using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ArenaUnity
 {
-    [ExecuteInEditMode]
-    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class ArenaMeshFrustum : ArenaMesh
     {
         [SerializeField, Range(0.1f, 1f)] internal float nearClip = 0.1f;
@@ -15,7 +17,7 @@ namespace ArenaUnity
         [SerializeField, Range(45f, 90f)] internal float fieldOfView = 60f;
         [SerializeField, Range(0f, 1f)] internal float aspectRatio = 1f;
 
-        protected override void Build(MeshFilter filter)
+        protected override void ApplyRender()
         {
             filter.sharedMesh = FrustumBuilder.Build(
                 Vector3.forward,
@@ -37,7 +39,7 @@ namespace ArenaUnity
             //    var aobj = GetComponent<ArenaObject>();
             //    if (aobj != null)
             //    {
-            //        aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
+            //        aobj.PublishUpdate($"{{{newJson}}}");
             //        apply = true;
             //    }
             //}

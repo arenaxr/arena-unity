@@ -3,7 +3,6 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
-using ArenaUnity.Schemas;
 using UnityEditor;
 using UnityEngine;
 
