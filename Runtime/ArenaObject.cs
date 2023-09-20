@@ -203,7 +203,6 @@ namespace ArenaUnity
                 {
                     ArenaMaterialJson dataObj = new ArenaMaterialJson();
                     ArenaUnity.ToArenaMaterial(gameObject, ref dataObj);
-                    Debug.Log(JsonConvert.SerializeObject(dataObj));
                     updatedData.Merge(dataObj);
                 }
                 if (GetComponent<TextMeshPro>())
@@ -244,20 +243,20 @@ namespace ArenaUnity
 
         internal void PublishUpdate(string objData, bool all = false, bool overwrite = false)
         {
-            Debug.Log(objData);
             ArenaObjectJson msg = new ArenaObjectJson
             {
                 object_id = name,
                 action = "update",
                 type = messageType,
                 persist = persist,
-                overwrite = overwrite,
             };
+            if (overwrite) msg.overwrite = overwrite;
 
             // merge new data with original message data
             var updatedData = new JObject();
             if (jsonData != null)
                 updatedData.Merge(JObject.Parse(jsonData));
+            Debug.Log(objData);
             updatedData.Merge(JObject.Parse(objData));
 
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);

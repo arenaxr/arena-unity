@@ -33,7 +33,7 @@ namespace ArenaUnity
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null)
                 {
-                    aobj.PublishUpdate($"{{{newJson}}}");
+                    aobj.PublishUpdate($"{newJson}");
                     apply = true;
                 }
             }

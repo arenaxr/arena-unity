@@ -8,7 +8,6 @@
 using ArenaUnity.Schemas;
 using MeshBuilder;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace ArenaUnity
 {
@@ -36,7 +35,7 @@ namespace ArenaUnity
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null)
                 {
-                    aobj.PublishUpdate($"{{{newJson}}}");
+                    aobj.PublishUpdate($"{newJson}");
                     apply = true;
                 }
             }
