@@ -13,14 +13,11 @@ namespace ArenaUnity
 {
     public class ArenaWireLight : ArenaComponent
     {
-        // TODO: ARENA Property Handling Status
-
-        // TODO: [Tooltip("Serializable JSON attributes for Arena .........")]
         public ArenaLightJson json = new ArenaLightJson();
 
         protected override void ApplyRender()
         {
-            // TODO (johnchoi): Implement this component if needed, or note our reasons for not rendering or controlling here.
+            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
 
             if (json.Type == ArenaLightJson.TypeType.Ambient)
             {

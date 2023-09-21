@@ -11,14 +11,11 @@ namespace ArenaUnity
 {
     public class ArenaWireThreeJsScene : ArenaComponent
     {
-        // TODO: ARENA Property Handling Status
-
-        // TODO: [Tooltip("Serializable JSON attributes for Arena .........")]
         public ArenaThreejsSceneJson json = new ArenaThreejsSceneJson();
 
         protected override void ApplyRender()
         {
-            // TODO (johnchoi): Implement this component if needed, or note our reasons for not rendering or controlling here.
+            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
         }
 
         public override void UpdateObject()

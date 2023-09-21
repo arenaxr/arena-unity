@@ -13,14 +13,11 @@ namespace ArenaUnity.Components
 {
     public class ArenaModelUpdate : ArenaComponent
     {
-        // TODO: ARENA Property Handling Status
-
-        // TODO: [Tooltip("Serializable JSON attributes for Arena .........")]
         public ArenaModelUpdateJson json = new ArenaModelUpdateJson();
 
         protected override void ApplyRender()
         {
-            // TODO (johnchoi): Implement this component if needed, or note our reasons for not rendering or controlling here.
+            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
         }
 
         public override void UpdateObject()

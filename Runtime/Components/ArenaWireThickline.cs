@@ -13,14 +13,11 @@ namespace ArenaUnity
 {
     public class ArenaWireThickline : ArenaComponent
     {
-        // TODO: ARENA Property Handling Status
-
-        // TODO: [Tooltip("Serializable JSON attributes for Arena .........")]
         public ArenaThicklineJson json = new ArenaThicklineJson();
 
         protected override void ApplyRender()
         {
-            // TODO (johnchoi): Implement this component if needed, or note our reasons for not rendering or controlling here.
+            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
 
             LineRenderer line = gameObject.GetComponent<LineRenderer>();
             if (line == null)

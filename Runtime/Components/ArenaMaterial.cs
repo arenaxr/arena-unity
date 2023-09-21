@@ -13,8 +13,6 @@ namespace ArenaUnity.Components
 {
     public class ArenaMaterial : ArenaComponent
     {
-        // TODO: ARENA Property Handling Status
-
         public enum MatRendMode
         {   // TODO: the standards for "_Mode" seem to be missing?
             Opaque = 0,
@@ -23,7 +21,6 @@ namespace ArenaUnity.Components
             Transparent = 3
         }
 
-        // TODO: [Tooltip("Serializable JSON attributes for Arena .........")]
         public ArenaMaterialJson json = new ArenaMaterialJson();
 
         protected override void ApplyRender()
@@ -31,7 +28,7 @@ namespace ArenaUnity.Components
             var renderer = gameObject.GetComponent<Renderer>();
             if (renderer != null)
             {
-                // TODO (johnchoi): Implement this component if needed, or note our reasons for not rendering or controlling here.
+                // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
 
                 // object material
                 var material = renderer.material;

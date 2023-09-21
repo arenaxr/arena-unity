@@ -13,14 +13,11 @@ namespace ArenaUnity
 {
     public class ArenaWireText : ArenaComponent
     {
-        // TODO: ARENA Property Handling Status
-
-        // TODO: [Tooltip("Serializable JSON attributes for Arena .........")]
         public ArenaTextJson json = new ArenaTextJson();
 
         protected override void ApplyRender()
         {
-            // TODO (johnchoi): Implement this component if needed, or note our reasons for not rendering or controlling here.
+            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
 
             TextMeshPro tm = gameObject.GetComponent<TextMeshPro>();
             if (tm == null)

@@ -32,7 +32,7 @@ namespace ArenaUnity.Components
 
         protected override void ApplyRender()
         {
-            // TODO (johnchoi): Implement this component if needed, or note our reasons for not rendering or controlling here.
+            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
 
             // apply changes to local unity object
             Animation anim = GetComponentInChildren<Animation>(true);
