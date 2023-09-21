@@ -580,7 +580,6 @@ namespace ArenaUnity
             }
 
             JObject jData = JObject.Parse(JsonConvert.SerializeObject(indata));
-            ArenaObjectDataJson data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
             //new JsonSerializerSettings
             //{
             //    Error = (sender, args) => {
@@ -589,18 +588,52 @@ namespace ArenaUnity
             //    },
             //});
 
-            // TODO (mwfarb): switch (msg.type)
-            //{
-            //    case "object":
-            //        data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
-            //        break;
-            //    case "program":
-            //        data = JsonConvert.DeserializeObject<ArenaArenaProgramJson>(indata.ToString());
-            //        break;
-            //    case "scene-options":
-            //        data = JsonConvert.DeserializeObject<ArenaArenaSceneOptionsJson>(indata.ToString());
-            //        break;
-            //}
+            switch (msg.type)
+            {
+                case "object":
+                    UpdateObjectMessage(msg, indata, displayName, aobj, gobj, jData);
+                    break;
+                case "scene-options":
+                    UpdateSceneOptionsMessage(indata, gobj, jData);
+                    break;
+                case "program":
+                    // TODO (mwfarb): define program implementation or lack thereofd
+                    break;
+            }
+
+            gobj.transform.hasChanged = false;
+
+            if (aobj != null)
+            {
+                aobj.data = indata;
+                var updatedData = jData;
+                if (aobj.jsonData != null)
+                    updatedData.Merge(JObject.Parse(aobj.jsonData));
+                updatedData.Merge(indata);
+                aobj.jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
+            }
+        }
+
+        private void UpdateSceneOptionsMessage(object indata, GameObject gobj, JObject jData)
+        {
+            ArenaArenaSceneOptionsJson data = JsonConvert.DeserializeObject<ArenaArenaSceneOptionsJson>(indata.ToString());
+
+            // handle scene options attributes
+            foreach (var result in jData)
+            {
+                switch (result.Key)
+                {
+                    case "env-presets": ArenaUnity.ApplyEnvironmentPresets(gobj, data); break;
+                    case "scene-options": ArenaUnity.ApplySceneOptions(gobj, data); break;
+                    case "renderer-settings": ArenaUnity.ApplyRendererSettings(gobj, data); break;
+                    case "post-processing": ArenaUnity.ApplyPostProcessing(gobj, data); break;
+                }
+            }
+        }
+
+        private void UpdateObjectMessage(ArenaObjectJson msg, object indata, string displayName, ArenaObject aobj, GameObject gobj, JObject jData)
+        {
+            ArenaObjectDataJson data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
 
             // modify Unity attributes
             bool worldPositionStays = false; // default: most children need relative position
@@ -784,18 +817,6 @@ namespace ArenaUnity
                             AttachMaterialTexture(checkLocalAsset((string)data.material.Src), gobj);
                         break;
                 }
-            }
-
-            gobj.transform.hasChanged = false;
-
-            if (aobj != null)
-            {
-                aobj.data = data;
-                var updatedData = jData;
-                if (aobj.jsonData != null)
-                    updatedData.Merge(JObject.Parse(aobj.jsonData));
-                updatedData.Merge(data);
-                aobj.jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
             }
         }
 
@@ -1051,7 +1072,7 @@ namespace ArenaUnity
             msg.type = eventType;
             msg.data = JsonConvert.DeserializeObject(msgJsonData);
             msg.timestamp = GetTimestamp();
-            // PublishSceneMessage($"{sceneTopic}/{source}", JsonConvert.SerializeObject(msg), hasPermissions);
+            PublishSceneMessage($"{sceneTopic}/{source}", JsonConvert.SerializeObject(msg), hasPermissions);
         }
 
         private void PublishSceneMessage(string topic, string msg, bool hasPermissions)

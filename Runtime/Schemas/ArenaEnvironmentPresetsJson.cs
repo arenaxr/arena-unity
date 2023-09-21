@@ -24,7 +24,7 @@ namespace ArenaUnity.Schemas
     public class ArenaEnvironmentPresetsJson
     {
         [JsonIgnore]
-        public readonly string componentName = "environment-presets";
+        public readonly string componentName = "env-presets";
 
         // environment-presets member-fields
 

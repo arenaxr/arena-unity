@@ -134,7 +134,7 @@ namespace ArenaUnity
 
         public void Publish(string topic, byte[] payload)
         {
-            //if (client != null) client.Publish(topic, payload);
+            if (client != null) client.Publish(topic, payload);
         }
 
         public void Subscribe(string[] topics)

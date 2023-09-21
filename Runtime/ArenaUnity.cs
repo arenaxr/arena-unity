@@ -226,6 +226,7 @@ namespace ArenaUnity
         {
             if (!gobj.TryGetComponent<ArenaMeshTorus>(out var torus))
                 torus = gobj.AddComponent<ArenaMeshTorus>();
+            torus.json = JsonConvert.DeserializeObject<ArenaTorusJson>(indata.ToString());
         }
 
         public static void ApplyWireTriangle(object indata, GameObject gobj)
@@ -359,6 +360,36 @@ namespace ArenaUnity
             if (!gobj.TryGetComponent<ArenaWireText>(out var t))
                 t = gobj.AddComponent<ArenaWireText>();
             t.json = JsonConvert.DeserializeObject<ArenaTextJson>(indata.ToString()); t.apply = true;
+        }
+
+        // scene options
+
+        public static void ApplyEnvironmentPresets(GameObject gobj, ArenaArenaSceneOptionsJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaSceneEnvironmentalPresets>(out var c))
+                c = gobj.AddComponent<ArenaSceneEnvironmentalPresets>();
+            c.json = JsonConvert.DeserializeObject<ArenaEnvironmentPresetsJson>(data.EnvPresets.ToString()); c.apply = true;
+        }
+
+        public static void ApplySceneOptions(GameObject gobj, ArenaArenaSceneOptionsJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaSceneOptions>(out var c))
+                c = gobj.AddComponent<ArenaSceneOptions>();
+            c.json = JsonConvert.DeserializeObject<ArenaSceneOptionsJson>(data.SceneOptions.ToString()); c.apply = true;
+        }
+
+        public static void ApplyRendererSettings(GameObject gobj, ArenaArenaSceneOptionsJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaSceneRendererSettings>(out var c))
+                c = gobj.AddComponent<ArenaSceneRendererSettings>();
+            c.json = JsonConvert.DeserializeObject<ArenaRendererSettingsJson>(data.RendererSettings.ToString()); c.apply = true;
+        }
+
+        public static void ApplyPostProcessing(GameObject gobj, ArenaArenaSceneOptionsJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaScenePostProcessing>(out var c))
+                c = gobj.AddComponent<ArenaScenePostProcessing>();
+            c.json = JsonConvert.DeserializeObject<ArenaPostProcessingJson>(data.PostProcessing.ToString()); c.apply = true;
         }
     }
 }
