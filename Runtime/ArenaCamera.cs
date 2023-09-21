@@ -90,7 +90,6 @@ namespace ArenaUnity
                 object_id = camid,
                 action = created ? "update" : "create",
                 type = messageType,
-                persist = persist,
             };
             if (string.IsNullOrWhiteSpace(displayName))
             {   // provide default name if needed
@@ -112,8 +111,9 @@ namespace ArenaUnity
             };
 
             var updatedData = new JObject();
-            updatedData.Merge(dataCam);
             updatedData.Merge(dataUnity);
+            updatedData.Merge(dataCam);
+            // TODO (mwfarb): check for deletions and pollution
 
             // publish
             msg.data = updatedData;

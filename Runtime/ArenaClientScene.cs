@@ -589,7 +589,7 @@ namespace ArenaUnity
             //    },
             //});
 
-            //switch (msg.type)
+            // TODO (mwfarb): switch (msg.type)
             //{
             //    case "object":
             //        data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
@@ -611,6 +611,38 @@ namespace ArenaUnity
             // handle wire object attributes
             switch (object_type)
             {
+                case "capsule": ArenaUnity.ApplyWireCapsule(indata, gobj); break;
+                case "box":
+                case "cube": // support legacy arena 'cube' == 'box'
+                    ArenaUnity.ApplyWireBox(indata, gobj); break;
+                case "cone": ArenaUnity.ApplyWireCone(indata, gobj); break;
+                case "cylinder": ArenaUnity.ApplyWireCylinder(indata, gobj); break;
+                case "dodecahedron": ArenaUnity.ApplyWireDodecahedron(indata, gobj); break;
+                case "tetrahedron": ArenaUnity.ApplyWireTetrahedron(indata, gobj); break;
+                case "icosahedron": ArenaUnity.ApplyWireIcosahedron(indata, gobj); break;
+                case "octahedron": ArenaUnity.ApplyWireOctahedron(indata, gobj); break;
+                case "plane": ArenaUnity.ApplyWirePlane(indata, gobj); break;
+                case "ring": ArenaUnity.ApplyWireRing(indata, gobj); break;
+                case "circle": ArenaUnity.ApplyWireCircle(indata, gobj); break;
+                case "videosphere": ArenaUnity.ApplyWireVideosphere(indata, gobj); break;
+                case "sphere": ArenaUnity.ApplyWireSphere(indata, gobj); break;
+                case "torus": ArenaUnity.ApplyWireTorus(indata, gobj); break;
+                case "torusKnot": ArenaUnity.ApplyWireTorusKnot(indata, gobj); break;
+                case "triangle": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
+                // TODO: case "roundedbox": ArenaUnity.ApplyWireRoundedbox(indata, gobj); break;
+
+                case "light": ArenaUnity.ApplyWireLight(indata, gobj); break;
+                case "text": ArenaUnity.ApplyWireText(indata, gobj); break;
+                case "line": ArenaUnity.ApplyWireLine(indata, gobj); break;
+                case "thickline": ArenaUnity.ApplyWireThickline(indata, gobj); break;
+                // TODO: case "arenaui-card": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
+                // TODO: case "arenaui-button-panel": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
+                // TODO: case "arenaui-prompt": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
+                // TODO: case "entity": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
+                // TODO: case "ocean": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
+                // TODO: case "pcd-model": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
+                // TODO: case "threejs-scene": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
+
                 case "gltf-model":
                     // load main model
                     if (data.url != null && aobj.gltfUrl == null)
@@ -623,9 +655,6 @@ namespace ArenaUnity
                             AttachGltf(assetPath, gobj, aobj);
                         }
                     }
-                    // load on-demand-model (LOD) as well
-                    //foreach (string detailedUrl in jData.SelectTokens("gltf-model-lod.detailedUrl"))
-                    //    AttachGltf(checkLocalAsset(detailedUrl), gobj);
                     break;
                 case "image":
                     // load image file
@@ -650,47 +679,6 @@ namespace ArenaUnity
                 case "handLeft":
                 case "handRight":
                     AttachHand(msg.object_id, data.url, gobj);
-                    break;
-                case "text":
-                    if (!gobj.TryGetComponent<ArenaWireText>(out var t))
-                        t = gobj.AddComponent<ArenaWireText>();
-                    t.json = JsonConvert.DeserializeObject<ArenaTextJson>(indata.ToString()); t.apply = true;
-                    break;
-                case "line":
-                    if (!gobj.TryGetComponent<ArenaWireLine>(out var l))
-                        l = gobj.AddComponent<ArenaWireLine>();
-                    l.json = JsonConvert.DeserializeObject<ArenaLineJson>(indata.ToString()); l.apply = true;
-                    break;
-                case "thickline":
-                    if (!gobj.TryGetComponent<ArenaWireThickline>(out var tl))
-                        tl = gobj.AddComponent<ArenaWireThickline>();
-                    tl.json = JsonConvert.DeserializeObject<ArenaThicklineJson>(indata.ToString()); tl.apply = true;
-                    break;
-                case "light":
-                    if (!gobj.TryGetComponent<ArenaWireLight>(out var lg))
-                        lg = gobj.AddComponent<ArenaWireLight>();
-                    lg.json = JsonConvert.DeserializeObject<ArenaLightJson>(indata.ToString()); lg.apply = true;
-                    break;
-                case "box":
-                case "cube":
-                case "capsule":
-                case "circle":
-                case "cone":
-                case "cylinder":
-                case "dodecahedron":
-                case "icosahedron":
-                case "octahedron":
-                case "plane":
-                case "ring":
-                case "roundedbox":
-                case "sphere":
-                case "tetrahedron":
-                case "torus":
-                case "torusKnot":
-                case "triangle":
-                case "videosphere":
-                    // geometry (mesh), all need their own meshes
-                    ArenaMesh.ToUnityMesh(indata, ref gobj);
                     break;
             }
 
@@ -743,7 +731,6 @@ namespace ArenaUnity
                 switch (result.Key)
                 {
                     case "position":
-                        // update transform properties, only apply if updated in mqtt message
                         gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
                         break;
                     case "rotation":
@@ -758,34 +745,43 @@ namespace ArenaUnity
                     case "scale":
                         gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
                         break;
-                    case "visible":
-                        // TODO (mwfarb): handle realtime renderer changes from unity.
-                        // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
-                        var renderer = gobj.GetComponent<Renderer>();
-                        if (renderer != null)
-                            renderer.enabled = (bool)data.visible;
-                        break;
+                    // TODO: case "animation": ArenaUnity.ApplyAnimation(gobj, data); break;
+                    // TODO: case "armarker": ArenaUnity.ApplyArmarker(gobj, data); break;
+                    case "click-listener": ArenaUnity.ApplyClickListener(gobj, data); break;
+                    // TODO: case "box-collision-listener": ArenaUnity.ApplyBoxCollisionListener(gobj, data); break;
+                    // TODO: case "collision-listener": ArenaUnity.ApplyCollisionListener(gobj, data); break;
+                    // TODO: case "blip": ArenaUnity.ApplyBlip(gobj, data); break;
+                    // TODO: case "dynamic-body": ArenaUnity.ApplyDynamicBody(gobj, data); break;
+                    // TODO: case "goto-landmark": ArenaUnity.ApplyGotoLandmark(gobj, data); break;
+                    // TODO: case "goto-url": ArenaUnity.ApplyGotoUrl(gobj, data); break;
+                    // TODO: case "hide-on-enter-ar": ArenaUnity.ApplyHideOnEnterAr(gobj, data); break;
+                    // TODO: case "hide-on-enter-vr": ArenaUnity.ApplyHideOnEnterVr(gobj, data); break;
+                    // TODO: case "show-on-enter-ar": ArenaUnity.ApplyShowOnEnterAr(gobj, data); break;
+                    // TODO: case "show-on-enter-vr": ArenaUnity.ApplyShowOnEnterVr(gobj, data); break;
+                    // TODO: case "impulse": ArenaUnity.ApplyImpulse(gobj, data); break;
+                    // TODO: case "landmark": ArenaUnity.ApplyLandmark(gobj, data); break;
+                    // TODO: case "material-extras": ArenaUnity.ApplyMaterialExtras(gobj, data); break;
+                    // TODO: case "shadow": ArenaUnity.ApplyShadow(gobj, data); break;
+                    // TODO: case "sound": ArenaUnity.ApplySound(gobj, data); break;
+                    // TODO: case "textinput": ArenaUnity.ApplyTextInput(gobj, data); break;
+                    // TODO: case "screenshareable": ArenaUnity.ApplyScreensharable(gobj, data); break;
+                    // TODO: case "remote-render": ArenaUnity.ApplyRemoteRender(gobj, data); break;
+                    // TODO: case "video-control": ArenaUnity.ApplyVideoControl(gobj, data); break;
+                    case "attribution": ArenaUnity.ApplyAttribution(gobj, data); break;
+                    // TODO: case "particle-system": ArenaUnity.ApplyParticleSystem(gobj, data); break;
+                    // TODO: case "spe-particles": ArenaUnity.ApplySpeParticles(gobj, data); break;
+                    // TODO: case "buffer": ArenaUnity.ApplyBuffer(gobj, data); break;
+                    // TODO: case "jitsi-video": ArenaUnity.ApplyJitsiVideo(gobj, data); break;
+                    // TODO: case "multisrc": ArenaUnity.ApplyMultiSrc(gobj, data); break;
+                    // TODO: case "skipCache": ArenaUnity.ApplySkipCache(gobj, data); break;
+                    case "visible": ArenaUnity.ApplyVisible(gobj, data); break;
+                    case "animation-mixer": ArenaUnity.ApplyAnimationMixer(gobj, data); break;
+                    // TODO: case "gltf-model-lod": ArenaUnity.ApplyGltfModelLod(gobj, data); break;
+                    // TODO: case "modelUpdate": ArenaUnity.ApplyModelUpdate(gobj, data); break;
                     case "material":
-                        if (!gobj.TryGetComponent<ArenaMaterial>(out var m))
-                            m = gobj.AddComponent<ArenaMaterial>();
-                        m.json = data.material; m.apply = true;
+                        ArenaUnity.ApplyMaterial(gobj, data);
                         if (isElement(data.material.Src))
                             AttachMaterialTexture(checkLocalAsset((string)data.material.Src), gobj);
-                        break;
-                    case "animation-mixer":
-                        if (!gobj.TryGetComponent<ArenaAnimationMixer>(out var am))
-                            am = gobj.AddComponent<ArenaAnimationMixer>();
-                        am.json = data.animationMixer; am.apply = true;
-                        break;
-                    case "attribution":
-                        if (!gobj.TryGetComponent<ArenaAttribution>(out var at))
-                            at = gobj.AddComponent<ArenaAttribution>();
-                        at.json = data.attribution; at.apply = true;
-                        break;
-                    case "click-listener":
-                        if (!gobj.TryGetComponent<ArenaClickListener>(out var cl))
-                            cl = gobj.AddComponent<ArenaClickListener>();
-                        cl.json = data.clickListener; cl.apply = true;
                         break;
                 }
             }

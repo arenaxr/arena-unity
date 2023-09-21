@@ -229,7 +229,7 @@ namespace ArenaUnity
             if (data != null)
                 updatedData.Merge(data);
             updatedData.Merge(dataUnity);
-
+            // TODO (mwfarb): check for deletions and pollution
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
 
             // publish

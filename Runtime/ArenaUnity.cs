@@ -4,6 +4,7 @@
  */
 
 using System;
+using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using TMPro;
@@ -179,5 +180,185 @@ namespace ArenaUnity
             return UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         }
 
+        // components
+
+        public static void ApplyVisible(GameObject gobj, ArenaObjectDataJson data)
+        {
+            // TODO (mwfarb): handle realtime renderer changes from unity.
+            // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
+            var renderer = gobj.GetComponent<Renderer>();
+            if (renderer != null)
+                renderer.enabled = (bool)data.visible;
+        }
+
+        public static void ApplyClickListener(GameObject gobj, ArenaObjectDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaClickListener>(out var c))
+                c = gobj.AddComponent<ArenaClickListener>();
+            c.json = data.clickListener; c.apply = true;
+        }
+
+        public static void ApplyAnimationMixer(GameObject gobj, ArenaObjectDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaAnimationMixer>(out var c))
+                c = gobj.AddComponent<ArenaAnimationMixer>();
+            c.json = data.animationMixer; c.apply = true;
+        }
+
+        public static void ApplyAttribution(GameObject gobj, ArenaObjectDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaAttribution>(out var c))
+                c = gobj.AddComponent<ArenaAttribution>();
+            c.json = data.attribution; c.apply = true;
+        }
+
+        public static void ApplyMaterial(GameObject gobj, ArenaObjectDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaMaterial>(out var c))
+                c = gobj.AddComponent<ArenaMaterial>();
+            c.json = data.material; c.apply = true;
+        }
+
+        // wire objects
+
+
+        public static void ApplyWireTorus(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshTorus>(out var torus))
+                torus = gobj.AddComponent<ArenaMeshTorus>();
+        }
+
+        public static void ApplyWireTriangle(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshTriangle>(out var triangle))
+                triangle = gobj.AddComponent<ArenaMeshTriangle>();
+            triangle.json = JsonConvert.DeserializeObject<ArenaTriangleJson>(indata.ToString());
+        }
+
+        public static void ApplyWireTorusKnot(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshTorusKnot>(out var torusKnot))
+                torusKnot = gobj.AddComponent<ArenaMeshTorusKnot>();
+            torusKnot.json = JsonConvert.DeserializeObject<ArenaTorusKnotJson>(indata.ToString());
+        }
+
+        public static void ApplyWireSphere(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshSphere>(out var sphere))
+                sphere = gobj.AddComponent<ArenaMeshSphere>();
+            sphere.json = JsonConvert.DeserializeObject<ArenaSphereJson>(indata.ToString());
+        }
+
+        public static void ApplyWireVideosphere(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshVideosphere>(out var videosphere))
+                videosphere = gobj.AddComponent<ArenaMeshVideosphere>();
+            videosphere.json = JsonConvert.DeserializeObject<ArenaVideosphereJson>(indata.ToString());
+        }
+
+        public static void ApplyWireCircle(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshCircle>(out var circle))
+                circle = gobj.AddComponent<ArenaMeshCircle>();
+            circle.json = JsonConvert.DeserializeObject<ArenaCircleJson>(indata.ToString());
+        }
+
+        public static void ApplyWireRing(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshRing>(out var ring))
+                ring = gobj.AddComponent<ArenaMeshRing>();
+            ring.json = JsonConvert.DeserializeObject<ArenaRingJson>(indata.ToString());
+        }
+
+        public static void ApplyWirePlane(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshPlane>(out var plane))
+                plane = gobj.AddComponent<ArenaMeshPlane>();
+            plane.json = JsonConvert.DeserializeObject<ArenaPlaneJson>(indata.ToString());
+        }
+
+        public static void ApplyWireOctahedron(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshOctahedron>(out var octahedron))
+                octahedron = gobj.AddComponent<ArenaMeshOctahedron>();
+            octahedron.json = JsonConvert.DeserializeObject<ArenaOctahedronJson>(indata.ToString());
+        }
+
+        public static void ApplyWireIcosahedron(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshIcosahedron>(out var icosahedron))
+                icosahedron = gobj.AddComponent<ArenaMeshIcosahedron>();
+            icosahedron.json = JsonConvert.DeserializeObject<ArenaIcosahedronJson>(indata.ToString());
+        }
+
+        public static void ApplyWireTetrahedron(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshTetrahedron>(out var tetrahedron))
+                tetrahedron = gobj.AddComponent<ArenaMeshTetrahedron>();
+            tetrahedron.json = JsonConvert.DeserializeObject<ArenaTetrahedronJson>(indata.ToString());
+        }
+
+        public static void ApplyWireDodecahedron(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshDodecahedron>(out var dodecahedron))
+                dodecahedron = gobj.AddComponent<ArenaMeshDodecahedron>();
+            dodecahedron.json = JsonConvert.DeserializeObject<ArenaDodecahedronJson>(indata.ToString());
+        }
+
+        public static void ApplyWireCylinder(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshCylinder>(out var cylinder))
+                cylinder = gobj.AddComponent<ArenaMeshCylinder>();
+            cylinder.json = JsonConvert.DeserializeObject<ArenaCylinderJson>(indata.ToString());
+        }
+
+        public static void ApplyWireCone(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshCone>(out var cone))
+                cone = gobj.AddComponent<ArenaMeshCone>();
+            cone.json = JsonConvert.DeserializeObject<ArenaConeJson>(indata.ToString());
+        }
+
+        public static void ApplyWireBox(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshBox>(out var box))
+                box = gobj.AddComponent<ArenaMeshBox>();
+            box.json = JsonConvert.DeserializeObject<ArenaBoxJson>(indata.ToString());
+        }
+
+        public static void ApplyWireCapsule(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshCapsule>(out var capsule))
+                capsule = gobj.AddComponent<ArenaMeshCapsule>();
+            capsule.json = JsonConvert.DeserializeObject<ArenaCapsuleJson>(indata.ToString());
+        }
+
+        public static void ApplyWireLight(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireLight>(out var lg))
+                lg = gobj.AddComponent<ArenaWireLight>();
+            lg.json = JsonConvert.DeserializeObject<ArenaLightJson>(indata.ToString()); lg.apply = true;
+        }
+
+        public static void ApplyWireThickline(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireThickline>(out var tl))
+                tl = gobj.AddComponent<ArenaWireThickline>();
+            tl.json = JsonConvert.DeserializeObject<ArenaThicklineJson>(indata.ToString()); tl.apply = true;
+        }
+
+        public static void ApplyWireLine(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireLine>(out var l))
+                l = gobj.AddComponent<ArenaWireLine>();
+            l.json = JsonConvert.DeserializeObject<ArenaLineJson>(indata.ToString()); l.apply = true;
+        }
+
+        public static void ApplyWireText(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireText>(out var t))
+                t = gobj.AddComponent<ArenaWireText>();
+            t.json = JsonConvert.DeserializeObject<ArenaTextJson>(indata.ToString()); t.apply = true;
+        }
     }
 }
