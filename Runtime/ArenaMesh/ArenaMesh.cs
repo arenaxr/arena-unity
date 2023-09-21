@@ -112,7 +112,10 @@ namespace ArenaUnity
                     ArenaMeshCircle circle = gobj.GetComponent<ArenaMeshCircle>() ?? gobj.AddComponent<ArenaMeshCircle>();
                     circle.json = JsonConvert.DeserializeObject<ArenaCircleJson>(indata.ToString());
                     break;
-                case "videosphere": // use sphere as a videosphere placeholder
+                case "videosphere":
+                    ArenaMeshVideosphere videosphere = gobj.GetComponent<ArenaMeshVideosphere>() ?? gobj.AddComponent<ArenaMeshVideosphere>();
+                    videosphere.json = JsonConvert.DeserializeObject<ArenaVideosphereJson>(indata.ToString());
+                    break;
                 case "sphere":
                     ArenaMeshSphere sphere = gobj.GetComponent<ArenaMeshSphere>() ?? gobj.AddComponent<ArenaMeshSphere>();
                     sphere.json = JsonConvert.DeserializeObject<ArenaSphereJson>(indata.ToString());

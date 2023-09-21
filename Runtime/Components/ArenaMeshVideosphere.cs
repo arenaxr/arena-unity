@@ -5,17 +5,22 @@
 
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
+using MeshBuilder;
 using Newtonsoft.Json;
 
 namespace ArenaUnity
 {
-    public class ArenaWireVideosphere : ArenaComponent
-    {
+    public class ArenaMeshVideosphere : ArenaMesh
+    { 
         public ArenaVideosphereJson json = new ArenaVideosphereJson();
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            filter.sharedMesh = SphereBuilder.Build(
+                json.Radius,
+                json.SegmentsHeight,
+                json.SegmentsWidth
+            );
         }
 
         public override void UpdateObject()

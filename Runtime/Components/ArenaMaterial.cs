@@ -39,7 +39,7 @@ namespace ArenaUnity.Components
                     else
                         material.shader = Shader.Find("Universal Render Pipeline/Lit");
                 }
-                float opacity = (json != null && json.Opacity != null) ? (float)json.Opacity : 1f;
+                float opacity = (float)json.Opacity;
                 if (json != null)
                 {
                     bool transparent = Convert.ToBoolean(json.Transparent);

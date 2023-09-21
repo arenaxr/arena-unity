@@ -688,7 +688,8 @@ namespace ArenaUnity
                 case "torus":
                 case "torusKnot":
                 case "triangle":
-                    // geometry (mesh)
+                case "videosphere":
+                    // geometry (mesh), all need their own meshes
                     ArenaMesh.ToUnityMesh(indata, ref gobj);
                     break;
             }
