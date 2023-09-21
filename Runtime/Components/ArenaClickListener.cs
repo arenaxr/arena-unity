@@ -113,8 +113,8 @@ namespace ArenaUnity.Components
                 Source = camName,
             };
             string payload = JsonConvert.SerializeObject(data);
-
-            ArenaClientScene.Instance.PublishEvent(name, eventType, camName, payload);
+            if (ArenaClientScene.Instance)
+                ArenaClientScene.Instance.PublishEvent(name, eventType, camName, payload);
         }
 
         protected override void ApplyRender()

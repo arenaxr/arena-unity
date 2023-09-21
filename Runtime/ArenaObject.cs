@@ -136,7 +136,8 @@ namespace ArenaUnity
                 persist = persist,
             };
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
+            if (ArenaClientScene.Instance)
+                ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
             // add new object with new name, it pubs
             created = false;
             transform.hasChanged = true;
@@ -234,7 +235,8 @@ namespace ArenaUnity
             // publish
             msg.data = transformOnly ? (object)dataUnity : updatedData;
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
+            if (ArenaClientScene.Instance)
+                ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
             if (!created)
                 created = true;
 
