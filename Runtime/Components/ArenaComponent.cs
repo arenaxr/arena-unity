@@ -8,7 +8,6 @@ using UnityEngine;
 namespace ArenaUnity.Components
 {
     [ExecuteInEditMode]
-    [DisallowMultipleComponent]
     [RequireComponent(typeof(ArenaObject))]
     public abstract class ArenaComponent : MonoBehaviour
 	{
@@ -48,7 +47,7 @@ namespace ArenaUnity.Components
         protected abstract void ApplyRender();
 
         /// <summary>
-        /// Implement the updates from local Unity Objects to remote Arena Json 
+        /// Implement the updates from local Unity Objects to remote Arena Json
         /// </summary>
         public abstract void UpdateObject();
     }

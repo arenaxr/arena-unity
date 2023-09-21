@@ -4,10 +4,8 @@
  */
 
 using System;
-using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -19,17 +17,9 @@ namespace ArenaUnity
     /// </summary>
     public static class ArenaUnity
     {
+        public static string ColorPropertyName = (!GraphicsSettings.renderPipelineAsset ? "_Color" : "_BaseColor");
         public const float LineSinglePixelInMeters = 0.005f;
-        private static string ColorPropertyName = (!GraphicsSettings.renderPipelineAsset ? "_Color" : "_BaseColor");
-        public enum MatRendMode
-        {   // TODO: the standards for "_Mode" seem to be missing?
-            Opaque = 0,
-            Cutout = 1,
-            Fade = 2,
-            Transparent = 3
-        }
-
-        private static float ArenaFloat(float n) { return (float)Math.Round(n, 3); }
+        public static float ArenaFloat(float n) { return (float)Math.Round(n, 3); }
 
         // time
         public static string TimeSpanToString(TimeSpan span)
@@ -65,154 +55,6 @@ namespace ArenaUnity
             else if (meshFilter && meshFilter.sharedMesh)
                 objectType = meshFilter.sharedMesh.name.ToLower();
             return objectType;
-        }
-
-        public static void ToUnityMesh(object indata, ref GameObject gobj)
-        {
-            //if ((string)indata.object_type == "entity" && indata.geometry != null && indata.geometry.primitive != null)
-            //{
-            //    // handle raw geometry
-            //    data = indata.geometry;
-            //    type = (string)indata.geometry.primitive;
-            //}
-            ArenaObjectDataJson data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
-            string type = data.object_type;
-            switch (type)
-            {
-                // build your own meshes, defaults here should reflect ARENA/AFRAME defaults
-                case "capsule":
-                    ArenaMeshCapsule capsule = gobj.GetComponent<ArenaMeshCapsule>() ?? gobj.AddComponent<ArenaMeshCapsule>();
-                    capsule.json = JsonConvert.DeserializeObject<ArenaCapsuleJson>(indata.ToString());
-                    break;
-                case "box":
-                case "cube": // support legacy arena 'cube' == 'box'
-                    ArenaMeshBox box = gobj.GetComponent<ArenaMeshBox>() ?? gobj.AddComponent<ArenaMeshBox>();
-                    box.json = JsonConvert.DeserializeObject<ArenaBoxJson>(indata.ToString());
-                    break;
-                case "cone":
-                    ArenaMeshCone cone = gobj.GetComponent<ArenaMeshCone>() ?? gobj.AddComponent<ArenaMeshCone>();
-                    cone.json = JsonConvert.DeserializeObject<ArenaConeJson>(indata.ToString());
-                    break;
-                case "cylinder":
-                    ArenaMeshCylinder cylinder = gobj.GetComponent<ArenaMeshCylinder>() ?? gobj.AddComponent<ArenaMeshCylinder>();
-                    cylinder.json = JsonConvert.DeserializeObject<ArenaCylinderJson>(indata.ToString());
-                    break;
-                case "dodecahedron":
-                    ArenaMeshDodecahedron dodecahedron = gobj.GetComponent<ArenaMeshDodecahedron>() ?? gobj.AddComponent<ArenaMeshDodecahedron>();
-                    dodecahedron.json = JsonConvert.DeserializeObject<ArenaDodecahedronJson>(indata.ToString());
-                    break;
-                case "tetrahedron":
-                    ArenaMeshTetrahedron tetrahedron = gobj.GetComponent<ArenaMeshTetrahedron>() ?? gobj.AddComponent<ArenaMeshTetrahedron>();
-                    tetrahedron.json = JsonConvert.DeserializeObject<ArenaTetrahedronJson>(indata.ToString());
-                    break;
-                case "icosahedron":
-                    ArenaMeshIcosahedron icosahedron = gobj.GetComponent<ArenaMeshIcosahedron>() ?? gobj.AddComponent<ArenaMeshIcosahedron>();
-                    icosahedron.json = JsonConvert.DeserializeObject<ArenaIcosahedronJson>(indata.ToString());
-                    break;
-                case "octahedron":
-                    ArenaMeshOctahedron octahedron = gobj.GetComponent<ArenaMeshOctahedron>() ?? gobj.AddComponent<ArenaMeshOctahedron>();
-                    octahedron.json = JsonConvert.DeserializeObject<ArenaOctahedronJson>(indata.ToString());
-                    break;
-                case "plane":
-                    ArenaMeshPlane plane = gobj.GetComponent<ArenaMeshPlane>() ?? gobj.AddComponent<ArenaMeshPlane>();
-                    plane.json = JsonConvert.DeserializeObject<ArenaPlaneJson>(indata.ToString());
-                    break;
-                case "ring":
-                    ArenaMeshRing ring = gobj.GetComponent<ArenaMeshRing>() ?? gobj.AddComponent<ArenaMeshRing>();
-                    ring.json = JsonConvert.DeserializeObject<ArenaRingJson>(indata.ToString());
-                    break;
-                case "circle":
-                    ArenaMeshCircle circle = gobj.GetComponent<ArenaMeshCircle>() ?? gobj.AddComponent<ArenaMeshCircle>();
-                    circle.json = JsonConvert.DeserializeObject<ArenaCircleJson>(indata.ToString());
-                    break;
-                case "videosphere": // use sphere as a videosphere placeholder
-                case "sphere":
-                    ArenaMeshSphere sphere = gobj.GetComponent<ArenaMeshSphere>() ?? gobj.AddComponent<ArenaMeshSphere>();
-                    sphere.json = JsonConvert.DeserializeObject<ArenaSphereJson>(indata.ToString());
-                    break;
-                case "torus":
-                    ArenaMeshTorus torus = gobj.GetComponent<ArenaMeshTorus>() ?? gobj.AddComponent<ArenaMeshTorus>();
-                    torus.json = JsonConvert.DeserializeObject<ArenaTorusJson>(indata.ToString());
-                    break;
-                case "torusKnot":
-                    ArenaMeshTorusKnot torusKnot = gobj.GetComponent<ArenaMeshTorusKnot>() ?? gobj.AddComponent<ArenaMeshTorusKnot>();
-                    torusKnot.json = JsonConvert.DeserializeObject<ArenaTorusKnotJson>(indata.ToString());
-                    break;
-                case "triangle":
-                    ArenaMeshTriangle triangle = gobj.GetComponent<ArenaMeshTriangle>() ?? gobj.AddComponent<ArenaMeshTriangle>();
-                    triangle.json = JsonConvert.DeserializeObject<ArenaTriangleJson>(indata.ToString());
-                    break;
-                default:
-                    break;
-            };
-        }
-        public static void ToArenaMesh(GameObject gobj, ref object data)
-        {
-            ArenaMesh am = gobj.GetComponent<ArenaMesh>();
-            if (am == null) return;
-            switch (am.GetType().ToString())
-            {
-                case "ArenaUnity.ArenaMeshCapsule":
-                    var capsule = gobj.GetComponent<ArenaMeshCapsule>();
-                    data = capsule.json;
-                    break;
-                case "ArenaUnity.ArenaMeshBox":
-                    var box = gobj.GetComponent<ArenaMeshBox>();
-                    data = box.json;
-                    break;
-                case "ArenaUnity.ArenaMeshCone":
-                    var cone = gobj.GetComponent<ArenaMeshCone>();
-                    data = cone.json;
-                    break;
-                case "ArenaUnity.ArenaMeshCylinder":
-                    var cylinder = gobj.GetComponent<ArenaMeshCylinder>();
-                    data = cylinder.json;
-                    break;
-                case "ArenaUnity.ArenaMeshDodecahedron":
-                    var dodecahedron = gobj.GetComponent<ArenaMeshDodecahedron>();
-                    data = dodecahedron.json;
-                    break;
-                case "ArenaUnity.ArenaMeshTetrahedron":
-                    var tetrahedron = gobj.GetComponent<ArenaMeshTetrahedron>();
-                    data = tetrahedron.json;
-                    break;
-                case "ArenaUnity.ArenaMeshIcosahedron":
-                    var icosahedron = gobj.GetComponent<ArenaMeshIcosahedron>();
-                    data = icosahedron.json;
-                    break;
-                case "ArenaUnity.ArenaMeshOctahedron":
-                    var octahedron = gobj.GetComponent<ArenaMeshOctahedron>();
-                    data = octahedron.json;
-                    break;
-                case "ArenaUnity.ArenaMeshPlane":
-                    var plane = gobj.GetComponent<ArenaMeshPlane>();
-                    data = plane.json;
-                    break;
-                case "ArenaUnity.ArenaMeshSphere":
-                    var sphere = gobj.GetComponent<ArenaMeshSphere>();
-                    data = sphere.json;
-                    break;
-                case "ArenaUnity.ArenaMeshCircle":
-                    var circle = gobj.GetComponent<ArenaMeshCircle>();
-                    data = circle.json;
-                    break;
-                case "ArenaUnity.ArenaMeshRing":
-                    var ring = gobj.GetComponent<ArenaMeshRing>();
-                    data = ring.json;
-                    break;
-                case "ArenaUnity.ArenaMeshTorus":
-                    var torus = gobj.GetComponent<ArenaMeshTorus>();
-                    data = torus.json;
-                    break;
-                case "ArenaUnity.ArenaMeshTorusKnot":
-                    var torusKnot = gobj.GetComponent<ArenaMeshTorusKnot>();
-                    data = torusKnot.json;
-                    break;
-                case "ArenaUnity.ArenaMeshTriangle":
-                    var triangle = gobj.GetComponent<ArenaMeshTriangle>();
-                    data = triangle.json;
-                    break;
-            }
         }
 
         // position
@@ -280,7 +122,7 @@ namespace ArenaUnity
                 Z = ArenaFloat(rotationEuler.z)
             };
         }
-        public static Quaternion ToUnityRotationEuler(ArenaVector3Json rotationEuler, bool invertY = true)
+        public static Quaternion ToUnityRotationEuler(ArenaRotationJson rotationEuler, bool invertY = true)
         {
             return Quaternion.Euler(
                 -(float)rotationEuler.X,
@@ -690,145 +532,6 @@ namespace ArenaUnity
                 light.shadows = !data.CastShadow ? LightShadows.None : LightShadows.Hard;
             }
         }
-        // material
-        public static void ToArenaMaterial(GameObject obj, ref ArenaMaterialJson data)
-        {
-            Renderer renderer = obj.GetComponent<Renderer>();
-            // object material
-            Material mat = renderer.material;
-            if (!mat)
-                return;
-            // shaders only
-            switch (mat.shader.name)
-            {
-                default:
-                case "Standard":
-                    data.Shader = "standard"; break;
-                case "Unlit/Color":
-                case "Unlit/Texture":
-                case "Unlit/Texture Colored":
-                case "Legacy Shaders/Transparent/Diffuse":
-                    data.Shader = "flat"; break;
-            }
-            //data.url = ToArenaTexture(mat);
-            if (mat.HasProperty(ColorPropertyName))
-                data.Color = ToArenaColor(mat.color);
-            //data.metalness = ArenaFloat(mat.GetFloat("_Metallic"));
-            //data.roughness = ArenaFloat(1f - mat.GetFloat("_Glossiness"));
-            //data.repeat = ArenaFloat(mat.mainTextureScale.x);
-            //data.side = "double";
-            switch ((MatRendMode)mat.GetFloat("_Mode"))
-            {
-                case MatRendMode.Opaque:
-                case MatRendMode.Fade:
-                    data.Transparent = false; break;
-                case MatRendMode.Transparent:
-                case MatRendMode.Cutout:
-                    data.Transparent = true; break;
-            }
-            data.Opacity = ArenaFloat(mat.color.a);
 
-        }
-        public static void ToUnityMaterial(ArenaMaterialJson data, ref GameObject gobj)
-        {
-            var renderer = gobj.GetComponent<Renderer>();
-            if (renderer != null)
-            {
-                // object material
-                var material = renderer.material;
-                if (GraphicsSettings.renderPipelineAsset)
-                {
-                    if (GraphicsSettings.renderPipelineAsset.GetType().ToString().Contains("HDRenderPipelineAsset"))
-                        material.shader = Shader.Find("HDRP/Lit");
-                    else
-                        material.shader = Shader.Find("Universal Render Pipeline/Lit");
-                }
-                float opacity = (data != null && data.Opacity != null) ? (float)data.Opacity : 1f;
-                if (data != null)
-                {
-                    bool transparent = Convert.ToBoolean(data.Transparent);
-                    bool opaque = opacity >= 1f;
-                    if (data.Color != null)
-                        material.SetColor(ColorPropertyName, ToUnityColor((string)data.Color, opacity));
-                    if (data.Opacity != null)
-                    {
-                        Color c = material.GetColor(ColorPropertyName);
-                        material.SetColor(ColorPropertyName, new Color(c.r, c.g, c.b, opacity));
-                    }
-                    if (data.Shader != null)
-                        material.shader.name = (string)data.Shader == "flat" ? "Unlit/Color" : "Standard";
-                    // For runtime set/change transparency mode, follow GUI params
-                    // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/StandardShaderGUI.cs#L344
-                    if (opacity >= 1f)
-                    {   // op == 1
-                        material.SetFloat("_Mode", (float)MatRendMode.Opaque);
-                        material.SetInt("_SrcBlend", (int)BlendMode.One);
-                        material.SetInt("_DstBlend", (int)BlendMode.Zero);
-                        material.SetInt("_ZWrite", 1);
-                        material.DisableKeyword("_ALPHATEST_ON");
-                        material.DisableKeyword("_ALPHABLEND_ON");
-                        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                        material.renderQueue = -1;
-                    }
-                    if (opacity <= 0f)
-                    {   // op == 0
-                        material.SetFloat("_Mode", (float)MatRendMode.Transparent);
-                        material.SetInt("_SrcBlend", (int)BlendMode.One);
-                        material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
-                        material.SetInt("_ZWrite", 0);
-                        material.EnableKeyword("_ALPHATEST_ON");
-                        material.EnableKeyword("_ALPHABLEND_ON");
-                        material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                        material.renderQueue = 3000;
-                    }
-                    else
-                    {   // op 0-1
-                        material.SetFloat("_Mode", (float)MatRendMode.Fade);
-                        material.SetInt("_SrcBlend", (int)BlendMode.One);
-                        material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
-                        material.SetInt("_ZWrite", 0);
-                        material.DisableKeyword("_ALPHATEST_ON");
-                        material.DisableKeyword("_ALPHABLEND_ON");
-                        material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                        material.renderQueue = 3000;
-                    }
-                }
-            }
-        }
-        //// animation-mixer
-        //internal static void ToArenaAnimationMixer(GameObject gobj, ref JObject jData)
-        //{
-        //    ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
-        //    jData["animation-mixer"] = am.json.SaveToString();
-        //}
-        //internal static void ToUnityAnimationMixer(JObject jData, ref GameObject gobj)
-        //{
-        //    JToken jToken = jData.SelectToken("animation-mixer");
-        //    if (jToken != null && jToken.Type != JTokenType.Null)
-        //    {
-        //        ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
-        //        if (am == null)
-        //            am = gobj.AddComponent<ArenaAnimationMixer>();
-        //        am.json = ArenaAnimationMixerJson.CreateFromJSON(JsonConvert.SerializeObject(jToken), jToken);
-        //        am.apply = true;
-        //    }
-        //}
-        //// click-listener
-        //internal static void ToArenaClickListener(GameObject gobj, ref JObject jData)
-        //{
-        //    ArenaClickListener am = gobj.GetComponent<ArenaClickListener>();
-        //    jData["click-listener"] = true;
-        //}
-        //internal static void ToUnityClickListener(JObject jData, ref GameObject gobj)
-        //{
-        //    JToken jToken = jData.SelectToken("click-listener");
-        //    // we accept any string or boolean true
-        //    if ((jToken != null && jToken.Type != JTokenType.Null) || (jToken.Type == JTokenType.Boolean && jToken.Value<bool>()))
-        //    {
-        //        ArenaClickListener cl = gobj.GetComponent<ArenaClickListener>();
-        //        if (cl == null)
-        //            cl = gobj.AddComponent<ArenaClickListener>();
-        //    }
-        //}
     }
 }

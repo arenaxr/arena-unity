@@ -202,7 +202,7 @@ namespace ArenaUnity
                 if (GetComponent<Renderer>())
                 {
                     ArenaMaterialJson dataObj = new ArenaMaterialJson();
-                    ArenaUnity.ToArenaMaterial(gameObject, ref dataObj);
+                    ArenaMaterial.ToArenaMaterial(gameObject, ref dataObj);
                     updatedData.Merge(dataObj);
                 }
                 if (GetComponent<TextMeshPro>())
@@ -223,11 +223,6 @@ namespace ArenaUnity
             if (data != null)
                 updatedData.Merge(data);
             updatedData.Merge(dataUnity);
-            // TODO: temp location until JObject completely replaces dynamic object
-            //if (GetComponent<ArenaAnimationMixer>())
-            //    ArenaUnity.ToArenaAnimationMixer(gameObject, ref updatedData);
-            //if (GetComponent<ArenaClickListener>())
-            //    ArenaUnity.ToArenaClickListener(gameObject, ref updatedData);
 
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
 

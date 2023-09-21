@@ -607,6 +607,8 @@ namespace ArenaUnity
             aobj.parentId = (string)data.parent;
             string parent = (string)data.parent;
             string object_type = (string)data.object_type;
+
+            // handle wire object attributes
             switch (object_type)
             {
                 case "gltf-model":
@@ -661,6 +663,26 @@ namespace ArenaUnity
                 case "light":
                     ArenaUnity.ToUnityLight(JsonConvert.DeserializeObject<ArenaLightJson>(indata.ToString()), ref gobj);
                     break;
+                case "box":
+                case "cube":
+                case "capsule":
+                case "circle":
+                case "cone":
+                case "cylinder":
+                case "dodecahedron":
+                case "icosahedron":
+                case "octahedron":
+                case "plane":
+                case "ring":
+                case "roundedbox":
+                case "sphere":
+                case "tetrahedron":
+                case "torus":
+                case "torusKnot":
+                case "triangle":
+                    // geometry (mesh)
+                    ArenaMesh.ToUnityMesh(indata, ref gobj);
+                    break;
             }
 
             // handle data.parent BEFORE setting transform in case object becomes unparented
@@ -706,69 +728,67 @@ namespace ArenaUnity
                 parentalQueue.Remove(msg.object_id);
             }
 
-            // update transform properties, only apply if updated in mqtt message
-            if (isElement(data.position))
-                gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
-            if (isElement(data.rotation))
+            // handle non-wire object attributes
+            foreach (var result in jData)
             {
-                // TODO (mwfarb): needed? bool invertY = !((string)data.object_type == "camera");
-                bool invertY = true;
-                //if (!isElement(data.rotation.W)) // quaternion
-                //    gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
-                gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
-                if (gltfTypeList.Where(x => x.Contains((string)data.object_type)).FirstOrDefault() != null)
-                    gobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
+                switch (result.Key)
+                {
+                    case "position":
+                        // update transform properties, only apply if updated in mqtt message
+                        gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
+                        break;
+                    case "rotation":
+                        // TODO (mwfarb): needed? bool invertY = !((string)data.object_type == "camera");
+                        bool invertY = true;
+                        if (!isElement(data.rotation.W)) // quaternion
+                            gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
+                        gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
+                        if (gltfTypeList.Where(x => x.Contains((string)data.object_type)).FirstOrDefault() != null)
+                            gobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
+                        break;
+                    case "scale":
+                        gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
+                        break;
+                    case "visible":
+                        // TODO (mwfarb): handle realtime renderer changes from unity.
+                        // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
+                        var renderer = gobj.GetComponent<Renderer>();
+                        if (renderer != null)
+                            renderer.enabled = (bool)data.visible;
+                        break;
+                    case "material":
+                        if (!gobj.TryGetComponent<ArenaMaterial>(out var m))
+                            m = gobj.AddComponent<ArenaMaterial>();
+                        m.json = data.material; m.apply = true;
+                        if (isElement(data.material.Src))
+                            AttachMaterialTexture(checkLocalAsset((string)data.material.Src), gobj);
+                        break;
+                    case "animation-mixer":
+                        if (!gobj.TryGetComponent<ArenaAnimationMixer>(out var am))
+                            am = gobj.AddComponent<ArenaAnimationMixer>();
+                        am.json = data.animationMixer; am.apply = true;
+                        break;
+                    case "attribution":
+                        if (!gobj.TryGetComponent<ArenaAttribution>(out var at))
+                            at = gobj.AddComponent<ArenaAttribution>();
+                        at.json = data.attribution; at.apply = true;
+                        break;
+                    case "click-listener":
+                        if (!gobj.TryGetComponent<ArenaClickListener>(out var cl))
+                            cl = gobj.AddComponent<ArenaClickListener>();
+                        cl.json = data.clickListener; cl.apply = true;
+                        break;
+                }
             }
-            if (isElement(data.scale))
-                gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
 
             gobj.transform.hasChanged = false;
-
-            // geometry (mesh)
-            ArenaUnity.ToUnityMesh(indata, ref gobj);
-
-            // data.material
-            if (isElement(data.material))
-                ArenaUnity.ToUnityMaterial((ArenaMaterialJson)data.material, ref gobj);
-            if (isElement(data.material) && isElement(data.material.Src))
-                AttachMaterialTexture(checkLocalAsset((string)data.material.Src), gobj);
-
-            // data.visible
-            if (isElement(data.visible))
-            {
-                // TODO (mwfarb): handle realtime renderer changes from unity.
-                // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
-                var renderer = gobj.GetComponent<Renderer>();
-                if (renderer != null)
-                    renderer.enabled = Convert.ToBoolean(data.visible);
-            }
-
-            // data.animation-mixer
-            if (data.animationMixer != null)
-            {
-                ArenaAnimationMixer am = gobj.GetComponent<ArenaAnimationMixer>();
-                if (am == null)
-                    am = gobj.AddComponent<ArenaAnimationMixer>();
-                am.json = data.animationMixer;
-                am.apply = true;
-            }
-
-            // data.click-listener
-            if (data.clickListener != null)
-            {
-                ArenaClickListener am = gobj.GetComponent<ArenaClickListener>();
-                if (am == null)
-                    am = gobj.AddComponent<ArenaClickListener>();
-                am.json = data.clickListener;
-                am.apply = true;
-            }
 
             if (aobj != null)
             {
                 aobj.data = data;
                 var updatedData = jData;
                 if (aobj.jsonData != null)
-                    updatedData.Merge(Newtonsoft.Json.Linq.JObject.Parse(aobj.jsonData));
+                    updatedData.Merge(JObject.Parse(aobj.jsonData));
                 updatedData.Merge(data);
                 aobj.jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
             }
@@ -967,7 +987,7 @@ namespace ArenaUnity
             UnityWebRequest www = UnityWebRequest.Get(url);
             www.downloadHandler = new DownloadHandlerBuffer();
             //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
-            if (!verifyCertificate)
+            if (!verifyCertificate && url.StartsWith("https://localhost"))
             {   // TODO (mwfarb): should check for arena/not-arena host when debugging on localhost
                 www.certificateHandler = new SelfSignedCertificateHandler();
             }
