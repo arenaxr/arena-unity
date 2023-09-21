@@ -20,7 +20,7 @@ namespace ArenaUnity.Components
 
         protected override void ApplyRender()
         {
-            // TODO: Debug.LogWarning("{json.componentName} not yet handling render updates from Arena!!!!");
+            // TODO (johnchoi): Implement this component if needed, or note our reasons for not rendering or controlling here.
         }
 
         public override void UpdateObject()

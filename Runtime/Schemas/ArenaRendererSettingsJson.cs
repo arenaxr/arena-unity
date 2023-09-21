@@ -89,22 +89,5 @@ namespace ArenaUnity.Schemas
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaRendererSettingsJson CreateFromJSON(string jsonString, JToken token)
-        {
-            ArenaRendererSettingsJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaRendererSettingsJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

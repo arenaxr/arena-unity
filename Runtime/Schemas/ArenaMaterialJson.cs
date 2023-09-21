@@ -234,23 +234,5 @@ namespace ArenaUnity.Schemas
         private IDictionary<string, JToken> _additionalData;
 
         private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaMaterialJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaMaterialJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaMaterialJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

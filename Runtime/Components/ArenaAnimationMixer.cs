@@ -15,14 +15,14 @@ namespace ArenaUnity.Components
     public class ArenaAnimationMixer : ArenaComponent
     {
         // ARENA Property Handling Status
-        // DONE clip
-        // TODO duration
-        // DONE crossFadeDuration
-        // DONE loop
-        // TODO repetitions
-        // DONE timeScale
-        // DONE clampWhenFinished
-        // DONE startAt
+        // DONE: clip
+        // TODO: duration
+        // DONE: crossFadeDuration
+        // DONE: loop
+        // TODO: repetitions
+        // DONE: timeScale
+        // DONE: clampWhenFinished
+        // DONE: startAt
 
         // NOTE: There is an easy clip parser but only #if UNITY_EDITOR (AnimationUtility.GetAnimationClips()).
 

@@ -76,23 +76,5 @@ namespace ArenaUnity.Schemas
         private IDictionary<string, JToken> _additionalData;
 
         private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaRotationJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaRotationJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaRotationJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

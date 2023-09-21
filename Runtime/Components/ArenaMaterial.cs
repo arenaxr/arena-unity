@@ -130,7 +130,6 @@ namespace ArenaUnity.Components
                     data.Transparent = true; break;
             }
             data.Opacity = ArenaUnity.ArenaFloat(mat.color.a);
-
         }
 
         public override void UpdateObject()
