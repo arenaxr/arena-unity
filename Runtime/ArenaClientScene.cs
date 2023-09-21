@@ -652,16 +652,24 @@ namespace ArenaUnity
                     AttachHand(msg.object_id, data.url, gobj);
                     break;
                 case "text":
-                    ArenaUnity.ToUnityText(JsonConvert.DeserializeObject<ArenaTextJson>(indata.ToString()), ref gobj);
+                    if (!gobj.TryGetComponent<ArenaWireText>(out var t))
+                        t = gobj.AddComponent<ArenaWireText>();
+                    t.json = JsonConvert.DeserializeObject<ArenaTextJson>(indata.ToString()); t.apply = true;
                     break;
                 case "line":
-                    ArenaUnity.ToUnityLine(JsonConvert.DeserializeObject<ArenaLineJson>(indata.ToString()), ref gobj);
+                    if (!gobj.TryGetComponent<ArenaWireLine>(out var l))
+                        l = gobj.AddComponent<ArenaWireLine>();
+                    l.json = JsonConvert.DeserializeObject<ArenaLineJson>(indata.ToString()); l.apply = true;
                     break;
                 case "thickline":
-                    ArenaUnity.ToUnityThickline(JsonConvert.DeserializeObject<ArenaThicklineJson>(indata.ToString()), ref gobj);
+                    if (!gobj.TryGetComponent<ArenaWireThickline>(out var tl))
+                        tl = gobj.AddComponent<ArenaWireThickline>();
+                    tl.json = JsonConvert.DeserializeObject<ArenaThicklineJson>(indata.ToString()); tl.apply = true;
                     break;
                 case "light":
-                    ArenaUnity.ToUnityLight(JsonConvert.DeserializeObject<ArenaLightJson>(indata.ToString()), ref gobj);
+                    if (!gobj.TryGetComponent<ArenaWireLight>(out var lg))
+                        lg = gobj.AddComponent<ArenaWireLight>();
+                    lg.json = JsonConvert.DeserializeObject<ArenaLightJson>(indata.ToString()); lg.apply = true;
                     break;
                 case "box":
                 case "cube":

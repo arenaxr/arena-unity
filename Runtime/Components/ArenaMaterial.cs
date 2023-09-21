@@ -28,9 +28,11 @@ namespace ArenaUnity.Components
 
         protected override void ApplyRender()
         {
-            var renderer = GetComponent<Renderer>();
+            var renderer = gameObject.GetComponent<Renderer>();
             if (renderer != null)
             {
+                // TODO (johnchoi): Implement this component if needed, or note our reasons for not rendering or controlling here.
+
                 // object material
                 var material = renderer.material;
                 if (GraphicsSettings.renderPipelineAsset)

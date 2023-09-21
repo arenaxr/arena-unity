@@ -56,7 +56,7 @@ namespace ArenaUnity
 
         public static void ToUnityMesh(object indata, ref GameObject gobj)
         {
-            //if ((string)indata.object_type == "entity" && indata.geometry != null && indata.geometry.primitive != null)
+            // TODO (mwfarb): if ((string)indata.object_type == "entity" && indata.geometry != null && indata.geometry.primitive != null)
             //{
             //    // handle raw geometry
             //    data = indata.geometry;
@@ -200,6 +200,81 @@ namespace ArenaUnity
                     data = triangle.json;
                     break;
             }
+        }
+
+
+        // size dimensions
+        public static void ToArenaDimensions(GameObject gobj, ref object data)
+        {
+            // used to collect unity-default render sizes
+            string collider = gobj.GetComponent<Collider>().GetType().ToString();
+            string mesh = null;
+            MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
+            if (meshFilter && meshFilter.sharedMesh)
+            {
+                mesh = meshFilter.sharedMesh.name;
+            }
+            switch (collider)
+            {
+                case "UnityEngine.BoxCollider":
+                    BoxCollider bc = gobj.GetComponent<BoxCollider>();
+                    data = new ArenaBoxJson
+                    {
+                        Width = ArenaUnity.ArenaFloat(bc.size.x),
+                        Height = ArenaUnity.ArenaFloat(bc.size.y),
+                        Depth = ArenaUnity.ArenaFloat(bc.size.z),
+                    };
+                    break;
+                case "UnityEngine.SphereCollider":
+                    SphereCollider sc = gobj.GetComponent<SphereCollider>();
+                    data = new ArenaSphereJson
+                    {
+                        Radius = ArenaUnity.ArenaFloat(sc.radius),
+                    };
+                    break;
+                case "UnityEngine.CapsuleCollider":
+                    CapsuleCollider cc = gobj.GetComponent<CapsuleCollider>();
+                    switch (mesh)
+                    {
+                        case "Cylinder":
+                            data = new ArenaCylinderJson
+                            {
+                                Height = ArenaUnity.ArenaFloat(cc.height),
+                                Radius = ArenaUnity.ArenaFloat(cc.radius),
+                            };
+                            break;
+                        case "Capsule":
+                            data = new ArenaCapsuleJson
+                            {
+                                Length = ArenaUnity.ArenaFloat(cc.height - (cc.radius * 2)),
+                                Radius = ArenaUnity.ArenaFloat(cc.radius),
+                            };
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            // TODO (mwfarb): switch (mesh)
+            //{
+            //    case "Cube":
+            //        data.object_type = "box";
+            //        break;
+            //    case "Quad":
+            //        data.object_type = "plane";
+            //        data.width = 1f;
+            //        data.height = 1f;
+            //        break;
+            //    case "Plane":
+            //        Quaternion rotOut = gobj.transform.localRotation;
+            //        rotOut *= Quaternion.Euler(90, 0, 0);
+            //        data.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
+            //        data.width = 10f;
+            //        data.height = 10f;
+            //        break;
+            //    default:
+            //        break;
+            //}
         }
 
     }

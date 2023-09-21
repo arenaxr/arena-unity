@@ -187,8 +187,13 @@ namespace ArenaUnity
 
             var updatedData = new JObject();
 
-            //     ArenaUnity.ToArenaDimensions(gameObject, ref dataObj);
-            //     ArenaUnity.ToArenaMesh(gameObject, ref dataObj);
+            // TODO (mwfarb): ArenaMesh.ToArenaDimensions(gameObject, ref dataObj);
+            //if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
+            //{
+            //    dataUnity.geometry = new ExpandoObject();
+            //    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity.geometry);
+            //}
+            // TODO (mwfarb): ArenaMesh.ToArenaMesh(gameObject, ref dataObj);
 
             // other attributes information
             if (!transformOnly)
@@ -196,7 +201,7 @@ namespace ArenaUnity
                 if (GetComponent<Light>())
                 {
                     ArenaLightJson dataObj = new ArenaLightJson();
-                    ArenaUnity.ToArenaLight(gameObject, ref dataObj);
+                    ArenaWireLight.ToArenaLight(gameObject, ref dataObj);
                     updatedData.Merge(dataObj);
                 }
                 if (GetComponent<Renderer>())
@@ -208,13 +213,13 @@ namespace ArenaUnity
                 if (GetComponent<TextMeshPro>())
                 {
                     ArenaTextJson dataObj = new ArenaTextJson();
-                    ArenaUnity.ToArenaText(gameObject, ref dataObj);
+                    ArenaWireText.ToArenaText(gameObject, ref dataObj);
                     updatedData.Merge(dataObj);
                 }
                 if (GetComponent<LineRenderer>())
                 {
                     ArenaThicklineJson dataObj = new ArenaThicklineJson();
-                    ArenaUnity.ToArenaThickline(gameObject, ref dataObj);
+                    ArenaWireThickline.ToArenaThickline(gameObject, ref dataObj);
                     updatedData.Merge(dataObj);
                 }
             }
