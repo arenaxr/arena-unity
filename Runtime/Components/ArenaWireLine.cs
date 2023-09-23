@@ -27,8 +27,8 @@ namespace ArenaUnity
             if (json.Start != null && json.End != null)
             {
                 Vector3[] nodes = {
-                            ArenaUnity.ToUnityPosition((ArenaPositionJson)json.Start),
-                            ArenaUnity.ToUnityPosition((ArenaPositionJson)json.End),
+                            ArenaUnity.ToUnityPosition((ArenaVector3Json)json.Start),
+                            ArenaUnity.ToUnityPosition((ArenaVector3Json)json.End),
                         };
                 line.SetPositions(nodes);
             }

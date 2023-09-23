@@ -48,10 +48,10 @@ namespace ArenaUnity.Schemas
             return (RandomRadiusMax != defRandomRadiusMax);
         }
 
-        private static object defOffsetPosition = JsonConvert.DeserializeObject("{'x': 0, 'y': 1.6, 'z': 0}");
+        private static ArenaVector3Json defOffsetPosition = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1.6, 'z': 0}");
         [JsonProperty(PropertyName = "offsetPosition")]
         [Tooltip("Use as a static teleport x,y,z offset")]
-        public object OffsetPosition = defOffsetPosition;
+        public ArenaVector3Json OffsetPosition = defOffsetPosition;
         public bool ShouldSerializeOffsetPosition()
         {
             // offsetPosition

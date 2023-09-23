@@ -27,28 +27,28 @@ namespace ArenaUnity.Schemas
 
         // triangle member-fields
 
-        private static object defVertexA = JsonConvert.DeserializeObject("{'x': 0, 'y': 0.5, 'z': 0}");
+        private static ArenaVector3Json defVertexA = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0.5, 'z': 0}");
         [JsonProperty(PropertyName = "vertexA")]
         [Tooltip("vertex A")]
-        public object VertexA = defVertexA;
+        public ArenaVector3Json VertexA = defVertexA;
         public bool ShouldSerializeVertexA()
         {
             return true; // required in json schema
         }
 
-        private static object defVertexB = JsonConvert.DeserializeObject("{'x': -0.5, 'y': -0.5, 'z': 0}");
+        private static ArenaVector3Json defVertexB = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': -0.5, 'y': -0.5, 'z': 0}");
         [JsonProperty(PropertyName = "vertexB")]
         [Tooltip("vertex B")]
-        public object VertexB = defVertexB;
+        public ArenaVector3Json VertexB = defVertexB;
         public bool ShouldSerializeVertexB()
         {
             return true; // required in json schema
         }
 
-        private static object defVertexC = JsonConvert.DeserializeObject("{'x': 0.5, 'y': -0.5, 'z': 0}");
+        private static ArenaVector3Json defVertexC = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0.5, 'y': -0.5, 'z': 0}");
         [JsonProperty(PropertyName = "vertexC")]
         [Tooltip("vertex C")]
-        public object VertexC = defVertexC;
+        public ArenaVector3Json VertexC = defVertexC;
         public bool ShouldSerializeVertexC()
         {
             return true; // required in json schema

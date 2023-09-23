@@ -3,6 +3,7 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
+using ArenaUnity.Schemas;
 using UnityEditor;
 #if UNITY_EDITOR
 using UnityEditor.EditorTools;
@@ -505,10 +506,9 @@ namespace ArenaUnity
             Vector3 handleDirection = Vector3.forward;
 
             EditorGUI.BeginChangeCheck();
-            // TODO (mwfarb): update this conversion when Vector3 objects are in parity with our schema
-            Vector3 vertexA = (Vector3)triangle.json.VertexA;
-            Vector3 vertexB = (Vector3)triangle.json.VertexB;
-            Vector3 vertexC = (Vector3)triangle.json.VertexC;
+            Vector3 vertexA = ArenaUnity.ToUnityPosition(triangle.json.VertexA);
+            Vector3 vertexB = ArenaUnity.ToUnityPosition(triangle.json.VertexB);
+            Vector3 vertexC = ArenaUnity.ToUnityPosition(triangle.json.VertexC);
             using (new Handles.DrawingScope(Color.red))
             {
                 Handles.DrawWireDisc(triangle.transform.position, handleDirection, size / 10f);
@@ -538,9 +538,9 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshTriangle>();
-                    amesh.json.VertexA = vertexA - triangle.transform.localPosition;
-                    amesh.json.VertexB = vertexB - triangle.transform.localPosition;
-                    amesh.json.VertexC = vertexC - triangle.transform.localPosition;
+                    amesh.json.VertexA = ArenaUnity.ToArenaPosition(vertexA - triangle.transform.localPosition);
+                    amesh.json.VertexB = ArenaUnity.ToArenaPosition(vertexB - triangle.transform.localPosition);
+                    amesh.json.VertexC = ArenaUnity.ToArenaPosition(vertexC - triangle.transform.localPosition);
                     amesh.apply = true;
                     amesh.UpdateObject();
                 }

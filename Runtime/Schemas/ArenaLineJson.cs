@@ -37,10 +37,10 @@ namespace ArenaUnity.Schemas
             return (Color != defColor);
         }
 
-        private static object defEnd = JsonConvert.DeserializeObject("{'x': -0.5, 'y': -0.5, 'z': 0}");
+        private static ArenaVector3Json defEnd = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': -0.5, 'y': -0.5, 'z': 0}");
         [JsonProperty(PropertyName = "end")]
         [Tooltip("vertex B (end)")]
-        public object End = defEnd;
+        public ArenaVector3Json End = defEnd;
         public bool ShouldSerializeEnd()
         {
             return true; // required in json schema
@@ -56,10 +56,10 @@ namespace ArenaUnity.Schemas
             return (Opacity != defOpacity);
         }
 
-        private static object defStart = JsonConvert.DeserializeObject("{'x': 0, 'y': 0.5, 'z': 0}");
+        private static ArenaVector3Json defStart = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0.5, 'z': 0}");
         [JsonProperty(PropertyName = "start")]
         [Tooltip("vertex A (start)")]
-        public object Start = defStart;
+        public ArenaVector3Json Start = defStart;
         public bool ShouldSerializeStart()
         {
             return true; // required in json schema

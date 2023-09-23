@@ -72,16 +72,16 @@ namespace ArenaUnity
                 -float.Parse(axis[2])
             );
         }
-        public static ArenaPositionJson ToArenaPosition(Vector3 position)
+        public static ArenaVector3Json ToArenaPosition(Vector3 position)
         {
-            return new ArenaPositionJson
+            return new ArenaVector3Json
             {
                 X = ArenaFloat(position.x),
                 Y = ArenaFloat(position.y),
                 Z = ArenaFloat(-position.z)
             };
         }
-        public static Vector3 ToUnityPosition(ArenaPositionJson position)
+        public static Vector3 ToUnityPosition(ArenaVector3Json position)
         {
             return new Vector3(
                 (float)position.X,
@@ -142,16 +142,16 @@ namespace ArenaUnity
             return rotationQuat;
         }
         // scale
-        public static ArenaScaleJson ToArenaScale(Vector3 scale)
+        public static ArenaVector3Json ToArenaScale(Vector3 scale)
         {
-            return new ArenaScaleJson
+            return new ArenaVector3Json
             {
                 X = ArenaFloat(scale.x),
                 Y = ArenaFloat(scale.y),
                 Z = ArenaFloat(scale.z)
             };
         }
-        public static Vector3 ToUnityScale(ArenaScaleJson scale)
+        public static Vector3 ToUnityScale(ArenaVector3Json scale)
         {
             return new Vector3(
                 (float)scale.X,

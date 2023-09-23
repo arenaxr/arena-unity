@@ -34,7 +34,7 @@ namespace ArenaUnity
 
         [JsonProperty(PropertyName = "position")]
         [Tooltip("3D object position")]
-        public ArenaPositionJson position = null;
+        public ArenaVector3Json position = null;
         public bool ShouldSerializeposition()
         {
             return (position != null);
@@ -50,7 +50,7 @@ namespace ArenaUnity
 
         [JsonProperty(PropertyName = "scale")]
         [Tooltip("3D object scale")]
-        public ArenaScaleJson scale = null;
+        public ArenaVector3Json scale = null;
         public bool ShouldSerializescale()
         {
             return (scale != null);

@@ -19,9 +19,9 @@ namespace ArenaUnity
         protected override void ApplyRender()
         {
             filter.sharedMesh = TriangleBuilder.Build(
-                ArenaUnity.ToUnityPosition(JsonConvert.DeserializeObject<ArenaPositionJson>(json.VertexA.ToString())),
-                ArenaUnity.ToUnityPosition(JsonConvert.DeserializeObject<ArenaPositionJson>(json.VertexB.ToString())),
-                ArenaUnity.ToUnityPosition(JsonConvert.DeserializeObject<ArenaPositionJson>(json.VertexC.ToString()))
+                 ArenaUnity.ToUnityPosition(json.VertexA),
+                 ArenaUnity.ToUnityPosition(json.VertexB),
+                 ArenaUnity.ToUnityPosition(json.VertexC)
             );
         }
 

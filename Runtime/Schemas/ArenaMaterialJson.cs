@@ -112,10 +112,10 @@ namespace ArenaUnity.Schemas
             return (Npot != defNpot);
         }
 
-        private static object defOffset = JsonConvert.DeserializeObject("{'x': 1, 'y': 1}");
+        private static ArenaVector2Json defOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         [JsonProperty(PropertyName = "offset")]
         [Tooltip("Texture offset to be used.")]
-        public object Offset = defOffset;
+        public ArenaVector2Json Offset = defOffset;
         public bool ShouldSerializeOffset()
         {
             if (_token != null && _token.SelectToken("offset") != null) return true;
@@ -132,10 +132,10 @@ namespace ArenaUnity.Schemas
             return (Opacity != defOpacity);
         }
 
-        private static object defRepeat = JsonConvert.DeserializeObject("{'x': 1, 'y': 1}");
+        private static ArenaVector2Json defRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         [JsonProperty(PropertyName = "repeat")]
         [Tooltip("Texture repeat to be used.")]
-        public object Repeat = defRepeat;
+        public ArenaVector2Json Repeat = defRepeat;
         public bool ShouldSerializeRepeat()
         {
             if (_token != null && _token.SelectToken("repeat") != null) return true;
