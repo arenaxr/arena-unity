@@ -38,7 +38,7 @@ namespace ArenaUnity
                 }
             }
             pixelWidth = (float)json.LineWidth;
-            if (line.material == null)
+            if (line.material == null) // TODO (mwfarb): find "Default-Line" material
                 line.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
             if (json.Color != null)
                 line.startColor = line.endColor = ArenaUnity.ToUnityColor((string)json.Color);

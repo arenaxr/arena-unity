@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
+using Codice.CM.Common;
 using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
@@ -1046,7 +1047,7 @@ namespace ArenaUnity
         {
             ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(msgJson);
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{client.ClientId}/{object_id}", JsonConvert.SerializeObject(msg), hasPermissions);
+            PublishSceneMessage($"{sceneTopic}/{client.ClientId}/{object_id}", msg, hasPermissions);
         }
 
         /// <summary>
@@ -1056,7 +1057,7 @@ namespace ArenaUnity
         {
             ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(msgJson);
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{object_id}", JsonConvert.SerializeObject(msg), hasPermissions);
+            PublishSceneMessage($"{sceneTopic}/{object_id}", msg, hasPermissions);
         }
 
         /// <summary>
@@ -1064,18 +1065,20 @@ namespace ArenaUnity
         /// </summary>
         public void PublishEvent(string object_id, string eventType, string source, string msgJsonData, bool hasPermissions = true)
         {
-            ArenaObjectJson msg = new ArenaObjectJson();
-            msg.object_id = object_id;
-            msg.action = "clientEvent";
-            msg.type = eventType;
-            msg.data = JsonConvert.DeserializeObject(msgJsonData);
+            ArenaObjectJson msg = new ArenaObjectJson
+            {
+                object_id = object_id,
+                action = "clientEvent",
+                type = eventType,
+                data = JsonConvert.DeserializeObject(msgJsonData),
+            };
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{source}", JsonConvert.SerializeObject(msg), hasPermissions);
+            PublishSceneMessage($"{sceneTopic}/{source}", msg, hasPermissions);
         }
 
-        private void PublishSceneMessage(string topic, string msg, bool hasPermissions)
+        private void PublishSceneMessage(string topic, ArenaObjectJson msg, bool hasPermissions)
         {
-            byte[] payload = System.Text.Encoding.UTF8.GetBytes(msg);
+            byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
             Publish(topic, payload); // remote
             LogMessage("Sending", msg, hasPermissions);
         }
@@ -1115,7 +1118,7 @@ namespace ArenaUnity
         {
             string msgJson = System.Text.Encoding.UTF8.GetString(message);
             ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(msgJson);
-            LogMessage("Received", msgJson);
+            LogMessage("Received", msg);
             StartCoroutine(ProcessArenaMessage(msg, menuCommand));
         }
 
@@ -1184,21 +1187,20 @@ namespace ArenaUnity
             }
         }
 
-        private void LogMessage(string dir, string msg, bool hasPermissions = true)
+        private void LogMessage(string dir, ArenaObjectJson msg, bool hasPermissions = true)
         {
-            // TODO (mwfarb): restore logging requests by user
-            //// determine logging level
-            //if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
-            //if (msg.type == "object")
-            //{
-            //    if (msg.data != null && msg.data.object_type == "camera" && !logMqttUsers) return;
-            //    if (!logMqttObjects) return;
-            //}
-            //if (msg.action == "clientEvent" && !logMqttEvents) return;
-            //if (hasPermissions)
-            Debug.Log($"{dir}: {msg}");
-            //else
-            //    Debug.LogWarning($"Permissions FAILED {dir}: {JsonConvert.SerializeObject(msg)}");
+            // determine logging level
+            if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
+            if (msg.type == "object")
+            {
+                if (msg.object_id.StartsWith("camera_") && !logMqttUsers) return;
+                if (!logMqttObjects) return;
+            }
+            if (msg.action == "clientEvent" && !logMqttEvents) return;
+            if (hasPermissions)
+                Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
+            else
+                Debug.LogWarning($"Permissions FAILED {dir}: {JsonConvert.SerializeObject(msg)}");
         }
 
         protected override void OnApplicationQuit()

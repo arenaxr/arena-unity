@@ -32,10 +32,8 @@ namespace ArenaUnity
             Vector3[] nodes = { start, end };
             line.SetPositions(nodes);
             line.startColor = line.endColor = color;
-            //line.material = new Material(Shader.Find("Standard"));
-            line.material = new Material(Shader.Find("Unlit/Color"));
-            //line.material = new Material(Shader.Find("Default-Line"));
-            //line.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
+            if (line.material == null) // TODO (mwfarb): find "Default-Line" material
+                line.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
             line.widthMultiplier = 1f * ArenaUnity.LineSinglePixelInMeters;
             // we also need to apply the gltf rotation matrix transform, since the hand models did as well
             rayObj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(rayObj.transform.localRotation);
