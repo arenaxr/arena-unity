@@ -668,13 +668,13 @@ namespace ArenaUnity
                 case "text": ArenaUnity.ApplyWireText(indata, gobj); break;
                 case "line": ArenaUnity.ApplyWireLine(indata, gobj); break;
                 case "thickline": ArenaUnity.ApplyWireThickline(indata, gobj); break;
-                // TODO: case "arenaui-card": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
-                // TODO: case "arenaui-button-panel": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
-                // TODO: case "arenaui-prompt": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
-                // TODO: case "entity": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
-                // TODO: case "ocean": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
-                // TODO: case "pcd-model": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
-                // TODO: case "threejs-scene": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
+                // TODO: case "arenaui-card": ArenaUnity.ApplyWireArenauiCard(indata, gobj); break;
+                // TODO: case "arenaui-button-panel": ArenaUnity.ApplyWireArenauiButtonPanel(indata, gobj); break;
+                // TODO: case "arenaui-prompt": ArenaUnity.ApplyWireArenauiPrompt(indata, gobj); break;
+                // TODO: case "entity": ArenaUnity.ApplyWireEntity(indata, gobj); break;
+                // TODO: case "ocean": ArenaUnity.ApplyWireOcean(indata, gobj); break;
+                // TODO: case "pcd-model": ArenaUnity.ApplyWirePcdModel(indata, gobj); break;
+                // TODO: case "threejs-scene": ArenaUnity.ApplyWireThreejsScene(indata, gobj); break;
 
                 case "gltf-model":
                     // load main model
