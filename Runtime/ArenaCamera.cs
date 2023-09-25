@@ -110,9 +110,8 @@ namespace ArenaUnity
             };
 
             var updatedData = new JObject();
-            updatedData.Merge(dataUnity);
-            updatedData.Merge(dataCam);
-            // TODO (mwfarb): check for deletions and pollution
+            updatedData.Merge(JObject.FromObject(dataUnity));
+            updatedData.Merge(JObject.FromObject(dataCam));
 
             // publish
             msg.data = updatedData;

@@ -38,6 +38,8 @@ namespace ArenaUnity
         [HideInInspector]
         public object data = null; // original message data for object, if any
         [HideInInspector]
+        public string object_type = null; // original message data for object, if any
+        [HideInInspector]
         public string parentId = null;
 
         internal bool Created { get { return created; } set { created = value; } }
@@ -163,10 +165,10 @@ namespace ArenaUnity
             };
             transformOnly = created ? transformOnly : false;
             ArenaObjectDataJson dataUnity = new ArenaObjectDataJson();
-            //if (data == null || data.object_type == null)
-            dataUnity.object_type = ArenaUnity.ToArenaObjectType(gameObject);
-            //else
-            //    dataUnity.object_type = (string)data.object_type;
+            if (data != null)
+                dataUnity.object_type = ArenaUnity.ToArenaObjectType(gameObject);
+            else
+                dataUnity.object_type = object_type;
 
             // minimum transform information
             dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
@@ -211,7 +213,7 @@ namespace ArenaUnity
             // merge unity data with original message data
             if (data != null)
                 updatedData.Merge(JObject.FromObject(data));
-            updatedData.Merge(dataUnity);
+            updatedData.Merge(JObject.FromObject(dataUnity));
             // TODO (mwfarb): check for deletions and pollution
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
 

@@ -639,6 +639,7 @@ namespace ArenaUnity
             aobj.parentId = (string)data.parent;
             string parent = (string)data.parent;
             string object_type = (string)data.object_type;
+            aobj.object_type = object_type;
 
             // handle wire object attributes
             switch (object_type)
