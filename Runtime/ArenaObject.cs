@@ -165,10 +165,12 @@ namespace ArenaUnity
             };
             transformOnly = created ? transformOnly : false;
             ArenaObjectDataJson dataUnity = new ArenaObjectDataJson();
-            if (data != null)
-                dataUnity.object_type = ArenaUnity.ToArenaObjectType(gameObject);
-            else
+            if (!string.IsNullOrEmpty(object_type))
                 dataUnity.object_type = object_type;
+            else
+                dataUnity.object_type = ToArenaObjectType(gameObject);
+
+            Debug.LogWarning(JsonConvert.SerializeObject(dataUnity));
 
             // minimum transform information
             dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
@@ -253,6 +255,29 @@ namespace ArenaUnity
             string payload = JsonConvert.SerializeObject(msg);
             if (ArenaClientScene.Instance)
                 ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
+        }
+
+        // object type
+        public static string ToArenaObjectType(GameObject gobj)
+        {
+            string objectType = "entity";
+            MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
+            TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
+            Light light = gobj.GetComponent<Light>();
+            SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
+            LineRenderer lr = gobj.GetComponent<LineRenderer>();
+            // initial priority is primitive
+            if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0f)
+                objectType = "image";
+            else if (lr)
+                objectType = "thickline";
+            else if (tm)
+                objectType = "text";
+            else if (light)
+                objectType = "light";
+            else if (meshFilter && meshFilter.sharedMesh)
+                objectType = meshFilter.sharedMesh.name.ToLower();
+            return objectType;
         }
 
         public void OnValidate()

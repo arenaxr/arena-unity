@@ -35,29 +35,6 @@ namespace ArenaUnity
             return spanString;
         }
 
-        // object type
-        public static string ToArenaObjectType(GameObject gobj)
-        {
-            string objectType = "entity";
-            MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
-            TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
-            Light light = gobj.GetComponent<Light>();
-            SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
-            LineRenderer lr = gobj.GetComponent<LineRenderer>();
-            // initial priority is primitive
-            if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0f)
-                objectType = "image";
-            else if (lr)
-                objectType = "thickline";
-            else if (tm)
-                objectType = "text";
-            else if (light)
-                objectType = "light";
-            else if (meshFilter && meshFilter.sharedMesh)
-                objectType = meshFilter.sharedMesh.name.ToLower();
-            return objectType;
-        }
-
         // position
         public static string ToArenaPositionString(Vector3 position)
         {
