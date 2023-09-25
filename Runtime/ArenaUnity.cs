@@ -66,6 +66,14 @@ namespace ArenaUnity
                 -(float)position.Z
             );
         }
+        public static Vector3 ToUnityPosition(Vector3 position)
+        {
+            return new Vector3(
+                (float)position.x,
+                (float)position.y,
+                -(float)position.z
+            );
+        }
 
         // rotation
         public static ArenaRotationJson ToArenaRotationQuat(Quaternion rotationQuat, bool invertY = true)
@@ -85,6 +93,15 @@ namespace ArenaUnity
                 (float)rotationQuat.Y * (invertY ? -1 : 1),
                 (float)rotationQuat.Z,
                 (float)rotationQuat.W
+            );
+        }
+        public static Quaternion ToUnityRotationQuat(Quaternion rotationQuat, bool invertY = true)
+        {
+            return new Quaternion(
+                -(float)rotationQuat.x,
+                (float)rotationQuat.y * (invertY ? -1 : 1),
+                (float)rotationQuat.z,
+                (float)rotationQuat.w
             );
         }
         /// <summary>
