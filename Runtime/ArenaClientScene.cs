@@ -798,7 +798,7 @@ namespace ArenaUnity
                     // TODO: case "sound": ArenaUnity.ApplySound(gobj, data); break;
                     // TODO: case "textinput": ArenaUnity.ApplyTextInput(gobj, data); break;
                     // TODO: case "screenshareable": ArenaUnity.ApplyScreensharable(gobj, data); break;
-                    // TODO: case "remote-render": ArenaUnity.ApplyRemoteRender(gobj, data); break;
+                    case "remote-render": ArenaUnity.ApplyRemoteRender(gobj, data); break;
                     // TODO: case "video-control": ArenaUnity.ApplyVideoControl(gobj, data); break;
                     case "attribution": ArenaUnity.ApplyAttribution(gobj, data); break;
                     // TODO: case "particle-system": ArenaUnity.ApplyParticleSystem(gobj, data); break;

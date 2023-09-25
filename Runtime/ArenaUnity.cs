@@ -213,6 +213,13 @@ namespace ArenaUnity
             c.json = data.material; c.apply = true;
         }
 
+        public static void ApplyRemoteRender(GameObject gobj, ArenaObjectDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaRemoteRender>(out var c))
+                c = gobj.AddComponent<ArenaRemoteRender>();
+            c.json = data.remoteRender; c.apply = true;
+        }
+
         // wire objects
 
 
