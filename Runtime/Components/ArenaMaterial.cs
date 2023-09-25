@@ -6,6 +6,7 @@
 using System;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -46,11 +47,9 @@ namespace ArenaUnity.Components
                     bool opaque = opacity >= 1f;
                     if (json.Color != null)
                         material.SetColor(ArenaUnity.ColorPropertyName, ArenaUnity.ToUnityColor((string)json.Color, opacity));
-                    if (json.Opacity != null)
-                    {
-                        Color c = material.GetColor(ArenaUnity.ColorPropertyName);
-                        material.SetColor(ArenaUnity.ColorPropertyName, new Color(c.r, c.g, c.b, opacity));
-                    }
+                    // TODO (mwfarb): restore arena style transparency/opacity switch: if (json.Opacity != null)
+                    Color c = material.GetColor(ArenaUnity.ColorPropertyName);
+                    material.SetColor(ArenaUnity.ColorPropertyName, new Color(c.r, c.g, c.b, opacity));
                     if (json.Shader != null)
                         material.shader.name = (string)json.Shader == "flat" ? "Unlit/Color" : "Standard";
                     // For runtime set/change transparency mode, follow GUI params
@@ -93,13 +92,13 @@ namespace ArenaUnity.Components
         }
 
         // material
-        public static void ToArenaMaterial(GameObject obj, ref ArenaMaterialJson data)
+        public static JObject ToArenaMaterial(GameObject obj)
         {
+            var data = new ArenaMaterialJson();
             Renderer renderer = obj.GetComponent<Renderer>();
             // object material
             Material mat = renderer.material;
-            if (!mat)
-                return;
+            if (!mat) return null;
             // shaders only
             switch (mat.shader.name)
             {
@@ -129,6 +128,8 @@ namespace ArenaUnity.Components
                     data.Transparent = true; break;
             }
             data.Opacity = ArenaUnity.ArenaFloat(mat.color.a);
+
+            return JObject.FromObject(data);
         }
 
         public override void UpdateObject()

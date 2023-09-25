@@ -19,7 +19,6 @@ namespace ArenaUnity
         private float publishInterval; // varies
 
         private string messageType = "object";
-        private bool persist = false;
         private Color displayColor = Color.white;
         internal string userid = null;
         internal string camid = null;

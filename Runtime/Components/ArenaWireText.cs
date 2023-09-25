@@ -6,6 +6,7 @@
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -77,8 +78,9 @@ namespace ArenaUnity
         }
 
         // text
-        public static void ToArenaText(GameObject gobj, ref ArenaTextJson data)
+        public static JObject ToArenaText(GameObject gobj)
         {
+            var data = new ArenaTextJson();
             TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
             //tm.fontSize;
             data.Value = tm.text;
@@ -128,6 +130,7 @@ namespace ArenaUnity
                     data.Anchor = ArenaTextJson.AnchorType.Center;
                     break;
             }
+            return JObject.FromObject(data);
         }
 
         public override void UpdateObject()

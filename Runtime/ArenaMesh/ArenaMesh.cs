@@ -9,6 +9,7 @@ using UnityEngine;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ArenaUnity
 {
@@ -54,10 +55,11 @@ namespace ArenaUnity
             }
         }
 
-        public static void ToArenaMesh(GameObject gobj, ref object data)
+        public static JObject ToArenaMesh(GameObject gobj)
         {
+            object data = null;
             ArenaMesh am = gobj.GetComponent<ArenaMesh>();
-            if (am == null) return;
+            if (am == null) return null;
             switch (am.GetType().ToString())
             {
                 case "ArenaUnity.ArenaMeshCapsule":
@@ -120,14 +122,19 @@ namespace ArenaUnity
                     var triangle = gobj.GetComponent<ArenaMeshTriangle>();
                     data = triangle.json;
                     break;
+                case "ArenaUnity.ArenaMeshVideosphere":
+                    var videosphere = gobj.GetComponent<ArenaMeshVideosphere>();
+                    data = videosphere.json;
+                    break;
             }
+            return JObject.FromObject(data);
         }
 
-
-        // size dimensions
-        public static void ToArenaDimensions(GameObject gobj, ref object data)
+        // mesh size/dimensions
+        public static JObject ToArenaDimensions(GameObject gobj)
         {
             // used to collect unity-default render sizes
+            object data = null;
             string collider = gobj.GetComponent<Collider>().GetType().ToString();
             string mesh = null;
             MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
@@ -173,29 +180,40 @@ namespace ArenaUnity
                             break;
                     }
                     break;
+                case "UnityEngine.MeshCollider":
+                    // TODO (mwfarb): this should only apply to freshly created objects, not static project objects
+                    switch (mesh)
+                    {
+                        case "Quad":
+                            data = new ArenaPlaneJson
+                            {
+                                Width = 1f,
+                                Height = 1f,
+                                SegmentsWidth = 1,
+                                SegmentsHeight = 1,
+                            };
+                            break;
+                        case "Plane":
+                            data = new ArenaPlaneJson
+                            {
+                                Width = 10f,
+                                Height = 10f,
+                                SegmentsWidth = 10,
+                                SegmentsHeight = 10,
+                            };
+                            // TODO (mwfarb): restore plane default rotation
+                            //Quaternion rotOut = gobj.transform.localRotation;
+                            //rotOut *= Quaternion.Euler(90, 0, 0);
+                            //data.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
                 default:
                     break;
             }
-            // TODO (mwfarb): switch (mesh)
-            //{
-            //    case "Cube":
-            //        data.object_type = "box";
-            //        break;
-            //    case "Quad":
-            //        data.object_type = "plane";
-            //        data.width = 1f;
-            //        data.height = 1f;
-            //        break;
-            //    case "Plane":
-            //        Quaternion rotOut = gobj.transform.localRotation;
-            //        rotOut *= Quaternion.Euler(90, 0, 0);
-            //        data.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
-            //        data.width = 10f;
-            //        data.height = 10f;
-            //        break;
-            //    default:
-            //        break;
-            //}
+            return JObject.FromObject(data);
         }
 
     }

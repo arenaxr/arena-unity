@@ -80,6 +80,9 @@ namespace ArenaUnity
                 case "ArenaUnity.ArenaMeshSphere":
                     HandleSizeSphere(aobj, go.GetComponent<ArenaMeshSphere>());
                     break;
+                case "ArenaUnity.ArenaMeshVideosphere":
+                    HandleSizeVideosphere(aobj, go.GetComponent<ArenaMeshVideosphere>());
+                    break;
                 case "ArenaUnity.ArenaMeshCircle":
                     HandleSizeCircle(aobj, go.GetComponent<ArenaMeshCircle>());
                     break;
@@ -271,6 +274,30 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshSphere>();
+                    amesh.json.Radius = radius;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
+                }
+            }
+        }
+
+        private static void HandleSizeVideosphere(ArenaObject aobj, ArenaMeshVideosphere videosphere)
+        {
+            float size = HandleUtility.GetHandleSize(videosphere.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float radius = videosphere.json.Radius;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                radius = Handles.ScaleSlider(videosphere.json.Radius, videosphere.transform.position, videosphere.transform.right, videosphere.transform.rotation, size, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Videosphere");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshVideosphere>();
                     amesh.json.Radius = radius;
                     amesh.apply = true;
                     amesh.UpdateObject();

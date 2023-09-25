@@ -264,6 +264,14 @@ namespace ArenaUnity
             return (speParticles != null);
         }
 
+        [JsonProperty(PropertyName = "look-at")]
+        [Tooltip("The look-at component defines the behavior for an entity to dynamically rotate or face towards another entity or position. Use '#my-camera' to face the user camera, otherwise can take either a vec3 position or a query selector to another entity.")]
+        public string lookAt = null;
+        public bool ShouldSerializelookAt()
+        {
+            return (lookAt != null);
+        }
+
         [JsonProperty(PropertyName = "buffer")]
         [Tooltip("Transform geometry into a BufferGeometry to reduce memory usage at the cost of being harder to manipulate (geometries only: box, circle, cone, ...).")]
         public bool? buffer = null;

@@ -32,10 +32,16 @@ namespace ArenaUnity
                         };
                 line.SetPositions(nodes);
             }
+            if (line.material == null)
+                line.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
             if (json.Color != null)
                 line.startColor = line.endColor = ArenaUnity.ToUnityColor((string)json.Color);
             line.widthMultiplier = pixelWidth * ArenaUnity.LineSinglePixelInMeters;
         }
+
+        // ToArenaLine not needed since all LineRenderer in Unity are essentially thickline, not line.
+        // We could try and support it if the Unity Ray is easily renderable on all platforms.
+        // public static void ToArenaLine(GameObject gobj, ref ArenaLineJson data) { }
 
         public override void UpdateObject()
         {

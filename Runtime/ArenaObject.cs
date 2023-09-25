@@ -188,46 +188,29 @@ namespace ArenaUnity
 
             var updatedData = new JObject();
 
-            // TODO (mwfarb): ArenaMesh.ToArenaDimensions(gameObject, ref dataObj);
-            //if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
-            //{
-            //    dataUnity.geometry = new ExpandoObject();
-            //    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity.geometry);
-            //}
-            // TODO (mwfarb): ArenaMesh.ToArenaMesh(gameObject, ref dataObj);
-
             // other attributes information
             if (!transformOnly)
             {
-                if (GetComponent<Light>())
-                {
-                    ArenaLightJson dataObj = new ArenaLightJson();
-                    ArenaWireLight.ToArenaLight(gameObject, ref dataObj);
-                    updatedData.Merge(dataObj);
-                }
+                // wire objects
+                if (GetComponent<ArenaMesh>())
+                    updatedData.Merge(ArenaMesh.ToArenaMesh(gameObject));
+                else if (GetComponent<Collider>())
+                    updatedData.Merge(ArenaMesh.ToArenaDimensions(gameObject));
+                else if (GetComponent<Light>())
+                    updatedData.Merge(ArenaWireLight.ToArenaLight(gameObject));
+                else if (GetComponent<TextMeshPro>())
+                    updatedData.Merge(ArenaWireText.ToArenaText(gameObject));
+                else if (GetComponent<LineRenderer>())
+                    updatedData.Merge(ArenaWireThickline.ToArenaThickline(gameObject));
+
+                // components
                 if (GetComponent<Renderer>())
-                {
-                    ArenaMaterialJson dataObj = new ArenaMaterialJson();
-                    ArenaMaterial.ToArenaMaterial(gameObject, ref dataObj);
-                    updatedData.Merge(dataObj);
-                }
-                if (GetComponent<TextMeshPro>())
-                {
-                    ArenaTextJson dataObj = new ArenaTextJson();
-                    ArenaWireText.ToArenaText(gameObject, ref dataObj);
-                    updatedData.Merge(dataObj);
-                }
-                if (GetComponent<LineRenderer>())
-                {
-                    ArenaThicklineJson dataObj = new ArenaThicklineJson();
-                    ArenaWireThickline.ToArenaThickline(gameObject, ref dataObj);
-                    updatedData.Merge(dataObj);
-                }
+                    updatedData.Merge(ArenaMaterial.ToArenaMaterial(gameObject));
             }
-            Debug.Log(JsonConvert.SerializeObject(updatedData));
+
             // merge unity data with original message data
             if (data != null)
-                updatedData.Merge(data);
+                updatedData.Merge(JObject.FromObject(data));
             updatedData.Merge(dataUnity);
             // TODO (mwfarb): check for deletions and pollution
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);

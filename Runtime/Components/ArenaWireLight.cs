@@ -6,6 +6,7 @@
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -54,10 +55,10 @@ namespace ArenaUnity
         }
 
         // light
-        public static void ToArenaLight(GameObject gobj, ref ArenaLightJson data)
+        public static JObject ToArenaLight(GameObject gobj)
         {
             // TODO: translate from RenderSettings.ambientMode, may need centralized one-time publish
-
+            var data = new ArenaLightJson();
             Light light = gobj.GetComponent<Light>();
             switch (light.type)
             {
@@ -77,6 +78,8 @@ namespace ArenaUnity
             data.Intensity = ArenaUnity.ArenaFloat(light.intensity);
             data.Color = ArenaUnity.ToArenaColor(light.color);
             data.CastShadow = light.shadows != LightShadows.None;
+
+            return JObject.FromObject(data);
         }
 
         public override void UpdateObject()

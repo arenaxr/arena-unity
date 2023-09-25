@@ -535,8 +535,6 @@ namespace ArenaUnity
         private void CreateUpdateObject(ArenaObjectJson msg, object indata, string displayName = null, object menuCommand = null)
         {
             ArenaObject aobj = null;
-            Debug.Log(msg.object_id + ": " + JsonConvert.SerializeObject(indata));
-
             if (arenaObjs.TryGetValue(msg.object_id, out GameObject gobj))
             {   // update local
                 if (gobj != null)
