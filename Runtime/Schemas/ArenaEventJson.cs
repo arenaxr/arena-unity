@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaEventJson
     {
-        public const string componentName = "event";
+        public readonly string object_type = "event";
 
         // event member-fields
 
@@ -35,48 +36,34 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
-        private static object defPosition = JsonConvert.DeserializeObject("{'x': 0, 'y': 0, 'z': 0}");
+        private static ArenaVector3Json defPosition = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         [JsonProperty(PropertyName = "position")]
         [Tooltip("The event destination position in 3D.")]
-        public object Position = defPosition;
+        public ArenaVector3Json Position = defPosition;
         public bool ShouldSerializePosition()
         {
             return true; // required in json schema
         }
 
-        private static object defClickPos = JsonConvert.DeserializeObject("{'x': 0, 'y': 1.6, 'z': 0}");
+        private static ArenaVector3Json defClickPos = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1.6, 'z': 0}");
         [JsonProperty(PropertyName = "clickPos")]
         [Tooltip("The event origination position in 3D.")]
-        public object ClickPos = defClickPos;
+        public ArenaVector3Json ClickPos = defClickPos;
         public bool ShouldSerializeClickPos()
         {
-            if (_token != null && _token.SelectToken("clickPos") != null) return true;
+            // clickPos
             return (ClickPos != defClickPos);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaEventJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaEventJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaEventJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

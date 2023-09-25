@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaImpulseJson
     {
-        public const string componentName = "impulse";
+        [JsonIgnore]
+        public readonly string componentName = "impulse";
 
         // impulse member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public string Force = defForce;
         public bool ShouldSerializeForce()
         {
-            if (_token != null && _token.SelectToken("force") != null) return true;
+            // force
             return (Force != defForce);
         }
 
@@ -42,7 +44,7 @@ namespace ArenaUnity.Schemas
         public string On = defOn;
         public bool ShouldSerializeOn()
         {
-            if (_token != null && _token.SelectToken("on") != null) return true;
+            // on
             return (On != defOn);
         }
 
@@ -52,33 +54,19 @@ namespace ArenaUnity.Schemas
         public string Position = defPosition;
         public bool ShouldSerializePosition()
         {
-            if (_token != null && _token.SelectToken("position") != null) return true;
+            // position
             return (Position != defPosition);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaImpulseJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaImpulseJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaImpulseJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

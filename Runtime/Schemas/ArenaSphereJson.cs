@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaSphereJson
     {
-        public const string componentName = "sphere";
+        public readonly string object_type = "sphere";
 
         // sphere member-fields
 
@@ -32,7 +33,7 @@ namespace ArenaUnity.Schemas
         public float PhiLength = defPhiLength;
         public bool ShouldSerializePhiLength()
         {
-            if (_token != null && _token.SelectToken("phiLength") != null) return true;
+            // phiLength
             return (PhiLength != defPhiLength);
         }
 
@@ -42,7 +43,7 @@ namespace ArenaUnity.Schemas
         public float PhiStart = defPhiStart;
         public bool ShouldSerializePhiStart()
         {
-            if (_token != null && _token.SelectToken("phiStart") != null) return true;
+            // phiStart
             return (PhiStart != defPhiStart);
         }
 
@@ -52,27 +53,27 @@ namespace ArenaUnity.Schemas
         public float Radius = defRadius;
         public bool ShouldSerializeRadius()
         {
-            if (_token != null && _token.SelectToken("radius") != null) return true;
+            // radius
             return (Radius != defRadius);
         }
 
-        private static float defSegmentsHeight = 18f;
+        private static int defSegmentsHeight = 18;
         [JsonProperty(PropertyName = "segmentsHeight")]
         [Tooltip("segments height")]
-        public float SegmentsHeight = defSegmentsHeight;
+        public int SegmentsHeight = defSegmentsHeight;
         public bool ShouldSerializeSegmentsHeight()
         {
-            if (_token != null && _token.SelectToken("segmentsHeight") != null) return true;
+            // segmentsHeight
             return (SegmentsHeight != defSegmentsHeight);
         }
 
-        private static float defSegmentsWidth = 36f;
+        private static int defSegmentsWidth = 36;
         [JsonProperty(PropertyName = "segmentsWidth")]
         [Tooltip("segments width")]
-        public float SegmentsWidth = defSegmentsWidth;
+        public int SegmentsWidth = defSegmentsWidth;
         public bool ShouldSerializeSegmentsWidth()
         {
-            if (_token != null && _token.SelectToken("segmentsWidth") != null) return true;
+            // segmentsWidth
             return (SegmentsWidth != defSegmentsWidth);
         }
 
@@ -82,7 +83,7 @@ namespace ArenaUnity.Schemas
         public float ThetaLength = defThetaLength;
         public bool ShouldSerializeThetaLength()
         {
-            if (_token != null && _token.SelectToken("thetaLength") != null) return true;
+            // thetaLength
             return (ThetaLength != defThetaLength);
         }
 
@@ -92,33 +93,19 @@ namespace ArenaUnity.Schemas
         public float ThetaStart = defThetaStart;
         public bool ShouldSerializeThetaStart()
         {
-            if (_token != null && _token.SelectToken("thetaStart") != null) return true;
+            // thetaStart
             return (ThetaStart != defThetaStart);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaSphereJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaSphereJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaSphereJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

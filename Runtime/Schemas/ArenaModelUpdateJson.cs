@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaModelUpdateJson
     {
-        public const string componentName = "modelUpdate";
+        [JsonIgnore]
+        public readonly string componentName = "modelUpdate";
 
         // modelUpdate member-fields
 
@@ -32,33 +34,19 @@ namespace ArenaUnity.Schemas
         public object AZaZaZaZ09 = defAZaZaZaZ09;
         public bool ShouldSerializeAZaZaZaZ09()
         {
-            if (_token != null && _token.SelectToken("^[A-Za-z][A-Za-z0-9_-]*$") != null) return true;
+            // ^[A-Za-z][A-Za-z0-9_-]*$
             return (AZaZaZaZ09 != defAZaZaZaZ09);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaModelUpdateJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaModelUpdateJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaModelUpdateJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

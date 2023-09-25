@@ -1,4 +1,9 @@
-﻿// Modified from: https://github.com/mrdoob/three.js/blob/dev/src/geometries/TetrahedronGeometry.js
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
+
+// Modified from: https://github.com/mrdoob/three.js/blob/dev/src/geometries/TetrahedronGeometry.js
 
 using System.Collections.Generic;
 using MeshBuilder;

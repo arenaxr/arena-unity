@@ -1,11 +1,12 @@
 ﻿/**
  * Open source software under the terms in /LICENSE
- * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
 using System.Collections;
-using System.Dynamic;
+using ArenaUnity.Components;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PrettyHierarchy;
 using UnityEngine;
 
@@ -18,7 +19,6 @@ namespace ArenaUnity
         private float publishInterval; // varies
 
         private string messageType = "object";
-        private bool persist = false;
         private Color displayColor = Color.white;
         internal string userid = null;
         internal string camid = null;
@@ -84,30 +84,40 @@ namespace ArenaUnity
             if (messageType != "object") return false;
 
             // message type information
-            dynamic msg = new ExpandoObject();
-            msg.object_id = camid;
-            msg.action = created ? "update" : "create";
-            msg.type = messageType;
-            msg.persist = persist;
+            ArenaObjectJson msg = new ArenaObjectJson
+            {
+                object_id = camid,
+                action = created ? "update" : "create",
+                type = messageType,
+            };
             if (string.IsNullOrWhiteSpace(displayName))
             {   // provide default name if needed
                 displayName = name;
             }
             msg.displayName = displayName;
 
-            dynamic dataUnity = new ExpandoObject();
-            dataUnity.object_type = "camera";
-            dataUnity.headModelPath = headModelPath;
-            dataUnity.color = ArenaUnity.ToArenaColor(displayColor);
-
             // minimum transform information
-            dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
-            dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(transform.localRotation); // always send quaternions over the wire
+            ArenaObjectDataJson dataUnity = new ArenaObjectDataJson
+            {
+                object_type = "camera",
+                position = ArenaUnity.ToArenaPosition(transform.localPosition),
+                rotation = ArenaUnity.ToArenaRotationQuat(transform.localRotation), // always send quaternions over the wire
+            };
+            ArenaCameraJson dataCam = new ArenaCameraJson
+            {
+                headModelPath = headModelPath,
+                color = ArenaUnity.ToArenaColor(displayColor),
+            };
+
+            var updatedData = new JObject();
+            updatedData.Merge(JObject.FromObject(dataUnity));
+            updatedData.Merge(JObject.FromObject(dataCam));
 
             // publish
-            msg.data = dataUnity;
+            msg.data = updatedData;
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishCamera(msg.object_id, payload, HasPermissions);
+            if (ArenaClientScene.Instance)
+                ArenaClientScene.Instance.PublishCamera(msg.object_id, payload, HasPermissions);
             if (!created)
                 created = true;
 

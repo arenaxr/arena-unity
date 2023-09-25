@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaConeJson
     {
-        public const string componentName = "cone";
+        public readonly string object_type = "cone";
 
         // cone member-fields
 
@@ -32,7 +33,7 @@ namespace ArenaUnity.Schemas
         public float Height = defHeight;
         public bool ShouldSerializeHeight()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defOpenEnded = false;
@@ -41,7 +42,7 @@ namespace ArenaUnity.Schemas
         public bool OpenEnded = defOpenEnded;
         public bool ShouldSerializeOpenEnded()
         {
-            if (_token != null && _token.SelectToken("openEnded") != null) return true;
+            // openEnded
             return (OpenEnded != defOpenEnded);
         }
 
@@ -51,7 +52,7 @@ namespace ArenaUnity.Schemas
         public float RadiusBottom = defRadiusBottom;
         public bool ShouldSerializeRadiusBottom()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defRadiusTop = 0.01f;
@@ -60,27 +61,27 @@ namespace ArenaUnity.Schemas
         public float RadiusTop = defRadiusTop;
         public bool ShouldSerializeRadiusTop()
         {
-            if (_token != null && _token.SelectToken("radiusTop") != null) return true;
+            // radiusTop
             return (RadiusTop != defRadiusTop);
         }
 
-        private static float defSegmentsHeight = 18f;
+        private static int defSegmentsHeight = 18;
         [JsonProperty(PropertyName = "segmentsHeight")]
         [Tooltip("segments height")]
-        public float SegmentsHeight = defSegmentsHeight;
+        public int SegmentsHeight = defSegmentsHeight;
         public bool ShouldSerializeSegmentsHeight()
         {
-            if (_token != null && _token.SelectToken("segmentsHeight") != null) return true;
+            // segmentsHeight
             return (SegmentsHeight != defSegmentsHeight);
         }
 
-        private static float defSegmentsRadial = 36f;
+        private static int defSegmentsRadial = 36;
         [JsonProperty(PropertyName = "segmentsRadial")]
         [Tooltip("segments radial")]
-        public float SegmentsRadial = defSegmentsRadial;
+        public int SegmentsRadial = defSegmentsRadial;
         public bool ShouldSerializeSegmentsRadial()
         {
-            if (_token != null && _token.SelectToken("segmentsRadial") != null) return true;
+            // segmentsRadial
             return (SegmentsRadial != defSegmentsRadial);
         }
 
@@ -90,7 +91,7 @@ namespace ArenaUnity.Schemas
         public float ThetaLength = defThetaLength;
         public bool ShouldSerializeThetaLength()
         {
-            if (_token != null && _token.SelectToken("thetaLength") != null) return true;
+            // thetaLength
             return (ThetaLength != defThetaLength);
         }
 
@@ -100,33 +101,19 @@ namespace ArenaUnity.Schemas
         public float ThetaStart = defThetaStart;
         public bool ShouldSerializeThetaStart()
         {
-            if (_token != null && _token.SelectToken("thetaStart") != null) return true;
+            // thetaStart
             return (ThetaStart != defThetaStart);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaConeJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaConeJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaConeJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

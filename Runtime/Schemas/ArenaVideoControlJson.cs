@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaVideoControlJson
     {
-        public const string componentName = "video-control";
+        [JsonIgnore]
+        public readonly string componentName = "video-control";
 
         // video-control member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public string FrameObject = defFrameObject;
         public bool ShouldSerializeFrameObject()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defVideoObject = "";
@@ -41,7 +43,7 @@ namespace ArenaUnity.Schemas
         public string VideoObject = defVideoObject;
         public bool ShouldSerializeVideoObject()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defVideoPath = "";
@@ -50,7 +52,7 @@ namespace ArenaUnity.Schemas
         public string VideoPath = defVideoPath;
         public bool ShouldSerializeVideoPath()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defAnyoneClicks = true;
@@ -59,7 +61,7 @@ namespace ArenaUnity.Schemas
         public bool AnyoneClicks = defAnyoneClicks;
         public bool ShouldSerializeAnyoneClicks()
         {
-            if (_token != null && _token.SelectToken("anyone_clicks") != null) return true;
+            // anyone_clicks
             return (AnyoneClicks != defAnyoneClicks);
         }
 
@@ -69,7 +71,7 @@ namespace ArenaUnity.Schemas
         public bool VideoLoop = defVideoLoop;
         public bool ShouldSerializeVideoLoop()
         {
-            if (_token != null && _token.SelectToken("video_loop") != null) return true;
+            // video_loop
             return (VideoLoop != defVideoLoop);
         }
 
@@ -79,7 +81,7 @@ namespace ArenaUnity.Schemas
         public bool Autoplay = defAutoplay;
         public bool ShouldSerializeAutoplay()
         {
-            if (_token != null && _token.SelectToken("autoplay") != null) return true;
+            // autoplay
             return (Autoplay != defAutoplay);
         }
 
@@ -89,7 +91,7 @@ namespace ArenaUnity.Schemas
         public float Volume = defVolume;
         public bool ShouldSerializeVolume()
         {
-            if (_token != null && _token.SelectToken("volume") != null) return true;
+            // volume
             return (Volume != defVolume);
         }
 
@@ -99,33 +101,19 @@ namespace ArenaUnity.Schemas
         public bool Cleanup = defCleanup;
         public bool ShouldSerializeCleanup()
         {
-            if (_token != null && _token.SelectToken("cleanup") != null) return true;
+            // cleanup
             return (Cleanup != defCleanup);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaVideoControlJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaVideoControlJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaVideoControlJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

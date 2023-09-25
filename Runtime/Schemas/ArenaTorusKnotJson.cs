@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaTorusKnotJson
     {
-        public const string componentName = "torusKnot";
+        public readonly string object_type = "torusKnot";
 
         // torusKnot member-fields
 
@@ -32,7 +33,7 @@ namespace ArenaUnity.Schemas
         public float P = defP;
         public bool ShouldSerializeP()
         {
-            if (_token != null && _token.SelectToken("p") != null) return true;
+            // p
             return (P != defP);
         }
 
@@ -42,7 +43,7 @@ namespace ArenaUnity.Schemas
         public float Q = defQ;
         public bool ShouldSerializeQ()
         {
-            if (_token != null && _token.SelectToken("q") != null) return true;
+            // q
             return (Q != defQ);
         }
 
@@ -52,7 +53,7 @@ namespace ArenaUnity.Schemas
         public float Radius = defRadius;
         public bool ShouldSerializeRadius()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defRadiusTubular = 0.4f;
@@ -61,53 +62,39 @@ namespace ArenaUnity.Schemas
         public float RadiusTubular = defRadiusTubular;
         public bool ShouldSerializeRadiusTubular()
         {
-            if (_token != null && _token.SelectToken("radiusTubular") != null) return true;
+            // radiusTubular
             return (RadiusTubular != defRadiusTubular);
         }
 
-        private static float defSegmentsRadial = 8f;
+        private static int defSegmentsRadial = 8;
         [JsonProperty(PropertyName = "segmentsRadial")]
         [Tooltip("segments radial")]
-        public float SegmentsRadial = defSegmentsRadial;
+        public int SegmentsRadial = defSegmentsRadial;
         public bool ShouldSerializeSegmentsRadial()
         {
-            if (_token != null && _token.SelectToken("segmentsRadial") != null) return true;
+            // segmentsRadial
             return (SegmentsRadial != defSegmentsRadial);
         }
 
-        private static float defSegmentsTubular = 100f;
+        private static int defSegmentsTubular = 100;
         [JsonProperty(PropertyName = "segmentsTubular")]
         [Tooltip("segments tubular")]
-        public float SegmentsTubular = defSegmentsTubular;
+        public int SegmentsTubular = defSegmentsTubular;
         public bool ShouldSerializeSegmentsTubular()
         {
-            if (_token != null && _token.SelectToken("segmentsTubular") != null) return true;
+            // segmentsTubular
             return (SegmentsTubular != defSegmentsTubular);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaTorusKnotJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaTorusKnotJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaTorusKnotJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

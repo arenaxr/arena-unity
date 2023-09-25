@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaTextJson
     {
-        public const string componentName = "text";
+        public readonly string object_type = "text";
 
         // text member-fields
 
@@ -42,7 +43,7 @@ namespace ArenaUnity.Schemas
         public AlignType Align = defAlign;
         public bool ShouldSerializeAlign()
         {
-            if (_token != null && _token.SelectToken("align") != null) return true;
+            // align
             return (Align != defAlign);
         }
 
@@ -52,7 +53,7 @@ namespace ArenaUnity.Schemas
         public float AlphaTest = defAlphaTest;
         public bool ShouldSerializeAlphaTest()
         {
-            if (_token != null && _token.SelectToken("alphaTest") != null) return true;
+            // alphaTest
             return (AlphaTest != defAlphaTest);
         }
 
@@ -74,7 +75,7 @@ namespace ArenaUnity.Schemas
         public AnchorType Anchor = defAnchor;
         public bool ShouldSerializeAnchor()
         {
-            if (_token != null && _token.SelectToken("anchor") != null) return true;
+            // anchor
             return (Anchor != defAnchor);
         }
 
@@ -94,7 +95,7 @@ namespace ArenaUnity.Schemas
         public BaselineType Baseline = defBaseline;
         public bool ShouldSerializeBaseline()
         {
-            if (_token != null && _token.SelectToken("baseline") != null) return true;
+            // baseline
             return (Baseline != defBaseline);
         }
 
@@ -104,7 +105,7 @@ namespace ArenaUnity.Schemas
         public string Color = defColor;
         public bool ShouldSerializeColor()
         {
-            if (_token != null && _token.SelectToken("color") != null) return true;
+            // color
             return (Color != defColor);
         }
 
@@ -136,7 +137,7 @@ namespace ArenaUnity.Schemas
         public FontType Font = defFont;
         public bool ShouldSerializeFont()
         {
-            if (_token != null && _token.SelectToken("font") != null) return true;
+            // font
             return (Font != defFont);
         }
 
@@ -146,17 +147,17 @@ namespace ArenaUnity.Schemas
         public string FontImage = defFontImage;
         public bool ShouldSerializeFontImage()
         {
-            if (_token != null && _token.SelectToken("fontImage") != null) return true;
+            // fontImage
             return (FontImage != defFontImage);
         }
 
-        private static float defHeight = 0f;  // TODO: (mwfarb) read-only?
+        private static float defHeight = 0f;  // TODO (mwfarb): read-only?
         [JsonProperty(PropertyName = "height")]
         [Tooltip("Height of text block. (derived from text size)")]
         public float Height = defHeight;
         public bool ShouldSerializeHeight()
         {
-            if (_token != null && _token.SelectToken("height") != null) return true;
+            // height
             return (Height != defHeight);
         }
 
@@ -166,17 +167,17 @@ namespace ArenaUnity.Schemas
         public float LetterSpacing = defLetterSpacing;
         public bool ShouldSerializeLetterSpacing()
         {
-            if (_token != null && _token.SelectToken("letterSpacing") != null) return true;
+            // letterSpacing
             return (LetterSpacing != defLetterSpacing);
         }
 
-        private static float defLineHeight = 0f;  // TODO: (mwfarb) read-only?
+        private static float defLineHeight = 0f;  // TODO (mwfarb): read-only?
         [JsonProperty(PropertyName = "lineHeight")]
         [Tooltip("Line height in pixels. (derived from font file)")]
         public float LineHeight = defLineHeight;
         public bool ShouldSerializeLineHeight()
         {
-            if (_token != null && _token.SelectToken("lineHeight") != null) return true;
+            // lineHeight
             return (LineHeight != defLineHeight);
         }
 
@@ -186,7 +187,7 @@ namespace ArenaUnity.Schemas
         public bool Negate = defNegate;
         public bool ShouldSerializeNegate()
         {
-            if (_token != null && _token.SelectToken("negate") != null) return true;
+            // negate
             return (Negate != defNegate);
         }
 
@@ -196,7 +197,7 @@ namespace ArenaUnity.Schemas
         public float Opacity = defOpacity;
         public bool ShouldSerializeOpacity()
         {
-            if (_token != null && _token.SelectToken("opacity") != null) return true;
+            // opacity
             return (Opacity != defOpacity);
         }
 
@@ -226,7 +227,7 @@ namespace ArenaUnity.Schemas
         public ShaderType Shader = defShader;
         public bool ShouldSerializeShader()
         {
-            if (_token != null && _token.SelectToken("shader") != null) return true;
+            // shader
             return (Shader != defShader);
         }
 
@@ -246,7 +247,7 @@ namespace ArenaUnity.Schemas
         public SideType Side = defSide;
         public bool ShouldSerializeSide()
         {
-            if (_token != null && _token.SelectToken("side") != null) return true;
+            // side
             return (Side != defSide);
         }
 
@@ -256,7 +257,7 @@ namespace ArenaUnity.Schemas
         public float TabSize = defTabSize;
         public bool ShouldSerializeTabSize()
         {
-            if (_token != null && _token.SelectToken("tabSize") != null) return true;
+            // tabSize
             return (TabSize != defTabSize);
         }
 
@@ -266,7 +267,7 @@ namespace ArenaUnity.Schemas
         public bool Transparent = defTransparent;
         public bool ShouldSerializeTransparent()
         {
-            if (_token != null && _token.SelectToken("transparent") != null) return true;
+            // transparent
             return (Transparent != defTransparent);
         }
 
@@ -276,7 +277,7 @@ namespace ArenaUnity.Schemas
         public string Value = defValue;
         public bool ShouldSerializeValue()
         {
-            if (_token != null && _token.SelectToken("value") != null) return true;
+            // value
             return (Value != defValue);
         }
 
@@ -296,7 +297,7 @@ namespace ArenaUnity.Schemas
         public WhiteSpaceType WhiteSpace = defWhiteSpace;
         public bool ShouldSerializeWhiteSpace()
         {
-            if (_token != null && _token.SelectToken("whiteSpace") != null) return true;
+            // whiteSpace
             return (WhiteSpace != defWhiteSpace);
         }
 
@@ -306,7 +307,7 @@ namespace ArenaUnity.Schemas
         public float Width = defWidth;
         public bool ShouldSerializeWidth()
         {
-            if (_token != null && _token.SelectToken("width") != null) return true;
+            // width
             return (Width != defWidth);
         }
 
@@ -316,17 +317,17 @@ namespace ArenaUnity.Schemas
         public float WrapCount = defWrapCount;
         public bool ShouldSerializeWrapCount()
         {
-            if (_token != null && _token.SelectToken("wrapCount") != null) return true;
+            // wrapCount
             return (WrapCount != defWrapCount);
         }
 
-        private static float defWrapPixels = 0f;  // TODO: (mwfarb) read-only?
+        private static float defWrapPixels = 0f;  // TODO (mwfarb): read-only?
         [JsonProperty(PropertyName = "wrapPixels")]
         [Tooltip("Number of pixels before wrapping text. (derived from wrapCount)")]
         public float WrapPixels = defWrapPixels;
         public bool ShouldSerializeWrapPixels()
         {
-            if (_token != null && _token.SelectToken("wrapPixels") != null) return true;
+            // wrapPixels
             return (WrapPixels != defWrapPixels);
         }
 
@@ -336,7 +337,7 @@ namespace ArenaUnity.Schemas
         public float Xoffset = defXoffset;
         public bool ShouldSerializeXoffset()
         {
-            if (_token != null && _token.SelectToken("xOffset") != null) return true;
+            // xOffset
             return (Xoffset != defXoffset);
         }
 
@@ -346,33 +347,19 @@ namespace ArenaUnity.Schemas
         public float Zoffset = defZoffset;
         public bool ShouldSerializeZoffset()
         {
-            if (_token != null && _token.SelectToken("zOffset") != null) return true;
+            // zOffset
             return (Zoffset != defZoffset);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaTextJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaTextJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaTextJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

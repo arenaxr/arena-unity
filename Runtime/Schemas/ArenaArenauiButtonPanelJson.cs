@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaArenauiButtonPanelJson
     {
-        public const string componentName = "arenaui-button-panel";
+        public readonly string object_type = "arenaui-button-panel";
 
         // arenaui-button-panel member-fields
 
@@ -67,33 +68,19 @@ namespace ArenaUnity.Schemas
         public FontType Font = defFont;
         public bool ShouldSerializeFont()
         {
-            if (_token != null && _token.SelectToken("font") != null) return true;
+            // font
             return (Font != defFont);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaArenauiButtonPanelJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaArenauiButtonPanelJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaArenauiButtonPanelJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

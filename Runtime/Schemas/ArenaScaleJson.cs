@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaScaleJson
     {
-        public const string componentName = "scale";
+        [JsonIgnore]
+        public readonly string componentName = "scale";
 
         // scale member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public float X = defX;
         public bool ShouldSerializeX()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defY = 1f;
@@ -41,7 +43,7 @@ namespace ArenaUnity.Schemas
         public float Y = defY;
         public bool ShouldSerializeY()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defZ = 1f;
@@ -50,32 +52,18 @@ namespace ArenaUnity.Schemas
         public float Z = defZ;
         public bool ShouldSerializeZ()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaScaleJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaScaleJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaScaleJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

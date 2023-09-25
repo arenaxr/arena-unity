@@ -6,25 +6,23 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ArenaUnity.Schemas;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ArenaUnity.Components
 {
-    [ExecuteInEditMode]
-    [DisallowMultipleComponent]
     [HelpURL("https://docs.arenaxr.org/content/schemas/message/animation-mixer")]
-    [RequireComponent(typeof(ArenaObject))]
-    public class ArenaAnimationMixer : MonoBehaviour
+    public class ArenaAnimationMixer : ArenaComponent
     {
         // ARENA Property Handling Status
-        // DONE clip
-        // TODO duration
-        // DONE crossFadeDuration
-        // DONE loop
-        // TODO repetitions
-        // DONE timeScale
-        // DONE clampWhenFinished
-        // DONE startAt
+        // DONE: clip
+        // TODO: duration
+        // DONE: crossFadeDuration
+        // DONE: loop
+        // TODO: repetitions
+        // DONE: timeScale
+        // DONE: clampWhenFinished
+        // DONE: startAt
 
         // NOTE: There is an easy clip parser but only #if UNITY_EDITOR (AnimationUtility.GetAnimationClips()).
 
@@ -32,38 +30,10 @@ namespace ArenaUnity.Components
         public ArenaAnimationMixerJson json = new ArenaAnimationMixerJson();
         internal List<string> animations = null;
 
-        internal bool apply = false;
-        internal bool scriptLoaded = false;
-        internal string updatedJson = null;
-
-        protected virtual void Start()
+        protected override void ApplyRender()
         {
-            apply = true;
-        }
+            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
 
-        protected void OnValidate()
-        {
-            if (!scriptLoaded)
-            {
-                scriptLoaded = true;
-            }
-            else
-            {   // do not publish update on script load
-                UpdateObject();
-            }
-        }
-
-        protected void Update()
-        {
-            if (apply)
-            {
-                ApplyAnimations();
-                apply = false;
-            }
-        }
-
-        internal void ApplyAnimations()
-        {
             // apply changes to local unity object
             Animation anim = GetComponentInChildren<Animation>(true);
             if (anim == null) return;
@@ -119,15 +89,15 @@ namespace ArenaUnity.Components
             }
         }
 
-        internal void UpdateObject()
+        public override void UpdateObject()
         {
-            var newJson = json.SaveToString();
+            var newJson = JsonConvert.SerializeObject(json);
             if (updatedJson != newJson)
             {
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null)
                 {
-                    aobj.PublishUpdate($"{{\"{ArenaAnimationMixerJson.componentName}\":{newJson}}}");
+                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
                     apply = true;
                 }
             }

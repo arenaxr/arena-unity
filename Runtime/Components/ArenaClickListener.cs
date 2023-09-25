@@ -3,17 +3,14 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
-using System.Dynamic;
+using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ArenaUnity.Components
 {
-    [ExecuteInEditMode]
-    [DisallowMultipleComponent]
     [HelpURL("https://docs.arenaxr.org/content/schemas/arena-aframe-components.html#click-listener")]
-    [RequireComponent(typeof(ArenaObject))]
-    public class ArenaClickListener : MonoBehaviour
+    public class ArenaClickListener : ArenaComponent
     {
         private Camera _camera;
         private ArenaCamera _arenaCam;
@@ -23,15 +20,14 @@ namespace ArenaUnity.Components
         public delegate void ClientEventMessageDelegate(string event_type, string msg);
         public ClientEventMessageDelegate OnEventCallback = null; // null, until user instantiates.
 
-        private void Start()
-        {
-        }
+        public ArenaClickListenerJson json = new ArenaClickListenerJson();
 
-        private void Update()
+        private new void Update()
         {
             // discover which camera to use for collisions
             _camera = Camera.main;
-            if (_camera != null && _arenaCam == null) {
+            if (_camera != null && _arenaCam == null)
+            {
                 // if user has chosen to add ArenaCamera, only then publish clientEvent events,
                 // do not auto-add ArenaCamera component
                 _arenaCam = _camera.GetComponent<ArenaCamera>();
@@ -50,7 +46,7 @@ namespace ArenaUnity.Components
                 }
                 else
                 {   // gltf-model
-                    // TODO: test for "this arena object only"
+                    // TODO (mwfarb): test for "this arena object only"
                     foreach (MeshRenderer mr in GetComponentsInChildren<MeshRenderer>())
                         AssignColliderMesh(mr);
                     foreach (SkinnedMeshRenderer smr in GetComponentsInChildren<SkinnedMeshRenderer>())
@@ -110,13 +106,35 @@ namespace ArenaUnity.Components
             Vector3 camPosition = _camera.transform.localPosition;
             string camName = _arenaCam.camid;
 
-            dynamic data = new ExpandoObject();
-            data.clickPos = ArenaUnity.ToArenaPosition(camPosition);
-            data.position = ArenaUnity.ToArenaPosition(hit.point);
-            data.source = camName;
+            ArenaEventJson data = new ArenaEventJson
+            {
+                ClickPos = ArenaUnity.ToArenaPosition(camPosition),
+                Position = ArenaUnity.ToArenaPosition(hit.point),
+                Source = camName,
+            };
             string payload = JsonConvert.SerializeObject(data);
+            if (ArenaClientScene.Instance)
+                ArenaClientScene.Instance.PublishEvent(name, eventType, camName, payload);
+        }
 
-            ArenaClientScene.Instance.PublishEvent(name, eventType, camName, payload);
+        protected override void ApplyRender()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void UpdateObject()
+        {
+            var newJson = JsonConvert.SerializeObject(json);
+            if (updatedJson != newJson)
+            {
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null)
+                {
+                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
+                    apply = true;
+                }
+            }
+            updatedJson = newJson;
         }
     }
 }

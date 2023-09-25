@@ -1,8 +1,9 @@
 ﻿/**
  * Open source software under the terms in /LICENSE
- * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
+using ArenaUnity.Schemas;
 using UnityEditor;
 #if UNITY_EDITOR
 using UnityEditor.EditorTools;
@@ -79,6 +80,9 @@ namespace ArenaUnity
                 case "ArenaUnity.ArenaMeshSphere":
                     HandleSizeSphere(aobj, go.GetComponent<ArenaMeshSphere>());
                     break;
+                case "ArenaUnity.ArenaMeshVideosphere":
+                    HandleSizeVideosphere(aobj, go.GetComponent<ArenaMeshVideosphere>());
+                    break;
                 case "ArenaUnity.ArenaMeshCircle":
                     HandleSizeCircle(aobj, go.GetComponent<ArenaMeshCircle>());
                     break;
@@ -103,20 +107,20 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float width = cube.width;
-            float height = cube.height;
-            float depth = cube.depth;
+            float width = cube.json.Width;
+            float height = cube.json.Height;
+            float depth = cube.json.Depth;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                width = Handles.ScaleSlider(cube.width, cube.transform.position, cube.transform.right, cube.transform.rotation, size, snap);
+                width = Handles.ScaleSlider(cube.json.Width, cube.transform.position, cube.transform.right, cube.transform.rotation, size, snap);
             }
             using (new Handles.DrawingScope(Color.green))
             {
-                height = Handles.ScaleSlider(cube.height, cube.transform.position, cube.transform.up, cube.transform.rotation, size, snap);
+                height = Handles.ScaleSlider(cube.json.Height, cube.transform.position, cube.transform.up, cube.transform.rotation, size, snap);
             }
             using (new Handles.DrawingScope(Color.cyan))
             {
-                depth = Handles.ScaleSlider(cube.depth, cube.transform.position, cube.transform.forward, cube.transform.rotation, size, snap);
+                depth = Handles.ScaleSlider(cube.json.Depth, cube.transform.position, cube.transform.forward, cube.transform.rotation, size, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -124,11 +128,11 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshBox>();
-                    amesh.width = width;
-                    amesh.height = height;
-                    amesh.depth = depth;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.Width = width;
+                    amesh.json.Height = height;
+                    amesh.json.Depth = depth;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -139,15 +143,15 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float width = plane.width;
-            float height = plane.height;
+            float width = plane.json.Width;
+            float height = plane.json.Height;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                width = Handles.ScaleSlider(plane.width, plane.transform.position, plane.transform.right, plane.transform.rotation, size, snap);
+                width = Handles.ScaleSlider(plane.json.Width, plane.transform.position, plane.transform.right, plane.transform.rotation, size, snap);
             }
             using (new Handles.DrawingScope(Color.cyan))
             {
-                height = Handles.ScaleSlider(plane.height, plane.transform.position, plane.transform.up, plane.transform.rotation, size, snap);
+                height = Handles.ScaleSlider(plane.json.Height, plane.transform.position, plane.transform.up, plane.transform.rotation, size, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -155,10 +159,10 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshPlane>();
-                    amesh.width = width;
-                    amesh.height = height;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.Width = width;
+                    amesh.json.Height = height;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -169,15 +173,15 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float radius = capsule.radius;
-            float length = capsule.length;
+            float radius = capsule.json.Radius;
+            float length = capsule.json.Length;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                radius = Handles.ScaleSlider(capsule.radius, capsule.transform.position, capsule.transform.right, capsule.transform.rotation, size, snap);
+                radius = Handles.ScaleSlider(capsule.json.Radius, capsule.transform.position, capsule.transform.right, capsule.transform.rotation, size, snap);
             }
             using (new Handles.DrawingScope(Color.green))
             {
-                length = Handles.ScaleSlider(capsule.length, capsule.transform.position, capsule.transform.up, capsule.transform.rotation, size, snap);
+                length = Handles.ScaleSlider(capsule.json.Length, capsule.transform.position, capsule.transform.up, capsule.transform.rotation, size, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -185,10 +189,10 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshCapsule>();
-                    amesh.radius = radius;
-                    amesh.length = length;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.Radius = radius;
+                    amesh.json.Length = length;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -199,15 +203,15 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float radius = cylinder.radius;
-            float height = cylinder.height;
+            float radius = cylinder.json.Radius;
+            float height = cylinder.json.Height;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                radius = Handles.ScaleSlider(cylinder.radius, cylinder.transform.position, cylinder.transform.right, cylinder.transform.rotation, size, snap);
+                radius = Handles.ScaleSlider(cylinder.json.Radius, cylinder.transform.position, cylinder.transform.right, cylinder.transform.rotation, size, snap);
             }
             using (new Handles.DrawingScope(Color.green))
             {
-                height = Handles.ScaleSlider(cylinder.height, cylinder.transform.position, cylinder.transform.up, cylinder.transform.rotation, size, snap);
+                height = Handles.ScaleSlider(cylinder.json.Height, cylinder.transform.position, cylinder.transform.up, cylinder.transform.rotation, size, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -215,10 +219,10 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshCylinder>();
-                    amesh.radius = radius;
-                    amesh.height = height;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.Radius = radius;
+                    amesh.json.Height = height;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -229,15 +233,15 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float radius = cone.radius;
-            float height = cone.height;
+            float radius = cone.json.RadiusBottom;
+            float height = cone.json.Height;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                radius = Handles.ScaleSlider(cone.radius, cone.transform.position, cone.transform.right, cone.transform.rotation, size, snap);
+                radius = Handles.ScaleSlider(cone.json.RadiusBottom, cone.transform.position, cone.transform.right, cone.transform.rotation, size, snap);
             }
             using (new Handles.DrawingScope(Color.green))
             {
-                height = Handles.ScaleSlider(cone.height, cone.transform.position, cone.transform.up, cone.transform.rotation, size, snap);
+                height = Handles.ScaleSlider(cone.json.Height, cone.transform.position, cone.transform.up, cone.transform.rotation, size, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -245,10 +249,10 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshCone>();
-                    amesh.radius = radius;
-                    amesh.height = height;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.RadiusBottom = radius;
+                    amesh.json.Height = height;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -259,10 +263,10 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float radius = sphere.radius;
+            float radius = sphere.json.Radius;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                radius = Handles.ScaleSlider(sphere.radius, sphere.transform.position, sphere.transform.right, sphere.transform.rotation, size, snap);
+                radius = Handles.ScaleSlider(sphere.json.Radius, sphere.transform.position, sphere.transform.right, sphere.transform.rotation, size, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -270,9 +274,33 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshSphere>();
-                    amesh.radius = radius;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.Radius = radius;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
+                }
+            }
+        }
+
+        private static void HandleSizeVideosphere(ArenaObject aobj, ArenaMeshVideosphere videosphere)
+        {
+            float size = HandleUtility.GetHandleSize(videosphere.transform.position) * 1f;
+            float snap = 0.5f;
+
+            EditorGUI.BeginChangeCheck();
+            float radius = videosphere.json.Radius;
+            using (new Handles.DrawingScope(Color.magenta))
+            {
+                radius = Handles.ScaleSlider(videosphere.json.Radius, videosphere.transform.position, videosphere.transform.right, videosphere.transform.rotation, size, snap);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                //Undo.RecordObjects(Selection.gameObjects, "Size Arena Videosphere");
+                foreach (var o in Selection.gameObjects)
+                {
+                    var amesh = o.GetComponent<ArenaMeshVideosphere>();
+                    amesh.json.Radius = radius;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -283,10 +311,10 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float radius = icosahedron.radius;
+            float radius = icosahedron.json.Radius;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                radius = Handles.ScaleSlider(icosahedron.radius, icosahedron.transform.position, icosahedron.transform.right, icosahedron.transform.rotation, size, snap);
+                radius = Handles.ScaleSlider(icosahedron.json.Radius, icosahedron.transform.position, icosahedron.transform.right, icosahedron.transform.rotation, size, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -294,9 +322,9 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshIcosahedron>();
-                    amesh.radius = radius;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.Radius = radius;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -307,10 +335,10 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float radius = octahedron.radius;
+            float radius = octahedron.json.Radius;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                radius = Handles.ScaleSlider(octahedron.radius, octahedron.transform.position, octahedron.transform.right, octahedron.transform.rotation, size, snap);
+                radius = Handles.ScaleSlider(octahedron.json.Radius, octahedron.transform.position, octahedron.transform.right, octahedron.transform.rotation, size, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -318,9 +346,9 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshOctahedron>();
-                    amesh.radius = radius;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.Radius = radius;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -331,10 +359,10 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float radius = dodecahedron.radius;
+            float radius = dodecahedron.json.Radius;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                radius = Handles.ScaleSlider(dodecahedron.radius, dodecahedron.transform.position, dodecahedron.transform.right, dodecahedron.transform.rotation, size, snap);
+                radius = Handles.ScaleSlider(dodecahedron.json.Radius, dodecahedron.transform.position, dodecahedron.transform.right, dodecahedron.transform.rotation, size, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -342,9 +370,9 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshDodecahedron>();
-                    amesh.radius = radius;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.Radius = radius;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -355,10 +383,10 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float radius = tetrahedron.radius;
+            float radius = tetrahedron.json.Radius;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                radius = Handles.ScaleSlider(tetrahedron.radius, tetrahedron.transform.position, tetrahedron.transform.right, tetrahedron.transform.rotation, size, snap);
+                radius = Handles.ScaleSlider(tetrahedron.json.Radius, tetrahedron.transform.position, tetrahedron.transform.right, tetrahedron.transform.rotation, size, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -366,9 +394,9 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshTetrahedron>();
-                    amesh.radius = radius;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.Radius = radius;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -379,20 +407,20 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float outerRadius = ring.outerRadius;
-            float innerRadius = ring.innerRadius;
-            float thetaLength = ring.thetaLength;
+            float outerRadius = ring.json.RadiusOuter;
+            float innerRadius = ring.json.RadiusInner;
+            float thetaLength = ring.json.ThetaLength;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                outerRadius = Handles.ScaleSlider(ring.outerRadius, ring.transform.position, ring.transform.right, ring.transform.rotation, size, snap);
+                outerRadius = Handles.ScaleSlider(ring.json.RadiusOuter, ring.transform.position, ring.transform.right, ring.transform.rotation, size, snap);
             }
             using (new Handles.DrawingScope(Color.cyan))
             {
-                innerRadius = Handles.ScaleSlider(ring.innerRadius, ring.transform.position, ring.transform.right, ring.transform.rotation, size / 2, snap);
+                innerRadius = Handles.ScaleSlider(ring.json.RadiusInner, ring.transform.position, ring.transform.right, ring.transform.rotation, size / 2, snap);
             }
             //using (new Handles.DrawingScope(Color.yellow))
             //{
-            //    float thetaDeg = ring.thetaLength * 180 / Mathf.PI;
+            //    float thetaDeg = ring.json.thetaLength * 180 / Mathf.PI;
             //    thetaDeg = Handles.FreeRotateHandle(Quaternion.Euler(0, thetaDeg, 0), ring.transform.position, size).eulerAngles.y;
             //    //thetaDeg = Handles.RotationHandle(Quaternion.Euler(0, thetaDeg, 0), ring.transform.position).eulerAngles.y;
             //    thetaLength = thetaDeg * 180 / Mathf.PI;
@@ -405,11 +433,11 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshRing>();
-                    amesh.outerRadius = outerRadius;
-                    amesh.innerRadius = innerRadius;
-                    //amesh.thetaLength = thetaLength;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.RadiusOuter = outerRadius;
+                    amesh.json.RadiusInner = innerRadius;
+                    //amesh.json.thetaLength = thetaLength;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -420,10 +448,10 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float radius = circle.radius;
+            float radius = circle.json.Radius;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                radius = Handles.ScaleSlider(circle.radius, circle.transform.position, circle.transform.right, circle.transform.rotation, size, snap);
+                radius = Handles.ScaleSlider(circle.json.Radius, circle.transform.position, circle.transform.right, circle.transform.rotation, size, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -431,9 +459,9 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshCircle>();
-                    amesh.radius = radius;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.Radius = radius;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -444,15 +472,15 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float radius = torus.radius;
-            float radiusTubular = torus.radiusTubular;
+            float radius = torus.json.Radius;
+            float radiusTubular = torus.json.RadiusTubular;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                radius = Handles.ScaleSlider(torus.radius, torus.transform.position, torus.transform.right, torus.transform.rotation, size, snap);
+                radius = Handles.ScaleSlider(torus.json.Radius, torus.transform.position, torus.transform.right, torus.transform.rotation, size, snap);
             }
             using (new Handles.DrawingScope(Color.cyan))
             {
-                radiusTubular = Handles.ScaleSlider(torus.radiusTubular, torus.transform.position, torus.transform.right, torus.transform.rotation, size / 2, snap);
+                radiusTubular = Handles.ScaleSlider(torus.json.RadiusTubular, torus.transform.position, torus.transform.right, torus.transform.rotation, size / 2, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -460,10 +488,10 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshTorus>();
-                    amesh.radius = radius;
-                    amesh.radiusTubular = radiusTubular;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.Radius = radius;
+                    amesh.json.RadiusTubular = radiusTubular;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -474,15 +502,15 @@ namespace ArenaUnity
             float snap = 0.5f;
 
             EditorGUI.BeginChangeCheck();
-            float radius = torusKnot.radius;
-            float radiusTubular = torusKnot.radiusTubular;
+            float radius = torusKnot.json.Radius;
+            float radiusTubular = torusKnot.json.RadiusTubular;
             using (new Handles.DrawingScope(Color.magenta))
             {
-                radius = Handles.ScaleSlider(torusKnot.radius, torusKnot.transform.position, torusKnot.transform.right, torusKnot.transform.rotation, size, snap);
+                radius = Handles.ScaleSlider(torusKnot.json.Radius, torusKnot.transform.position, torusKnot.transform.right, torusKnot.transform.rotation, size, snap);
             }
             using (new Handles.DrawingScope(Color.cyan))
             {
-                radiusTubular = Handles.ScaleSlider(torusKnot.radiusTubular, torusKnot.transform.position, torusKnot.transform.right, torusKnot.transform.rotation, size / 2, snap);
+                radiusTubular = Handles.ScaleSlider(torusKnot.json.RadiusTubular, torusKnot.transform.position, torusKnot.transform.right, torusKnot.transform.rotation, size / 2, snap);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -490,10 +518,10 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshTorusKnot>();
-                    amesh.radius = radius;
-                    amesh.radiusTubular = radiusTubular;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.Radius = radius;
+                    amesh.json.RadiusTubular = radiusTubular;
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }
@@ -505,9 +533,9 @@ namespace ArenaUnity
             Vector3 handleDirection = Vector3.forward;
 
             EditorGUI.BeginChangeCheck();
-            Vector3 vertexA = triangle.vertexA;
-            Vector3 vertexB = triangle.vertexB;
-            Vector3 vertexC = triangle.vertexC;
+            Vector3 vertexA = ArenaUnity.ToUnityPosition(triangle.json.VertexA);
+            Vector3 vertexB = ArenaUnity.ToUnityPosition(triangle.json.VertexB);
+            Vector3 vertexC = ArenaUnity.ToUnityPosition(triangle.json.VertexC);
             using (new Handles.DrawingScope(Color.red))
             {
                 Handles.DrawWireDisc(triangle.transform.position, handleDirection, size / 10f);
@@ -537,11 +565,11 @@ namespace ArenaUnity
                 foreach (var o in Selection.gameObjects)
                 {
                     var amesh = o.GetComponent<ArenaMeshTriangle>();
-                    amesh.vertexA = vertexA - triangle.transform.localPosition;
-                    amesh.vertexB = vertexB - triangle.transform.localPosition;
-                    amesh.vertexC = vertexC - triangle.transform.localPosition;
-                    amesh.build = true;
-                    aobj.meshChanged = true;
+                    amesh.json.VertexA = ArenaUnity.ToArenaPosition(vertexA - triangle.transform.localPosition);
+                    amesh.json.VertexB = ArenaUnity.ToArenaPosition(vertexB - triangle.transform.localPosition);
+                    amesh.json.VertexC = ArenaUnity.ToArenaPosition(vertexC - triangle.transform.localPosition);
+                    amesh.apply = true;
+                    amesh.UpdateObject();
                 }
             }
         }

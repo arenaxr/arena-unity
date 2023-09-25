@@ -1,19 +1,46 @@
-﻿// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
 
+// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
+
+using ArenaUnity.Schemas;
 using MeshBuilder;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ArenaUnity
 {
     public class ArenaMeshRing : ArenaMesh
     {
-        [SerializeField, Range(0f, 10f)] internal float innerRadius = 0.1f, outerRadius = 1f;
-        [SerializeField, Range(2, 64)] internal int thetaSegments = 16, phiSegments = 16;
-        [SerializeField, Range(0f, Mathf.PI * 2f)] internal float thetaStart = 0f, thetaLength = Mathf.PI * 2f;
+        public ArenaRingJson json = new ArenaRingJson();
 
-        protected override void Build(MeshFilter filter)
+        protected override void ApplyRender()
         {
-            filter.sharedMesh = RingBuilder.Build(innerRadius, outerRadius, thetaSegments, phiSegments, thetaStart, thetaLength);
+            filter.sharedMesh = RingBuilder.Build(
+                json.RadiusInner,
+                json.RadiusOuter,
+                json.SegmentsTheta,
+                json.SegmentsPhi,
+                Mathf.PI / 180 * json.ThetaStart,
+                Mathf.PI / 180 * json.ThetaLength
+            );
+        }
+
+        public override void UpdateObject()
+        {
+            var newJson = JsonConvert.SerializeObject(json);
+            if (updatedJson != newJson)
+            {
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null)
+                {
+                    aobj.PublishUpdate($"{newJson}");
+                    apply = true;
+                }
+            }
+            updatedJson = newJson;
         }
     }
 }

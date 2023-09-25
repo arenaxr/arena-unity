@@ -1,20 +1,41 @@
-﻿// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
 
+// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
+
+using ArenaUnity.Schemas;
 using MeshBuilder;
-using UnityEngine;
+using Newtonsoft.Json;
 
 namespace ArenaUnity
 {
-    [ExecuteInEditMode]
-    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class ArenaMeshIcosahedron : ArenaMesh
     {
-        [SerializeField, Range(0.5f, 10f)] internal float radius = 1f;
-        [SerializeField, Range(0, 5)] internal int details = 1;
+        public ArenaIcosahedronJson json = new ArenaIcosahedronJson();
 
-        protected override void Build(MeshFilter filter)
+        protected override void ApplyRender()
         {
-            filter.sharedMesh = IcosahedronBuilder.Build(radius, details);
+            filter.sharedMesh = IcosahedronBuilder.Build(
+                json.Radius,
+                json.Detail
+            );
+        }
+
+        public override void UpdateObject()
+        {
+            var newJson = JsonConvert.SerializeObject(json);
+            if (updatedJson != newJson)
+            {
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null)
+                {
+                    aobj.PublishUpdate($"{newJson}");
+                    apply = true;
+                }
+            }
+            updatedJson = newJson;
         }
     }
 }

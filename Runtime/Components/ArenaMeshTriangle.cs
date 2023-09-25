@@ -3,6 +3,8 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
+using ArenaUnity.Schemas;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -12,13 +14,30 @@ namespace ArenaUnity
 
     public class ArenaMeshTriangle : ArenaMesh
     {
-        [SerializeField] internal Vector3 vertexA = new Vector3(0f, 0.5f);
-        [SerializeField] internal Vector3 vertexB = new Vector3(-0.5f, -0.5f);
-        [SerializeField] internal Vector3 vertexC = new Vector3(0.5f, -0.5f);
+        public ArenaTriangleJson json = new ArenaTriangleJson();
 
-        protected override void Build(MeshFilter filter)
+        protected override void ApplyRender()
         {
-            filter.sharedMesh = TriangleBuilder.Build(vertexA, vertexB, vertexC);
+            filter.sharedMesh = TriangleBuilder.Build(
+                 ArenaUnity.ToUnityPosition(json.VertexA),
+                 ArenaUnity.ToUnityPosition(json.VertexB),
+                 ArenaUnity.ToUnityPosition(json.VertexC)
+            );
+        }
+
+        public override void UpdateObject()
+        {
+            var newJson = JsonConvert.SerializeObject(json);
+            if (updatedJson != newJson)
+            {
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null)
+                {
+                    aobj.PublishUpdate($"{newJson}");
+                    apply = true;
+                }
+            }
+            updatedJson = newJson;
         }
     }
 }

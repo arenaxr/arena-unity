@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaArenauiCardJson
     {
-        public const string componentName = "arenaui-card";
+        public readonly string object_type = "arenaui-card";
 
         // arenaui-card member-fields
 
@@ -32,7 +33,7 @@ namespace ArenaUnity.Schemas
         public string Title = defTitle;
         public bool ShouldSerializeTitle()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defBody = "";
@@ -41,7 +42,7 @@ namespace ArenaUnity.Schemas
         public string Body = defBody;
         public bool ShouldSerializeBody()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum BodyAlignType
@@ -62,7 +63,7 @@ namespace ArenaUnity.Schemas
         public BodyAlignType BodyAlign = defBodyAlign;
         public bool ShouldSerializeBodyAlign()
         {
-            if (_token != null && _token.SelectToken("bodyAlign") != null) return true;
+            // bodyAlign
             return (BodyAlign != defBodyAlign);
         }
 
@@ -72,7 +73,7 @@ namespace ArenaUnity.Schemas
         public string Img = defImg;
         public bool ShouldSerializeImg()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defImgCaption = "";
@@ -81,7 +82,7 @@ namespace ArenaUnity.Schemas
         public string ImgCaption = defImgCaption;
         public bool ShouldSerializeImgCaption()
         {
-            if (_token != null && _token.SelectToken("imgCaption") != null) return true;
+            // imgCaption
             return (ImgCaption != defImgCaption);
         }
 
@@ -99,7 +100,7 @@ namespace ArenaUnity.Schemas
         public ImgDirectionType ImgDirection = defImgDirection;
         public bool ShouldSerializeImgDirection()
         {
-            if (_token != null && _token.SelectToken("imgDirection") != null) return true;
+            // imgDirection
             return (ImgDirection != defImgDirection);
         }
 
@@ -119,7 +120,7 @@ namespace ArenaUnity.Schemas
         public ImgSizeType ImgSize = defImgSize;
         public bool ShouldSerializeImgSize()
         {
-            if (_token != null && _token.SelectToken("imgSize") != null) return true;
+            // imgSize
             return (ImgSize != defImgSize);
         }
 
@@ -129,7 +130,7 @@ namespace ArenaUnity.Schemas
         public float FontSize = defFontSize;
         public bool ShouldSerializeFontSize()
         {
-            if (_token != null && _token.SelectToken("fontSize") != null) return true;
+            // fontSize
             return (FontSize != defFontSize);
         }
 
@@ -139,7 +140,7 @@ namespace ArenaUnity.Schemas
         public float WidthScale = defWidthScale;
         public bool ShouldSerializeWidthScale()
         {
-            if (_token != null && _token.SelectToken("widthScale") != null) return true;
+            // widthScale
             return (WidthScale != defWidthScale);
         }
 
@@ -149,7 +150,7 @@ namespace ArenaUnity.Schemas
         public bool CloseButton = defCloseButton;
         public bool ShouldSerializeCloseButton()
         {
-            if (_token != null && _token.SelectToken("closeButton") != null) return true;
+            // closeButton
             return (CloseButton != defCloseButton);
         }
 
@@ -167,33 +168,19 @@ namespace ArenaUnity.Schemas
         public FontType Font = defFont;
         public bool ShouldSerializeFont()
         {
-            if (_token != null && _token.SelectToken("font") != null) return true;
+            // font
             return (Font != defFont);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaArenauiCardJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaArenauiCardJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaArenauiCardJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

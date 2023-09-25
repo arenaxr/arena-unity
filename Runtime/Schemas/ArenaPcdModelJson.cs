@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaPcdModelJson
     {
-        public const string componentName = "pcd-model";
+        public readonly string object_type = "pcd-model";
 
         // pcd-model member-fields
 
@@ -32,7 +33,7 @@ namespace ArenaUnity.Schemas
         public string Url = defUrl;
         public bool ShouldSerializeUrl()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defPointSize = 0.01f;
@@ -41,7 +42,7 @@ namespace ArenaUnity.Schemas
         public float PointSize = defPointSize;
         public bool ShouldSerializePointSize()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defPointColor = "#7f7f7f";
@@ -50,33 +51,19 @@ namespace ArenaUnity.Schemas
         public string PointColor = defPointColor;
         public bool ShouldSerializePointColor()
         {
-            if (_token != null && _token.SelectToken("pointColor") != null) return true;
+            // pointColor
             return (PointColor != defPointColor);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaPcdModelJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaPcdModelJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaPcdModelJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

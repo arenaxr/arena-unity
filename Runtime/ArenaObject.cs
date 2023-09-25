@@ -1,13 +1,13 @@
 ﻿/**
  * Open source software under the terms in /LICENSE
- * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using ArenaUnity.Components;
+using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PrettyHierarchy;
@@ -36,7 +36,9 @@ namespace ArenaUnity
         public string jsonData = null;
 
         [HideInInspector]
-        public dynamic data = null; // original message data for object, if any
+        public object data = null; // original message data for object, if any
+        [HideInInspector]
+        public string object_type = null; // original message data for object, if any
         [HideInInspector]
         public string parentId = null;
 
@@ -48,7 +50,6 @@ namespace ArenaUnity
         internal bool externalDelete = false;
         internal bool isJsonValidated = false;
         internal string gltfUrl = null;
-        internal bool meshChanged = false;
         internal List<string> animations = null; // TODO (mwfarb): ideal location: ArenaGltfModel component
 
         internal List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
@@ -95,19 +96,18 @@ namespace ArenaUnity
 
         IEnumerator PublishTickThrottle()
         {
-            //TODO: prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
+            // TODO (mwfarb): prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
 
             while (true)
             {
                 // send only when changed, each publishInterval
-                if ((transform.hasChanged || meshChanged) && ArenaClientScene.Instance)
+                if ((transform.hasChanged) && ArenaClientScene.Instance)
                 {
                     int ms = objectUpdateMs != ArenaClientScene.Instance.globalUpdateMs ? objectUpdateMs : ArenaClientScene.Instance.globalUpdateMs;
                     publishInterval = (float)ms / 1000f;
                     if (PublishCreateUpdate(true))
                     {
                         transform.hasChanged = false;
-                        meshChanged = false;
                     }
                 }
                 yield return new WaitForSeconds(publishInterval);
@@ -131,14 +131,15 @@ namespace ArenaUnity
             if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return;
             // pub delete old
-            dynamic msg = new
+            ArenaObjectJson msg = new ArenaObjectJson
             {
                 object_id = oldName,
                 action = "delete",
                 persist = persist,
             };
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
+            if (ArenaClientScene.Instance)
+                ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
             // add new object with new name, it pubs
             created = false;
             transform.hasChanged = true;
@@ -155,17 +156,21 @@ namespace ArenaUnity
                 ArenaClientScene.Instance.arenaObjs[name] = gameObject;
 
             // message type information
-            dynamic msg = new ExpandoObject();
-            msg.object_id = name;
-            msg.action = created ? "update" : "create";
-            msg.type = messageType;
-            msg.persist = persist;
+            ArenaObjectJson msg = new ArenaObjectJson
+            {
+                object_id = name,
+                action = created ? "update" : "create",
+                type = messageType,
+                persist = persist,
+            };
             transformOnly = created ? transformOnly : false;
-            dynamic dataUnity = new ExpandoObject();
-            if (data == null || data.object_type == null)
-                dataUnity.object_type = ArenaUnity.ToArenaObjectType(gameObject);
+            ArenaObjectDataJson dataUnity = new ArenaObjectDataJson();
+            if (!string.IsNullOrEmpty(object_type))
+                dataUnity.object_type = object_type;
             else
-                dataUnity.object_type = (string)data.object_type;
+                dataUnity.object_type = ToArenaObjectType(gameObject);
+
+            Debug.LogWarning(JsonConvert.SerializeObject(dataUnity));
 
             // minimum transform information
             dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
@@ -174,7 +179,6 @@ namespace ArenaUnity
                 ArenaUnity.UnityToGltfRotationQuat(transform.localRotation);
             dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(rotOut); // always send quaternions over the wire
             dataUnity.scale = ArenaUnity.ToArenaScale(transform.localScale);
-            ArenaUnity.ToArenaDimensions(gameObject, ref dataUnity);
             if (transform.parent && transform.parent.gameObject.GetComponent<ArenaObject>() != null)
             {   // parent
                 dataUnity.parent = transform.parent.name;
@@ -186,48 +190,40 @@ namespace ArenaUnity
                 parentId = null;
             }
 
-            if (meshChanged)
-            {
-                if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
-                {
-                    dataUnity.geometry = new ExpandoObject();
-                    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity.geometry);
-                }
-                else
-                {
-                    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity);
-                }
-            }
+            var updatedData = new JObject();
+
             // other attributes information
             if (!transformOnly)
             {
-                if (GetComponent<Light>())
-                    ArenaUnity.ToArenaLight(gameObject, ref dataUnity);
+                // wire objects
+                if (GetComponent<ArenaMesh>())
+                    updatedData.Merge(ArenaMesh.ToArenaMesh(gameObject));
+                else if (GetComponent<Collider>())
+                    updatedData.Merge(ArenaMesh.ToArenaDimensions(gameObject));
+                else if (GetComponent<Light>())
+                    updatedData.Merge(ArenaWireLight.ToArenaLight(gameObject));
+                else if (GetComponent<TextMeshPro>())
+                    updatedData.Merge(ArenaWireText.ToArenaText(gameObject));
+                else if (GetComponent<LineRenderer>())
+                    updatedData.Merge(ArenaWireThickline.ToArenaThickline(gameObject));
+
+                // components
                 if (GetComponent<Renderer>())
-                    ArenaUnity.ToArenaMaterial(gameObject, ref dataUnity);
-                if (GetComponent<TextMeshPro>())
-                    ArenaUnity.ToArenaText(gameObject, ref dataUnity);
-                if (GetComponent<LineRenderer>())
-                    ArenaUnity.ToArenaLine(gameObject, ref dataUnity);
+                    updatedData.Merge(ArenaMaterial.ToArenaMaterial(gameObject));
             }
 
             // merge unity data with original message data
-            var updatedData = new JObject();
             if (data != null)
-                updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(data)));
-            updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(dataUnity)));
-            // TODO: temp location until JObject completely replaces dynamic object
-            if (GetComponent<ArenaAnimationMixer>())
-                ArenaUnity.ToArenaAnimationMixer(gameObject, ref updatedData);
-            if (GetComponent<ArenaClickListener>())
-                ArenaUnity.ToArenaClickListener(gameObject, ref updatedData);
-
+                updatedData.Merge(JObject.FromObject(data));
+            updatedData.Merge(JObject.FromObject(dataUnity));
+            // TODO (mwfarb): check for deletions and pollution
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
 
             // publish
-            msg.data = transformOnly ? dataUnity : updatedData;
+            msg.data = transformOnly ? (object)dataUnity : updatedData;
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
+            if (ArenaClientScene.Instance)
+                ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
             if (!created)
                 created = true;
 
@@ -236,17 +232,20 @@ namespace ArenaUnity
 
         internal void PublishUpdate(string objData, bool all = false, bool overwrite = false)
         {
-            dynamic msg = new ExpandoObject();
-            msg.object_id = name;
-            msg.action = "update";
-            msg.type = messageType;
-            msg.persist = persist;
+            ArenaObjectJson msg = new ArenaObjectJson
+            {
+                object_id = name,
+                action = "update",
+                type = messageType,
+                persist = persist,
+            };
             if (overwrite) msg.overwrite = overwrite;
 
             // merge new data with original message data
             var updatedData = new JObject();
             if (jsonData != null)
                 updatedData.Merge(JObject.Parse(jsonData));
+            Debug.Log(objData);
             updatedData.Merge(JObject.Parse(objData));
 
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
@@ -254,7 +253,31 @@ namespace ArenaUnity
             // publish
             msg.data = all ? updatedData : JObject.Parse(objData);
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
+            if (ArenaClientScene.Instance)
+                ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
+        }
+
+        // object type
+        public static string ToArenaObjectType(GameObject gobj)
+        {
+            string objectType = "entity";
+            MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
+            TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
+            Light light = gobj.GetComponent<Light>();
+            SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
+            LineRenderer lr = gobj.GetComponent<LineRenderer>();
+            // initial priority is primitive
+            if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0f)
+                objectType = "image";
+            else if (lr)
+                objectType = "thickline";
+            else if (tm)
+                objectType = "text";
+            else if (light)
+                objectType = "light";
+            else if (meshFilter && meshFilter.sharedMesh)
+                objectType = meshFilter.sharedMesh.name.ToLower();
+            return objectType;
         }
 
         public void OnValidate()

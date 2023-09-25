@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaAnimationMixerJson
     {
-        public const string componentName = "animation-mixer";
+        [JsonIgnore]
+        public readonly string componentName = "animation-mixer";
 
         // animation-mixer member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public bool ClampWhenFinished = defClampWhenFinished;
         public bool ShouldSerializeClampWhenFinished()
         {
-            if (_token != null && _token.SelectToken("clampWhenFinished") != null) return true;
+            // clampWhenFinished
             return (ClampWhenFinished != defClampWhenFinished);
         }
 
@@ -42,7 +44,7 @@ namespace ArenaUnity.Schemas
         public string Clip = defClip;
         public bool ShouldSerializeClip()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defCrossFadeDuration = 0f;
@@ -51,7 +53,7 @@ namespace ArenaUnity.Schemas
         public float CrossFadeDuration = defCrossFadeDuration;
         public bool ShouldSerializeCrossFadeDuration()
         {
-            if (_token != null && _token.SelectToken("crossFadeDuration") != null) return true;
+            // crossFadeDuration
             return (CrossFadeDuration != defCrossFadeDuration);
         }
 
@@ -61,7 +63,7 @@ namespace ArenaUnity.Schemas
         public float Duration = defDuration;
         public bool ShouldSerializeDuration()
         {
-            if (_token != null && _token.SelectToken("duration") != null) return true;
+            // duration
             return (Duration != defDuration);
         }
 
@@ -81,7 +83,7 @@ namespace ArenaUnity.Schemas
         public LoopType Loop = defLoop;
         public bool ShouldSerializeLoop()
         {
-            if (_token != null && _token.SelectToken("loop") != null) return true;
+            // loop
             return (Loop != defLoop);
         }
 
@@ -91,7 +93,7 @@ namespace ArenaUnity.Schemas
         public string Repetitions = defRepetitions;
         public bool ShouldSerializeRepetitions()
         {
-            if (_token != null && _token.SelectToken("repetitions") != null) return true;
+            // repetitions
             return (Repetitions != defRepetitions);
         }
 
@@ -101,7 +103,7 @@ namespace ArenaUnity.Schemas
         public float StartAt = defStartAt;
         public bool ShouldSerializeStartAt()
         {
-            if (_token != null && _token.SelectToken("startAt") != null) return true;
+            // startAt
             return (StartAt != defStartAt);
         }
 
@@ -111,33 +113,19 @@ namespace ArenaUnity.Schemas
         public float TimeScale = defTimeScale;
         public bool ShouldSerializeTimeScale()
         {
-            if (_token != null && _token.SelectToken("timeScale") != null) return true;
+            // timeScale
             return (TimeScale != defTimeScale);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaAnimationMixerJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaAnimationMixerJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaAnimationMixerJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

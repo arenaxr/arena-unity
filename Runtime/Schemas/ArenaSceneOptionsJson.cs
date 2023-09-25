@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaSceneOptionsJson
     {
-        public const string componentName = "scene-options";
+        [JsonIgnore]
+        public readonly string componentName = "scene-options";
 
         // scene-options member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public bool ClickableOnlyEvents = defClickableOnlyEvents;
         public bool ShouldSerializeClickableOnlyEvents()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum DistanceModelType
@@ -51,17 +53,17 @@ namespace ArenaUnity.Schemas
         public DistanceModelType DistanceModel = defDistanceModel;
         public bool ShouldSerializeDistanceModel()
         {
-            if (_token != null && _token.SelectToken("distanceModel") != null) return true;
+            // distanceModel
             return (DistanceModel != defDistanceModel);
         }
 
-        private static object[] defSceneHeadModels = {};
+        private static object[] defSceneHeadModels = { };
         [JsonProperty(PropertyName = "sceneHeadModels")]
         [Tooltip("Define the default head model(s) for the scene in a list. Users may still choose from the ARENA default list of head models as well.")]
         public object[] SceneHeadModels = defSceneHeadModels;
         public bool ShouldSerializeSceneHeadModels()
         {
-            if (_token != null && _token.SelectToken("sceneHeadModels") != null) return true;
+            // sceneHeadModels
             return (SceneHeadModels != defSceneHeadModels);
         }
 
@@ -71,7 +73,7 @@ namespace ArenaUnity.Schemas
         public string JitsiHost = defJitsiHost;
         public bool ShouldSerializeJitsiHost()
         {
-            if (_token != null && _token.SelectToken("jitsiHost") != null) return true;
+            // jitsiHost
             return (JitsiHost != defJitsiHost);
         }
 
@@ -81,7 +83,7 @@ namespace ArenaUnity.Schemas
         public float MaxAVDist = defMaxAVDist;
         public bool ShouldSerializeMaxAVDist()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defNavMesh = "";
@@ -90,7 +92,7 @@ namespace ArenaUnity.Schemas
         public string NavMesh = defNavMesh;
         public bool ShouldSerializeNavMesh()
         {
-            if (_token != null && _token.SelectToken("navMesh") != null) return true;
+            // navMesh
             return (NavMesh != defNavMesh);
         }
 
@@ -100,7 +102,7 @@ namespace ArenaUnity.Schemas
         public bool NetworkedLocationSolver = defNetworkedLocationSolver;
         public bool ShouldSerializeNetworkedLocationSolver()
         {
-            if (_token != null && _token.SelectToken("networkedLocationSolver") != null) return true;
+            // networkedLocationSolver
             return (NetworkedLocationSolver != defNetworkedLocationSolver);
         }
 
@@ -110,7 +112,7 @@ namespace ArenaUnity.Schemas
         public bool PrivateScene = defPrivateScene;
         public bool ShouldSerializePrivateScene()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defRefDistance = 1f;
@@ -119,7 +121,7 @@ namespace ArenaUnity.Schemas
         public float RefDistance = defRefDistance;
         public bool ShouldSerializeRefDistance()
         {
-            if (_token != null && _token.SelectToken("refDistance") != null) return true;
+            // refDistance
             return (RefDistance != defRefDistance);
         }
 
@@ -129,7 +131,7 @@ namespace ArenaUnity.Schemas
         public float RolloffFactor = defRolloffFactor;
         public bool ShouldSerializeRolloffFactor()
         {
-            if (_token != null && _token.SelectToken("rolloffFactor") != null) return true;
+            // rolloffFactor
             return (RolloffFactor != defRolloffFactor);
         }
 
@@ -139,7 +141,7 @@ namespace ArenaUnity.Schemas
         public string Screenshare = defScreenshare;
         public bool ShouldSerializeScreenshare()
         {
-            if (_token != null && _token.SelectToken("screenshare") != null) return true;
+            // screenshare
             return (Screenshare != defScreenshare);
         }
 
@@ -149,7 +151,7 @@ namespace ArenaUnity.Schemas
         public bool VideoFrustumCulling = defVideoFrustumCulling;
         public bool ShouldSerializeVideoFrustumCulling()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defVideoDistanceConstraints = true;
@@ -158,7 +160,7 @@ namespace ArenaUnity.Schemas
         public bool VideoDistanceConstraints = defVideoDistanceConstraints;
         public bool ShouldSerializeVideoDistanceConstraints()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defVideoDefaultResolutionConstraint = 180f;
@@ -167,7 +169,7 @@ namespace ArenaUnity.Schemas
         public float VideoDefaultResolutionConstraint = defVideoDefaultResolutionConstraint;
         public bool ShouldSerializeVideoDefaultResolutionConstraint()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defVolume = 1f;
@@ -176,7 +178,7 @@ namespace ArenaUnity.Schemas
         public float Volume = defVolume;
         public bool ShouldSerializeVolume()
         {
-            if (_token != null && _token.SelectToken("volume") != null) return true;
+            // volume
             return (Volume != defVolume);
         }
 
@@ -186,7 +188,7 @@ namespace ArenaUnity.Schemas
         public bool Physics = defPhysics;
         public bool ShouldSerializePhysics()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static object defArHitTest = JsonConvert.DeserializeObject("");
@@ -195,33 +197,19 @@ namespace ArenaUnity.Schemas
         public object ArHitTest = defArHitTest;
         public bool ShouldSerializeArHitTest()
         {
-            if (_token != null && _token.SelectToken("ar-hit-test") != null) return true;
+            // ar-hit-test
             return (ArHitTest != defArHitTest);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaSceneOptionsJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaSceneOptionsJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaSceneOptionsJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

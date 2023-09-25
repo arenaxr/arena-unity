@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaClickListenerJson
     {
-        public const string componentName = "click-listener";
+        [JsonIgnore]
+        public readonly string componentName = "click-listener";
 
         // click-listener member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public bool Enabled = defEnabled;
         public bool ShouldSerializeEnabled()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defBubble = true;
@@ -41,32 +43,18 @@ namespace ArenaUnity.Schemas
         public bool Bubble = defBubble;
         public bool ShouldSerializeBubble()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaClickListenerJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaClickListenerJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaClickListenerJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

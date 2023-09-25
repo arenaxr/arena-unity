@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,14 +23,24 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaLineJson
     {
-        public const string componentName = "line";
+        public readonly string object_type = "line";
 
         // line member-fields
 
-        private static object defEnd = JsonConvert.DeserializeObject("{'x': -0.5, 'y': -0.5, 'z': 0}");
+        private static string defColor = "#7f7f7f";
+        [JsonProperty(PropertyName = "color")]
+        [Tooltip("color")]
+        public string Color = defColor;
+        public bool ShouldSerializeColor()
+        {
+            // color
+            return (Color != defColor);
+        }
+
+        private static ArenaVector3Json defEnd = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': -0.5, 'y': -0.5, 'z': 0}");
         [JsonProperty(PropertyName = "end")]
         [Tooltip("vertex B (end)")]
-        public object End = defEnd;
+        public ArenaVector3Json End = defEnd;
         public bool ShouldSerializeEnd()
         {
             return true; // required in json schema
@@ -41,14 +52,14 @@ namespace ArenaUnity.Schemas
         public float Opacity = defOpacity;
         public bool ShouldSerializeOpacity()
         {
-            if (_token != null && _token.SelectToken("opacity") != null) return true;
+            // opacity
             return (Opacity != defOpacity);
         }
 
-        private static object defStart = JsonConvert.DeserializeObject("{'x': 0, 'y': 0.5, 'z': 0}");
+        private static ArenaVector3Json defStart = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0.5, 'z': 0}");
         [JsonProperty(PropertyName = "start")]
         [Tooltip("vertex A (start)")]
-        public object Start = defStart;
+        public ArenaVector3Json Start = defStart;
         public bool ShouldSerializeStart()
         {
             return true; // required in json schema
@@ -60,33 +71,19 @@ namespace ArenaUnity.Schemas
         public bool Visible = defVisible;
         public bool ShouldSerializeVisible()
         {
-            if (_token != null && _token.SelectToken("visible") != null) return true;
+            // visible
             return (Visible != defVisible);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaLineJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaLineJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaLineJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

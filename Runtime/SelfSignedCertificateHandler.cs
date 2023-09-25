@@ -1,4 +1,9 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
+
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.Networking;
 

@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaShadowJson
     {
-        public const string componentName = "shadow";
+        [JsonIgnore]
+        public readonly string componentName = "shadow";
 
         // shadow member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public bool Cast = defCast;
         public bool ShouldSerializeCast()
         {
-            if (_token != null && _token.SelectToken("cast") != null) return true;
+            // cast
             return (Cast != defCast);
         }
 
@@ -42,33 +44,19 @@ namespace ArenaUnity.Schemas
         public bool Receive = defReceive;
         public bool ShouldSerializeReceive()
         {
-            if (_token != null && _token.SelectToken("receive") != null) return true;
+            // receive
             return (Receive != defReceive);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaShadowJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaShadowJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaShadowJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaMaterialExtrasJson
     {
-        public const string componentName = "material-extras";
+        [JsonIgnore]
+        public readonly string componentName = "material-extras";
 
         // material-extras member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public string OverrideSrc = defOverrideSrc;
         public bool ShouldSerializeOverrideSrc()
         {
-            if (_token != null && _token.SelectToken("overrideSrc") != null) return true;
+            // overrideSrc
             return (OverrideSrc != defOverrideSrc);
         }
 
@@ -66,7 +68,7 @@ namespace ArenaUnity.Schemas
         public EncodingType Encoding = defEncoding;
         public bool ShouldSerializeEncoding()
         {
-            if (_token != null && _token.SelectToken("encoding") != null) return true;
+            // encoding
             return (Encoding != defEncoding);
         }
 
@@ -76,7 +78,7 @@ namespace ArenaUnity.Schemas
         public bool ColorWrite = defColorWrite;
         public bool ShouldSerializeColorWrite()
         {
-            if (_token != null && _token.SelectToken("colorWrite") != null) return true;
+            // colorWrite
             return (ColorWrite != defColorWrite);
         }
 
@@ -86,7 +88,7 @@ namespace ArenaUnity.Schemas
         public float RenderOrder = defRenderOrder;
         public bool ShouldSerializeRenderOrder()
         {
-            if (_token != null && _token.SelectToken("renderOrder") != null) return true;
+            // renderOrder
             return (RenderOrder != defRenderOrder);
         }
 
@@ -96,33 +98,19 @@ namespace ArenaUnity.Schemas
         public bool TransparentOccluder = defTransparentOccluder;
         public bool ShouldSerializeTransparentOccluder()
         {
-            if (_token != null && _token.SelectToken("transparentOccluder") != null) return true;
+            // transparentOccluder
             return (TransparentOccluder != defTransparentOccluder);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaMaterialExtrasJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaMaterialExtrasJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaMaterialExtrasJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

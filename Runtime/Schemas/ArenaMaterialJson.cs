@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaMaterialJson
     {
-        public const string componentName = "material";
+        [JsonIgnore]
+        public readonly string componentName = "material";
 
         // material member-fields
 
@@ -110,10 +112,10 @@ namespace ArenaUnity.Schemas
             return (Npot != defNpot);
         }
 
-        private static object defOffset = JsonConvert.DeserializeObject("{'x': 1, 'y': 1}");
+        private static ArenaVector2Json defOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         [JsonProperty(PropertyName = "offset")]
         [Tooltip("Texture offset to be used.")]
-        public object Offset = defOffset;
+        public ArenaVector2Json Offset = defOffset;
         public bool ShouldSerializeOffset()
         {
             if (_token != null && _token.SelectToken("offset") != null) return true;
@@ -130,10 +132,10 @@ namespace ArenaUnity.Schemas
             return (Opacity != defOpacity);
         }
 
-        private static object defRepeat = JsonConvert.DeserializeObject("{'x': 1, 'y': 1}");
+        private static ArenaVector2Json defRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         [JsonProperty(PropertyName = "repeat")]
         [Tooltip("Texture repeat to be used.")]
-        public object Repeat = defRepeat;
+        public ArenaVector2Json Repeat = defRepeat;
         public bool ShouldSerializeRepeat()
         {
             if (_token != null && _token.SelectToken("repeat") != null) return true;
@@ -221,28 +223,16 @@ namespace ArenaUnity.Schemas
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
 
         private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaMaterialJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaMaterialJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaMaterialJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

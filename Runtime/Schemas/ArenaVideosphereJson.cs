@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaVideosphereJson
     {
-        public const string componentName = "videosphere";
+        public readonly string object_type = "videosphere";
 
         // videosphere member-fields
 
@@ -32,7 +33,7 @@ namespace ArenaUnity.Schemas
         public bool Autoplay = defAutoplay;
         public bool ShouldSerializeAutoplay()
         {
-            if (_token != null && _token.SelectToken("autoplay") != null) return true;
+            // autoplay
             return (Autoplay != defAutoplay);
         }
 
@@ -42,7 +43,7 @@ namespace ArenaUnity.Schemas
         public string CrossOrigin = defCrossOrigin;
         public bool ShouldSerializeCrossOrigin()
         {
-            if (_token != null && _token.SelectToken("crossOrigin") != null) return true;
+            // crossOrigin
             return (CrossOrigin != defCrossOrigin);
         }
 
@@ -52,7 +53,7 @@ namespace ArenaUnity.Schemas
         public bool Loop = defLoop;
         public bool ShouldSerializeLoop()
         {
-            if (_token != null && _token.SelectToken("loop") != null) return true;
+            // loop
             return (Loop != defLoop);
         }
 
@@ -62,27 +63,27 @@ namespace ArenaUnity.Schemas
         public float Radius = defRadius;
         public bool ShouldSerializeRadius()
         {
-            if (_token != null && _token.SelectToken("radius") != null) return true;
+            // radius
             return (Radius != defRadius);
         }
 
-        private static float defSegmentsHeight = 64f;
+        private static int defSegmentsHeight = 64;
         [JsonProperty(PropertyName = "segmentsHeight")]
         [Tooltip("segments height")]
-        public float SegmentsHeight = defSegmentsHeight;
+        public int SegmentsHeight = defSegmentsHeight;
         public bool ShouldSerializeSegmentsHeight()
         {
-            if (_token != null && _token.SelectToken("segmentsHeight") != null) return true;
+            // segmentsHeight
             return (SegmentsHeight != defSegmentsHeight);
         }
 
-        private static float defSegmentsWidth = 64f;
+        private static int defSegmentsWidth = 64;
         [JsonProperty(PropertyName = "segmentsWidth")]
         [Tooltip("segments width")]
-        public float SegmentsWidth = defSegmentsWidth;
+        public int SegmentsWidth = defSegmentsWidth;
         public bool ShouldSerializeSegmentsWidth()
         {
-            if (_token != null && _token.SelectToken("segmentsWidth") != null) return true;
+            // segmentsWidth
             return (SegmentsWidth != defSegmentsWidth);
         }
 
@@ -92,33 +93,19 @@ namespace ArenaUnity.Schemas
         public string Src = defSrc;
         public bool ShouldSerializeSrc()
         {
-            if (_token != null && _token.SelectToken("src") != null) return true;
+            // src
             return (Src != defSrc);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaVideosphereJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaVideosphereJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaVideosphereJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

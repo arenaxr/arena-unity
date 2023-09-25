@@ -1,27 +1,45 @@
-﻿// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
 
+// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
+
+using ArenaUnity.Schemas;
 using MeshBuilder;
-using UnityEngine;
+using Newtonsoft.Json;
 
 namespace ArenaUnity
 {
-    [ExecuteInEditMode]
-    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class ArenaMeshBox : ArenaMesh
     {
-        [SerializeField, Range(0.5f, 10f)] internal float width = 1f;
-        [SerializeField, Range(0.5f, 10f)] internal float height = 1f;
-        [SerializeField, Range(0.5f, 10f)] internal float depth = 1f;
-        [SerializeField, Range(1, 10)] internal int widthSegments = 1;
-        [SerializeField, Range(1, 10)] internal int heightSegments = 1;
-        [SerializeField, Range(1, 10)] internal int depthSegments = 1;
+        public ArenaBoxJson json = new ArenaBoxJson();
 
-        protected override void Build(MeshFilter filter)
+        protected override void ApplyRender()
         {
             filter.sharedMesh = CubeBuilder.Build(
-                width, height, depth,
-                widthSegments, heightSegments, depthSegments
+                json.Width,
+                json.Height,
+                json.Depth,
+                json.SegmentsWidth,
+                json.SegmentsHeight,
+                json.SegmentsDepth
             );
+        }
+
+        public override void UpdateObject()
+        {
+            var newJson = JsonConvert.SerializeObject(json);
+            if (updatedJson != newJson)
+            {
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null)
+                {
+                    aobj.PublishUpdate($"{newJson}");
+                    apply = true;
+                }
+            }
+            updatedJson = newJson;
         }
     }
 }

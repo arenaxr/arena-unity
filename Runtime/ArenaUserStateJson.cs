@@ -1,4 +1,9 @@
-﻿using System;
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
+
+using System;
 
 namespace ArenaUnity
 {
@@ -12,5 +17,4 @@ namespace ArenaUnity
         public string type { get; set; }
         public bool is_staff { get; set; }
     }
-
 }

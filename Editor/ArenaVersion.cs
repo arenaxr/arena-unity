@@ -1,12 +1,13 @@
 /**
  * Open source software under the terms in /LICENSE
- * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
 using System;
 using System.Collections;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEditor.PackageManager;
@@ -96,10 +97,12 @@ namespace ArenaUnity.Editor
             }
             else
             {
-                dynamic git = JsonConvert.DeserializeObject(www.downloadHandler.text);
+
+                //GitReleasesLatestJson git = JsonConvert.DeserializeObject<GitReleasesLatestJson>(www.downloadHandler.text);
+                var git = JObject.Parse(www.downloadHandler.text);
                 if (git != null)
                 {
-                    if (Version.TryParse(((string)git.tag_name).Trim('v'), out var latest))
+                    if (Version.TryParse(git["tag_name"].ToString().Trim('v'), out var latest))
                     {
                         PlayerPrefs.SetString("GitVersionLatest", latest.ToString());
                         if (local < latest)

@@ -1,6 +1,6 @@
 ﻿/**
 * Open source software under the terms in /LICENSE
-* Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+* Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
 */
 
 using System;
@@ -344,7 +344,7 @@ namespace ArenaUnity
 
                 willFlag = camera;
                 willTopic = $"{realm}/s/{namespaceName}/{sceneName}/{camid}";
-                dynamic msg = new
+                ArenaObjectJson msg = new ArenaObjectJson
                 {
                     object_id = camid,
                     action = "delete",

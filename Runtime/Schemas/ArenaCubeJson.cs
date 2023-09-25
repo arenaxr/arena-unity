@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaCubeJson
     {
-        public const string componentName = "cube";
+        public readonly string object_type = "cube";
 
         // cube member-fields
 
@@ -32,7 +33,7 @@ namespace ArenaUnity.Schemas
         public float Depth = defDepth;
         public bool ShouldSerializeDepth()
         {
-            if (_token != null && _token.SelectToken("depth") != null) return true;
+            // depth
             return (Depth != defDepth);
         }
 
@@ -42,37 +43,37 @@ namespace ArenaUnity.Schemas
         public float Height = defHeight;
         public bool ShouldSerializeHeight()
         {
-            if (_token != null && _token.SelectToken("height") != null) return true;
+            // height
             return (Height != defHeight);
         }
 
-        private static float defSegmentsDepth = 1f;
+        private static int defSegmentsDepth = 1;
         [JsonProperty(PropertyName = "segmentsDepth")]
         [Tooltip("segments depth")]
-        public float SegmentsDepth = defSegmentsDepth;
+        public int SegmentsDepth = defSegmentsDepth;
         public bool ShouldSerializeSegmentsDepth()
         {
-            if (_token != null && _token.SelectToken("segmentsDepth") != null) return true;
+            // segmentsDepth
             return (SegmentsDepth != defSegmentsDepth);
         }
 
-        private static float defSegmentsHeight = 1f;
+        private static int defSegmentsHeight = 1;
         [JsonProperty(PropertyName = "segmentsHeight")]
         [Tooltip("segments height")]
-        public float SegmentsHeight = defSegmentsHeight;
+        public int SegmentsHeight = defSegmentsHeight;
         public bool ShouldSerializeSegmentsHeight()
         {
-            if (_token != null && _token.SelectToken("segmentsHeight") != null) return true;
+            // segmentsHeight
             return (SegmentsHeight != defSegmentsHeight);
         }
 
-        private static float defSegmentsWidth = 1f;
+        private static int defSegmentsWidth = 1;
         [JsonProperty(PropertyName = "segmentsWidth")]
         [Tooltip("segments width")]
-        public float SegmentsWidth = defSegmentsWidth;
+        public int SegmentsWidth = defSegmentsWidth;
         public bool ShouldSerializeSegmentsWidth()
         {
-            if (_token != null && _token.SelectToken("segmentsWidth") != null) return true;
+            // segmentsWidth
             return (SegmentsWidth != defSegmentsWidth);
         }
 
@@ -82,33 +83,19 @@ namespace ArenaUnity.Schemas
         public float Width = defWidth;
         public bool ShouldSerializeWidth()
         {
-            if (_token != null && _token.SelectToken("width") != null) return true;
+            // width
             return (Width != defWidth);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaCubeJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaCubeJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaCubeJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

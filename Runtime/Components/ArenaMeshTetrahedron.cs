@@ -3,20 +3,36 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
-using UnityEngine;
+using ArenaUnity.Schemas;
+using Newtonsoft.Json;
 
 namespace ArenaUnity
 {
-    [ExecuteInEditMode]
-    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class ArenaMeshTetrahedron : ArenaMesh
     {
-        [SerializeField, Range(0.5f, 10f)] internal float radius = 1f;
-        [SerializeField, Range(0, 5)] internal int details = 1;
+        public ArenaTetrahedronJson json = new ArenaTetrahedronJson();
 
-        protected override void Build(MeshFilter filter)
+        protected override void ApplyRender()
         {
-            filter.sharedMesh = TetrahedronBuilder.Build(radius, details);
+            filter.sharedMesh = TetrahedronBuilder.Build(
+                json.Radius,
+                json.Detail
+            );
+        }
+
+        public override void UpdateObject()
+        {
+            var newJson = JsonConvert.SerializeObject(json);
+            if (updatedJson != newJson)
+            {
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null)
+                {
+                    aobj.PublishUpdate($"{newJson}");
+                    apply = true;
+                }
+            }
+            updatedJson = newJson;
         }
     }
 }

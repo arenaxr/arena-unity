@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaArmarkerJson
     {
-        public const string componentName = "armarker";
+        [JsonIgnore]
+        public readonly string componentName = "armarker";
 
         // armarker member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public bool Publish = defPublish;
         public bool ShouldSerializePublish()
         {
-            if (_token != null && _token.SelectToken("publish") != null) return true;
+            // publish
             return (Publish != defPublish);
         }
 
@@ -42,7 +44,7 @@ namespace ArenaUnity.Schemas
         public bool Dynamic = defDynamic;
         public bool ShouldSerializeDynamic()
         {
-            if (_token != null && _token.SelectToken("dynamic") != null) return true;
+            // dynamic
             return (Dynamic != defDynamic);
         }
 
@@ -52,7 +54,7 @@ namespace ArenaUnity.Schemas
         public float Ele = defEle;
         public bool ShouldSerializeEle()
         {
-            if (_token != null && _token.SelectToken("ele") != null) return true;
+            // ele
             return (Ele != defEle);
         }
 
@@ -62,7 +64,7 @@ namespace ArenaUnity.Schemas
         public float Lat = defLat;
         public bool ShouldSerializeLat()
         {
-            if (_token != null && _token.SelectToken("lat") != null) return true;
+            // lat
             return (Lat != defLat);
         }
 
@@ -72,7 +74,7 @@ namespace ArenaUnity.Schemas
         public float Long = defLong;
         public bool ShouldSerializeLong()
         {
-            if (_token != null && _token.SelectToken("long") != null) return true;
+            // long
             return (Long != defLong);
         }
 
@@ -82,7 +84,7 @@ namespace ArenaUnity.Schemas
         public string Markerid = defMarkerid;
         public bool ShouldSerializeMarkerid()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum MarkertypeType
@@ -101,7 +103,7 @@ namespace ArenaUnity.Schemas
         public MarkertypeType Markertype = defMarkertype;
         public bool ShouldSerializeMarkertype()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defSize = 150f;
@@ -110,7 +112,7 @@ namespace ArenaUnity.Schemas
         public float Size = defSize;
         public bool ShouldSerializeSize()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defUrl = "";
@@ -119,33 +121,19 @@ namespace ArenaUnity.Schemas
         public string Url = defUrl;
         public bool ShouldSerializeUrl()
         {
-            if (_token != null && _token.SelectToken("url") != null) return true;
+            // url
             return (Url != defUrl);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaArmarkerJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaArmarkerJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaArmarkerJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

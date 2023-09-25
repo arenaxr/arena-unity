@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaCircleJson
     {
-        public const string componentName = "circle";
+        public readonly string object_type = "circle";
 
         // circle member-fields
 
@@ -32,16 +33,16 @@ namespace ArenaUnity.Schemas
         public float Radius = defRadius;
         public bool ShouldSerializeRadius()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
-        private static float defSegments = 32f;
+        private static int defSegments = 32;
         [JsonProperty(PropertyName = "segments")]
         [Tooltip("segments")]
-        public float Segments = defSegments;
+        public int Segments = defSegments;
         public bool ShouldSerializeSegments()
         {
-            if (_token != null && _token.SelectToken("segments") != null) return true;
+            // segments
             return (Segments != defSegments);
         }
 
@@ -51,7 +52,7 @@ namespace ArenaUnity.Schemas
         public float ThetaLength = defThetaLength;
         public bool ShouldSerializeThetaLength()
         {
-            if (_token != null && _token.SelectToken("thetaLength") != null) return true;
+            // thetaLength
             return (ThetaLength != defThetaLength);
         }
 
@@ -61,33 +62,19 @@ namespace ArenaUnity.Schemas
         public float ThetaStart = defThetaStart;
         public bool ShouldSerializeThetaStart()
         {
-            if (_token != null && _token.SelectToken("thetaStart") != null) return true;
+            // thetaStart
             return (ThetaStart != defThetaStart);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaCircleJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaCircleJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaCircleJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

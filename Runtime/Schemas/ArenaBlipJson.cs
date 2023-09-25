@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaBlipJson
     {
-        public const string componentName = "blip";
+        [JsonIgnore]
+        public readonly string componentName = "blip";
 
         // blip member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public bool Blipin = defBlipin;
         public bool ShouldSerializeBlipin()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defBlipout = true;
@@ -41,7 +43,7 @@ namespace ArenaUnity.Schemas
         public bool Blipout = defBlipout;
         public bool ShouldSerializeBlipout()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum GeometryType
@@ -60,7 +62,7 @@ namespace ArenaUnity.Schemas
         public GeometryType Geometry = defGeometry;
         public bool ShouldSerializeGeometry()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum PlanesType
@@ -79,7 +81,7 @@ namespace ArenaUnity.Schemas
         public PlanesType Planes = defPlanes;
         public bool ShouldSerializePlanes()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defDuration = 750f;
@@ -88,7 +90,7 @@ namespace ArenaUnity.Schemas
         public float Duration = defDuration;
         public bool ShouldSerializeDuration()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defApplyDescendants = false;
@@ -97,33 +99,19 @@ namespace ArenaUnity.Schemas
         public bool ApplyDescendants = defApplyDescendants;
         public bool ShouldSerializeApplyDescendants()
         {
-            if (_token != null && _token.SelectToken("applyDescendants") != null) return true;
+            // applyDescendants
             return (ApplyDescendants != defApplyDescendants);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaBlipJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaBlipJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaBlipJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

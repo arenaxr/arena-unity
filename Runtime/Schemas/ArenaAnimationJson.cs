@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaAnimationJson
     {
-        public const string componentName = "animation";
+        [JsonIgnore]
+        public readonly string componentName = "animation";
 
         // animation member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public bool Autoplay = defAutoplay;
         public bool ShouldSerializeAutoplay()
         {
-            if (_token != null && _token.SelectToken("autoplay") != null) return true;
+            // autoplay
             return (Autoplay != defAutoplay);
         }
 
@@ -42,7 +44,7 @@ namespace ArenaUnity.Schemas
         public float Delay = defDelay;
         public bool ShouldSerializeDelay()
         {
-            if (_token != null && _token.SelectToken("delay") != null) return true;
+            // delay
             return (Delay != defDelay);
         }
 
@@ -62,7 +64,7 @@ namespace ArenaUnity.Schemas
         public DirType Dir = defDir;
         public bool ShouldSerializeDir()
         {
-            if (_token != null && _token.SelectToken("dir") != null) return true;
+            // dir
             return (Dir != defDir);
         }
 
@@ -72,7 +74,7 @@ namespace ArenaUnity.Schemas
         public float Dur = defDur;
         public bool ShouldSerializeDur()
         {
-            if (_token != null && _token.SelectToken("dur") != null) return true;
+            // dur
             return (Dur != defDur);
         }
 
@@ -142,7 +144,7 @@ namespace ArenaUnity.Schemas
         public EasingType Easing = defEasing;
         public bool ShouldSerializeEasing()
         {
-            if (_token != null && _token.SelectToken("easing") != null) return true;
+            // easing
             return (Easing != defEasing);
         }
 
@@ -152,7 +154,7 @@ namespace ArenaUnity.Schemas
         public float Elasticity = defElasticity;
         public bool ShouldSerializeElasticity()
         {
-            if (_token != null && _token.SelectToken("elasticity") != null) return true;
+            // elasticity
             return (Elasticity != defElasticity);
         }
 
@@ -162,17 +164,18 @@ namespace ArenaUnity.Schemas
         public bool Enabled = defEnabled;
         public bool ShouldSerializeEnabled()
         {
-            if (_token != null && _token.SelectToken("enabled") != null) return true;
+            // enabled
             return (Enabled != defEnabled);
         }
 
         private static string defFrom = "";
+        [JsonConverter(typeof(string))] // TODO (mwfarb): remove explicit conversion to avoid walking errors
         [JsonProperty(PropertyName = "from")]
         [Tooltip("Initial value at start of animation. If not specified, the current property value of the entity will be used (will be sampled on each animation start). It is best to specify a from value when possible for stability.")]
         public string From = defFrom;
         public bool ShouldSerializeFrom()
         {
-            if (_token != null && _token.SelectToken("from") != null) return true;
+            // from
             return (From != defFrom);
         }
 
@@ -182,7 +185,7 @@ namespace ArenaUnity.Schemas
         public bool IsRawProperty = defIsRawProperty;
         public bool ShouldSerializeIsRawProperty()
         {
-            if (_token != null && _token.SelectToken("isRawProperty") != null) return true;
+            // isRawProperty
             return (IsRawProperty != defIsRawProperty);
         }
 
@@ -192,17 +195,17 @@ namespace ArenaUnity.Schemas
         public string Loop = defLoop;
         public bool ShouldSerializeLoop()
         {
-            if (_token != null && _token.SelectToken("loop") != null) return true;
+            // loop
             return (Loop != defLoop);
         }
 
-        private static string[] defPauseEvents = {};
+        private static string[] defPauseEvents = { };
         [JsonProperty(PropertyName = "pauseEvents")]
         [Tooltip("Comma-separated list of events to listen to trigger pause. Can be resumed with resumeEvents.")]
         public string[] PauseEvents = defPauseEvents;
         public bool ShouldSerializePauseEvents()
         {
-            if (_token != null && _token.SelectToken("pauseEvents") != null) return true;
+            // pauseEvents
             return (PauseEvents != defPauseEvents);
         }
 
@@ -212,17 +215,17 @@ namespace ArenaUnity.Schemas
         public string Property = defProperty;
         public bool ShouldSerializeProperty()
         {
-            if (_token != null && _token.SelectToken("property") != null) return true;
+            // property
             return (Property != defProperty);
         }
 
-        private static string[] defResumeEvents = {};
+        private static string[] defResumeEvents = { };
         [JsonProperty(PropertyName = "resumeEvents")]
         [Tooltip("Comma-separated list of events to listen to trigger resume after pausing.")]
         public string[] ResumeEvents = defResumeEvents;
         public bool ShouldSerializeResumeEvents()
         {
-            if (_token != null && _token.SelectToken("resumeEvents") != null) return true;
+            // resumeEvents
             return (ResumeEvents != defResumeEvents);
         }
 
@@ -232,27 +235,28 @@ namespace ArenaUnity.Schemas
         public bool Round = defRound;
         public bool ShouldSerializeRound()
         {
-            if (_token != null && _token.SelectToken("round") != null) return true;
+            // round
             return (Round != defRound);
         }
 
-        private static string[] defStartEvents = {};
+        private static string[] defStartEvents = { };
         [JsonProperty(PropertyName = "startEvents")]
         [Tooltip("Comma-separated list of events to listen to trigger a restart and play. Animation will not autoplay if specified. startEvents will restart the animation, use pauseEvents to resume it. If there are other animation components on the entity animating the same property, those animations will be automatically paused to not conflict.")]
         public string[] StartEvents = defStartEvents;
         public bool ShouldSerializeStartEvents()
         {
-            if (_token != null && _token.SelectToken("startEvents") != null) return true;
+            // startEvents
             return (StartEvents != defStartEvents);
         }
 
         private static string defTo = "";
+        [JsonConverter(typeof(string))] // TODO (mwfarb): remove explicit conversion to avoid walking errors
         [JsonProperty(PropertyName = "to")]
         [Tooltip("Target value at end of animation.")]
         public string To = defTo;
         public bool ShouldSerializeTo()
         {
-            if (_token != null && _token.SelectToken("to") != null) return true;
+            // to
             return (To != defTo);
         }
 
@@ -262,33 +266,19 @@ namespace ArenaUnity.Schemas
         public string Type = defType;
         public bool ShouldSerializeType()
         {
-            if (_token != null && _token.SelectToken("type") != null) return true;
+            // type
             return (Type != defType);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaAnimationJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaAnimationJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaAnimationJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

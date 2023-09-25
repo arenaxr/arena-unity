@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaArenauiPromptJson
     {
-        public const string componentName = "arenaui-prompt";
+        public readonly string object_type = "arenaui-prompt";
 
         // arenaui-prompt member-fields
 
@@ -32,7 +33,7 @@ namespace ArenaUnity.Schemas
         public string Title = defTitle;
         public bool ShouldSerializeTitle()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static string defDescription = "This is a prompt. Please confirm or cancel.";
@@ -41,7 +42,7 @@ namespace ArenaUnity.Schemas
         public string Description = defDescription;
         public bool ShouldSerializeDescription()
         {
-            if (_token != null && _token.SelectToken("description") != null) return true;
+            // description
             return (Description != defDescription);
         }
 
@@ -51,7 +52,7 @@ namespace ArenaUnity.Schemas
         public string[] Buttons = defButtons;
         public bool ShouldSerializeButtons()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defWidth = 1.5f;
@@ -60,7 +61,7 @@ namespace ArenaUnity.Schemas
         public float Width = defWidth;
         public bool ShouldSerializeWidth()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         public enum FontType
@@ -77,33 +78,19 @@ namespace ArenaUnity.Schemas
         public FontType Font = defFont;
         public bool ShouldSerializeFont()
         {
-            if (_token != null && _token.SelectToken("font") != null) return true;
+            // font
             return (Font != defFont);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaArenauiPromptJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaArenauiPromptJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaArenauiPromptJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

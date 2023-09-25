@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaEntityJson
     {
-        public const string componentName = "entity";
+        public readonly string object_type = "entity";
 
         // entity member-fields
 
@@ -32,7 +33,7 @@ namespace ArenaUnity.Schemas
         public object Geometry = defGeometry;
         public bool ShouldSerializeGeometry()
         {
-            if (_token != null && _token.SelectToken("geometry") != null) return true;
+            // geometry
             return (Geometry != defGeometry);
         }
 
@@ -42,33 +43,19 @@ namespace ArenaUnity.Schemas
         public object Panel = defPanel;
         public bool ShouldSerializePanel()
         {
-            if (_token != null && _token.SelectToken("panel") != null) return true;
+            // panel
             return (Panel != defPanel);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaEntityJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaEntityJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaEntityJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

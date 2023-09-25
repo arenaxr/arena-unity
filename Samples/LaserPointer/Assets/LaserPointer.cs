@@ -1,7 +1,7 @@
 using System.Collections;
-using System.Dynamic;
 using ArenaUnity;
 using ArenaUnity.Components;
+using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -44,49 +44,62 @@ public class LaserPointer : MonoBehaviour
         if (event_type != "mousedown") return;
         int instance = UnityEngine.Random.Range(0, 100000000);
 
-        // TODO (error) Received: {"object_id":"guac-cube_1_1","action":"clientEvent","type":"mousedown","data":{"position":{"x":1,"y":1,"z":-3},"source":"pyClient-144637"},"timestamp":"2023-03-06T16:30:06.368Z"}
+        ArenaObjectJson m = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
+        ArenaEventJson evt = JsonConvert.DeserializeObject<ArenaEventJson>(m.data.ToString());
 
-        // TODO: provide better serialization
-        dynamic m = JsonConvert.DeserializeObject(message);
-        dynamic start = m.data.clickPos;
-        dynamic end = m.data.position;
-        start.y = (float)start.y - .1f; // lower position for visibility
+        ArenaVector3Json start = evt.ClickPos;
+        ArenaVector3Json end = evt.Position;
+        start.Y = (float)start.Y - .1f; // lower position for visibility
 
         // laser
-        dynamic msg = new ExpandoObject();
-        msg.object_id = $"line-{instance}";
-        msg.action = "create";
-        msg.type = "object";
-        msg.ttl = 1;
-        msg.data = new ExpandoObject();
-        msg.data.object_type = useThickline ? "thickline" : "line";
+        ArenaObjectJson msg = new ArenaObjectJson
+        {
+            object_id = $"line-{instance}",
+            action = "create",
+            type = "object",
+            ttl = 1,
+        };
+        string payload;
         if (useThickline)
         {
-            string startTL = $"{start.x} {start.y} {start.z}";
-            string endTL = $"{end.x} {end.y} {end.z}";
-            msg.data.path = $"{startTL},{endTL}";
-            msg.data.lineWidth = 5;
+            var data = new ArenaThicklineJson();
+            string startTL = $"{start.X} {start.Y} {start.Z}";
+            string endTL = $"{end.X} {end.Y} {end.Z}";
+            data.Path = $"{startTL},{endTL}";
+            data.LineWidth = 5;
+            data.Color = ArenaUnity.ArenaUnity.ToArenaColor(_laserColor);
+            msg.data = data;
+            payload = JsonConvert.SerializeObject(msg);
         }
         else
         {
-            msg.data.start = start;
-            msg.data.end = end;
+            var data = new ArenaLineJson();
+            data.Start = start;
+            data.End = end;
+            data.Color = ArenaUnity.ArenaUnity.ToArenaColor(_laserColor);
+            msg.data = data;
+            payload = JsonConvert.SerializeObject(msg);
         }
-        msg.data.color = ArenaUnity.ArenaUnity.ToArenaColor(_laserColor);
-        string payload = JsonConvert.SerializeObject(msg);
         _scene.PublishObject(msg.object_id, payload);
         // target
-        msg = new ExpandoObject();
-        msg.object_id = $"target-{instance}"; ;
-        msg.action = "create";
-        msg.type = "object";
-        msg.ttl = 1;
-        msg.data = new ExpandoObject();
-        msg.data.object_type = "sphere";
-        msg.data.position = m.data.position;
-        msg.data.scale = ArenaUnity.ArenaUnity.ToArenaScale(_targetScale);
-        msg.data.color = ArenaUnity.ArenaUnity.ToArenaColor(_laserColor);
-        msg.data.lineWidth = 5;
+        msg = new ArenaObjectJson
+        {
+            object_id = $"target-{instance}",
+            action = "create",
+            type = "object",
+            ttl = 1,
+        };
+        var data1 = new ArenaObjectDataJson
+        {
+            object_type = "sphere",
+            position = end,
+            scale = ArenaUnity.ArenaUnity.ToArenaScale(_targetScale),
+            material = new ArenaMaterialJson
+            {
+                Color = ArenaUnity.ArenaUnity.ToArenaColor(_laserColor),
+            },
+        };
+        msg.data = data1;
         payload = JsonConvert.SerializeObject(msg);
         _scene.PublishObject(msg.object_id, payload);
     }

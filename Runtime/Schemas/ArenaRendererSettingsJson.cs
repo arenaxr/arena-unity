@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaRendererSettingsJson
     {
-        public const string componentName = "renderer-settings";
+        [JsonIgnore]
+        public readonly string componentName = "renderer-settings";
 
         // renderer-settings member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public bool LocalClippingEnabled = defLocalClippingEnabled;
         public bool ShouldSerializeLocalClippingEnabled()
         {
-            if (_token != null && _token.SelectToken("localClippingEnabled") != null) return true;
+            // localClippingEnabled
             return (LocalClippingEnabled != defLocalClippingEnabled);
         }
 
@@ -54,7 +56,7 @@ namespace ArenaUnity.Schemas
         public OutputColorSpaceType OutputColorSpace = defOutputColorSpace;
         public bool ShouldSerializeOutputColorSpace()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static bool defPhysicallyCorrectLights = false;
@@ -63,7 +65,7 @@ namespace ArenaUnity.Schemas
         public bool PhysicallyCorrectLights = defPhysicallyCorrectLights;
         public bool ShouldSerializePhysicallyCorrectLights()
         {
-            if (_token != null && _token.SelectToken("physicallyCorrectLights") != null) return true;
+            // physicallyCorrectLights
             return (PhysicallyCorrectLights != defPhysicallyCorrectLights);
         }
 
@@ -73,33 +75,19 @@ namespace ArenaUnity.Schemas
         public bool SortObjects = defSortObjects;
         public bool ShouldSerializeSortObjects()
         {
-            if (_token != null && _token.SelectToken("sortObjects") != null) return true;
+            // sortObjects
             return (SortObjects != defSortObjects);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaRendererSettingsJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaRendererSettingsJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaRendererSettingsJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

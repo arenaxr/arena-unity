@@ -52,7 +52,7 @@ namespace M2MqttUnity
         protected bool isEncrypted = false;
         [Tooltip("SSL protocol to use when isEncrypted is true.")]
         protected MqttSslProtocols sslProtocol = MqttSslProtocols.TLSv1_0;
-        [Tooltip("Wether to verify the encryption certificate")]
+        [Tooltip("Whether to verify the encryption certificate")]
         protected bool verifyCertificate = true;
         [Header("Connection parameters")]
         [Tooltip("Connection to the broker is delayed by the the given milliseconds")]

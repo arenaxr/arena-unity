@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,7 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaOceanJson
     {
-        public const string componentName = "ocean";
+        public readonly string object_type = "ocean";
 
         // ocean member-fields
 
@@ -32,7 +33,7 @@ namespace ArenaUnity.Schemas
         public float Width = defWidth;
         public bool ShouldSerializeWidth()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defDepth = 10f;
@@ -41,7 +42,7 @@ namespace ArenaUnity.Schemas
         public float Depth = defDepth;
         public bool ShouldSerializeDepth()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defDensity = 10f;
@@ -50,7 +51,7 @@ namespace ArenaUnity.Schemas
         public float Density = defDensity;
         public bool ShouldSerializeDensity()
         {
-            if (_token != null && _token.SelectToken("density") != null) return true;
+            // density
             return (Density != defDensity);
         }
 
@@ -60,7 +61,7 @@ namespace ArenaUnity.Schemas
         public float Amplitude = defAmplitude;
         public bool ShouldSerializeAmplitude()
         {
-            if (_token != null && _token.SelectToken("amplitude") != null) return true;
+            // amplitude
             return (Amplitude != defAmplitude);
         }
 
@@ -70,7 +71,7 @@ namespace ArenaUnity.Schemas
         public float AmplitudeVariance = defAmplitudeVariance;
         public bool ShouldSerializeAmplitudeVariance()
         {
-            if (_token != null && _token.SelectToken("amplitudeVariance") != null) return true;
+            // amplitudeVariance
             return (AmplitudeVariance != defAmplitudeVariance);
         }
 
@@ -80,7 +81,7 @@ namespace ArenaUnity.Schemas
         public float Speed = defSpeed;
         public bool ShouldSerializeSpeed()
         {
-            if (_token != null && _token.SelectToken("speed") != null) return true;
+            // speed
             return (Speed != defSpeed);
         }
 
@@ -90,7 +91,7 @@ namespace ArenaUnity.Schemas
         public float SpeedVariance = defSpeedVariance;
         public bool ShouldSerializeSpeedVariance()
         {
-            if (_token != null && _token.SelectToken("speedVariance") != null) return true;
+            // speedVariance
             return (SpeedVariance != defSpeedVariance);
         }
 
@@ -100,7 +101,7 @@ namespace ArenaUnity.Schemas
         public string Color = defColor;
         public bool ShouldSerializeColor()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static float defOpacity = 0.8f;
@@ -109,33 +110,19 @@ namespace ArenaUnity.Schemas
         public float Opacity = defOpacity;
         public bool ShouldSerializeOpacity()
         {
-            if (_token != null && _token.SelectToken("opacity") != null) return true;
+            // opacity
             return (Opacity != defOpacity);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaOceanJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaOceanJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaOceanJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

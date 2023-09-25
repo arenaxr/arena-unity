@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaArenaSceneOptionsJson
     {
-        public const string componentName = "arena-scene-options";
+        [JsonIgnore]
+        public readonly string componentName = "arena-scene-options";
 
         // arena-scene-options member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public object EnvPresets = defEnvPresets;
         public bool ShouldSerializeEnvPresets()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static object defRendererSettings = JsonConvert.DeserializeObject("");
@@ -41,7 +43,7 @@ namespace ArenaUnity.Schemas
         public object RendererSettings = defRendererSettings;
         public bool ShouldSerializeRendererSettings()
         {
-            if (_token != null && _token.SelectToken("renderer-settings") != null) return true;
+            // renderer-settings
             return (RendererSettings != defRendererSettings);
         }
 
@@ -51,7 +53,7 @@ namespace ArenaUnity.Schemas
         public object SceneOptions = defSceneOptions;
         public bool ShouldSerializeSceneOptions()
         {
-            return true; // required in json schema 
+            return true; // required in json schema
         }
 
         private static object defPostProcessing = JsonConvert.DeserializeObject("");
@@ -60,33 +62,19 @@ namespace ArenaUnity.Schemas
         public object PostProcessing = defPostProcessing;
         public bool ShouldSerializePostProcessing()
         {
-            if (_token != null && _token.SelectToken("post-processing") != null) return true;
+            // post-processing
             return (PostProcessing != defPostProcessing);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaArenaSceneOptionsJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaArenaSceneOptionsJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaArenaSceneOptionsJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }

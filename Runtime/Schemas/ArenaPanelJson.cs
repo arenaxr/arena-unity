@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -22,7 +23,8 @@ namespace ArenaUnity.Schemas
     [Serializable]
     public class ArenaPanelJson
     {
-        public const string componentName = "panel";
+        [JsonIgnore]
+        public readonly string componentName = "panel";
 
         // panel member-fields
 
@@ -32,7 +34,7 @@ namespace ArenaUnity.Schemas
         public float Depth = defDepth;
         public bool ShouldSerializeDepth()
         {
-            if (_token != null && _token.SelectToken("depth") != null) return true;
+            // depth
             return (Depth != defDepth);
         }
 
@@ -42,7 +44,7 @@ namespace ArenaUnity.Schemas
         public float Height = defHeight;
         public bool ShouldSerializeHeight()
         {
-            if (_token != null && _token.SelectToken("height") != null) return true;
+            // height
             return (Height != defHeight);
         }
 
@@ -52,33 +54,19 @@ namespace ArenaUnity.Schemas
         public float Width = defWidth;
         public bool ShouldSerializeWidth()
         {
-            if (_token != null && _token.SelectToken("width") != null) return true;
+            // width
             return (Width != defWidth);
         }
 
         // General json object management
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
+            errorContext.Handled = true;
+        }
 
         [JsonExtensionData]
         private IDictionary<string, JToken> _additionalData;
-
-        private static JToken _token;
-
-        public string SaveToString()
-        {
-            return Regex.Unescape(JsonConvert.SerializeObject(this));
-        }
-
-        public static ArenaPanelJson CreateFromJSON(string jsonString, JToken token)
-        {
-            _token = token; // save updated wire json
-            ArenaPanelJson json = null;
-            try {
-                json = JsonConvert.DeserializeObject<ArenaPanelJson>(Regex.Unescape(jsonString));
-            } catch (JsonReaderException e)
-            {
-                Debug.LogWarning($"{e.Message}: {jsonString}");
-            }
-            return json;
-        }
     }
 }
