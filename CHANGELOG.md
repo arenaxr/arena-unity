@@ -2,6 +2,22 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.10.0](https://github.com/arenaxr/arena-unity/compare/v0.9.3...v0.10.0) (2023-09-25)
+
+
+### Features
+
+* **json:** use full arena json schema, refactor for ArenaComponent base ([#78](https://github.com/arenaxr/arena-unity/issues/78)) ([6ca1490](https://github.com/arenaxr/arena-unity/commit/6ca14905fbc3350e066c5716ecb958b331690994))
+
+
+### Bug Fixes
+
+* add network latency stats ([95c7ab6](https://github.com/arenaxr/arena-unity/commit/95c7ab677e6fdaeca4cb37530dfb95a8cc15178a))
+* **json:** add partially autogen json schema for all wire properties ([#77](https://github.com/arenaxr/arena-unity/issues/77)) ([a6de2b2](https://github.com/arenaxr/arena-unity/commit/a6de2b2aa3e0053485917720c19db40634fd4105))
+* **json:** update json schemas + allow array schemas ([c7397cf](https://github.com/arenaxr/arena-unity/commit/c7397cf6c00626e2a086ed8de0b48710a92bdba0))
+* reorganize mesh components, deprecate prism ([80d713b](https://github.com/arenaxr/arena-unity/commit/80d713b8f7511436f27e5876778dbe77d83eb598))
+* use arena defaults settings from host, separate broker/webhost ([#76](https://github.com/arenaxr/arena-unity/issues/76)) ([01c2393](https://github.com/arenaxr/arena-unity/commit/01c23936bd9ae7d82b2ef9a774e87ee8ed276248))
+
 ## [0.9.3](https://github.com/arenaxr/arena-unity/compare/v0.9.2...v0.9.3) (2023-06-06)
 
 
