@@ -65,7 +65,7 @@ namespace ArenaUnity.Components
                         material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
                         material.renderQueue = -1;
                     }
-                    if (opacity <= 0f)
+                    else if (opacity <= 0f)
                     {   // op == 0
                         material.SetFloat("_Mode", (float)MatRendMode.Transparent);
                         material.SetInt("_SrcBlend", (int)BlendMode.One);
