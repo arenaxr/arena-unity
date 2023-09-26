@@ -75,7 +75,7 @@
     "createdAt": "2022-01-05T16:18:08.788Z",
     "updatedAt": "2022-01-05T16:18:08.811Z",
     "data": {
-        "object_type": "cube",
+        "object_type": "box",
         "width": 1,
         "height": 1,
         "depth": 1,

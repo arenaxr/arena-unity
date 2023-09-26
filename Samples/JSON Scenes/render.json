@@ -145,7 +145,7 @@
         "type": "object",
         "persist": true,
         "data": {
-            "object_type": "cube",
+            "object_type": "box",
             "dynamic-body": {
                 "type": "dynamic"
             },
@@ -186,7 +186,7 @@
         "type": "object",
         "persist": true,
         "data": {
-            "object_type": "cube",
+            "object_type": "box",
             "dynamic-body": {
                 "type": "dynamic"
             },
@@ -400,7 +400,7 @@
         "type": "object",
         "persist": true,
         "data": {
-            "object_type": "cube",
+            "object_type": "box",
             "position": {
                 "x": 0,
                 "y": 1,
@@ -436,7 +436,7 @@
         "type": "object",
         "persist": true,
         "data": {
-            "object_type": "cube",
+            "object_type": "box",
             "position": {
                 "x": 0,
                 "y": 1,
@@ -477,7 +477,7 @@
         "type": "object",
         "persist": true,
         "data": {
-            "object_type": "cube",
+            "object_type": "box",
             "position": {
                 "x": 0,
                 "y": 1,
@@ -537,10 +537,8 @@
         "persist": true,
         "data": {
             "object_type": "light",
-            "light": {
                 "type": "ambient",
                 "color": "#363942"
-            }
         }
     },
     {
@@ -555,11 +553,9 @@
                 "y": 1.58,
                 "z": -1.14
             },
-            "light": {
                 "type": "point",
                 "color": "#9090AD",
                 "intensity": "0.75"
-            }
         }
     },
     {
@@ -574,10 +570,8 @@
                 "y": 0.39,
                 "z": 1.25
             },
-            "light": {
                 "type": "point",
                 "color": "#C2E6C7"
-            }
         }
     }
 ]
