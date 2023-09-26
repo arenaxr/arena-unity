@@ -245,7 +245,7 @@ namespace ArenaUnity
             var updatedData = new JObject();
             if (jsonData != null)
                 updatedData.Merge(JObject.Parse(jsonData));
-            Debug.Log(objData);
+            //Debug.Log(objData);
             updatedData.Merge(JObject.Parse(objData));
 
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);

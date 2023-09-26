@@ -205,6 +205,13 @@ namespace ArenaUnity
             if (renderer != null)
                 renderer.enabled = (bool)data.visible;
         }
+        public static void ApplyRemoteRender(GameObject gobj, ArenaObjectDataJson data)
+        {
+            // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
+            var renderer = gobj.GetComponent<Renderer>();
+            if (renderer != null)
+                renderer.enabled = data.remoteRender.Enabled;
+        }
 
         public static void ApplyClickListener(GameObject gobj, ArenaObjectDataJson data)
         {
@@ -232,13 +239,6 @@ namespace ArenaUnity
             if (!gobj.TryGetComponent<ArenaMaterial>(out var c))
                 c = gobj.AddComponent<ArenaMaterial>();
             c.json = data.material; c.apply = true;
-        }
-
-        public static void ApplyRemoteRender(GameObject gobj, ArenaObjectDataJson data)
-        {
-            if (!gobj.TryGetComponent<ArenaRemoteRender>(out var c))
-                c = gobj.AddComponent<ArenaRemoteRender>();
-            c.json = data.remoteRender; c.apply = true;
         }
 
         // wire objects

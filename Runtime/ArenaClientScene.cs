@@ -644,7 +644,7 @@ namespace ArenaUnity
             {
                 // deprecation warnings
                 case "cube":
-                    Debug.LogWarning($"data.object_type: {object_type} is deprecated for object-id {msg.object_id}, use data.object_type: box instead.");
+                    Debug.LogWarning($"data.object_type: {object_type} is deprecated for object-id: {msg.object_id}, use data.object_type: box instead.");
                     ArenaUnity.ApplyWireBox(indata, gobj); break;
 
                 // wire object primitives
@@ -762,7 +762,17 @@ namespace ArenaUnity
                 parentalQueue.Remove(msg.object_id);
             }
 
-            // handle non-wire object attributes
+            // apply rendering visibility attributes, before other on-wire object attributes
+            if (data.visible != null) // visible, if set is highest priority to enable/disable renderer
+            {
+                ArenaUnity.ApplyVisible(gobj, data);
+            }
+            else if (data.remoteRender != null) // remote-render, if set is lowest priority to enable/disable renderer
+            {
+                ArenaUnity.ApplyRemoteRender(gobj, data);
+            }
+
+            // handle non-wire object attributes, as they occur in json
             foreach (var result in jData)
             {
                 switch (result.Key)
@@ -779,7 +789,7 @@ namespace ArenaUnity
                         Debug.LogWarning($"data.light.[property] is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.[property] instead.");
                         break;
 
-                    // expect attributes
+                    // expected attributes
                     case "position":
                         gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
                         break;
@@ -815,7 +825,6 @@ namespace ArenaUnity
                     // TODO: case "sound": ArenaUnity.ApplySound(gobj, data); break;
                     // TODO: case "textinput": ArenaUnity.ApplyTextInput(gobj, data); break;
                     // TODO: case "screenshareable": ArenaUnity.ApplyScreensharable(gobj, data); break;
-                    case "remote-render": ArenaUnity.ApplyRemoteRender(gobj, data); break;
                     // TODO: case "video-control": ArenaUnity.ApplyVideoControl(gobj, data); break;
                     case "attribution": ArenaUnity.ApplyAttribution(gobj, data); break;
                     // TODO: case "particle-system": ArenaUnity.ApplyParticleSystem(gobj, data); break;
@@ -824,7 +833,6 @@ namespace ArenaUnity
                     // TODO: case "jitsi-video": ArenaUnity.ApplyJitsiVideo(gobj, data); break;
                     // TODO: case "multisrc": ArenaUnity.ApplyMultiSrc(gobj, data); break;
                     // TODO: case "skipCache": ArenaUnity.ApplySkipCache(gobj, data); break;
-                    case "visible": ArenaUnity.ApplyVisible(gobj, data); break;
                     case "animation-mixer": ArenaUnity.ApplyAnimationMixer(gobj, data); break;
                     // TODO: case "gltf-model-lod": ArenaUnity.ApplyGltfModelLod(gobj, data); break;
                     // TODO: case "modelUpdate": ArenaUnity.ApplyModelUpdate(gobj, data); break;
@@ -836,7 +844,6 @@ namespace ArenaUnity
                 }
             }
         }
-
 
         internal void AttachAvatar(string object_id, ArenaCameraJson data, string displayName, GameObject gobj)
         {
