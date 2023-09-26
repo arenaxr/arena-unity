@@ -22,6 +22,27 @@ namespace ArenaUnity
         public const float LineSinglePixelInMeters = 0.005f;
         public static float ArenaFloat(float n) { return (float)Math.Round(n, 3); }
 
+        public static readonly string[] primitives = {
+            "box",
+            "capsule",
+            "circle",
+            "cone",
+            "cube", // deprecated
+            "cylinder",
+            "dodecahedron",
+            "icosahedron",
+            "octahedron",
+            "plane",
+            "ring",
+            "roundedbox",
+            "sphere",
+            "tetrahedron",
+            "torus",
+            "torusKnot",
+            "triangle",
+            "videosphere"
+        };
+
         // time
         public static string TimeSpanToString(TimeSpan span)
         {

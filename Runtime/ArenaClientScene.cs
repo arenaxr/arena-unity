@@ -11,7 +11,6 @@ using System.IO;
 using System.Linq;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
-using Codice.CM.Common;
 using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
@@ -94,8 +93,7 @@ namespace ArenaUnity
         const string prefixCam = "camera_";
         const string prefixHandL = "handLeft_";
         const string prefixHandR = "handRight_";
-        internal List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
-
+        static readonly List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
         static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl", "headModelPath", "texture" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
@@ -644,26 +642,31 @@ namespace ArenaUnity
             // handle wire object attributes
             switch (object_type)
             {
-                case "capsule": ArenaUnity.ApplyWireCapsule(indata, gobj); break;
-                case "box":
-                case "cube": // support legacy arena 'cube' == 'box'
+                // deprecation warnings
+                case "cube":
+                    Debug.LogWarning($"data.object_type: {object_type} is deprecated for object-id {msg.object_id}, use data.object_type: box instead.");
                     ArenaUnity.ApplyWireBox(indata, gobj); break;
+
+                // wire object primitives
+                case "box": ArenaUnity.ApplyWireBox(indata, gobj); break;
+                case "capsule": ArenaUnity.ApplyWireCapsule(indata, gobj); break;
+                case "circle": ArenaUnity.ApplyWireCircle(indata, gobj); break;
                 case "cone": ArenaUnity.ApplyWireCone(indata, gobj); break;
                 case "cylinder": ArenaUnity.ApplyWireCylinder(indata, gobj); break;
                 case "dodecahedron": ArenaUnity.ApplyWireDodecahedron(indata, gobj); break;
-                case "tetrahedron": ArenaUnity.ApplyWireTetrahedron(indata, gobj); break;
                 case "icosahedron": ArenaUnity.ApplyWireIcosahedron(indata, gobj); break;
                 case "octahedron": ArenaUnity.ApplyWireOctahedron(indata, gobj); break;
                 case "plane": ArenaUnity.ApplyWirePlane(indata, gobj); break;
                 case "ring": ArenaUnity.ApplyWireRing(indata, gobj); break;
-                case "circle": ArenaUnity.ApplyWireCircle(indata, gobj); break;
-                case "videosphere": ArenaUnity.ApplyWireVideosphere(indata, gobj); break;
+                // TODO: case "roundedbox": ArenaUnity.ApplyWireRoundedbox(indata, gobj); break;
                 case "sphere": ArenaUnity.ApplyWireSphere(indata, gobj); break;
+                case "tetrahedron": ArenaUnity.ApplyWireTetrahedron(indata, gobj); break;
                 case "torus": ArenaUnity.ApplyWireTorus(indata, gobj); break;
                 case "torusKnot": ArenaUnity.ApplyWireTorusKnot(indata, gobj); break;
                 case "triangle": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
-                // TODO: case "roundedbox": ArenaUnity.ApplyWireRoundedbox(indata, gobj); break;
+                case "videosphere": ArenaUnity.ApplyWireVideosphere(indata, gobj); break;
 
+                // other wire objects
                 case "light": ArenaUnity.ApplyWireLight(indata, gobj); break;
                 case "text": ArenaUnity.ApplyWireText(indata, gobj); break;
                 case "line": ArenaUnity.ApplyWireLine(indata, gobj); break;
@@ -675,7 +678,6 @@ namespace ArenaUnity
                 // TODO: case "ocean": ArenaUnity.ApplyWireOcean(indata, gobj); break;
                 // TODO: case "pcd-model": ArenaUnity.ApplyWirePcdModel(indata, gobj); break;
                 // TODO: case "threejs-scene": ArenaUnity.ApplyWireThreejsScene(indata, gobj); break;
-
                 case "gltf-model":
                     // load main model
                     if (data.url != null && aobj.gltfUrl == null)
@@ -694,6 +696,8 @@ namespace ArenaUnity
                     if (data.url != null)
                         AttachImage(checkLocalAsset((string)data.url), gobj);
                     break;
+
+                // user avatar objects
                 case "camera":
                     if (renderCameras)
                     {
@@ -763,6 +767,19 @@ namespace ArenaUnity
             {
                 switch (result.Key)
                 {
+                    // deprecation warnings
+                    case "color":
+                        if (ArenaUnity.primitives.Contains(object_type))
+                            Debug.LogWarning($"data.color is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.material.color instead.");
+                        break;
+                    case "text":
+                        Debug.LogWarning($"data.text is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.value instead.");
+                        break;
+                    case "light":
+                        Debug.LogWarning($"data.light.[property] is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.[property] instead.");
+                        break;
+
+                    // expect attributes
                     case "position":
                         gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
                         break;
@@ -819,6 +836,7 @@ namespace ArenaUnity
                 }
             }
         }
+
 
         internal void AttachAvatar(string object_id, ArenaCameraJson data, string displayName, GameObject gobj)
         {
