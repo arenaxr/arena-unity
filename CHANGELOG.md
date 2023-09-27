@@ -2,6 +2,21 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.10.1](https://github.com/arenaxr/arena-unity/compare/v0.10.0...v0.10.1) (2023-09-27)
+
+
+### Bug Fixes
+
+* **gltf-model:** fixed rotation publish when changing rotation ([45e0c2b](https://github.com/arenaxr/arena-unity/commit/45e0c2b013bc171c5a3639ac649adb8e69c8bde8))
+* **gltf-model:** fixed rotation transform setting for gltf-model ([0918c74](https://github.com/arenaxr/arena-unity/commit/0918c74989d4aa4e437efda4d7cf8385d3e0c4c5))
+* **gltf/image:** deprecated data.src, for data.url ([e39ad8a](https://github.com/arenaxr/arena-unity/commit/e39ad8a1d75b84a511f1fa8f19053fdb729b046d))
+* **json:** add deprecation warnings for json ([aa6a2c9](https://github.com/arenaxr/arena-unity/commit/aa6a2c98aaf38ce246933a70aabb780c91de6ca4))
+* **json:** allow deprecated schema to set values with warnings ([4783158](https://github.com/arenaxr/arena-unity/commit/4783158ec7ad13b84ec19dd97d69918bbb2bb745))
+* **json:** prevent serialization of deprecated properties ([af15236](https://github.com/arenaxr/arena-unity/commit/af15236c5a9dbe8410f636bf6479b2ffbb5527dc))
+* **material:** fixed transparent overwriting ([772e4e5](https://github.com/arenaxr/arena-unity/commit/772e4e522783c5a93c73e4edadcf5722373def13))
+* **remote-render:** add remote render capability ([cc43aab](https://github.com/arenaxr/arena-unity/commit/cc43aabd6280f02b5adcaee047cf158c7cc22e8e))
+* **transform:** add back Vector3/Quaternion translations ([ca9ba0e](https://github.com/arenaxr/arena-unity/commit/ca9ba0e44e1f8cd30ce7d56c8d575f07304f7c84))
+
 ## [0.10.0](https://github.com/arenaxr/arena-unity/compare/v0.9.3...v0.10.0) (2023-09-25)
 
 
