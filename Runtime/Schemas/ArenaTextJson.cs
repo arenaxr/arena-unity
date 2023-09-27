@@ -351,6 +351,14 @@ namespace ArenaUnity.Schemas
             return (Zoffset != defZoffset);
         }
 
+        [JsonProperty(PropertyName = "text")]
+        [Tooltip("DEPRECATED: data.text is deprecated for object_type: text, use data.value instead.")]
+        public string text = null;
+        public bool ShouldSerializetext()
+        {
+            return false; // do not serialize deprecated fields
+        }
+
         // General json object management
         [OnError]
         internal void OnError(StreamingContext context, ErrorContext errorContext)

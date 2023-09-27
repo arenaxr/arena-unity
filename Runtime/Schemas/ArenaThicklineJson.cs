@@ -27,7 +27,7 @@ namespace ArenaUnity.Schemas
 
         // thickline member-fields
 
-        private static string defColor = "#7f7f7f";
+        private static string defColor = "#000000";
         [JsonProperty(PropertyName = "color")]
         [Tooltip("color")]
         public string Color = defColor;

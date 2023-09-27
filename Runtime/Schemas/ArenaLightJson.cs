@@ -261,6 +261,14 @@ namespace ArenaUnity.Schemas
             return (Type != defType);
         }
 
+        [JsonProperty(PropertyName = "light")]
+        [Tooltip("DEPRECATED: data.light.[property] is deprecated for object_type: light, use data.[property] instead.")]
+        public object light = null;
+        public bool ShouldSerializelight()
+        {
+            return false; // never serialize deprecated fields
+        }
+
         // General json object management
         [OnError]
         internal void OnError(StreamingContext context, ErrorContext errorContext)
