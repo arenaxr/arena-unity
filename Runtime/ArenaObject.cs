@@ -176,7 +176,7 @@ namespace ArenaUnity
             dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
             Quaternion rotOut = transform.localRotation;
             if (gltfTypeList.Where(x => x.Contains(dataUnity.object_type)).FirstOrDefault() != null)
-                ArenaUnity.UnityToGltfRotationQuat(transform.localRotation);
+                rotOut = ArenaUnity.UnityToGltfRotationQuat(transform.localRotation);
             dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(rotOut); // always send quaternions over the wire
             dataUnity.scale = ArenaUnity.ToArenaScale(transform.localScale);
             if (transform.parent && transform.parent.gameObject.GetComponent<ArenaObject>() != null)
