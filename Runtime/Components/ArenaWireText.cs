@@ -25,7 +25,9 @@ namespace ArenaUnity
                 tm = gameObject.AddComponent<TextMeshPro>();
             tm.fontSize = 2;
 
-            if (json.Value != null)
+            if (json.text != null)
+                tm.text = json.text; // data.text is deprecated, users get a console warning at json injest
+            else if (json.Value != null)
                 tm.text = (string)json.Value;
             if (json.Color != null)
                 tm.color = ArenaUnity.ToUnityColor((string)json.Color);

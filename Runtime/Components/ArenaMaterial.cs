@@ -40,21 +40,20 @@ namespace ArenaUnity.Components
                     else
                         material.shader = Shader.Find("Universal Render Pipeline/Lit");
                 }
-                float opacity = (float)json.Opacity;
                 if (json != null)
                 {
                     bool transparent = Convert.ToBoolean(json.Transparent);
-                    bool opaque = opacity >= 1f;
                     if (json.Color != null)
-                        material.SetColor(ArenaUnity.ColorPropertyName, ArenaUnity.ToUnityColor((string)json.Color, opacity));
-                    // TODO (mwfarb): restore arena style transparency/opacity switch: if (json.Opacity != null)
+                        material.SetColor(ArenaUnity.ColorPropertyName, ArenaUnity.ToUnityColor(json.Color, json.Opacity));
+
                     Color c = material.GetColor(ArenaUnity.ColorPropertyName);
-                    material.SetColor(ArenaUnity.ColorPropertyName, new Color(c.r, c.g, c.b, opacity));
+                    material.SetColor(ArenaUnity.ColorPropertyName, new Color(c.r, c.g, c.b, json.Opacity));
                     if (json.Shader != null)
-                        material.shader.name = (string)json.Shader == "flat" ? "Unlit/Color" : "Standard";
+                        material.shader.name = json.Shader == "flat" ? "Unlit/Color" : "Standard";
+
                     // For runtime set/change transparency mode, follow GUI params
                     // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/StandardShaderGUI.cs#L344
-                    if (opacity >= 1f)
+                    if (json.Opacity >= 1f)
                     {   // op == 1
                         material.SetFloat("_Mode", (float)MatRendMode.Opaque);
                         material.SetInt("_SrcBlend", (int)BlendMode.One);
@@ -65,7 +64,7 @@ namespace ArenaUnity.Components
                         material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
                         material.renderQueue = -1;
                     }
-                    else if (opacity <= 0f)
+                    else if (json.Opacity <= 0f)
                     {   // op == 0
                         material.SetFloat("_Mode", (float)MatRendMode.Transparent);
                         material.SetInt("_SrcBlend", (int)BlendMode.One);

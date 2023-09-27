@@ -780,13 +780,25 @@ namespace ArenaUnity
                     // deprecation warnings
                     case "color":
                         if (ArenaUnity.primitives.Contains(object_type))
+                        {
                             Debug.LogWarning($"data.color is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.material.color instead.");
+                            data.material ??= new ArenaMaterialJson();
+                            data.material.Color = data.color;
+                            ArenaUnity.ApplyMaterial(gobj, data);
+                        }
                         break;
                     case "text":
-                        Debug.LogWarning($"data.text is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.value instead.");
+                        if (object_type == "text")
+                        {
+                            Debug.LogWarning($"data.text is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.value instead.");
+                        }
                         break;
                     case "light":
-                        Debug.LogWarning($"data.light.[property] is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.[property] instead.");
+                        if (object_type == "light")
+                        {
+                            Debug.LogWarning($"data.light.[property] is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.[property] instead.");
+                            ArenaUnity.ApplyWireLight(data.light, gobj);
+                        }
                         break;
 
                     // expected attributes
