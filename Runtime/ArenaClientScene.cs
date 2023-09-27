@@ -762,6 +762,27 @@ namespace ArenaUnity
                 parentalQueue.Remove(msg.object_id);
             }
 
+            // apply transform triad
+            if (data.position != null)
+            {
+                gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
+            }
+            if (data.rotation != null)
+            {
+                // TODO: needed? bool invertY = !((string)data.object_type == "camera");
+                bool invertY = true;
+                if (isElement(data.rotation.W)) // quaternion
+                    gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
+                else // euler
+                    gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
+                if (gltfTypeList.Where(x => x.Contains(data.object_type)).FirstOrDefault() != null)
+                    gobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
+            }
+            if (data.scale != null)
+            {
+                gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
+            }
+
             // apply rendering visibility attributes, before other on-wire object attributes
             if (data.visible != null) // visible, if set is highest priority to enable/disable renderer
             {
@@ -802,21 +823,6 @@ namespace ArenaUnity
                         break;
 
                     // expected attributes
-                    case "position":
-                        gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
-                        break;
-                    case "rotation":
-                        // TODO (mwfarb): needed? bool invertY = !((string)data.object_type == "camera");
-                        bool invertY = true;
-                        if (!isElement(data.rotation.W)) // quaternion
-                            gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
-                        gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
-                        if (gltfTypeList.Where(x => x.Contains((string)data.object_type)).FirstOrDefault() != null)
-                            gobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
-                        break;
-                    case "scale":
-                        gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
-                        break;
                     // TODO: case "animation": ArenaUnity.ApplyAnimation(gobj, data); break;
                     // TODO: case "armarker": ArenaUnity.ApplyArmarker(gobj, data); break;
                     case "click-listener": ArenaUnity.ApplyClickListener(gobj, data); break;
