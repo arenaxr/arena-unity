@@ -638,6 +638,7 @@ namespace ArenaUnity
             string parent = (string)data.parent;
             string object_type = (string)data.object_type;
             aobj.object_type = object_type;
+            var url = !string.IsNullOrEmpty(data.src) ? data.src : data.url;
 
             // handle wire object attributes
             switch (object_type)
@@ -680,21 +681,21 @@ namespace ArenaUnity
                 // TODO: case "threejs-scene": ArenaUnity.ApplyWireThreejsScene(indata, gobj); break;
                 case "gltf-model":
                     // load main model
-                    if (data.url != null && aobj.gltfUrl == null)
+                    if (url != null && aobj.gltfUrl == null)
                     {
                         // keep url, to add/remove and check exiting imported urls
-                        string assetPath = checkLocalAsset((string)data.url);
+                        string assetPath = checkLocalAsset(url);
                         if (assetPath != null)
                         {
-                            aobj.gltfUrl = (string)data.url;
+                            aobj.gltfUrl = url;
                             AttachGltf(assetPath, gobj, aobj);
                         }
                     }
                     break;
                 case "image":
                     // load image file
-                    if (data.url != null)
-                        AttachImage(checkLocalAsset((string)data.url), gobj);
+                    if (url != null)
+                        AttachImage(checkLocalAsset(url), gobj);
                     break;
 
                 // user avatar objects
@@ -715,7 +716,7 @@ namespace ArenaUnity
                     break;
                 case "handLeft":
                 case "handRight":
-                    AttachHand(msg.object_id, data.url, gobj);
+                    AttachHand(msg.object_id, url, gobj);
                     break;
             }
 
@@ -808,17 +809,20 @@ namespace ArenaUnity
                             ArenaUnity.ApplyMaterial(gobj, data);
                         }
                         break;
-                    case "text":
-                        if (object_type == "text")
-                        {
-                            Debug.LogWarning($"data.text is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.value instead.");
-                        }
-                        break;
                     case "light":
                         if (object_type == "light")
                         {
                             Debug.LogWarning($"data.light.[property] is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.[property] instead.");
                             ArenaUnity.ApplyWireLight(data.light, gobj);
+                        }
+                        break;
+                    case "src":
+                        Debug.LogWarning($"data.src is deprecated for many object_types, use data.url instead.");
+                        break;
+                    case "text":
+                        if (object_type == "text")
+                        {
+                            Debug.LogWarning($"data.text is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.value instead.");
                         }
                         break;
 

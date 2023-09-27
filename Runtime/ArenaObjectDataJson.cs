@@ -354,6 +354,14 @@ namespace ArenaUnity
             return false; // do not serialize deprecated fields
         }
 
+        [JsonProperty(PropertyName = "src")]
+        [Tooltip("DEPRECATED: data.src is deprecated for several object_types, use data.url instead.")]
+        public string src = null;
+        public bool ShouldSerializesrc()
+        {
+            return false; // do not serialize deprecated fields
+        }
+
         [JsonProperty(PropertyName = "light")]
         [Tooltip("DEPRECATED: data.light.[property] is deprecated for object_type: light, use data.[property] instead.")]
         public object light = null;
