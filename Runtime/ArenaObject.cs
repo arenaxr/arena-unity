@@ -170,7 +170,7 @@ namespace ArenaUnity
             else
                 dataUnity.object_type = ToArenaObjectType(gameObject);
 
-            Debug.LogWarning(JsonConvert.SerializeObject(dataUnity));
+            //Debug.LogWarning(JsonConvert.SerializeObject(dataUnity));
 
             // minimum transform information
             dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
@@ -276,7 +276,14 @@ namespace ArenaUnity
             else if (light)
                 objectType = "light";
             else if (meshFilter && meshFilter.sharedMesh)
-                objectType = meshFilter.sharedMesh.name.ToLower();
+                switch (meshFilter.sharedMesh.name) {
+                    case "Cube": objectType = "box"; break;
+                    case "Sphere": objectType = "sphere"; break;
+                    case "Cylinder": objectType = "cylinder"; break;
+                    case "Capsule": objectType = "capsule"; break;
+                    case "Plane": objectType = "plane"; break;
+                    case "Quad": objectType = "plane"; break;
+                }
             return objectType;
         }
 
