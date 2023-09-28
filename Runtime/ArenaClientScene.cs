@@ -542,7 +542,7 @@ namespace ArenaUnity
             else
             {   // create local
 #if !UNITY_EDITOR
-                Debug.Log($"Loading object '{object_id}'..."); // show new objects in log
+                Debug.Log($"Loading object '{msg.object_id}'..."); // show new objects in log
 #endif
                 // check if theres already an object in unity, if so don't make a new one
                 gobj = GameObject.Find((string)msg.object_id);
