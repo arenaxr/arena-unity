@@ -170,7 +170,6 @@ namespace ArenaUnity
             else
                 dataUnity.object_type = ToArenaObjectType(gameObject);
 
-            Debug.LogWarning(JsonConvert.SerializeObject(dataUnity));
             var updatedData = new JObject();
 
             // minimum transform information

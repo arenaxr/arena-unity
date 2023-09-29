@@ -49,7 +49,7 @@ namespace MeshBuilder
             // flat normals
             if (details == 0)
             {
-                // TODO: add method for computing vertex normals for flat shading
+                // TODO (mwfarb): add method for computing vertex normals for flat shading
             }
 
             var mesh = new Mesh();
