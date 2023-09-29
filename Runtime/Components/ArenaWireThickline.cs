@@ -109,7 +109,7 @@ namespace ArenaUnity
             data.LineWidth = (int)(line.startWidth / ArenaUnity.LineSinglePixelInMeters); // TODO: support endWidth
             data.Color = ArenaUnity.ToArenaColor(line.startColor); // TODO: support endColor
 
-            return JObject.FromObject(data);
+            return data != null ? JObject.FromObject(data) : null;
         }
 
         public override void UpdateObject()

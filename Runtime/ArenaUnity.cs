@@ -156,6 +156,12 @@ namespace ArenaUnity
             rotationQuat *= Quaternion.Euler(0, -180f, 0);
             return rotationQuat;
         }
+        public static ArenaRotationJson ToArenaRotationPlaneMesh(Quaternion rotationQuat)
+        {
+            rotationQuat *= Quaternion.Euler(90, 0, 0);
+            return ToArenaRotationQuat(rotationQuat);
+        }
+
         // scale
         public static ArenaVector3Json ToArenaScale(Vector3 scale)
         {

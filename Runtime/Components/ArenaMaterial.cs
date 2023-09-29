@@ -128,7 +128,7 @@ namespace ArenaUnity.Components
             }
             data.Opacity = ArenaUnity.ArenaFloat(mat.color.a);
 
-            return JObject.FromObject(data);
+            return data != null ? JObject.FromObject(data) : null;
         }
 
         public override void UpdateObject()

@@ -132,7 +132,7 @@ namespace ArenaUnity
                     data.Anchor = ArenaTextJson.AnchorType.Center;
                     break;
             }
-            return JObject.FromObject(data);
+            return data != null ? JObject.FromObject(data) : null;
         }
 
         public override void UpdateObject()

@@ -79,7 +79,7 @@ namespace ArenaUnity
             data.Color = ArenaUnity.ToArenaColor(light.color);
             data.CastShadow = light.shadows != LightShadows.None;
 
-            return JObject.FromObject(data);
+            return data != null ? JObject.FromObject(data) : null;
         }
 
         public override void UpdateObject()

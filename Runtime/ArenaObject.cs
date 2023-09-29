@@ -170,7 +170,8 @@ namespace ArenaUnity
             else
                 dataUnity.object_type = ToArenaObjectType(gameObject);
 
-            //Debug.LogWarning(JsonConvert.SerializeObject(dataUnity));
+            Debug.LogWarning(JsonConvert.SerializeObject(dataUnity));
+            var updatedData = new JObject();
 
             // minimum transform information
             dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
@@ -179,6 +180,13 @@ namespace ArenaUnity
                 rotOut = ArenaUnity.UnityToGltfRotationQuat(transform.localRotation);
             dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(rotOut); // always send quaternions over the wire
             dataUnity.scale = ArenaUnity.ToArenaScale(transform.localScale);
+            if (GetComponent<Collider>())
+            {
+                updatedData.Merge(ArenaMesh.ToArenaDimensions(gameObject, out bool isUnityPlane));
+                if (isUnityPlane)
+                    dataUnity.rotation = ArenaUnity.ToArenaRotationPlaneMesh(rotOut);
+            }
+
             if (transform.parent && transform.parent.gameObject.GetComponent<ArenaObject>() != null)
             {   // parent
                 dataUnity.parent = transform.parent.name;
@@ -190,16 +198,12 @@ namespace ArenaUnity
                 parentId = null;
             }
 
-            var updatedData = new JObject();
-
             // other attributes information
             if (!transformOnly)
             {
                 // wire objects
                 if (GetComponent<ArenaMesh>())
                     updatedData.Merge(ArenaMesh.ToArenaMesh(gameObject));
-                else if (GetComponent<Collider>())
-                    updatedData.Merge(ArenaMesh.ToArenaDimensions(gameObject));
                 else if (GetComponent<Light>())
                     updatedData.Merge(ArenaWireLight.ToArenaLight(gameObject));
                 else if (GetComponent<TextMeshPro>())
@@ -267,16 +271,9 @@ namespace ArenaUnity
             SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
             LineRenderer lr = gobj.GetComponent<LineRenderer>();
             // initial priority is primitive
-            if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0f)
-                objectType = "image";
-            else if (lr)
-                objectType = "thickline";
-            else if (tm)
-                objectType = "text";
-            else if (light)
-                objectType = "light";
-            else if (meshFilter && meshFilter.sharedMesh)
-                switch (meshFilter.sharedMesh.name) {
+            if (meshFilter && meshFilter.sharedMesh)
+                switch (meshFilter.sharedMesh.name)
+                {
                     case "Cube": objectType = "box"; break;
                     case "Sphere": objectType = "sphere"; break;
                     case "Cylinder": objectType = "cylinder"; break;
@@ -284,6 +281,15 @@ namespace ArenaUnity
                     case "Plane": objectType = "plane"; break;
                     case "Quad": objectType = "plane"; break;
                 }
+            else if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0f)
+                objectType = "image";
+            else if (tm)
+                objectType = "text";
+            else if (lr)
+                objectType = "thickline";
+            else if (light)
+                objectType = "light";
+
             return objectType;
         }
 

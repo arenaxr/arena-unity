@@ -127,14 +127,15 @@ namespace ArenaUnity
                     data = videosphere.json;
                     break;
             }
-            return JObject.FromObject(data);
+            return data != null ? JObject.FromObject(data) : null;
         }
 
         // mesh size/dimensions
-        public static JObject ToArenaDimensions(GameObject gobj)
+        public static JObject ToArenaDimensions(GameObject gobj, out bool isUnityPlane)
         {
             // used to collect unity-default render sizes
             object data = null;
+            isUnityPlane = false;
             string collider = gobj.GetComponent<Collider>().GetType().ToString();
             string mesh = null;
             MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
@@ -142,6 +143,7 @@ namespace ArenaUnity
             {
                 mesh = meshFilter.sharedMesh.name;
             }
+            // this should only apply to freshly created objects, not static project objects
             switch (collider)
             {
                 case "UnityEngine.BoxCollider":
@@ -181,7 +183,6 @@ namespace ArenaUnity
                     }
                     break;
                 case "UnityEngine.MeshCollider":
-                    // TODO (mwfarb): this should only apply to freshly created objects, not static project objects
                     switch (mesh)
                     {
                         case "Quad":
@@ -201,10 +202,7 @@ namespace ArenaUnity
                                 SegmentsWidth = 10,
                                 SegmentsHeight = 10,
                             };
-                            // TODO (mwfarb): restore plane default rotation
-                            //Quaternion rotOut = gobj.transform.localRotation;
-                            //rotOut *= Quaternion.Euler(90, 0, 0);
-                            //data.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
+                            isUnityPlane = true;
                             break;
                         default:
                             break;
@@ -213,7 +211,7 @@ namespace ArenaUnity
                 default:
                     break;
             }
-            return JObject.FromObject(data);
+            return data != null ? JObject.FromObject(data) : null;
         }
 
     }
