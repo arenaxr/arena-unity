@@ -2,6 +2,17 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.10.2](https://github.com/arenaxr/arena-unity/compare/v0.10.1...v0.10.2) (2023-10-01)
+
+
+### Bug Fixes
+
+* **json:** prevent overwriting on message component updates ([cee05cc](https://github.com/arenaxr/arena-unity/commit/cee05ccfb519ec35ba9bd6a6c7e0a661dc228df7))
+* **mesh:** correct for Unity Plane mesh rotation using Arena plane ([9be6796](https://github.com/arenaxr/arena-unity/commit/9be6796cdcdf0f6fe8d5f471c334fe169fc69b34))
+* **mesh:** corrected polyhedron mesh generation with flat normals, adds crisp edges ([d43c709](https://github.com/arenaxr/arena-unity/commit/d43c709af19df2cb2e8cd7f1b9ae38726156d28a))
+* **mesh:** fixed default unity Cube/Quad =&gt; arena box/plane ([cebe0e6](https://github.com/arenaxr/arena-unity/commit/cebe0e69475dff9fac1dc6b90cb8e5fa7337ccbe))
+* **mesh:** match arena's triangle geometry clockwise polygon winding order ([c22e5ae](https://github.com/arenaxr/arena-unity/commit/c22e5ae1a9337a13005803011c1d6509bf5b6390))
+
 ## [0.10.1](https://github.com/arenaxr/arena-unity/compare/v0.10.0...v0.10.1) (2023-09-27)
 
 
