@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace MeshBuilder
@@ -28,33 +27,46 @@ namespace MeshBuilder
                 return idx;
             };
 
-            // smooth normals
-            for (int i = 0; i < details; i++)
-            {
-                int n = indices.Count;
-                for (int k = 0; k < n; k += 3)
-                {
-                    var i0 = indices[k + 0];
-                    var i1 = indices[k + 1];
-                    var i2 = indices[k + 2];
-                    var a = MidPoint(i0, i1);
-                    var b = MidPoint(i1, i2);
-                    var c = MidPoint(i2, i0);
-                    indices.Add(i0); indices.Add(a); indices.Add(c);
-                    indices.Add(a); indices.Add(i1); indices.Add(b);
-                    indices.Add(c); indices.Add(b); indices.Add(i2);
-                    indices.Add(a); indices.Add(b); indices.Add(c);
-                }
-            }
-            // flat normals
-            if (details == 0)
-            {
-                // TODO (mwfarb): add method for computing vertex normals for flat shading
-            }
+            // treatise on shared vs unique verticies, helped mwfarb generate flat normals:
+            // https://blog.nobel-joergensen.com/2010/12/25/procedural-generated-mesh-in-unity
 
             var mesh = new Mesh();
-            mesh.SetVertices(vertices.Select(v => v * radius).ToList());
-            mesh.SetIndices(indices, MeshTopology.Triangles, 0);
+            if (details == 0)
+            {
+                // flat normals
+                List<Vector3> vertexBuffer = new List<Vector3>();
+                List<int> indexBuffer = new List<int>();
+                for (var i = 0; i < indices.Count; i++)
+                {
+                    vertexBuffer.Add(vertices[indices[i]]);
+                    indexBuffer.Add(i);
+                }
+                mesh.SetVertices(vertexBuffer.Select(v => v * radius).ToList());
+                mesh.SetIndices(indexBuffer, MeshTopology.Triangles, 0);
+            }
+            else
+            {
+                // smooth normals
+                for (int i = 0; i < details; i++)
+                {
+                    int n = indices.Count;
+                    for (int k = 0; k < n; k += 3)
+                    {
+                        var i0 = indices[k + 0];
+                        var i1 = indices[k + 1];
+                        var i2 = indices[k + 2];
+                        var a = MidPoint(i0, i1);
+                        var b = MidPoint(i1, i2);
+                        var c = MidPoint(i2, i0);
+                        indices.Add(i0); indices.Add(a); indices.Add(c);
+                        indices.Add(a); indices.Add(i1); indices.Add(b);
+                        indices.Add(c); indices.Add(b); indices.Add(i2);
+                        indices.Add(a); indices.Add(b); indices.Add(c);
+                    }
+                }
+                mesh.SetVertices(vertices.Select(v => v * radius).ToList());
+                mesh.SetIndices(indices, MeshTopology.Triangles, 0);
+            }
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
 
@@ -70,5 +82,3 @@ namespace MeshBuilder
 
     }
 }
-
-
