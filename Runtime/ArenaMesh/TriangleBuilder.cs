@@ -17,7 +17,7 @@ namespace ArenaUnity
                 new Vector2(vertexA.x, vertexA.y),
                 new Vector2(vertexB.x, vertexB.y),
                 new Vector2(vertexC.x, vertexC.y) };
-            mesh.triangles = new int[] { 0, 1, 2 };
+            mesh.triangles = new int[] { 2, 1, 0 };
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
             return mesh;
