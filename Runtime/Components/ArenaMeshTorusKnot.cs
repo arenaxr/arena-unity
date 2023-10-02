@@ -16,7 +16,7 @@ namespace ArenaUnity
         {
             filter.sharedMesh = TorusKnotBuilder.Build(
                 json.Radius,
-                json.RadiusTubular,
+                json.RadiusTubular * 2,
                 json.SegmentsTubular,
                 json.SegmentsRadial,
                 json.P,
