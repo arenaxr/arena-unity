@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
-    internal class DodecahedronBuilder
+    internal class DodecahedronBuilder : MeshBuilderBase
     {
         internal static Mesh Build(float radius, int details)
         {

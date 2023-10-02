@@ -27,7 +27,7 @@ namespace MeshBuilder
                 return idx;
             };
 
-            // treatise on shared vs unique verticies, helped mwfarb generate flat normals:
+            // treatise on shared vs unique vertices, helped mwfarb generate flat normals:
             // https://blog.nobel-joergensen.com/2010/12/25/procedural-generated-mesh-in-unity
 
             var mesh = new Mesh();

@@ -3,11 +3,12 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
+using MeshBuilder;
 using UnityEngine;
 
 namespace ArenaUnity
 {
-    internal class TriangleBuilder
+    internal class TriangleBuilder : MeshBuilderBase
     {
         internal static Mesh Build(Vector3 vertexA, Vector3 vertexB, Vector3 vertexC)
         {

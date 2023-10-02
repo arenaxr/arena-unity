@@ -5,11 +5,12 @@
 
 // Modified from: https://behreajj.medium.com/making-a-capsule-mesh-via-script-in-five-3d-environments-c2214abf02db
 
+using MeshBuilder;
 using UnityEngine;
 
 namespace ArenaUnity
 {
-    internal class CapsuleBuilder
+    internal class CapsuleBuilder : MeshBuilderBase
     {
         public enum UvProfile : int
         {

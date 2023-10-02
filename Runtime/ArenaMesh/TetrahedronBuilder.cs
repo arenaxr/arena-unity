@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
-    internal class TetrahedronBuilder
+    internal class TetrahedronBuilder : MeshBuilderBase
     {
         internal static Mesh Build(float radius, int details)
         {

@@ -702,15 +702,13 @@ namespace ArenaUnity
                 case "camera":
                     if (renderCameras)
                     {
-                        Camera cam = gobj.GetComponent<Camera>();
-                        if (cam == null)
-                        {
-                            cam = gobj.transform.gameObject.AddComponent<Camera>();
-                            cam.nearClipPlane = 0.1f; // match arena
-                            cam.farClipPlane = 10000f; // match arena
-                            cam.fieldOfView = 80f; // match arena
-                            cam.targetDisplay = 8; // render on least-used display
-                        }
+                        if (!gobj.TryGetComponent<Camera>(out var cam))
+                            cam = gobj.AddComponent<Camera>();
+                        //cam = gobj.transform.gameObject.AddComponent<Camera>();
+                        cam.nearClipPlane = 0.1f; // match arena
+                        cam.farClipPlane = 10000f; // match arena
+                        cam.fieldOfView = 80f; // match arena
+                        cam.targetDisplay = 8; // render on least-used display
                         AttachAvatar(msg.object_id, JsonConvert.DeserializeObject<ArenaCameraJson>(indata.ToString()), displayName, gobj);
                     }
                     break;

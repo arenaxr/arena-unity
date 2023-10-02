@@ -56,7 +56,7 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
-        private static float defRadiusTubular = 0.4f;
+        private static float defRadiusTubular = 0.2f;
         [JsonProperty(PropertyName = "radiusTubular")]
         [Tooltip("radius tubular")]
         public float RadiusTubular = defRadiusTubular;
