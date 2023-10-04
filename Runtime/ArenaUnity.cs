@@ -148,13 +148,9 @@ namespace ArenaUnity
         }
         public static Quaternion GltfToUnityRotationQuat(Quaternion rotationQuat)
         {
-            rotationQuat *= Quaternion.Euler(0, 180f, 0);
-            return rotationQuat;
-        }
-        public static Quaternion UnityToGltfRotationQuat(Quaternion rotationQuat)
-        {
-            rotationQuat *= Quaternion.Euler(0, -180f, 0);
-            return rotationQuat;
+            var euler = rotationQuat.eulerAngles;
+            euler.y -= 180;
+            return Quaternion.Euler(euler);
         }
         public static ArenaRotationJson ToArenaRotationPlaneMesh(Quaternion rotationQuat)
         {

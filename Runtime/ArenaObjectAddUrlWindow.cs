@@ -53,7 +53,7 @@ namespace ArenaUnity
                     type = "object",
                     persist = true,
                 };
-                Quaternion rotOut = object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(Quaternion.identity) : Quaternion.identity;
+                Quaternion rotOut = Quaternion.identity;
                 ArenaObjectDataJson data = new ArenaObjectDataJson
                 {
                     object_type = object_type,

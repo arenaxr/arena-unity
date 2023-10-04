@@ -774,8 +774,6 @@ namespace ArenaUnity
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
                 else // euler
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
-                if (gltfTypeList.Where(x => x.Contains(data.object_type)).FirstOrDefault() != null)
-                    gobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(gobj.transform.localRotation);
             }
             if (data.scale != null)
             {
@@ -881,7 +879,7 @@ namespace ArenaUnity
                         GameObject hmobj = new GameObject(headModelId);
                         AttachGltf(localpath, hmobj);
                         hmobj.transform.localPosition = Vector3.zero;
-                        hmobj.transform.localRotation = Quaternion.identity;
+                        hmobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
                         hmobj.transform.localScale = Vector3.one;
                         // makes the child keep its local orientation rather than its global orientation
                         hmobj.transform.SetParent(gobj.transform, worldPositionStays);
@@ -927,7 +925,7 @@ namespace ArenaUnity
                     Transform foundHandModel = gobj.transform.Find(handModelId);
                     if (!foundHandModel)
                     {
-                        // add model child to camera
+                        // add model child to hand
                         GameObject hmobj = new GameObject(handModelId);
                         AttachGltf(localpath, hmobj);
                         hmobj.transform.localPosition = Vector3.zero;
@@ -988,6 +986,7 @@ namespace ArenaUnity
                 if (clips != null && aobj != null)
                     AssignAnimations(aobj, mobj, clips);
                 mobj.transform.parent = gobj.transform;
+                mobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(mobj.transform.localRotation);
                 foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
                 {   // prevent inadvertent editing of gltf elements
                     child.gameObject.isStatic = true;

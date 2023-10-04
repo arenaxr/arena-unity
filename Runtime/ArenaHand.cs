@@ -35,8 +35,6 @@ namespace ArenaUnity
             if (line.material == null) // TODO (mwfarb): find "Default-Line" material
                 line.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
             line.widthMultiplier = 1f * ArenaUnity.LineSinglePixelInMeters;
-            // we also need to apply the gltf rotation matrix transform, since the hand models did as well
-            rayObj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(rayObj.transform.localRotation);
             // makes the child keep its local orientation rather than its global orientation
             rayObj.transform.SetParent(transform, false);
         }
