@@ -346,6 +346,14 @@ namespace ArenaUnity
             return (modelUpdate != null);
         }
 
+        [JsonProperty(PropertyName = "geometry")]
+        [Tooltip("DEPRECATED: data.geometry.primitive is deprecated for primitives, use object_type = [primitive] instead.")]
+        public object geometry = null;
+        public bool ShouldSerializegeometry()
+        {
+            return false; // do not serialize deprecated fields
+        }
+
         [JsonProperty(PropertyName = "color")]
         [Tooltip("DEPRECATED: data.color is deprecated for primitive geometry, use data.material.color instead.")]
         public string color = null;

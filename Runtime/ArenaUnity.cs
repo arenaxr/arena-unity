@@ -270,6 +270,35 @@ namespace ArenaUnity
 
         // wire objects
 
+        public static void ApplyGeometry(string primitive, object data, GameObject gobj)
+        {
+            if (string.IsNullOrEmpty(primitive))
+            {
+                JObject jObject = JObject.FromObject(data);
+                primitive = (string)jObject.SelectToken("primitive");
+            }
+            switch (primitive)
+            {
+                case "box": ApplyWireBox(data, gobj); break;
+                case "capsule": ApplyWireCapsule(data, gobj); break;
+                case "circle": ApplyWireCircle(data, gobj); break;
+                case "cone": ApplyWireCone(data, gobj); break;
+                case "cylinder": ApplyWireCylinder(data, gobj); break;
+                case "dodecahedron": ApplyWireDodecahedron(data, gobj); break;
+                case "icosahedron": ApplyWireIcosahedron(data, gobj); break;
+                case "octahedron": ApplyWireOctahedron(data, gobj); break;
+                case "plane": ApplyWirePlane(data, gobj); break;
+                case "ring": ApplyWireRing(data, gobj); break;
+                // TODO: case "roundedbox": ApplyWireRoundedbox(indata, gobj); break;
+                case "sphere": ApplyWireSphere(data, gobj); break;
+                case "tetrahedron": ApplyWireTetrahedron(data, gobj); break;
+                case "torus": ApplyWireTorus(data, gobj); break;
+                case "torusKnot": ApplyWireTorusKnot(data, gobj); break;
+                case "triangle": ApplyWireTriangle(data, gobj); break;
+                case "videosphere": ApplyWireVideosphere(data, gobj); break;
+            }
+        }
+
         public static void ApplyWireTorus(object indata, GameObject gobj)
         {
             if (!gobj.TryGetComponent<ArenaMeshTorus>(out var torus))
@@ -463,5 +492,6 @@ namespace ArenaUnity
             c.json = JsonConvert.DeserializeObject<ArenaPostProcessingJson>(data.PostProcessing.ToString());
             c.apply = true;
         }
+
     }
 }

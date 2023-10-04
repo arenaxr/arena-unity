@@ -649,25 +649,27 @@ namespace ArenaUnity
                     ArenaUnity.ApplyWireBox(indata, gobj); break;
 
                 // wire object primitives
-                case "box": ArenaUnity.ApplyWireBox(indata, gobj); break;
-                case "capsule": ArenaUnity.ApplyWireCapsule(indata, gobj); break;
-                case "circle": ArenaUnity.ApplyWireCircle(indata, gobj); break;
-                case "cone": ArenaUnity.ApplyWireCone(indata, gobj); break;
-                case "cylinder": ArenaUnity.ApplyWireCylinder(indata, gobj); break;
-                case "dodecahedron": ArenaUnity.ApplyWireDodecahedron(indata, gobj); break;
-                case "icosahedron": ArenaUnity.ApplyWireIcosahedron(indata, gobj); break;
-                case "octahedron": ArenaUnity.ApplyWireOctahedron(indata, gobj); break;
-                case "plane": ArenaUnity.ApplyWirePlane(indata, gobj); break;
-                case "ring": ArenaUnity.ApplyWireRing(indata, gobj); break;
-                // TODO: case "roundedbox": ArenaUnity.ApplyWireRoundedbox(indata, gobj); break;
-                case "sphere": ArenaUnity.ApplyWireSphere(indata, gobj); break;
-                case "tetrahedron": ArenaUnity.ApplyWireTetrahedron(indata, gobj); break;
-                case "torus": ArenaUnity.ApplyWireTorus(indata, gobj); break;
-                case "torusKnot": ArenaUnity.ApplyWireTorusKnot(indata, gobj); break;
-                case "triangle": ArenaUnity.ApplyWireTriangle(indata, gobj); break;
-                case "videosphere": ArenaUnity.ApplyWireVideosphere(indata, gobj); break;
+                case "box":
+                case "capsule":
+                case "circle":
+                case "cone":
+                case "cylinder":
+                case "dodecahedron":
+                case "icosahedron":
+                case "octahedron":
+                case "plane":
+                case "ring":
+                case "roundedbox":
+                case "sphere":
+                case "tetrahedron":
+                case "torus":
+                case "torusKnot":
+                case "triangle":
+                case "videosphere":
+                    ArenaUnity.ApplyGeometry(object_type, indata, gobj); break;
 
                 // other wire objects
+                case "entity": /* general GameObject */ break;
                 case "light": ArenaUnity.ApplyWireLight(indata, gobj); break;
                 case "text": ArenaUnity.ApplyWireText(indata, gobj); break;
                 case "line": ArenaUnity.ApplyWireLine(indata, gobj); break;
@@ -675,7 +677,6 @@ namespace ArenaUnity
                 // TODO: case "arenaui-card": ArenaUnity.ApplyWireArenauiCard(indata, gobj); break;
                 // TODO: case "arenaui-button-panel": ArenaUnity.ApplyWireArenauiButtonPanel(indata, gobj); break;
                 // TODO: case "arenaui-prompt": ArenaUnity.ApplyWireArenauiPrompt(indata, gobj); break;
-                // TODO: case "entity": ArenaUnity.ApplyWireEntity(indata, gobj); break;
                 // TODO: case "ocean": ArenaUnity.ApplyWireOcean(indata, gobj); break;
                 // TODO: case "pcd-model": ArenaUnity.ApplyWirePcdModel(indata, gobj); break;
                 // TODO: case "threejs-scene": ArenaUnity.ApplyWireThreejsScene(indata, gobj); break;
@@ -830,6 +831,9 @@ namespace ArenaUnity
                     // TODO: case "collision-listener": ArenaUnity.ApplyCollisionListener(gobj, data); break;
                     // TODO: case "blip": ArenaUnity.ApplyBlip(gobj, data); break;
                     // TODO: case "dynamic-body": ArenaUnity.ApplyDynamicBody(gobj, data); break;
+                    case "geometry":
+                        if (object_type == "entity")
+                            ArenaUnity.ApplyGeometry(null, data.geometry, gobj); break;
                     // TODO: case "goto-landmark": ArenaUnity.ApplyGotoLandmark(gobj, data); break;
                     // TODO: case "goto-url": ArenaUnity.ApplyGotoUrl(gobj, data); break;
                     // TODO: case "hide-on-enter-ar": ArenaUnity.ApplyHideOnEnterAr(gobj, data); break;
