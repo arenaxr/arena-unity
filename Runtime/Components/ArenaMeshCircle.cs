@@ -8,6 +8,7 @@
 using ArenaUnity.Schemas;
 using MeshBuilder;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace ArenaUnity
 {
@@ -22,8 +23,8 @@ namespace ArenaUnity
                 json.Radius,
                 json.Segments,
                 1,
-                json.ThetaStart,
-                json.ThetaLength
+                Mathf.PI / 180 * json.ThetaStart,
+                Mathf.PI / 180 * json.ThetaLength
             );
         }
 
