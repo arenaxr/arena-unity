@@ -18,6 +18,22 @@ namespace ArenaUnity
         // Priority 1 ensures it is grouped with the other menu items of the same kind
         // and propagated to the hierarchy dropdown and hierarchy context menus.
 
+        [MenuItem("GameObject/ARENA/GLTF Model", false, 5)]
+        internal static void CreateArenaGltfModel(MenuCommand menuCommand)
+        {
+            ArenaObjectAddUrlWindow window = (ArenaObjectAddUrlWindow)EditorWindow.GetWindow(typeof(ArenaObjectAddUrlWindow));
+            window.Init("gltf-model", menuCommand);
+            window.Show();
+        }
+
+        [MenuItem("GameObject/ARENA/Image", false, 5)]
+        internal static void CreateArenaImage(MenuCommand menuCommand)
+        {
+            ArenaObjectAddUrlWindow window = (ArenaObjectAddUrlWindow)EditorWindow.GetWindow(typeof(ArenaObjectAddUrlWindow));
+            window.Init("image", menuCommand);
+            window.Show();
+        }
+
         [MenuItem("GameObject/ARENA/Box", false, 10)]
         internal static void CreateArenaBox(MenuCommand menuCommand)
         {
@@ -54,26 +70,10 @@ namespace ArenaUnity
             PublishPrimitive(menuCommand, "dodecahedron");
         }
 
-        [MenuItem("GameObject/ARENA/GLTF Model", false, 10)]
-        internal static void CreateArenaGltfModel(MenuCommand menuCommand)
-        {
-            ArenaObjectAddUrlWindow window = (ArenaObjectAddUrlWindow)EditorWindow.GetWindow(typeof(ArenaObjectAddUrlWindow));
-            window.Init("gltf-model", menuCommand);
-            window.Show();
-        }
-
         [MenuItem("GameObject/ARENA/Icosahedron", false, 10)]
         internal static void CreateArenaIcosahedron(MenuCommand menuCommand)
         {
             PublishPrimitive(menuCommand, "icosahedron");
-        }
-
-        [MenuItem("GameObject/ARENA/Image", false, 10)]
-        internal static void CreateArenaImage(MenuCommand menuCommand)
-        {
-            ArenaObjectAddUrlWindow window = (ArenaObjectAddUrlWindow)EditorWindow.GetWindow(typeof(ArenaObjectAddUrlWindow));
-            window.Init("image", menuCommand);
-            window.Show();
         }
 
         [MenuItem("GameObject/ARENA/Octahedron", false, 10)]
@@ -112,21 +112,42 @@ namespace ArenaUnity
             PublishPrimitive(menuCommand, "torus");
         }
 
+        [MenuItem("GameObject/ARENA/TorusKnot", false, 10)]
+        internal static void CreateArenaTorusKnot(MenuCommand menuCommand)
+        {
+            PublishPrimitive(menuCommand, "torusKnot");
+        }
+
+        [MenuItem("GameObject/ARENA/Triangle", false, 10)]
+        internal static void CreateArenaTriangle(MenuCommand menuCommand)
+        {
+            PublishPrimitive(menuCommand, "triangle");
+        }
+
+        [MenuItem("GameObject/ARENA/Videosphere", false, 10)]
+        internal static void CreateArenaVideosphere(MenuCommand menuCommand)
+        {
+            PublishPrimitive(menuCommand, "videosphere");
+        }
+
+        [MenuItem("GameObject/ARENA/Image", true)]
+        [MenuItem("GameObject/ARENA/GLTF Model", true)]
         [MenuItem("GameObject/ARENA/Box", true)]
         [MenuItem("GameObject/ARENA/Capsule", true)]
         [MenuItem("GameObject/ARENA/Circle", true)]
         [MenuItem("GameObject/ARENA/Cone", true)]
         [MenuItem("GameObject/ARENA/Cylinder", true)]
         [MenuItem("GameObject/ARENA/Dodecahedron", true)]
-        [MenuItem("GameObject/ARENA/GLTF Model", true)]
         [MenuItem("GameObject/ARENA/Icosahedron", true)]
-        [MenuItem("GameObject/ARENA/Image", true)]
         [MenuItem("GameObject/ARENA/Octahedron", true)]
         [MenuItem("GameObject/ARENA/Plane", true)]
         [MenuItem("GameObject/ARENA/Ring", true)]
         [MenuItem("GameObject/ARENA/Sphere", true)]
         [MenuItem("GameObject/ARENA/Tetrahedron", true)]
         [MenuItem("GameObject/ARENA/Torus", true)]
+        [MenuItem("GameObject/ARENA/TorusKnot", true)]
+        [MenuItem("GameObject/ARENA/Triangle", true)]
+        [MenuItem("GameObject/ARENA/Videosphere", true)]
         static bool ValidateCreateArenaObject()
         {
             return ArenaClientScene.Instance != null && ArenaClientScene.Instance.mqttClientConnected;
