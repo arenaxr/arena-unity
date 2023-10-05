@@ -19,8 +19,8 @@ namespace ArenaUnity
         {
             filter.sharedMesh = SphereBuilder.Build(
                 json.Radius,
-                json.SegmentsHeight,
-                json.SegmentsWidth
+                json.SegmentsWidth,
+                json.SegmentsHeight
             );
             // TODO (mwfarb): can we support extra mesh construction from a-frame?
             //sphere.phiStart = (float)(data.phiStart != null ? Mathf.PI / 180 * (float)data.phiStart : 0f);

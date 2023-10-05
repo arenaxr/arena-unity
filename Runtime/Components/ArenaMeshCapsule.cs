@@ -18,7 +18,7 @@ namespace ArenaUnity
                 json.Radius,
                 json.Length,
                 json.SegmentsRadial,
-                json.SegmentsCap
+                json.SegmentsCap * 2 // CapsuleData computes total latitudes for both hemispheres
             );
         }
 
