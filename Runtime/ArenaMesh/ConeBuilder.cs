@@ -20,7 +20,7 @@ namespace ArenaUnity
             Vector2[] uv = new Vector2[vertices.Length];
             int[] triangles = new int[(subdivisions * 2) * 3];
 
-            // changed to match arena (mwf): vertices[0] = Vector3.zero;
+            // changed to match arena (mwfarb): vertices[0] = Vector3.zero;
             vertices[0] = new Vector3(0f, height / -2f, 0f);
             uv[0] = new Vector2(0.5f, 0f);
             for (int i = 0, n = subdivisions - 1; i < subdivisions; i++)
@@ -29,11 +29,11 @@ namespace ArenaUnity
                 float r = ratio * (Mathf.PI * 2f);
                 float x = Mathf.Cos(r) * radius;
                 float z = Mathf.Sin(r) * radius;
-                // changed to match arena (mwf): vertices[i + 1] = new Vector3(x, 0f, z);
+                // changed to match arena (mwfarb): vertices[i + 1] = new Vector3(x, 0f, z);
                 vertices[i + 1] = new Vector3(x, height / -2, z);
                 uv[i + 1] = new Vector2(ratio, 0f);
             }
-            // changed to match arena (mwf): vertices[subdivisions + 1] = new Vector3(0f, height, 0f);
+            // changed to match arena (mwfarb): vertices[subdivisions + 1] = new Vector3(0f, height, 0f);
             vertices[subdivisions + 1] = new Vector3(0f, height / 2, 0f);
             uv[subdivisions + 1] = new Vector2(0.5f, 1f);
 
