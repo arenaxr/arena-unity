@@ -5,12 +5,11 @@
 
 // Modified from: https://behreajj.medium.com/making-a-capsule-mesh-via-script-in-five-3d-environments-c2214abf02db
 
-using MeshBuilder;
 using UnityEngine;
 
 namespace ArenaUnity
 {
-    internal class CapsuleBuilder : MeshBuilderBase
+    internal class CapsuleBuilder
     {
         public enum UvProfile : int
         {
@@ -333,10 +332,10 @@ namespace ArenaUnity
 
             // Triangles must be assigned last.
             mesh.triangles = tris;
+            ArenaUnity.ToUnityMesh(ref mesh);
             mesh.RecalculateTangents();
             mesh.Optimize();
             return mesh;
         }
-
     }
 }

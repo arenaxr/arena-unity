@@ -6,12 +6,11 @@
 // Modified from: https://github.com/mrdoob/three.js/blob/dev/src/geometries/TorusKnotGeometry.js
 
 using System.Collections.Generic;
-using MeshBuilder;
 using UnityEngine;
 
 namespace ArenaUnity
 {
-    internal class TorusKnotBuilder : MeshBuilderBase
+    internal class TorusKnotBuilder
     {
         internal static Mesh Build(float radius = 1, float tube = 0.4f, int tubularSegments = 64, int radialSegments = 8, float p = 2, float q = 3)
         {
@@ -90,6 +89,7 @@ namespace ArenaUnity
             mesh.SetNormals(normals);
             mesh.SetUVs(0, uvs);
             mesh.SetIndices(indices, MeshTopology.Triangles, 0);
+            ArenaUnity.ToUnityMesh(ref mesh);
             mesh.RecalculateBounds();
             return mesh;
 

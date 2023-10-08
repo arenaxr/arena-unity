@@ -5,7 +5,6 @@
 
 // Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
 
-using MeshBuilder;
 using UnityEngine;
 
 namespace ArenaUnity

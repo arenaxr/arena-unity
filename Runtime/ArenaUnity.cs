@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
@@ -94,6 +95,26 @@ namespace ArenaUnity
                 (float)position.y,
                 -(float)position.z
             );
+        }
+        public static Vector3[] ToUnityPosition(Vector3[] positions)
+        {
+            for (int i = 0; i < positions.Length; i++)
+            {
+                positions[i] = ToUnityPosition(positions[i]);
+            }
+            return positions;
+        }
+        public static void ToUnityMesh(ref Mesh mesh)
+        {
+            // reverse position on vertex/normal on Z axis
+            mesh.vertices = ToUnityPosition(mesh.vertices);
+            mesh.normals = ToUnityPosition(mesh.normals);
+            // reverse winding order of triangles such that outer normals are preserved
+            List<int> tri = new List<int>();
+            mesh.GetTriangles(tri, 0);
+            Debug.Log(tri.Count);
+            tri.Reverse();
+            mesh.SetTriangles(tri, 0);
         }
 
         // rotation

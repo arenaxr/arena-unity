@@ -5,13 +5,12 @@
 
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
-using MeshBuilder;
 using Newtonsoft.Json;
 
 namespace ArenaUnity
 {
     public class ArenaMeshVideosphere : ArenaMesh
-    { 
+    {
         public ArenaVideosphereJson json = new ArenaVideosphereJson();
 
         protected override void ApplyRender()

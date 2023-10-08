@@ -6,7 +6,6 @@
 // Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
 
 using ArenaUnity.Schemas;
-using MeshBuilder;
 using Newtonsoft.Json;
 
 namespace ArenaUnity

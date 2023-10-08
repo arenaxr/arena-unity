@@ -5,11 +5,10 @@
 
 // Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
 
-using UnityEngine;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 namespace ArenaUnity
 {

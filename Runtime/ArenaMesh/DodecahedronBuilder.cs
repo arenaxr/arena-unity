@@ -6,12 +6,11 @@
 // Modified from: https://github.com/mrdoob/three.js/blob/dev/src/geometries/DodecahedronGeometry.js
 
 using System.Collections.Generic;
-using MeshBuilder;
 using UnityEngine;
 
 namespace ArenaUnity
 {
-    internal class DodecahedronBuilder : MeshBuilderBase
+    internal class DodecahedronBuilder
     {
         internal static Mesh Build(float radius, int details)
         {
@@ -54,7 +53,7 @@ namespace ArenaUnity
                 1, 12, 14,  1, 14, 5,   1, 5, 9
             };
 
-            return PolyhedronBuilder.Build(vertices, indices, radius/2, details);
+            return PolyhedronBuilder.Build(vertices, indices, radius / 2, details);
         }
     }
 }

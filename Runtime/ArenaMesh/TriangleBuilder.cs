@@ -3,12 +3,11 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
-using MeshBuilder;
 using UnityEngine;
 
 namespace ArenaUnity
 {
-    internal class TriangleBuilder : MeshBuilderBase
+    internal class TriangleBuilder
     {
         internal static Mesh Build(Vector3 vertexA, Vector3 vertexB, Vector3 vertexC)
         {
@@ -18,7 +17,8 @@ namespace ArenaUnity
                 new Vector2(vertexA.x, vertexA.y),
                 new Vector2(vertexB.x, vertexB.y),
                 new Vector2(vertexC.x, vertexC.y) };
-            mesh.triangles = new int[] { 2, 1, 0 };
+            mesh.triangles = new int[] { 0, 1, 2 };
+            ArenaUnity.ToUnityMesh(ref mesh);
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
             return mesh;
