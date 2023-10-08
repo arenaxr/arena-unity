@@ -13,7 +13,7 @@ namespace ArenaUnity
 {
     public class CylinderBuilder
     {
-        public static Mesh Build(float radius, float height, int radialSegments = 10, int heightSegments = 4, bool openEnded = true)
+        public static Mesh Build(float radius, float height, int radialSegments = 10, int heightSegments = 4, bool openEnded = false)
         {
             radialSegments = Mathf.Max(3, radialSegments);
             heightSegments = Mathf.Max(1, heightSegments);
@@ -71,7 +71,7 @@ namespace ArenaUnity
                 AddWall(1f, fy);
             }
 
-            if (openEnded)
+            if (!openEnded)
             {
                 // Top
                 {

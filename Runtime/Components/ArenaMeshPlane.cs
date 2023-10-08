@@ -33,16 +33,16 @@ namespace ArenaUnity
                         new Vector2(2f, 2f), 0.5f),
                         json.Width,
                         json.Height,
-                        json.SegmentsWidth * 2,
-                        json.SegmentsHeight * 2
+                        json.SegmentsWidth,
+                        json.SegmentsHeight
                     );
                     break;
                 default:
                     filter.sharedMesh = PlaneBuilder.Build(
                         json.Width,
                         json.Height,
-                        json.SegmentsWidth * 2,
-                        json.SegmentsHeight * 2
+                        json.SegmentsWidth,
+                        json.SegmentsHeight
                     );
                     break;
             }

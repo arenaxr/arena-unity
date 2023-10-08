@@ -19,8 +19,8 @@ namespace ArenaUnity
 
         public static Mesh Build(ParametricPlane param, float width = 1f, float height = 1f, int wSegments = 1, int hSegments = 1)
         {
-            wSegments = Mathf.Max(1, wSegments);
-            hSegments = Mathf.Max(1, hSegments);
+            wSegments = Mathf.Max(1, wSegments + 1);
+            hSegments = Mathf.Max(1, hSegments + 1);
 
             var mesh = new Mesh();
 
