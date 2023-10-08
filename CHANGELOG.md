@@ -2,6 +2,19 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.10.3](https://github.com/arenaxr/arena-unity/compare/v0.10.2...v0.10.3) (2023-10-08)
+
+
+### Bug Fixes
+
+* **geometry:** add support for a-frame geometry component as attribute ([4d1eda0](https://github.com/arenaxr/arena-unity/commit/4d1eda0c7217e59fc2474a54a51d7aadfdd787c1))
+* **gltf-model:** fixed rotation application for consistant model rendering rotation ([f824383](https://github.com/arenaxr/arena-unity/commit/f824383612f848d33f55a6e0e8ba94df3d7af21b))
+* **menu:** add missing Menu items: Light/Thickline/Entity/Text ([ceb807b](https://github.com/arenaxr/arena-unity/commit/ceb807b80dd88b35b1ffb5edb2c331cdc5f6b85c))
+* **menu:** updated Menu with newest ARENA primitives ([0609cc3](https://github.com/arenaxr/arena-unity/commit/0609cc3cd18a078444d65788eb2aaea7de3c24fa))
+* **mesh:** add torusKnot procedural mesh fromn three.js ([b436d1d](https://github.com/arenaxr/arena-unity/commit/b436d1d44bc28c5b0603cd2fea4e74299535fab8))
+* **mesh:** fixed errors in circle mesh generation ([3dc58d1](https://github.com/arenaxr/arena-unity/commit/3dc58d111b14130778b5b3103eaf09a307438b99))
+* **mesh:** orient mesh verticies/normals/indicies to match arena ([8247b85](https://github.com/arenaxr/arena-unity/commit/8247b85d65bfc4de3a3eca0ac0d2d23f148ce02a))
+
 ## [0.10.2](https://github.com/arenaxr/arena-unity/compare/v0.10.1...v0.10.2) (2023-10-01)
 
 
