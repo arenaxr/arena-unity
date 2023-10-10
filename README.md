@@ -1,7 +1,7 @@
 # ARENA-unity
 Unity C# library for editing scenes and creating applications for the ARENA.
 
-<img alt="" src="Documentation/arena-unity-demo.gif">
+<img alt="" src="Documentation~/arena-unity-demo.gif">
 
 ## Library Usage:
 - [Quick Start](https://docs.arenaxr.org/content/unity)
