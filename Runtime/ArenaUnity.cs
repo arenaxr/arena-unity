@@ -112,7 +112,6 @@ namespace ArenaUnity
             // reverse winding order of triangles such that outer normals are preserved
             List<int> tri = new List<int>();
             mesh.GetTriangles(tri, 0);
-            Debug.Log(tri.Count);
             tri.Reverse();
             mesh.SetTriangles(tri, 0);
         }
@@ -245,16 +244,18 @@ namespace ArenaUnity
         {
             // TODO (mwfarb): handle realtime renderer changes from unity.
             // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
-            var renderer = gobj.GetComponent<Renderer>();
-            if (renderer != null)
+            foreach (Renderer renderer in gobj.GetComponentsInChildren<Renderer>(true))
+            {
                 renderer.enabled = (bool)data.visible;
+            }
         }
         public static void ApplyRemoteRender(GameObject gobj, ArenaObjectDataJson data)
         {
             // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
-            var renderer = gobj.GetComponent<Renderer>();
-            if (renderer != null)
+            foreach (Renderer renderer in gobj.GetComponentsInChildren<Renderer>(true))
+            {
                 renderer.enabled = data.remoteRender.Enabled;
+            }
         }
 
         public static void ApplyClickListener(GameObject gobj, ArenaObjectDataJson data)
