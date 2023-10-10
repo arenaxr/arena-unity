@@ -50,6 +50,23 @@
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
   },
+  "samples": [
+    {
+      "displayName": "Arena Headless",
+      "description": "A sample application to integrate ARENA and manage objects from a headless server application",
+      "path": "Samples~/ArenaHeadless"
+    },
+    {
+      "displayName": "Arena Logger",
+      "description": "A sample application to integrate ARENA 3d views, with a 2d overlay of debug logging, with some controls to sculpt MQTT logging levels",
+      "path": "Samples~/ArenaLogger"
+    },
+    {
+      "displayName": "Laser Pointer",
+      "description": "A sample laser pointer application",
+      "path": "Samples~/LaserPointer"
+    }
+  ],
   "keywords": [
     "collaboration",
     "networking"
