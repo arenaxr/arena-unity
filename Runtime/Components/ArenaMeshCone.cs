@@ -7,6 +7,7 @@
 
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace ArenaUnity
 {
@@ -16,17 +17,16 @@ namespace ArenaUnity
 
         protected override void ApplyRender()
         {
-            filter.sharedMesh = ConeBuilder.Build(
-                json.SegmentsRadial,
+            filter.sharedMesh = CylinderBuilder.Build(
+                json.RadiusTop,
                 json.RadiusBottom,
-                json.Height
+                json.Height,
+                json.SegmentsRadial,
+                json.SegmentsHeight,
+                json.OpenEnded,
+                Mathf.PI / 180 * json.ThetaStart,
+                Mathf.PI / 180 * json.ThetaLength
             );
-            // TODO (mwfarb): can we support extra mesh construction from a-frame?
-            //cone.radiusTop = json.radiusTop != null ? (float)json.radiusTop : 0.01f;
-            //cone.segmentsHeight = json.segmentsHeight != null ? (int)json.segmentsHeight : 18;
-            //cone.openEnded = json.openEnded != null ? Convert.ToBoolean(json.openEnded) : false;
-            //cone.thetaStart = (float)(json.thetaStart != null ? Mathf.PI / 180 * (float)json.thetaStart : 0f);
-            //cone.thetaLength = (float)(json.thetaLength != null ? Mathf.PI / 180 * (float)json.thetaLength : Mathf.PI * 2f);
         }
 
         public override void UpdateObject()
