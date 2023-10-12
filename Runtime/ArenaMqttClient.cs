@@ -191,6 +191,12 @@ namespace ArenaUnity
             string mqttToken = null;
             CoroutineWithData cd;
 
+            //if (!Directory.Exists(sceneAuthDir))
+            //{
+            //    Directory.CreateDirectory(sceneAuthDir);
+            //    //Directory.CreateDirectory(sceneAuthDir, new System.Security.AccessControl.DirectorySecurity());
+            //}
+
             if (hostAddress == "localhost")
             {
                 verifyCertificate = false;
@@ -226,6 +232,7 @@ namespace ArenaUnity
                 {
                     case Auth.Anonymous:
                         // prefix all anon users with "anonymous-"
+                        Debug.Log("Using anonymous MQTT token.");
                         tokenType = "anonymous";
                         userName = $"anonymous-unity";
                         break;
@@ -267,7 +274,7 @@ namespace ArenaUnity
                         tokenType = "google-installed";
                         break;
                     case Auth.Manual:
-                        Debug.LogError($"Authentication type '{authType}' missing local token file: {localMqttPath}.");
+                        Debug.LogError($"Authentication type Manual missing local token file: {localMqttPath}.");
                         yield break;
                     default:
                         Debug.LogError($"Invalid ARENA authentication type: '{tokenType}'");
@@ -321,9 +328,9 @@ namespace ArenaUnity
                 if (!isCrdSuccess(cd.result)) yield break;
                 mqttToken = cd.result.ToString();
 
-                StreamWriter writer = new StreamWriter(userMqttPath);
-                writer.Write(mqttToken);
-                writer.Close();
+                //StreamWriter writer = new StreamWriter(userMqttPath);
+                //writer.Write(mqttToken);
+                //writer.Close();
             }
 
             var auth = JsonConvert.DeserializeObject<ArenaMqttAuthJson>(mqttToken);
@@ -352,17 +359,16 @@ namespace ArenaUnity
                 willMessage = JsonConvert.SerializeObject(msg);
             }
 
-            var handler = new JwtSecurityTokenHandler();
-            JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
-            permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
-            if (string.IsNullOrWhiteSpace(namespaceName))
-            {
-                namespaceName = payloadJson.Sub;
-            }
-            mqttExpires = (long)payloadJson.Exp;
-            DateTimeOffset dateTimeOffSet = DateTimeOffset.FromUnixTimeSeconds(mqttExpires);
-            TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now.ToUniversalTime());
-            Debug.Log($"MQTT Token expires in {ArenaUnity.TimeSpanToString(duration)}");
+            //var handler = new JwtSecurityTokenHandler();
+            //JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
+            //if (string.IsNullOrWhiteSpace(namespaceName))
+            //{
+            //    namespaceName = payloadJson.Sub;
+            //}
+            //mqttExpires = (long)payloadJson.Exp;
+            //DateTimeOffset dateTimeOffSet = DateTimeOffset.FromUnixTimeSeconds(mqttExpires);
+            //TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now.ToUniversalTime());
+            //Debug.Log($"MQTT Token expires in {ArenaUnity.TimeSpanToString(duration)}");
 
             // background mqtt connect
             Connect();

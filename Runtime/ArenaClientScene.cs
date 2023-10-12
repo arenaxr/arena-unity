@@ -218,6 +218,7 @@ namespace ArenaUnity
                 LogAndExit("Permissions not received.");
                 yield break;
             }
+
             ArenaMqttTokenClaimsJson perms = JsonConvert.DeserializeObject<ArenaMqttTokenClaimsJson>(permissions);
             foreach (string pubperm in perms.publ)
             {
