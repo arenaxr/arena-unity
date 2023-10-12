@@ -1,14 +1,17 @@
 ﻿/**
  * Open source software under the terms in /LICENSE
- * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
+using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Text.RegularExpressions;
+using System.Linq;
+using ArenaUnity.Components;
+using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PrettyHierarchy;
+using TMPro;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -16,30 +19,40 @@ namespace ArenaUnity
     /// <summary>
     /// Class to manage an ARENA object, publishing, and its properties.
     /// </summary>
-    [HelpURL("https://arena.conix.io/content/messaging/definitions.html")]
+    [HelpURL("https://docs.arenaxr.org/content/schemas")]
     [DisallowMultipleComponent]
     public class ArenaObject : PrettyObject
     {
-        [Tooltip("Message type in persistance storage schema")]
+        [Tooltip("Message type in persistence storage schema")]
         public string messageType = "object"; // default to object
         [Tooltip("Persist this object in the ARENA server database (default true = persist on server)")]
         public bool persist = true;
-        [TextArea(5, 10)]
-        [Tooltip("ARENA JSON-encoded message (debug only for now)")]
+        [Tooltip("Override (globalUpdateMs) publish frequency to publish detected transform changes (milliseconds)")]
+        [Range(100, 1000)]
+        public int objectUpdateMs = 100;
+        [TextArea(5, 20)]
+        [Tooltip("ARENA JSON-encoded message")]
+        [SerializeField]
         public string jsonData = null;
 
         [HideInInspector]
-        public dynamic data = null; // original message data for object, if any
+        public object data = null; // original message data for object, if any
+        [HideInInspector]
+        public string object_type = null; // original message data for object, if any
         [HideInInspector]
         public string parentId = null;
-        [HideInInspector]
-        public bool created = false;
 
-        internal string oldName; // test for rename
+        internal bool Created { get { return created; } set { created = value; } }
+
+        private float publishInterval; // varies
+        private bool created = false;
+        private string oldName; // test for rename
         internal bool externalDelete = false;
         internal bool isJsonValidated = false;
-        internal List<string> animations = null;
-        internal bool meshChanged = false;
+        internal string gltfUrl = null;
+        internal List<string> animations = null; // TODO (mwfarb): ideal location: ArenaGltfModel component
+
+        internal List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
 
         public void OnEnable()
         {
@@ -51,27 +64,63 @@ namespace ArenaUnity
 
         void Start()
         {
+            // TODO: consider how inactive objects react to find here, might need to use arenaObjs array
+
+            // runtime created arena objects still need to be checked for name uniqueness
+            bool found = false;
+            foreach (var aobj in FindObjectsOfType<ArenaObject>())
+            {
+                if (aobj.name == name)
+                {
+                    if (!found) found = true;
+                    else name = $"{name}-{UnityEngine.Random.Range(0, 1000000)}";
+                }
+            }
+
             isJsonValidated = jsonData != null;
+            StartCoroutine(PublishTickThrottle());
+        }
+
+
+        public void SetTtlDeleteTimer(float seconds)
+        {
+            StartCoroutine(TtlUpdater(seconds));
+        }
+
+        IEnumerator TtlUpdater(float seconds)
+        {
+            yield return new WaitForSeconds(seconds);
+            externalDelete = true;
+            Destroy(gameObject);
+        }
+
+        IEnumerator PublishTickThrottle()
+        {
+            // TODO (mwfarb): prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
+
+            while (true)
+            {
+                // send only when changed, each publishInterval
+                if ((transform.hasChanged) && ArenaClientScene.Instance)
+                {
+                    int ms = objectUpdateMs != ArenaClientScene.Instance.globalUpdateMs ? objectUpdateMs : ArenaClientScene.Instance.globalUpdateMs;
+                    publishInterval = (float)ms / 1000f;
+                    if (PublishCreateUpdate(true))
+                    {
+                        transform.hasChanged = false;
+                    }
+                }
+                yield return new WaitForSeconds(publishInterval);
+            }
         }
 
         void Update()
         {
-            // send only when changed, each publishInterval frames, or stop at 0 frames
-            if (!ArenaClient.Instance || ArenaClient.Instance.transformPublishInterval == 0 ||
-            Time.frameCount % ArenaClient.Instance.transformPublishInterval != 0)
-                return;
-            if (transform.hasChanged || meshChanged)
+            if (ArenaClientScene.Instance != null)
+                HasPermissions = ArenaClientScene.Instance.sceneObjectRights;
+
+            if (oldName != null && name != oldName)
             {
-                if (PublishCreateUpdate(true))
-                {
-                    transform.hasChanged = false;
-                    meshChanged = false;
-                }
-            }
-            else if (oldName != null && name != oldName)
-            {
-                // Ensure arena-compatible naming
-                name = Regex.Replace(name, ArenaUnity.regexArenaObjectId, "-");
                 HandleRename();
             }
             oldName = name;
@@ -79,17 +128,18 @@ namespace ArenaUnity
 
         private void HandleRename()
         {
-            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+            if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return;
             // pub delete old
-            dynamic msg = new
+            ArenaObjectJson msg = new ArenaObjectJson
             {
                 object_id = oldName,
                 action = "delete",
                 persist = persist,
             };
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.Publish(msg.object_id, payload);
+            if (ArenaClientScene.Instance)
+                ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
             // add new object with new name, it pubs
             created = false;
             transform.hasChanged = true;
@@ -97,34 +147,44 @@ namespace ArenaUnity
 
         public bool PublishCreateUpdate(bool transformOnly = false)
         {
-            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+            if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return false;
-            if (ArenaClient.Instance.IsShuttingDown) return false;
+            if (ArenaClientScene.Instance.IsShuttingDown) return false;
             if (messageType != "object") return false;
 
+            if (!ArenaClientScene.Instance.arenaObjs.ContainsKey(name))
+                ArenaClientScene.Instance.arenaObjs[name] = gameObject;
+
             // message type information
-            dynamic msg = new ExpandoObject();
-            msg.object_id = name;
-            msg.action = created ? "update" : "create";
-            msg.type = messageType;
-            msg.persist = persist;
+            ArenaObjectJson msg = new ArenaObjectJson
+            {
+                object_id = name,
+                action = created ? "update" : "create",
+                type = messageType,
+                persist = persist,
+            };
             transformOnly = created ? transformOnly : false;
-            dynamic dataUnity = new ExpandoObject();
-            if (data == null || data.object_type == null)
-                dataUnity.object_type = ArenaUnity.ToArenaObjectType(gameObject);
+            ArenaObjectDataJson dataUnity = new ArenaObjectDataJson();
+            if (!string.IsNullOrEmpty(object_type))
+                dataUnity.object_type = object_type;
             else
-                dataUnity.object_type = (string)data.object_type;
+                dataUnity.object_type = ToArenaObjectType(gameObject);
+
+            var updatedData = new JObject();
 
             // minimum transform information
             dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
-            Quaternion rotOut = dataUnity.object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(transform.localRotation) : transform.localRotation;
-            if (data == null || data.rotation == null || data.rotation.w != null)
-                dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(rotOut);
-            else
-                dataUnity.rotation = ArenaUnity.ToArenaRotationEuler(rotOut.eulerAngles);
+            Quaternion rotOut = transform.localRotation;
+            dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(rotOut); // always send quaternions over the wire
             dataUnity.scale = ArenaUnity.ToArenaScale(transform.localScale);
-            ArenaUnity.ToArenaDimensions(gameObject, ref dataUnity);
-            if (transform.parent.gameObject.GetComponent<ArenaObject>() != null)
+            if (GetComponent<Collider>())
+            {
+                updatedData.Merge(ArenaMesh.ToArenaDimensions(gameObject, out bool isUnityPlane));
+                if (isUnityPlane)
+                    dataUnity.rotation = ArenaUnity.ToArenaRotationPlaneMesh(rotOut);
+            }
+
+            if (transform.parent && transform.parent.gameObject.GetComponent<ArenaObject>() != null)
             {   // parent
                 dataUnity.parent = transform.parent.name;
                 parentId = transform.parent.name;
@@ -135,62 +195,108 @@ namespace ArenaUnity
                 parentId = null;
             }
 
-            if (meshChanged)
-            {
-                if ((string)data.object_type == "entity" && data.geometry != null && data.geometry.primitive != null)
-                {
-                    dataUnity.geometry = new ExpandoObject();
-                    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity.geometry);
-                }
-                else
-                {
-                    ArenaUnity.ToArenaMesh(gameObject, ref dataUnity);
-                }
-            }
             // other attributes information
             if (!transformOnly)
             {
-                if (GetComponent<Light>())
-                    ArenaUnity.ToArenaLight(gameObject, ref dataUnity);
+                // wire objects
+                if (GetComponent<ArenaMesh>())
+                    updatedData.Merge(ArenaMesh.ToArenaMesh(gameObject));
+                else if (GetComponent<Light>())
+                    updatedData.Merge(ArenaWireLight.ToArenaLight(gameObject));
+                else if (GetComponent<TextMeshPro>())
+                    updatedData.Merge(ArenaWireText.ToArenaText(gameObject));
+                else if (GetComponent<LineRenderer>())
+                    updatedData.Merge(ArenaWireThickline.ToArenaThickline(gameObject));
+
+                // components
                 if (GetComponent<Renderer>())
-                    ArenaUnity.ToArenaMaterial(gameObject, ref dataUnity);
+                    updatedData.Merge(ArenaMaterial.ToArenaMaterial(gameObject));
             }
 
             // merge unity data with original message data
-            var updatedData = new JObject();
             if (data != null)
-                updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(data)));
-            updatedData.Merge(JObject.Parse(JsonConvert.SerializeObject(dataUnity)));
+                updatedData.Merge(JObject.FromObject(data));
+            updatedData.Merge(JObject.FromObject(dataUnity));
+            // TODO (mwfarb): check for deletions and pollution
+            jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
 
             // publish
-            msg.data = transformOnly ? dataUnity : updatedData;
-            jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
+            msg.data = transformOnly ? (object)dataUnity : updatedData;
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.Publish(msg.object_id, payload);
+            if (ArenaClientScene.Instance)
+                ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
             if (!created)
                 created = true;
 
             return true;
         }
 
-        internal void PublishJsonData()
+        internal void PublishUpdate(string objData, bool all = false, bool overwrite = false)
         {
-            dynamic msg = new ExpandoObject();
-            msg.object_id = name;
-            msg.action = "update";
-            msg.type = messageType;
-            msg.persist = persist;
-            msg.data = JsonConvert.DeserializeObject(jsonData);
+            ArenaObjectJson msg = new ArenaObjectJson
+            {
+                object_id = name,
+                action = "update",
+                type = messageType,
+                persist = persist,
+            };
+            if (overwrite) msg.overwrite = overwrite;
+
+            // merge new data with original message data
+            var updatedData = new JObject();
+            if (jsonData != null)
+                updatedData.Merge(JObject.Parse(jsonData));
+            //Debug.Log(objData);
+            updatedData.Merge(JObject.Parse(objData));
+
+            jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
+
+            // publish
+            msg.data = all ? updatedData : JObject.Parse(objData);
             string payload = JsonConvert.SerializeObject(msg);
-            ArenaClient.Instance.Publish(msg.object_id, payload); // remote
-            ArenaClient.Instance.ProcessMessage(payload); // local
+            if (ArenaClientScene.Instance)
+                ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
+        }
+
+        // object type
+        public static string ToArenaObjectType(GameObject gobj)
+        {
+            string objectType = "entity";
+            MeshFilter meshFilter = gobj.GetComponent<MeshFilter>();
+            TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
+            Light light = gobj.GetComponent<Light>();
+            SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
+            LineRenderer lr = gobj.GetComponent<LineRenderer>();
+            // initial priority is primitive
+            if (meshFilter && meshFilter.sharedMesh)
+                switch (meshFilter.sharedMesh.name)
+                {
+                    case "Cube": objectType = "box"; break;
+                    case "Sphere": objectType = "sphere"; break;
+                    case "Cylinder": objectType = "cylinder"; break;
+                    case "Capsule": objectType = "capsule"; break;
+                    case "Plane": objectType = "plane"; break;
+                    case "Quad": objectType = "plane"; break;
+                }
+            else if (spriteRenderer && spriteRenderer.sprite && spriteRenderer.sprite.pixelsPerUnit != 0f)
+                objectType = "image";
+            else if (tm)
+                objectType = "text";
+            else if (lr)
+                objectType = "thickline";
+            else if (light)
+                objectType = "light";
+
+            return objectType;
         }
 
         public void OnValidate()
         {
-            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+            // TODO: handle problematic offline name change
+
+            if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return;
-            if (ArenaClient.Instance.IsShuttingDown) return;
+            if (ArenaClientScene.Instance.IsShuttingDown) return;
 
             // jsonData edited manually by user?
             if (jsonData != null)
@@ -213,18 +319,19 @@ namespace ArenaUnity
 
         public void OnDestroy()
         {
-            if (ArenaClient.Instance == null || !ArenaClient.Instance.mqttClientConnected)
+            if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return;
-            if (ArenaClient.Instance.IsShuttingDown) return;
+            if (ArenaClientScene.Instance.IsShuttingDown) return;
 
-            if (!externalDelete)
-                ArenaClient.Instance.pendingDelete.Add(name);
+            // check if delete messages should be sent to other subscribers
+            if (!externalDelete || (transform.parent != null && transform.parent.GetComponent<ArenaObject>() == null))
+                ArenaClientScene.Instance.pendingDelete.Add(name);
         }
 
         public void OnApplicationQuit()
         {
-            if (ArenaClient.Instance != null)
-                ArenaClient.Instance.IsShuttingDown = true;
+            if (ArenaClientScene.Instance != null)
+                ArenaClientScene.Instance.IsShuttingDown = true;
         }
     }
 }

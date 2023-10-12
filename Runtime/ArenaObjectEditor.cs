@@ -1,4 +1,8 @@
-﻿using System;
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
+
 using UnityEditor;
 using UnityEngine;
 
@@ -10,56 +14,41 @@ namespace ArenaUnity
     {
         public override void OnInspectorGUI()
         {
-            ArenaObject script = (ArenaObject)target;
+            ArenaObject aobj = (ArenaObject)target;
 
             // add button to publish unity changes
-            GUI.enabled = script.messageType == "object";
+            GUI.enabled = aobj.HasPermissions && aobj.messageType == "object";
             if (GUILayout.Button("Publish Unity Data"))
             {
-                script.PublishCreateUpdate();
+                aobj.PublishCreateUpdate();
             }
             GUI.enabled = true;
+
+            // edit authorization
+            GUILayout.BeginHorizontal("Box");
+            GUILayout.Label("Publish Permission:");
+            if (Application.isPlaying)
+            {
+                var authStyle = new GUIStyle(EditorStyles.label);
+                authStyle.normal.textColor = aobj.TextColor;
+                var authString = aobj.HasPermissions ? "A" : "Not a";
+                GUILayout.Label($"{authString}uthorized to publish changes", authStyle);
+            }
+            else
+            {
+                GUILayout.Label("Determined in playmode");
+            }
+            GUILayout.EndHorizontal();
 
             DrawDefaultInspector();
 
             // add button to publish manual json data changes if valid
-            GUI.enabled = script.isJsonValidated;
+            GUI.enabled = aobj.HasPermissions && aobj.isJsonValidated;
             if (GUILayout.Button("Publish Json Data"))
             {
-                script.PublishJsonData();
+                aobj.PublishUpdate(aobj.jsonData, true, true); // overwrite when doing full object update
             }
             GUI.enabled = true;
-
-            // add any animation buttons
-            if (script.animations != null && script.animations.Count > 0)
-            {
-                GUILayout.Space(5f);
-                EditorGUILayout.LabelField("Animations", EditorStyles.boldLabel);
-                foreach (string animation in script.animations)
-                {
-                    Animation anim = script.GetComponentInChildren<Animation>(true);
-                    GUILayout.BeginHorizontal("Box");
-                    //float seconds = anim[animation].length;
-                    //string timespan = seconds > 0 ? TimeSpan.FromSeconds(seconds).ToString(@"(mm\:ss)") : "";
-                    //GUIStyle style = new GUIStyle();
-                    //style.richText = true;
-                    //GUILayout.Label($"<b>{animation}</b> ({timespan})", style);
-                    GUILayout.Label(animation);
-                    if (GUILayout.Button($"Play", GUILayout.Width(40)))
-                    {
-                        anim.Play(animation);
-                    }
-                    if (GUILayout.Button($"Stop", GUILayout.Width(40)))
-                    {
-                        anim.Stop(animation);
-                    }
-                    if (GUILayout.Button($"Rewind", GUILayout.Width(60)))
-                    {
-                        anim.Rewind(animation);
-                    }
-                    GUILayout.EndHorizontal();
-                }
-            }
 
         }
     }

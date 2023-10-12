@@ -28,7 +28,7 @@ namespace Siccity.GLTFUtility.Converters {
 				case 2:
 					return new Vector2(floatArray[0], floatArray[1]);
 				case 3:
-					return new Vector2(floatArray[0], floatArray[1]); // we dont need third float
+					return new Vector2(floatArray[0], floatArray[1]); // we don't need third float
 				default:
 					return new Vector2(1, 1);
 			}

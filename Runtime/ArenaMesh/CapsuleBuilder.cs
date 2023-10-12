@@ -1,4 +1,9 @@
-﻿// Modified from: https://behreajj.medium.com/making-a-capsule-mesh-via-script-in-five-3d-environments-c2214abf02db
+﻿/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
+
+// Modified from: https://behreajj.medium.com/making-a-capsule-mesh-via-script-in-five-3d-environments-c2214abf02db
 
 using UnityEngine;
 
@@ -327,10 +332,10 @@ namespace ArenaUnity
 
             // Triangles must be assigned last.
             mesh.triangles = tris;
+            ArenaUnity.ToUnityMesh(ref mesh);
             mesh.RecalculateTangents();
             mesh.Optimize();
             return mesh;
         }
-
     }
 }

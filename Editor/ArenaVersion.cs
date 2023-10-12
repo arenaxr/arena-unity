@@ -1,12 +1,13 @@
 /**
  * Open source software under the terms in /LICENSE
- * Copyright (c) 2021, The CONIX Research Center. All rights reserved.
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
 using System;
 using System.Collections;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEditor.PackageManager;
@@ -23,8 +24,8 @@ namespace ArenaUnity.Editor
     internal class ArenaVersion
     {
         const string unityPackageName = "io.conix.arena.unity";
-        const string githubOrg = "conix-center";
-        const string githubName = "ARENA-unity";
+        const string githubOrg = "arenaxr";
+        const string githubName = "arena-unity";
         private static string gitLatestUrl = $"https://api.github.com/repos/{githubOrg}/{githubName}/releases/latest";
         private static ListRequest _listRequest;
         private static bool checkGithub = false;
@@ -34,7 +35,6 @@ namespace ArenaUnity.Editor
 
         static ArenaVersion()
         {
-            string latest = PlayerPrefs.GetString("GitVersionLatest", GH_RATE_LIMIT_VERSION);
             long time = (long)PlayerPrefs.GetFloat("GitVersionCheckTime", 0);
             TimeSpan t = DateTime.UtcNow - new DateTime(time);
             // only check github every 24 hours to avoid hitting api rate limit
@@ -49,13 +49,26 @@ namespace ArenaUnity.Editor
             if (_listRequest.Status == StatusCode.Success)
             {
                 var package = _listRequest.Result.FirstOrDefault(p => p.name == unityPackageName);
-                if (package != null && Version.TryParse(package.version, out var local))
+                if (package != null && Version.TryParse(package.version.Trim('v'), out var local))
                 {
-                    if (Version.TryParse(package.versions.latest, out var latest))
+                    // Check unity package manager/github automated version manager
+                    if (Version.TryParse(package.versions.latest.Trim('v'), out var latest))
                     {
                         if (local < latest)
                         {
                             Debug.LogWarning(UpgradeMessage(local, latest));
+                        }
+                    }
+                    else
+                    {
+                        // Minimal, check last saved version check
+                        string latest_sav = PlayerPrefs.GetString("GitVersionLatest", GH_RATE_LIMIT_VERSION).Trim('v');
+                        if (Version.TryParse(latest_sav, out latest))
+                        {
+                            if (local < latest)
+                            {
+                                Debug.LogWarning(UpgradeMessage(local, latest));
+                            }
                         }
                     }
                     // Check github directly next
@@ -84,12 +97,14 @@ namespace ArenaUnity.Editor
             }
             else
             {
-                dynamic git = JsonConvert.DeserializeObject(www.downloadHandler.text);
+
+                //GitReleasesLatestJson git = JsonConvert.DeserializeObject<GitReleasesLatestJson>(www.downloadHandler.text);
+                var git = JObject.Parse(www.downloadHandler.text);
                 if (git != null)
                 {
-                    if (Version.TryParse((string)git.tag_name, out var latest))
+                    if (Version.TryParse(git["tag_name"].ToString().Trim('v'), out var latest))
                     {
-                        PlayerPrefs.SetString("GitVersionLatest", (string)git.tag_name);
+                        PlayerPrefs.SetString("GitVersionLatest", latest.ToString());
                         if (local < latest)
                         {
                             Debug.LogWarning(UpgradeMessage(local, latest));
@@ -103,7 +118,7 @@ namespace ArenaUnity.Editor
 
         private static string UpgradeMessage(Version local, Version latest)
         {
-            return $"ARENA for Unity Package version {latest} is available, however {local} is installed.\nUpdate to https://github.com/{githubOrg}/{githubName}.git#{latest}";
+            return $"ARENA for Unity Package version {latest} is available, however {local} is installed.\nUpdate to https://github.com/{githubOrg}/{githubName}.git#latest";
         }
 
         private static string CurrentMessage(Version local)

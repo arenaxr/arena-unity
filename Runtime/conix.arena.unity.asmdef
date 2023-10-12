@@ -3,7 +3,7 @@
     "references": [
         "Siccity.GLTFUtility",
         "PrettyHierarchy",
-        "SandolkakosDigital.EditorUtils"
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

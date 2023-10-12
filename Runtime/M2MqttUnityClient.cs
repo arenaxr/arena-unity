@@ -25,6 +25,9 @@ SOFTWARE.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
@@ -42,22 +45,30 @@ namespace M2MqttUnity
     {
         [Header("MQTT broker configuration")]
         [Tooltip("IP address or URL of the host running the broker")]
-        public string brokerAddress = "arenaxr.org";
+        protected string brokerAddress = null;
         [Tooltip("Port where the broker accepts connections")]
-        protected int brokerPort = 8883;
+        protected int brokerPort = 1883;
         [Tooltip("Use encrypted connection")]
-        private bool isEncrypted = true;
+        protected bool isEncrypted = false;
+        [Tooltip("SSL protocol to use when isEncrypted is true.")]
+        protected MqttSslProtocols sslProtocol = MqttSslProtocols.TLSv1_0;
+        [Tooltip("Whether to verify the encryption certificate")]
+        protected bool verifyCertificate = true;
         [Header("Connection parameters")]
         [Tooltip("Connection to the broker is delayed by the the given milliseconds")]
-        private int connectionDelay = 500;
+        protected int connectionDelay = 500;
         [Tooltip("Connection timeout in milliseconds")]
-        private int timeoutOnConnection = MqttSettings.MQTT_CONNECT_TIMEOUT;
+        protected int timeoutOnConnection = MqttSettings.MQTT_CONNECT_TIMEOUT;
         [Tooltip("Connect on startup")]
-        private bool autoConnect = true;
+        protected bool autoConnect = false;
         [Tooltip("UserName for the MQTT broker. Keep blank if no user name is required.")]
         protected string mqttUserName = null;
         [Tooltip("Password for the MQTT broker. Keep blank if no password is required.")]
         protected string mqttPassword = null;
+
+        protected bool willFlag = false;
+        protected string willTopic = null;
+        protected string willMessage = null;
 
         /// <summary>
         /// Wrapped MQTT client
@@ -116,8 +127,6 @@ namespace M2MqttUnity
         protected virtual void OnConnected()
         {
             Debug.LogFormat("Connected to {0}:{1}...\n", brokerAddress, brokerPort.ToString());
-
-            SubscribeTopics();
 
             if (ConnectionSucceeded != null)
             {
@@ -285,11 +294,16 @@ namespace M2MqttUnity
                 try
                 {
 #if (!UNITY_EDITOR && UNITY_WSA_10_0 && !ENABLE_IL2CPP)
-                    client = new MqttClient(brokerAddress,brokerPort,isEncrypted, isEncrypted ? MqttSslProtocols.TLSv1_2 : MqttSslProtocols.None);
+                    client = new MqttClient(brokerAddress, brokerPort, isEncrypted, isEncrypted ? sslProtocol: MqttSslProtocols.None);
 #else
-                    client = new MqttClient(brokerAddress, brokerPort, isEncrypted, null, null, isEncrypted ? MqttSslProtocols.TLSv1_2 : MqttSslProtocols.None);
-                    //System.Security.Cryptography.X509Certificates.X509Certificate cert = new System.Security.Cryptography.X509Certificates.X509Certificate();
-                    //client = new MqttClient(brokerAddress, brokerPort, isEncrypted, cert, null, MqttSslProtocols.TLSv1_2, MyRemoteCertificateValidationCallback);
+                    if (verifyCertificate)
+                    {
+                        client = new MqttClient(brokerAddress, brokerPort, isEncrypted, null, null, isEncrypted ? sslProtocol : MqttSslProtocols.None);
+                    }
+                    else
+                    {
+                        client = new MqttClient(brokerAddress, brokerPort, isEncrypted, null, null, isEncrypted ? sslProtocol : MqttSslProtocols.None, SelfSignedCertValidationCallback);
+                    }
 #endif
                 }
                 catch (Exception e)
@@ -314,7 +328,14 @@ namespace M2MqttUnity
             string clientId = "unity-" + Guid.NewGuid().ToString();
             try
             {
-                client.Connect(clientId, mqttUserName, mqttPassword);
+                if (willFlag)
+                {
+                    client.Connect(clientId, mqttUserName, mqttPassword, false, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, willFlag, willTopic, willMessage, true, MqttMsgConnect.KEEP_ALIVE_PERIOD_DEFAULT);
+                }
+                else
+                {
+                    client.Connect(clientId, mqttUserName, mqttPassword);
+                }
             }
             catch (Exception e)
             {
@@ -337,6 +358,24 @@ namespace M2MqttUnity
             }
         }
 
+
+        private bool SelfSignedCertValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            Regex regex = new Regex(@"CN\s*=\s*(?<name>\*?\.?\w*\.?\w+)");
+            try
+            {
+                var match = regex.Match(certificate.Subject);
+                string host = match.Groups["name"].Value;
+                Debug.LogWarning($"Excepting server certificate without verification for MQTT on {host}!");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"Excepting server certificate without verification for MQTT! Read cert host: {ex.Message}");
+                Console.WriteLine();
+            }
+            return true;
+        }
+
         private IEnumerator DoDisconnect()
         {
             yield return new WaitForEndOfFrame();
@@ -351,7 +390,6 @@ namespace M2MqttUnity
             {
                 if (client.IsConnected)
                 {
-                    UnsubscribeTopics();
                     client.Disconnect();
                 }
                 client.MqttMsgPublishReceived -= OnMqttMessageReceived;

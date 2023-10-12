@@ -1,14 +1,36 @@
 ﻿// Modified from: https://github.com/NCEEGEE/PrettyHierarchy
 
-using UnityEngine;
+using System;
 using UnityEditor;
+using UnityEngine;
 
 namespace PrettyHierarchy
 {
     [DisallowMultipleComponent]
     public class PrettyObject : MonoBehaviour
     {
+        public static Color32 ColorDarkAllow = new Color32(0, 255, 0, 255); // green
+        public static Color32 ColorLightAllow = new Color32(0, 128, 0, 255); // dark green
+
+        public static Color32 ColorDarkDisallow = new Color32(255, 165, 0, 255); //orange
+        public static Color32 ColorLightDisallow = new Color32(204, 85, 0, 255); // dark orange
+
+        private bool hasPermissions;
+
+        public bool HasPermissions { get { return hasPermissions; } set { hasPermissions = value; } }
+
 #if UNITY_EDITOR
+        private Color32 UpdateTextColor()
+        {
+            Color32 color;
+            if (EditorGUIUtility.isProSkin)
+                color = hasPermissions ? ColorDarkAllow : ColorDarkDisallow;
+            else
+                color = hasPermissions ? ColorLightAllow : ColorLightDisallow;
+            EditorApplication.RepaintHierarchyWindow();
+            return color;
+        }
+
         //[Header("Background")]
         //[SerializeField]
         private bool useDefaultBackgroundColor = true;
@@ -18,7 +40,7 @@ namespace PrettyHierarchy
         //[SerializeField]
         private bool useDefaultTextColor = false;
         //[SerializeField]
-        private Color32 textColor = Color.green;
+        private Color32 textColor = new Color32(0, 0, 0, 255);
         //[SerializeField]
         private Font font;
         //[SerializeField]
@@ -34,7 +56,7 @@ namespace PrettyHierarchy
         public Color32 BackgroundColor { get { return new Color32(backgroundColor.r, backgroundColor.g, backgroundColor.b, 255); } }
 
         public bool UseDefaultTextColor { get { return useDefaultTextColor; } }
-        public Color32 TextColor { get { return textColor; } }
+        public Color32 TextColor { get { return UpdateTextColor(); } }
         public Font Font { get { return font; } }
         public int FontSize { get { return fontSize; } }
         public FontStyle FontStyle { get { return fontStyle; } }

@@ -1,6 +1,9 @@
+/**
+ * Open source software under the terms in /LICENSE
+ * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
+ */
+
 using System;
-using System.Dynamic;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
@@ -28,11 +31,6 @@ namespace ArenaUnity
 
             if (GUILayout.Button($"Create new {object_type}"))
             {
-                if (ArenaClient.Instance == null)
-                {
-                    Debug.LogError($"Failed to create object '{object_id}', press Play before creating an ARENA {object_type}.");
-                    return;
-                }
                 // validate uri
                 if (!Uri.IsWellFormedUriString(object_url, UriKind.RelativeOrAbsolute))
                 {
@@ -45,23 +43,27 @@ namespace ArenaUnity
                 Camera cam = Camera.current ?? Camera.main;
                 Vector3 cameraPoint = cam.transform.position + cam.transform.forward * distance;
 
-                dynamic msg = new ExpandoObject();
-                msg.object_id = Regex.Replace(object_id, ArenaUnity.regexArenaObjectId, "-");
-                if (ArenaClient.Instance.arenaObjs.ContainsKey(msg.object_id))
-                    msg.object_id = $"{msg.object_id}-{UnityEngine.Random.Range(0, 1000000)}";
-                msg.action = "create";
-                msg.type = "object";
-                msg.persist = true;
-                dynamic data = new ExpandoObject();
-                data.object_type = object_type;
-                data.url = object_url;
-                Quaternion rotOut = object_type == "gltf-model" ? ArenaUnity.UnityToGltfRotationQuat(Quaternion.identity) : Quaternion.identity;
-                data.rotation = ArenaUnity.ToArenaRotationEuler(rotOut.eulerAngles);
-                data.position = ArenaUnity.ToArenaPosition(cameraPoint);
+                var client = ArenaClientScene.Instance;
+                if (client.arenaObjs.ContainsKey(object_id))
+                    object_id = $"{object_id}-{UnityEngine.Random.Range(0, 1000000)}";
+                ArenaObjectJson msg = new ArenaObjectJson
+                {
+                    object_id = object_id,
+                    action = "create",
+                    type = "object",
+                    persist = true,
+                };
+                Quaternion rotOut = Quaternion.identity;
+                ArenaObjectDataJson data = new ArenaObjectDataJson
+                {
+                    object_type = object_type,
+                    url = object_url,
+                    rotation = ArenaUnity.ToArenaRotationQuat(rotOut), // always send quaternions over the wire
+                    position = ArenaUnity.ToArenaPosition(cameraPoint),
+                };
                 msg.data = data;
                 string payload = JsonConvert.SerializeObject(msg);
-                ArenaClient.Instance.Publish(object_id, payload); // remote
-                ArenaClient.Instance.ProcessMessage(payload, menuCommand); // local
+                client.PublishObject(msg.object_id, payload, client.sceneObjectRights);
                 Close();
             }
 

@@ -1,15 +1,14 @@
 {
   "name": "io.conix.arena.unity",
-  "version": "0.0.12",
+  "version": "0.10.3",
   "displayName": "ARENA Library for Unity",
   "description": "Enables control of ARENA assets through Unity.",
   "unity": "2019.4",
-  "unityRelease": "0b5",
-  "documentationUrl": "https://github.com/conix-center/ARENA-unity/blob/main/README.md",
-  "changelogUrl": "https://github.com/conix-center/ARENA-unity/blob/main/CHANGELOG.md",
-  "licensesUrl": "https://github.com/conix-center/ARENA-unity/blob/main/LICENSE",
+  "documentationUrl": "https://github.com/arenaxr/arena-unity/blob/main/README.md",
+  "changelogUrl": "https://github.com/arenaxr/arena-unity/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/arenaxr/arena-unity/blob/main/LICENSE",
   "dependencies": {
-    "com.unity.nuget.newtonsoft-json": "2.0.2",
+    "com.unity.nuget.newtonsoft-json": "3.0.2",
     "com.unity.collab-proxy": "1.2.16",
     "com.unity.editorcoroutines": "1.0.0",
     "com.unity.ide.rider": "1.2.1",
@@ -51,6 +50,23 @@
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
   },
+  "samples": [
+    {
+      "displayName": "Arena Headless",
+      "description": "A sample application to integrate ARENA and manage objects from a headless server application",
+      "path": "Samples~/ArenaHeadless"
+    },
+    {
+      "displayName": "Arena Logger",
+      "description": "A sample application to integrate ARENA 3d views, with a 2d overlay of debug logging, with some controls to sculpt MQTT logging levels",
+      "path": "Samples~/ArenaLogger"
+    },
+    {
+      "displayName": "Laser Pointer",
+      "description": "A sample laser pointer application",
+      "path": "Samples~/LaserPointer"
+    }
+  ],
   "keywords": [
     "collaboration",
     "networking"
@@ -58,6 +74,6 @@
   "author": {
     "name": "The CONIX Research Center",
     "email": "info@conix.io",
-    "url": "https://arena.conix.io"
+    "url": "https://docs.arenaxr.org"
   }
 }

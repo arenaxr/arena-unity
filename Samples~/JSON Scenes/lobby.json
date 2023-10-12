@@ -1,0 +1,747 @@
+[{
+    "object_id": "lobby-model",
+    "createdAt": "2022-01-06T17:09:57.870Z",
+    "updatedAt": "2022-01-06T17:09:57.887Z",
+    "data": {
+        "object_type": "gltf-model",
+        "url": "https://arena-cdn.conix.io/store/users/wiselab/room_models/lobby/lobby-v2.glb",
+        "position": {
+            "x": 0,
+            "y": -2,
+            "z": 0
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 0.05,
+            "y": 0.05,
+            "z": 0.05
+        },
+        "shadow": {
+            "cast": true,
+            "receive": true
+        }
+    },
+    "type": "object"
+}, {
+    "object_id": "39d71711-9fa7-4d7b-b87c-d7702e7ae426",
+    "createdAt": "2022-01-06T17:09:57.883Z",
+    "updatedAt": "2022-01-06T17:09:57.890Z",
+    "data": {
+        "env-presets": {
+            "active": false,
+            "preset": "default",
+            "flatShading": true,
+            "fog": 0,
+            "ground": "none"
+        },
+        "scene-options": {
+            "jitsiServer": "mr.andrew.cmu.edu",
+            "clickableOnlyEvents": true,
+            "privateScene": true,
+            "maxAVDist": 20
+        },
+        "renderer-settings": {
+            "outputEncoding": "sRGBEncoding",
+            "physicallyCorrectLights": false
+        }
+    },
+    "type": "scene-options"
+}, {
+    "object_id": "old-tree",
+    "createdAt": "2022-01-06T17:09:57.885Z",
+    "updatedAt": "2022-01-06T17:09:57.897Z",
+    "data": {
+        "object_type": "gltf-model",
+        "position": {
+            "x": 10,
+            "y": -0.25,
+            "z": 1.2
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 3,
+            "y": 3,
+            "z": 3
+        },
+        "url": "/store/users/wiselab/models/old_tree/scene.gltf"
+    },
+    "type": "object"
+}, {
+    "object_id": "main-light",
+    "createdAt": "2022-01-06T17:09:57.892Z",
+    "updatedAt": "2022-01-06T17:09:57.903Z",
+    "data": {
+        "object_type": "light",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+        },
+        "type": "ambient",
+        "color": "#ffffff",
+        "intensity": 1
+    },
+    "type": "object"
+}, {
+    "object_id": "controls_sign_img1",
+    "createdAt": "2022-01-06T17:09:57.895Z",
+    "updatedAt": "2022-01-06T17:09:57.903Z",
+    "data": {
+        "object_type": "image",
+        "position": {
+            "x": 2.5,
+            "y": 1.25,
+            "z": -13.6
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 7,
+            "y": 4,
+            "z": 3
+        },
+        "url": "https://arena-cdn.conix.io/store/users/wiselab/images/move-controls.png"
+    },
+    "type": "object"
+}, {
+    "object_id": "arm1",
+    "createdAt": "2022-01-06T17:09:57.899Z",
+    "updatedAt": "2022-01-06T17:09:57.911Z",
+    "data": {
+        "object_type": "gltf-model",
+        "position": {
+            "x": 20,
+            "y": -2,
+            "z": 11
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 0.01,
+            "y": 0.01,
+            "z": 0.01
+        },
+        "color": "#ffffff",
+        "url": "/models/factory_robot_arm/scene.gltf",
+        "animation-mixer": {
+            "clip": "Armature.002|Armature.002Action.001"
+        },
+        "click-listener": ""
+    },
+    "type": "object"
+}, {
+    "object_id": "square_vid1",
+    "createdAt": "2022-01-06T17:09:57.907Z",
+    "updatedAt": "2022-01-06T17:09:57.916Z",
+    "data": {
+        "object_type": "box",
+        "position": {
+            "x": 19,
+            "y": 1,
+            "z": -13.6
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 7,
+            "y": 4.5,
+            "z": 0.1
+        },
+        "color": "#808080",
+        "material": {
+            "src": "",
+            "side": "front"
+        },
+        "video-control": {
+            "video_object": "square_vid1",
+            "frame_object": "store/users/wiselab/images/conix-video-2.png",
+            "video_path": "store/users/wiselab/videos/one-minute-madness-sm.mp4",
+            "anyone_clicks": false,
+            "video_loop": false
+        },
+        "click-listener": true
+    },
+    "type": "object"
+}, {
+    "object_id": "poster1_pdflink",
+    "createdAt": "2022-01-06T17:09:57.909Z",
+    "updatedAt": "2022-01-06T17:09:57.923Z",
+    "data": {
+        "object_type": "image",
+        "position": {
+            "x": 24,
+            "y": 2,
+            "z": -13.5
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+        },
+        "color": "#ffffff",
+        "url": "https://arena-cdn.conix.io/store/users/conixadmin/review-2020-posters/ppdf.png",
+        "goto-url": {
+            "dest": "popup",
+            "on": "mousedown",
+            "url": "https://arena-cdn.conix.io/store/users/conixadmin/posters/poster_pdfs/P101638.pdf"
+        },
+        "click-listener": false
+    },
+    "type": "object"
+}, {
+    "object_id": "robot_sign_img1",
+    "createdAt": "2022-01-06T17:09:57.920Z",
+    "updatedAt": "2022-01-06T17:09:57.931Z",
+    "data": {
+        "object_type": "image",
+        "position": {
+            "x": 19,
+            "y": 1.25,
+            "z": 14.5
+        },
+        "rotation": {
+            "x": 0,
+            "y": 1,
+            "z": 0,
+            "w": 0
+        },
+        "scale": {
+            "x": 7,
+            "y": 4.5,
+            "z": 1
+        },
+        "color": "#ffffff",
+        "url": "https://arena-cdn.conix.io/store/users/wiselab/images/app-demo.png"
+    },
+    "type": "object"
+}, {
+    "object_id": "sound_sign_img1",
+    "createdAt": "2022-01-06T17:09:57.927Z",
+    "updatedAt": "2022-01-06T17:09:57.942Z",
+    "data": {
+        "object_type": "image",
+        "position": {
+            "x": 25.1,
+            "y": 1.5,
+            "z": -6
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0.707,
+            "z": 0,
+            "w": -0.707
+        },
+        "scale": {
+            "x": 4.75,
+            "y": 3,
+            "z": 1
+        },
+        "color": "#ffffff",
+        "url": "https://arena-cdn.conix.io/store/users/wiselab/images/directional-sound.png",
+        "click-listener": false
+    },
+    "type": "object"
+}, {
+    "object_id": "sound_sphere_right",
+    "createdAt": "2022-01-06T17:09:57.933Z",
+    "updatedAt": "2022-01-06T17:09:57.942Z",
+    "data": {
+        "object_type": "sphere",
+        "position": {
+            "x": 25.1,
+            "y": 1.5,
+            "z": -3.6
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 0.25,
+            "y": 0.25,
+            "z": 0.25
+        },
+        "color": "#0b7913",
+        "sound": {
+            "positional": true,
+            "poolSize": 1,
+            "src": "store/users/wiselab/audio/applause.wav",
+            "on": "mousedown"
+        },
+        "click-listener": true
+    },
+    "type": "object"
+}, {
+    "object_id": "sound_sphere_left",
+    "createdAt": "2022-01-06T17:09:57.938Z",
+    "updatedAt": "2022-01-06T17:09:57.951Z",
+    "data": {
+        "object_type": "sphere",
+        "position": {
+            "x": 25.1,
+            "y": 1.5,
+            "z": -8.4
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 0.25,
+            "y": 0.25,
+            "z": 0.25
+        },
+        "color": "#0b7913",
+        "sound": {
+            "positional": true,
+            "poolSize": 1,
+            "src": "store/users/wiselab/audio/applause.wav",
+            "on": "mousedown"
+        },
+        "click-listener": true
+    },
+    "type": "object"
+}, {
+    "object_id": "navigation-landmark",
+    "createdAt": "2022-01-06T17:09:57.949Z",
+    "updatedAt": "2022-01-06T17:09:57.959Z",
+    "data": {
+        "object_type": "box",
+        "position": {
+            "x": 3,
+            "y": 2,
+            "z": -13
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+        },
+        "material": {
+            "transparent": true,
+            "opacity": 0
+        },
+        "landmark": {
+            "label": "How to Navigate",
+            "offsetPosition": {
+                "x": 0.3,
+                "y": -2,
+                "z": 3.5
+            }
+        }
+    },
+    "type": "object"
+}, {
+    "object_id": "video-landmark",
+    "createdAt": "2022-01-06T17:09:57.957Z",
+    "updatedAt": "2022-01-06T17:09:57.964Z",
+    "data": {
+        "object_type": "box",
+        "position": {
+            "x": 20,
+            "y": 2,
+            "z": -13
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+        },
+        "material": {
+            "transparent": true,
+            "opacity": 0
+        },
+        "landmark": {
+            "label": "Video and Poster Demo",
+            "offsetPosition": {
+                "x": -0.2,
+                "y": -2,
+                "z": 4.7
+            }
+        }
+    },
+    "type": "object"
+}, {
+    "object_id": "audio-landmark",
+    "createdAt": "2022-01-06T17:09:57.962Z",
+    "updatedAt": "2022-01-06T17:09:57.972Z",
+    "data": {
+        "object_type": "box",
+        "position": {
+            "x": 26,
+            "y": 2,
+            "z": -6
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0.707,
+            "z": 0,
+            "w": -0.707
+        },
+        "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+        },
+        "material": {
+            "transparent": true,
+            "opacity": 0
+        },
+        "landmark": {
+            "label": "Spatial Sound Demo",
+            "offsetPosition": {
+                "x": -4.6,
+                "y": -2,
+                "z": 0.3
+            }
+        }
+    },
+    "type": "object"
+}, {
+    "object_id": "pinataParent",
+    "createdAt": "2022-01-06T17:09:57.968Z",
+    "updatedAt": "2022-01-06T17:09:57.979Z",
+    "data": {
+        "object_type": "box",
+        "position": {
+            "x": 1.159,
+            "y": -1.1,
+            "z": 19.626
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+        },
+        "color": "#ffffff",
+        "animation": {
+            "property": "position",
+            "to": "1.1588432948946288 -1.1 19.626309766362603",
+            "easing": "linear",
+            "dur": 100
+        },
+        "material": {
+            "transparent": true,
+            "opacity": 0
+        },
+        "landmark": {
+            "label": "Pinata",
+            "randomRadiusMin": 1,
+            "randomRadiusMax": 2,
+            "lookAtLandmark": true
+        }
+    },
+    "type": "object"
+}, {
+    "object_id": "screenshare",
+    "createdAt": "2022-01-06T17:09:58.002Z",
+    "updatedAt": "2022-01-06T17:09:58.012Z",
+    "data": {
+        "object_type": "box",
+        "position": {
+            "x": 2.5,
+            "y": 1.25,
+            "z": 15.25
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 7,
+            "y": 4,
+            "z": 0.25
+        },
+        "color": "#ffffff"
+    },
+    "type": "object"
+}, {
+    "object_id": "831a4e79-0ee6-43b4-8c9b-13f799a198cc",
+    "createdAt": "2022-01-06T17:09:58.009Z",
+    "updatedAt": "2022-01-06T17:09:58.041Z",
+    "data": {
+        "name": "wiselab/face-avatar",
+        "instantiate": "single",
+        "filename": "avatar.py",
+        "filetype": "PY",
+        "env": ["SCENE=${scene}", "MQTTH=${mqtth}", "REALM=realm", "NAMESPACE=${namespace}"],
+        "channels": []
+    },
+    "type": "program"
+}, {
+    "object_id": "background-pano",
+    "createdAt": "2022-01-06T17:09:58.019Z",
+    "updatedAt": "2022-01-06T17:09:58.050Z",
+    "data": {
+        "object_type": "gltf-model",
+        "position": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0.707,
+            "z": 0,
+            "w": 0.707
+        },
+        "scale": {
+            "x": 0.2,
+            "y": 0.2,
+            "z": 0.2
+        },
+        "url": "/store/users/wiselab/sky_pano/grand_canyon_yuma_point/scene.gltf"
+    },
+    "type": "object"
+}, {
+    "object_id": "btn_start",
+    "createdAt": "2022-01-06T17:09:58.047Z",
+    "updatedAt": "2022-01-06T17:09:58.061Z",
+    "data": {
+        "object_type": "box",
+        "position": {
+            "x": 18,
+            "y": -2,
+            "z": 11.5
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 0.5,
+            "y": 0.1,
+            "z": 0.5
+        },
+        "color": "#00ff00",
+        "click-listener": false
+    },
+    "type": "object"
+}, {
+    "object_id": "btn_stop",
+    "createdAt": "2022-01-06T17:09:58.057Z",
+    "updatedAt": "2022-01-06T17:09:58.069Z",
+    "data": {
+        "object_type": "box",
+        "position": {
+            "x": 18,
+            "y": -2,
+            "z": 10.5
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 0.5,
+            "y": 0.1,
+            "z": 0.5
+        },
+        "color": "#ff0000",
+        "click-listener": false
+    },
+    "type": "object"
+}, {
+    "object_id": "spotlight",
+    "createdAt": "2022-01-06T17:09:58.065Z",
+    "updatedAt": "2022-01-06T17:19:47.819Z",
+    "data": {
+        "object_type": "light",
+        "type": "spot",
+        "color": "#FFFFFF",
+        "intensity": 1,
+        "position": {
+            "x": 8,
+            "y": 3,
+            "z": 6
+        },
+        "rotation": {
+            "x": -90,
+            "y": 0,
+            "z": 0
+        },
+        "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+        },
+        "castShadow": true,
+        "angle": 30,
+        "distance": 10
+    },
+    "type": "object"
+}, {
+    "object_id": "startpos_around_tree",
+    "createdAt": "2022-01-06T17:09:58.067Z",
+    "updatedAt": "2022-01-06T17:09:58.082Z",
+    "data": {
+        "object_type": "entity",
+        "position": {
+            "x": 11.3,
+            "y": 0,
+            "z": 0.67
+        },
+        "landmark": {
+            "startingPosition": true,
+            "randomRadiusMin": 9,
+            "randomRadiusMax": 9,
+            "lookAtLandmark": true
+        }
+    },
+    "type": "object"
+}, {
+    "object_id": "poster1_videolink",
+    "createdAt": "2022-01-06T17:09:57.914Z",
+    "updatedAt": "2022-01-06T17:09:57.923Z",
+    "data": {
+        "object_type": "image",
+        "position": {
+            "x": 24,
+            "y": 0.5,
+            "z": -13.5
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+        },
+        "color": "#ffffff",
+        "url": "https://arena-cdn.conix.io/store/users/conixadmin/review-2020-posters/ltvideo.png",
+        "goto-url": {
+            "dest": "popup",
+            "on": "mousedown",
+            "url": "https://youtu.be/zNLL9AbruKQ"
+        },
+        "click-listener": false,
+        "parent": ""
+    },
+    "type": "object"
+}, {
+    "object_id": "pinata-model",
+    "createdAt": "2022-01-06T17:09:57.976Z",
+    "updatedAt": "2022-01-06T17:09:57.998Z",
+    "data": {
+        "object_type": "gltf-model",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "rotation": {
+            "x": 0,
+            "y": -1,
+            "z": 0,
+            "w": 0
+        },
+        "scale": {
+            "x": 0.002,
+            "y": 0.002,
+            "z": 0.002
+        },
+        "color": "#ffffff",
+        "url": "store/users/wiselab/models/fortnite_llama/scene.gltf",
+        "click-listener": "",
+        "parent": "pinataParent"
+    },
+    "type": "object"
+}, {
+    "object_id": "text1",
+    "createdAt": "2022-01-06T17:09:57.984Z",
+    "updatedAt": "2022-01-06T17:09:58.005Z",
+    "data": {
+        "object_type": "text",
+        "position": {
+            "x": 0,
+            "y": 2,
+            "z": 0
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "w": 1
+        },
+        "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+        },
+        "color": "#6464ff",
+        "value": "Click Me!",
+        "parent": "pinataParent"
+    },
+    "type": "object"
+}]
