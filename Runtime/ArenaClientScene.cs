@@ -363,16 +363,6 @@ namespace ArenaUnity
             return uris;
         }
 
-        private bool isElement(object el)
-        {
-            return el != null;
-        }
-
-        private bool isElementEmpty(object el)
-        {
-            return string.IsNullOrWhiteSpace((string)el);
-        }
-
         internal Uri ConstructRemoteUrl(string srcUrl)
         {
             if (string.IsNullOrWhiteSpace(srcUrl))
@@ -769,9 +759,8 @@ namespace ArenaUnity
             }
             if (data.rotation != null)
             {
-                // TODO: needed? bool invertY = !((string)data.object_type == "camera");
                 bool invertY = true;
-                if (isElement(data.rotation.W)) // quaternion
+                if (jData.SelectToken("rotation.w") != null) // quaternion
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
                 else // euler
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
@@ -860,7 +849,7 @@ namespace ArenaUnity
                     // TODO: case "modelUpdate": ArenaUnity.ApplyModelUpdate(gobj, data); break;
                     case "material":
                         ArenaUnity.ApplyMaterial(gobj, data);
-                        if (isElement(data.material.Src))
+                        if (!string.IsNullOrEmpty(data.material.Src))
                             AttachMaterialTexture(checkLocalAsset((string)data.material.Src), gobj);
                         break;
                 }
@@ -1184,7 +1173,7 @@ namespace ArenaUnity
                     case "update":
                         object_id = (string)msg.object_id;
                         string msg_type = (string)msg.type;
-                        float ttl = isElement(msg.ttl) ? (float)msg.ttl : 0f;
+                        float ttl = (msg.ttl != null) ? (float)msg.ttl : 0f;
                         bool persist = Convert.ToBoolean(msg.persist);
 
                         // there isnt already an object in the scene created by the user with the same object_id

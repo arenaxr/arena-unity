@@ -104,17 +104,6 @@ namespace ArenaUnity
             }
             return positions;
         }
-        public static void ToUnityMesh(ref Mesh mesh)
-        {
-            // reverse position on vertex/normal on Z axis
-            mesh.vertices = ToUnityPosition(mesh.vertices);
-            mesh.normals = ToUnityPosition(mesh.normals);
-            // reverse winding order of triangles such that outer normals are preserved
-            List<int> tri = new List<int>();
-            mesh.GetTriangles(tri, 0);
-            tri.Reverse();
-            mesh.SetTriangles(tri, 0);
-        }
 
         // rotation
         public static ArenaRotationJson ToArenaRotationQuat(Quaternion rotationQuat, bool invertY = true)
@@ -145,26 +134,14 @@ namespace ArenaUnity
                 (float)rotationQuat.w
             );
         }
-        /// <summary>
-        /// Converts Vector3 rotationEuler to dynamic rotationEuler. CAUTION: Do not use for ARENA!
-        /// A merge with quaternion type will leave a mix of xyz euler and w quaternion = badness.
-        /// </summary>
-        public static ArenaVector3Json ToArenaRotationEuler(Vector3 rotationEuler, bool invertY = true)
-        {
-            return new ArenaVector3Json
-            {
-                X = ArenaFloat(-rotationEuler.x),
-                Y = ArenaFloat(rotationEuler.y * (invertY ? -1 : 1)),
-                Z = ArenaFloat(rotationEuler.z)
-            };
-        }
         public static Quaternion ToUnityRotationEuler(ArenaRotationJson rotationEuler, bool invertY = true)
         {
-            return Quaternion.Euler(
-                -(float)rotationEuler.X,
-                (float)rotationEuler.Y * (invertY ? -1 : 1),
-                (float)rotationEuler.Z
-            );
+            return ToUnityRotationQuat(
+                Quaternion.Euler(
+                    rotationEuler.X,
+                    rotationEuler.Y,
+                    rotationEuler.Z
+                ), invertY);
         }
         public static Quaternion GltfToUnityRotationQuat(Quaternion rotationQuat)
         {
@@ -172,11 +149,9 @@ namespace ArenaUnity
             euler.y -= 180;
             return Quaternion.Euler(euler);
         }
-        public static ArenaRotationJson ToArenaRotationPlaneMesh(Quaternion rotationQuat)
-        {
-            rotationQuat *= Quaternion.Euler(90, 0, 0);
-            return ToArenaRotationQuat(rotationQuat);
-        }
+        // CAUTION: Do not use ToArenaRotationEuler() for ARENA!
+        // A merge with quaternion type will leave a mix of xyz euler and w quaternion = badness.
+        // public static ArenaVector3Json ToArenaRotationEuler(Vector3 rotationEuler, bool invertY = true) { }
 
         // scale
         public static ArenaVector3Json ToArenaScale(Vector3 scale)
@@ -195,6 +170,24 @@ namespace ArenaUnity
                 (float)scale.Y,
                 (float)scale.Z
             );
+        }
+
+        // mesh
+        public static void ToUnityMesh(ref Mesh mesh)
+        {
+            // reverse position on vertex/normal on Z axis
+            mesh.vertices = ToUnityPosition(mesh.vertices);
+            mesh.normals = ToUnityPosition(mesh.normals);
+            // reverse winding order of triangles such that outer normals are preserved
+            List<int> tri = new List<int>();
+            mesh.GetTriangles(tri, 0);
+            tri.Reverse();
+            mesh.SetTriangles(tri, 0);
+        }
+        public static ArenaRotationJson ToArenaRotationPlaneMesh(Quaternion rotationQuat)
+        {
+            rotationQuat *= Quaternion.Euler(90, 0, 0);
+            return ToArenaRotationQuat(rotationQuat);
         }
 
         // color
