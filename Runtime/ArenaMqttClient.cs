@@ -190,13 +190,12 @@ namespace ArenaUnity
             string userMqttPath = Path.Combine(sceneAuthDir, mqttTokenFile);
             string mqttToken = null;
             CoroutineWithData cd;
-
-            //if (!Directory.Exists(sceneAuthDir))
-            //{
-            //    Directory.CreateDirectory(sceneAuthDir);
-            //    //Directory.CreateDirectory(sceneAuthDir, new System.Security.AccessControl.DirectorySecurity());
-            //}
-
+#if UNITY_EDITOR && !( UNITY_ANDROID || UNITY_IOS )
+            if (!Directory.Exists(sceneAuthDir))
+            {
+                Directory.CreateDirectory(sceneAuthDir);
+            }
+#endif
             if (hostAddress == "localhost")
             {
                 verifyCertificate = false;
@@ -327,10 +326,11 @@ namespace ArenaUnity
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
                 mqttToken = cd.result.ToString();
-
-                //StreamWriter writer = new StreamWriter(userMqttPath);
-                //writer.Write(mqttToken);
-                //writer.Close();
+#if UNITY_EDITOR && !( UNITY_ANDROID || UNITY_IOS )
+                StreamWriter writer = new StreamWriter(userMqttPath);
+                writer.Write(mqttToken);
+                writer.Close();
+#endif
             }
 
             var auth = JsonConvert.DeserializeObject<ArenaMqttAuthJson>(mqttToken);
@@ -359,16 +359,17 @@ namespace ArenaUnity
                 willMessage = JsonConvert.SerializeObject(msg);
             }
 
-            //var handler = new JwtSecurityTokenHandler();
-            //JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
-            //if (string.IsNullOrWhiteSpace(namespaceName))
-            //{
-            //    namespaceName = payloadJson.Sub;
-            //}
-            //mqttExpires = (long)payloadJson.Exp;
-            //DateTimeOffset dateTimeOffSet = DateTimeOffset.FromUnixTimeSeconds(mqttExpires);
-            //TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now.ToUniversalTime());
-            //Debug.Log($"MQTT Token expires in {ArenaUnity.TimeSpanToString(duration)}");
+            var handler = new JwtSecurityTokenHandler();
+            JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
+            permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
+            if (string.IsNullOrWhiteSpace(namespaceName))
+            {
+                namespaceName = payloadJson.Sub;
+            }
+            mqttExpires = (long)payloadJson.Exp;
+            DateTimeOffset dateTimeOffSet = DateTimeOffset.FromUnixTimeSeconds(mqttExpires);
+            TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now.ToUniversalTime());
+            Debug.Log($"MQTT Token expires in {ArenaUnity.TimeSpanToString(duration)}");
 
             // background mqtt connect
             Connect();
