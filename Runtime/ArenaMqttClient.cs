@@ -190,7 +190,12 @@ namespace ArenaUnity
             string userMqttPath = Path.Combine(sceneAuthDir, mqttTokenFile);
             string mqttToken = null;
             CoroutineWithData cd;
-
+#if UNITY_EDITOR && !( UNITY_ANDROID || UNITY_IOS )
+            if (!Directory.Exists(sceneAuthDir))
+            {
+                Directory.CreateDirectory(sceneAuthDir);
+            }
+#endif
             if (hostAddress == "localhost")
             {
                 verifyCertificate = false;
@@ -226,6 +231,7 @@ namespace ArenaUnity
                 {
                     case Auth.Anonymous:
                         // prefix all anon users with "anonymous-"
+                        Debug.Log("Using anonymous MQTT token.");
                         tokenType = "anonymous";
                         userName = $"anonymous-unity";
                         break;
@@ -267,7 +273,7 @@ namespace ArenaUnity
                         tokenType = "google-installed";
                         break;
                     case Auth.Manual:
-                        Debug.LogError($"Authentication type '{authType}' missing local token file: {localMqttPath}.");
+                        Debug.LogError($"Authentication type Manual missing local token file: {localMqttPath}.");
                         yield break;
                     default:
                         Debug.LogError($"Invalid ARENA authentication type: '{tokenType}'");
@@ -320,10 +326,11 @@ namespace ArenaUnity
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
                 mqttToken = cd.result.ToString();
-
+#if UNITY_EDITOR && !( UNITY_ANDROID || UNITY_IOS )
                 StreamWriter writer = new StreamWriter(userMqttPath);
                 writer.Write(mqttToken);
                 writer.Close();
+#endif
             }
 
             var auth = JsonConvert.DeserializeObject<ArenaMqttAuthJson>(mqttToken);
