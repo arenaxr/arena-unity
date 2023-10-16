@@ -2,6 +2,16 @@
 
 ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.10.4](https://github.com/arenaxr/arena-unity/compare/v0.10.3...v0.10.4) (2023-10-13)
+
+
+### Bug Fixes
+
+* **auth:** allow ios/android builds to skip writing token to disk  ([#83](https://github.com/arenaxr/arena-unity/issues/83)) ([59a9f8b](https://github.com/arenaxr/arena-unity/commit/59a9f8b0f6f39e7c50f6a6dd8d3fea361e09231c))
+* **mesh:** added cone flat bottom, added cone/cylinder thetaLength ([a536ead](https://github.com/arenaxr/arena-unity/commit/a536ead960d3d48c982961aaf1c02418f3d3ca25))
+* **rotation:** corrected support for deprecated euler still in wire format ([285eb4d](https://github.com/arenaxr/arena-unity/commit/285eb4d8f66d3e87fb7b5bf95b635a51e563b4d8))
+* **visible/renderer:** loop through all child objects for setting renderer enabled ([06cf60f](https://github.com/arenaxr/arena-unity/commit/06cf60f29129eda35b27380522405e770a055186))
+
 ## [0.10.3](https://github.com/arenaxr/arena-unity/compare/v0.10.2...v0.10.3) (2023-10-08)
 
 
