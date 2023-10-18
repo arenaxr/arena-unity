@@ -480,6 +480,30 @@ namespace ArenaUnity
             text.apply = true;
         }
 
+        //ARENAUI Objects
+        public static void ApplyWireArenauiCard(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireArenauiCard>(out var text))
+                text = gobj.AddComponent<ArenaWireArenauiCard>();
+            text.json = JsonConvert.DeserializeObject<ArenaArenauiCardJson>(MergeRawJson(text.json, indata));
+            text.apply = true;
+        }
+        public static void ApplyWireArenauiButtonPanel(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireArenauiButtonPanel>(out var text))
+                text = gobj.AddComponent<ArenaWireArenauiButtonPanel>();
+            text.json = JsonConvert.DeserializeObject<ArenaArenauiButtonPanelJson>(MergeRawJson(text.json, indata));
+            text.apply = true;
+        }
+        public static void ApplyWireArenauiPrompt(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireArenauiPrompt>(out var text))
+                text = gobj.AddComponent<ArenaWireArenauiPrompt>();
+            text.json = JsonConvert.DeserializeObject<ArenaArenauiPromptJson>(MergeRawJson(text.json, indata));
+            text.apply = true;
+        }        
+
+
         // scene options components
 
         public static void ApplyEnvironmentPresets(GameObject gobj, ArenaArenaSceneOptionsJson data)
