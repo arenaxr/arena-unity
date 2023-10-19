@@ -82,6 +82,24 @@ namespace ArenaUnity.Schemas
             return (Font != defFont);
         }
 
+        public enum ThemeType
+        {
+            [EnumMember(Value = "light")]
+            Light,
+            [EnumMember(Value = "dark")]
+            Dark,
+        }
+        private static ThemeType defTheme = ThemeType.Light;
+        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty(PropertyName = "theme")]
+        [Tooltip("Color Theme")]
+        public ThemeType Theme = defTheme;
+        public bool ShouldSerializeTheme()
+        {
+            // theme
+            return (Theme != defTheme);
+        }
+
         // General json object management
         [OnError]
         internal void OnError(StreamingContext context, ErrorContext errorContext)
