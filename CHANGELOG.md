@@ -308,13 +308,13 @@ arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 * **objects:** remove problimatic auto-rename ([65a2512](https://github.com/arenaxr/arena-unity/commit/65a2512ea135cb752d9c2cb7bc3f9c830edf27f1))
 * **primitive:** match more primitives to a-frame defaults ([42e57ce](https://github.com/arenaxr/arena-unity/commit/42e57cee336b756c20257e783cf136ea86d4a4e3))
 
-## [0.0.14](https://github.com/conix-center/arena-unity/compare/0.0.13...v0.0.14) (2022-07-14)
+## [0.0.14](https://github.com/arenaxr/arena-unity/compare/0.0.13...v0.0.14) (2022-07-14)
 
 
 ### Bug Fixes
 
-* **editor:** improve arena object inspector color light theme ([213f263](https://github.com/conix-center/arena-unity/commit/213f2636fe7ad876bb98bf2b7300fd0ee869d53c))
-* spelling ([c8d364f](https://github.com/conix-center/arena-unity/commit/c8d364fcae08dfd6100ef622ab6f8cabbef02743))
+* **editor:** improve arena object inspector color light theme ([213f263](https://github.com/arenaxr/arena-unity/commit/213f2636fe7ad876bb98bf2b7300fd0ee869d53c))
+* spelling ([c8d364f](https://github.com/arenaxr/arena-unity/commit/c8d364fcae08dfd6100ef622ab6f8cabbef02743))
 
 ## [0.0.13] - 2022-02-28
 ### Added
