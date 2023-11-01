@@ -328,7 +328,6 @@ namespace ArenaUnity
             return (animationMixer != null);
         }
 
-
         [JsonProperty(PropertyName = "gltf-model-lod")]
         [Tooltip("Simple switch between the default gltf-model and a detailed one when a user camera is within specified distance")]
         public ArenaGltfModelLodJson gltfModelLod = null;
@@ -337,13 +336,20 @@ namespace ArenaUnity
             return (gltfModelLod != null);
         }
 
-
         [JsonProperty(PropertyName = "modelUpdate")]
         [Tooltip("The GLTF-specific `modelUpdate` attribute is an object with child component names as keys. The top-level keys are the names of the child components to be updated. The values of each are nested `position` and `rotation` attributes to set as new values, respectively. Either `position` or `rotation` can be omitted if unchanged.")]
         public ArenaModelUpdateJson modelUpdate = null;
         public bool ShouldSerializemodelUpdate()
         {
             return (modelUpdate != null);
+        }
+
+        [JsonProperty(PropertyName = "arena-user")]
+        [Tooltip("The user avatar data for an ARENA user.")]
+        public ArenaArenaUserJson arenaUser = null;
+        public bool ShouldSerializearenaUser()
+        {
+            return (arenaUser != null);
         }
 
         [JsonProperty(PropertyName = "geometry")]

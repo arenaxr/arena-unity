@@ -62,13 +62,6 @@ namespace ArenaUnity
             return (attributes != null);
         }
 
-        // TODO (mwfarb): remove displayName from transaction level object
-        public string displayName = null;
-        public bool ShouldSerializedisplayName()
-        {
-            return (displayName != null);
-        }
-
         [OnError]
         internal void OnError(StreamingContext context, ErrorContext errorContext)
         {

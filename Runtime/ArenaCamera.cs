@@ -5,6 +5,7 @@
 
 using System.Collections;
 using ArenaUnity.Components;
+using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PrettyHierarchy;
@@ -94,7 +95,6 @@ namespace ArenaUnity
             {   // provide default name if needed
                 displayName = name;
             }
-            msg.displayName = displayName;
 
             // minimum transform information
             ArenaObjectDataJson dataUnity = new ArenaObjectDataJson
@@ -102,16 +102,16 @@ namespace ArenaUnity
                 object_type = "camera",
                 position = ArenaUnity.ToArenaPosition(transform.localPosition),
                 rotation = ArenaUnity.ToArenaRotationQuat(transform.localRotation), // always send quaternions over the wire
-            };
-            ArenaCameraJson dataCam = new ArenaCameraJson
-            {
-                headModelPath = headModelPath,
-                color = ArenaUnity.ToArenaColor(displayColor),
+                arenaUser = new ArenaArenaUserJson
+                {
+                    displayName = displayName,
+                    headModelPath = headModelPath,
+                    color = ArenaUnity.ToArenaColor(displayColor),
+                }
             };
 
             var updatedData = new JObject();
             updatedData.Merge(JObject.FromObject(dataUnity));
-            updatedData.Merge(JObject.FromObject(dataCam));
 
             // publish
             msg.data = updatedData;
