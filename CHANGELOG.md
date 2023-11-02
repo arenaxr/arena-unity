@@ -2,6 +2,18 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.11.0](https://github.com/arenaxr/arena-unity/compare/v0.10.4...v0.11.0) (2023-11-02)
+
+
+### Features
+
+* **arena-user:** updated camera objects to use arena-user component schema ([#86](https://github.com/arenaxr/arena-unity/issues/86)) ([6268c33](https://github.com/arenaxr/arena-unity/commit/6268c3376e06bb5666637c6575da83677c93eb8e))
+
+
+### Bug Fixes
+
+* **arenaui:** added theme/font updates for arenaui json ([00fbb37](https://github.com/arenaxr/arena-unity/commit/00fbb37f33f4d22f3cd913db932f0bf562fce988))
+
 ## [0.10.4](https://github.com/arenaxr/arena-unity/compare/v0.10.3...v0.10.4) (2023-10-13)
 
 
