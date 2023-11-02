@@ -521,7 +521,7 @@ namespace ArenaUnity
 #endif
         }
 
-        private void CreateUpdateObject(ArenaObjectJson msg, object indata, string displayName = null, object menuCommand = null)
+        private void CreateUpdateObject(ArenaObjectJson msg, object indata, object menuCommand = null)
         {
             ArenaObject aobj = null;
             if (arenaObjs.TryGetValue(msg.object_id, out GameObject gobj))
@@ -578,7 +578,7 @@ namespace ArenaUnity
             switch (msg.type)
             {
                 case "object":
-                    UpdateObjectMessage(msg, indata, displayName, aobj, gobj, jData);
+                    UpdateObjectMessage(msg, indata, aobj, gobj, jData);
                     break;
                 case "scene-options":
                     UpdateSceneOptionsMessage(indata, gobj, jData);
@@ -618,7 +618,7 @@ namespace ArenaUnity
             }
         }
 
-        private void UpdateObjectMessage(ArenaObjectJson msg, object indata, string displayName, ArenaObject aobj, GameObject gobj, JObject jData)
+        private void UpdateObjectMessage(ArenaObjectJson msg, object indata, ArenaObject aobj, GameObject gobj, JObject jData)
         {
             ArenaObjectDataJson data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
 
@@ -700,7 +700,9 @@ namespace ArenaUnity
                         cam.farClipPlane = 10000f; // match arena
                         cam.fieldOfView = 80f; // match arena
                         cam.targetDisplay = 8; // render on least-used display
-                        AttachAvatar(msg.object_id, JsonConvert.DeserializeObject<ArenaCameraJson>(indata.ToString()), displayName, gobj);
+                        var json = new ArenaArenaUserJson();
+                        json = JsonConvert.DeserializeObject<ArenaArenaUserJson>(ArenaUnity.MergeRawJson(json, data.arenaUser));
+                        AttachAvatar(msg.object_id, json, gobj);
                     }
                     break;
                 case "handLeft":
@@ -856,12 +858,15 @@ namespace ArenaUnity
             }
         }
 
-        internal void AttachAvatar(string object_id, ArenaCameraJson data, string displayName, GameObject gobj)
+        internal void AttachAvatar(string object_id, ArenaArenaUserJson json, GameObject gobj)
         {
+            json.headModelPath ??= arenaDefaults.headModelPath;
+            json.displayName ??=arenaDefaults.userName;
+
             bool worldPositionStays = false;
-            if (data.headModelPath != null)
+            if (json.headModelPath != null)
             {
-                string localpath = checkLocalAsset(data.headModelPath);
+                string localpath = checkLocalAsset(json.headModelPath);
                 if (localpath != null)
                 {
                     string headModelId = $"head-model-{object_id}";
@@ -884,7 +889,7 @@ namespace ArenaUnity
                     {
                         // update text
                         TextMeshPro tm = foundHeadText.GetComponent<TextMeshPro>();
-                        tm.text = displayName;
+                        tm.text = json.displayName;
                     }
                     else
                     {
@@ -892,9 +897,9 @@ namespace ArenaUnity
                         GameObject htobj = new GameObject(headTextId);
                         TextMeshPro tm = htobj.transform.gameObject.AddComponent<TextMeshPro>();
                         tm.alignment = TextAlignmentOptions.Center;
-                        tm.color = ArenaUnity.ToUnityColor((string)data.color);
+                        tm.color = ArenaUnity.ToUnityColor((string)json.color);
                         tm.fontSize = 5;
-                        tm.text = displayName;
+                        tm.text = json.displayName;
 
                         htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
                         htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
@@ -1189,7 +1194,7 @@ namespace ArenaUnity
                                 }
                             }
                         }
-                        CreateUpdateObject(msg, msg.data, msg.displayName, menuCommand);
+                        CreateUpdateObject(msg, msg.data, menuCommand);
                         break;
                     case "delete":
                         object_id = (string)msg.object_id;
