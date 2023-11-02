@@ -700,7 +700,9 @@ namespace ArenaUnity
                         cam.farClipPlane = 10000f; // match arena
                         cam.fieldOfView = 80f; // match arena
                         cam.targetDisplay = 8; // render on least-used display
-                        AttachAvatar(msg.object_id, data.arenaUser, gobj);
+                        var json = new ArenaArenaUserJson();
+                        json = JsonConvert.DeserializeObject<ArenaArenaUserJson>(ArenaUnity.MergeRawJson(json, data.arenaUser));
+                        AttachAvatar(msg.object_id, json, gobj);
                     }
                     break;
                 case "handLeft":
@@ -858,6 +860,9 @@ namespace ArenaUnity
 
         internal void AttachAvatar(string object_id, ArenaArenaUserJson json, GameObject gobj)
         {
+            json.headModelPath ??= arenaDefaults.headModelPath;
+            json.displayName ??=arenaDefaults.userName;
+
             bool worldPositionStays = false;
             if (json.headModelPath != null)
             {
