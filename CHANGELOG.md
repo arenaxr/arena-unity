@@ -4,6 +4,9 @@ arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
 ## [0.11.0](https://github.com/arenaxr/arena-unity/compare/v0.10.4...v0.11.0) (2023-11-02)
 
+* **BREAKING CHANGE**: All `arena-user` attributes (descriptors of users in the scene) now are published under the
+                       `arena-user` key within the `data` block, rather than the top-level or directly under `data`
+                       of the of the MQTT message.
 
 ### Features
 
