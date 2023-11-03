@@ -17,6 +17,9 @@ using Google.Apis.Util.Store;
 using M2MqttUnity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt;
@@ -55,7 +58,6 @@ namespace ArenaUnity
         const string mqttTokenFile = ".arena_mqtt_auth";
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
-        protected string userHomePath { get; private set; }
         public string appFilesPath { get; private set; }
         public string userid { get; private set; }
         public string camid { get; private set; }
@@ -70,7 +72,6 @@ namespace ArenaUnity
 
         public enum Auth { Anonymous, Google, Manual };
         public bool IsShuttingDown { get; internal set; }
-
 
         private List<byte[]> eventMessages = new List<byte[]>();
 
@@ -160,9 +161,14 @@ namespace ArenaUnity
 
         // Auth methods
 
+        internal static string  GetUnityAuthPath()
+        {
+            string userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+            return Path.Combine(userHomePath, userDirArena, userSubDirUnity);
+        }
+
         protected virtual void OnEnable()
         {
-            userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             appFilesPath = Application.isMobilePlatform ? Application.persistentDataPath : "";
         }
 
@@ -185,7 +191,7 @@ namespace ArenaUnity
         private IEnumerator Signin(string sceneName, string namespaceName, string realm, bool camera, string latencyTopic)
         {
             networkLatencyTopic = latencyTopic;
-            string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, hostAddress, "s");
+            string sceneAuthDir = Path.Combine(GetUnityAuthPath(), hostAddress, "s");
             string userGAuthPath = sceneAuthDir;
             string userMqttPath = Path.Combine(sceneAuthDir, mqttTokenFile);
             string mqttToken = null;
@@ -374,6 +380,24 @@ namespace ArenaUnity
             // background mqtt connect
             Connect();
             yield return namespaceName;
+        }
+
+        /// <summary>
+        /// Remove ARENA authentication.
+        /// </summary>
+#if UNITY_EDITOR
+        [MenuItem("ARENA/Signout")]
+#endif
+        internal static void SignoutArena()
+        {
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+                EditorApplication.ExitPlaymode();
+#endif
+            string unityAuthPath = GetUnityAuthPath();
+            if (Directory.Exists(unityAuthPath))
+                Directory.Delete(unityAuthPath, true);
+            Debug.Log("Signed out of the ARENA.");
         }
 
         private static Stream ToStream(string str)
