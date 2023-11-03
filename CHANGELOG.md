@@ -2,6 +2,14 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.11.1](https://github.com/arenaxr/arena-unity/compare/v0.11.0...v0.11.1) (2023-11-03)
+
+
+### Bug Fixes
+
+* **auth:** fixed failed Signout command ([6b13ced](https://github.com/arenaxr/arena-unity/commit/6b13ced690234d1e919b45535011bdee1fde805b))
+* **light:** disable Light component from visible/remote-render ([1df5030](https://github.com/arenaxr/arena-unity/commit/1df5030ff702ed19bfdd271e1298542150ffbe55))
+
 ## [0.11.0](https://github.com/arenaxr/arena-unity/compare/v0.10.4...v0.11.0) (2023-11-02)
 
 * **BREAKING CHANGE**: All `arena-user` attributes (descriptors of users in the scene) now are published under the
