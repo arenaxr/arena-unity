@@ -241,6 +241,10 @@ namespace ArenaUnity
             {
                 renderer.enabled = (bool)data.visible;
             }
+            foreach (Light light in gobj.GetComponentsInChildren<Light>(true))
+            {
+                light.enabled = (bool)data.visible;
+            }
         }
         public static void ApplyRemoteRender(GameObject gobj, ArenaObjectDataJson data)
         {
@@ -248,6 +252,10 @@ namespace ArenaUnity
             foreach (Renderer renderer in gobj.GetComponentsInChildren<Renderer>(true))
             {
                 renderer.enabled = data.remoteRender.Enabled;
+            }
+            foreach (Light light in gobj.GetComponentsInChildren<Light>(true))
+            {
+                light.enabled = data.remoteRender.Enabled;
             }
         }
 
