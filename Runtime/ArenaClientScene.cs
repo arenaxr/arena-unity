@@ -48,6 +48,8 @@ namespace ArenaUnity
         [Header("Presence")]
         [Tooltip("Display other camera avatars in the scene")]
         public bool renderCameras = true;
+        [Tooltip("Display other avatars' hand controllers in the scene")]
+        public bool renderHands = true;
         [Tooltip("Display VR Controller Rays")]
         public bool drawControllerRays = false;
 
@@ -691,7 +693,10 @@ namespace ArenaUnity
                     break;
                 case "handLeft":
                 case "handRight":
-                    AttachHand(msg.object_id, url, gobj);
+                    if (renderHands)
+                    {
+                        AttachHand(msg.object_id, url, gobj);
+                    }
                     break;
             }
 
@@ -845,7 +850,7 @@ namespace ArenaUnity
         internal void AttachAvatar(string object_id, ArenaArenaUserJson json, GameObject gobj)
         {
             json.headModelPath ??= arenaDefaults.headModelPath;
-            json.displayName ??=arenaDefaults.userName;
+            json.displayName ??= arenaDefaults.userName;
 
             bool worldPositionStays = false;
             if (json.headModelPath != null)
