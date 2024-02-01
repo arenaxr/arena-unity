@@ -51,6 +51,7 @@ namespace ArenaUnity
         // internal variables
         private string idToken = null;
         protected string csrfToken = null;
+        protected string fsToken = null;
         private static UserCredential credential;
 
         // local paths
@@ -289,9 +290,10 @@ namespace ArenaUnity
                 // get arena CSRF token
                 yield return HttpRequestAuth($"https://{hostAddress}/user/login");
 
-                // get arena user account state
                 WWWForm form = new WWWForm();
                 if (idToken != null) form.AddField("id_token", idToken);
+
+                // get arena user account state
                 cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/user_state", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
@@ -311,6 +313,12 @@ namespace ArenaUnity
                         namespaceName = "public";
                     }
                 }
+                // get fs login
+                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/storelogin", csrfToken, form));
+                yield return cd.coroutine;
+                if (!isCrdSuccess(cd.result)) yield break;
+                Debug.LogWarning($"FILE STORE TOKEN: '{fsToken}'");
+
                 // get arena user mqtt token
                 form.AddField("id_auth", tokenType);
                 form.AddField("username", userName);
@@ -446,6 +454,8 @@ namespace ArenaUnity
                         csrfToken = GetCookie(SetCookie, "csrftoken");
                     else if (SetCookie.Contains("csrf="))
                         csrfToken = GetCookie(SetCookie, "csrf");
+                    if (SetCookie.Contains("auth="))
+                        fsToken = GetCookie(SetCookie, "auth");
                 }
                 yield return www.downloadHandler.text;
             }
@@ -456,13 +466,13 @@ namespace ArenaUnity
             return result != null && result.ToString() != "UnityEngine.Networking.UnityWebRequestAsyncOperation";
         }
 
-        private string GetCookie(string SetCookie, string csrftag)
+        private string GetCookie(string SetCookie, string cookieTag)
         {
             string csrfCookie = null;
-            Regex rxCookie = new Regex($"{csrftag}=(?<csrf_token>.{64});");
+            Regex rxCookie = new Regex($"(^| ){cookieTag}=([^;]+)");
             MatchCollection cookieMatches = rxCookie.Matches(SetCookie);
             if (cookieMatches.Count > 0)
-                csrfCookie = cookieMatches[0].Groups["csrf_token"].Value;
+                csrfCookie = cookieMatches[0].Groups[2].Value;
             return csrfCookie;
         }
 
