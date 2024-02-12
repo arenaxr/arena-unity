@@ -966,6 +966,7 @@ namespace ArenaUnity
                 var gltf = mobj.AddComponent<GLTFast.GltfAsset>();
                 gltf.Url = fullUrl;
                 // TODO: (mwfarb) add a error handler in the main thread if the url is 404
+                // TODO: (mwfarb) add a load complete handler to manage the animations
                 //mobj = Importer.LoadFromFile(assetPath, i, out clips);
             }
             catch (Exception err)
