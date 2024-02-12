@@ -1,9 +1,9 @@
 {
     "name": "conix.arena.unity",
     "references": [
-        "Siccity.GLTFUtility",
         "PrettyHierarchy",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "glTFast"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
