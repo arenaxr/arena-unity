@@ -4,6 +4,7 @@
         "PrettyHierarchy",
         "Unity.TextMeshPro",
         "glTFast",
+        "glTFast.Export",
         "Draco"
     ],
     "includePlatforms": [],

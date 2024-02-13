@@ -4,10 +4,17 @@
  */
 
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using ArenaUnity.Schemas;
+using GLTFast.Export;
+using GLTFast.Logging;
 using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 namespace ArenaUnity
 {
@@ -157,6 +164,18 @@ namespace ArenaUnity
             PublishWireObject(menuCommand, "triangle", MatColor);
         }
 
+        [MenuItem("Assets/ARENA Export GLTF/GLTF-Binary (.glb)", false, 32)]
+        static void ExportSelectionBinaryMenu()
+        {
+            ExportSelection();
+        }
+
+        [MenuItem("GameObject/ARENA Export GLTF/GLTF-Binary (.glb)", false, 31)]
+        static void ExportGameObjectBinaryMenu(MenuCommand command)
+        {
+            ExportGameObject(command);
+        }
+
         [MenuItem("GameObject/ARENA/Entity", true)]
         [MenuItem("GameObject/ARENA/GLTF Model", true)]
         [MenuItem("GameObject/ARENA/Image", true)]
@@ -178,6 +197,8 @@ namespace ArenaUnity
         [MenuItem("GameObject/ARENA/Torus", true)]
         [MenuItem("GameObject/ARENA/TorusKnot", true)]
         [MenuItem("GameObject/ARENA/Triangle", true)]
+        [MenuItem("GameObject/ARENA Export GLTF/GLTF-Binary (.glb)", true)]
+        [MenuItem("Assets/ARENA Export GLTF/GLTF-Binary (.glb)", true)]
         static bool ValidateCreateArenaObject()
         {
             return ArenaClientScene.Instance != null && ArenaClientScene.Instance.mqttClientConnected;
@@ -217,6 +238,73 @@ namespace ArenaUnity
             string payload = JsonConvert.SerializeObject(msg);
             client.PublishObject(msg.object_id, payload, client.sceneObjectRights);
         }
+
+        static void ExportGameObject(MenuCommand command)
+        {
+            var go = command.context as GameObject;
+            if (go != null)
+            {
+                ExportBinaryStream(go.name, new[] { go });
+            }
+            else if (TryGetExportNameAndGameObjects(out var name, out var gameObjects))
+            {
+                ExportBinaryStream(name, gameObjects);
+            }
+        }
+
+        static void ExportSelection()
+        {
+            if (TryGetExportNameAndGameObjects(out var name, out var gameObjects))
+            {
+                ExportBinaryStream(name, gameObjects);
+            }
+        }
+
+        static async Task<bool> ExportBinaryStream(string name, GameObject[] gameObjects)
+        {
+            var settings = new ExportSettings
+            {
+                Format = GltfFormat.Binary
+            };
+            var goSettings = new GameObjectExportSettings { OnlyActiveInHierarchy = false };
+            var export = new GameObjectExport(settings, gameObjectExportSettings: goSettings, logger: new ConsoleLogger());
+            export.AddScene(gameObjects, name);
+
+            MemoryStream stream = new MemoryStream();
+            bool streamSuccess = await export.SaveToStreamAndDispose(stream);
+
+            var storeResPrefix = authState.is_staff ? $"users/{username}/" : "";
+            var userFilePath = $"scenes/{sceneinput.value}/{resultFileOpen.name}";
+            var storeResPath = $"{storeResPrefix}{userFilePath}";
+
+            byte[] payload = stream.GetBuffer();
+            UnityWebRequest www = new UnityWebRequest($"https://localhost/storemng/api/resources/{storeResPath}?override=true");
+            UploadHandler uploadHandler = new UploadHandlerRaw(payload);
+            www.SetRequestHeader("X-Auth", fsToken);
+            // uploadHandler.contentType = "custom/content-type";
+            www.uploadHandler = uploadHandler;
+
+            return streamSuccess;
+        }
+
+        static bool TryGetExportNameAndGameObjects(out string name, out GameObject[] gameObjects)
+        {
+            var transforms = Selection.GetTransforms(SelectionMode.Assets | SelectionMode.TopLevel);
+            if (transforms.Length > 0)
+            {
+                name = transforms.Length > 1
+                    ? SceneManager.GetActiveScene().name
+                    : Selection.activeObject.name;
+
+                gameObjects = transforms.Select(x => x.gameObject).ToArray();
+                return true;
+            }
+
+            name = null;
+            gameObjects = null;
+            return false;
+        }
+
 #endif
     }
 }
