@@ -317,7 +317,6 @@ namespace ArenaUnity
                 cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/storelogin", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
-                Debug.LogWarning($"FILE STORE TOKEN: '{fsToken}'");
 
                 // get arena user mqtt token
                 form.AddField("id_auth", tokenType);

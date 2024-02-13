@@ -4,7 +4,9 @@
     "references": [
         "Unity.TextMeshPro.Editor",
         "Unity.EditorCoroutines.Editor",
-        "PrettyHierarchy"
+        "PrettyHierarchy",
+        "glTFast.Editor",
+        "Draco.Editor"
     ],
     "includePlatforms": [
         "Editor"
