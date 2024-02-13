@@ -102,19 +102,18 @@ namespace ArenaUnity
         static readonly string[] requiredShadersStandardRP = {
             "Standard",
             "Unlit/Color",
-            //"GLTFUtility/Standard (Metallic)",
-            //"GLTFUtility/Standard Transparent (Metallic)",
-            //"GLTFUtility/Standard (Specular)",
-            //"GLTFUtility/Standard Transparent (Specular)",
+            "glTF/PbrMetallicRoughness",
+            "glTF/PbrSpecularGlossiness",
+            "glTF/Unlit",
         };
         static readonly string[] requiredShadersURPHDRP = {
             // "Standard",
             // "Unlit/Color",
-            //"GLTFUtility/URP/Standard (Metallic)",
-            //"GLTFUtility/URP/Standard Transparent (Metallic)",
-            //"GLTFUtility/URP/Standard (Specular)",
-            //"GLTFUtility/URP/Standard Transparent (Specular)",
+            "glTF/PbrMetallicRoughness",
+            "glTF/PbrSpecularGlossiness",
+            "glTF/Unlit",
         };
+        // TODO: (mwfarb) confirm URP shaders are correct
 
         protected override void OnEnable()
         {
