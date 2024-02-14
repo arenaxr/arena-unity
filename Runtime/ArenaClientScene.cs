@@ -570,7 +570,7 @@ namespace ArenaUnity
                     UpdateSceneOptionsMessage(indata, gobj, jData);
                     break;
                 case "program":
-                    // TODO (mwfarb): define program implementation or lack thereofd
+                    // TODO (mwfarb): define program implementation or lack thereof
                     break;
             }
 
