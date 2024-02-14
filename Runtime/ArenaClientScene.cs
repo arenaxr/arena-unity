@@ -1166,8 +1166,8 @@ namespace ArenaUnity
                 {
                     object_type = "gltf-model",
                     url = storeExtPath,
-                    position = ArenaUnity.ToArenaPosition(gameObjects[0].transform.localPosition),
-                    rotation = ArenaUnity.ToArenaRotationQuat(gameObjects[0].transform.localRotation),
+                    position = ArenaUnity.ToArenaPosition(gameObjects[0].transform.position),
+                    rotation = ArenaUnity.ToArenaRotationQuat(gameObjects[0].transform.rotation),
                 }
             };
             string payload = JsonConvert.SerializeObject(msg);
