@@ -1074,6 +1074,7 @@ namespace ArenaUnity
                 byte[] results = www.downloadHandler.data;
                 yield return results;
             }
+            ClearProgressBar();
         }
 
         private IEnumerator HttpUploadFSRaw(string url, byte[] payload)
@@ -1108,6 +1109,7 @@ namespace ArenaUnity
             {
                 yield return true;
             }
+            ClearProgressBar();
         }
 
         public void ExportGLTFBinaryStream(string name, GameObject[] gameObjects)
@@ -1118,10 +1120,7 @@ namespace ArenaUnity
         private IEnumerator ExportGLTF(string name, GameObject[] gameObjects)
         {
             // export gltf to stream
-            var settings = new ExportSettings
-            {
-                Format = GltfFormat.Binary
-            };
+            var settings = new ExportSettings { Format = GltfFormat.Binary };
             var goSettings = new GameObjectExportSettings { OnlyActiveInHierarchy = false };
             var export = new GameObjectExport(settings, gameObjectExportSettings: goSettings, logger: new ConsoleLogger());
             export.AddScene(gameObjects, name);
@@ -1156,9 +1155,10 @@ namespace ArenaUnity
             Debug.LogWarning($"file upload result {cd.result}");
 
             // send scene object metadata to MQTT
+            var object_id = name;
             ArenaObjectJson msg = new ArenaObjectJson
             {
-                object_id = name,
+                object_id = object_id,
                 action = "create",
                 type = "object",
                 persist = true,
@@ -1166,8 +1166,13 @@ namespace ArenaUnity
                 {
                     object_type = "gltf-model",
                     url = storeExtPath,
-                    position = ArenaUnity.ToArenaPosition(gameObjects[0].transform.position),
-                    rotation = ArenaUnity.ToArenaRotationQuat(gameObjects[0].transform.rotation),
+                    // position = ArenaUnity.ToArenaPosition(gameObjects[0].transform.position),
+                    // rotation = ArenaUnity.ToArenaRotationQuat(gameObjects[0].transform.rotation),
+                    // TODO: (mwfarb) use world origin for now, since it is baked into the export
+                    position = ArenaUnity.ToArenaPosition(Vector3.zero),
+                    rotation = ArenaUnity.ToArenaRotationQuat(
+                        ArenaUnity.GltfToUnityRotationQuat(Quaternion.identity)),
+                    // TODO: (mwfarb) add attribution information
                 }
             };
             string payload = JsonConvert.SerializeObject(msg);
