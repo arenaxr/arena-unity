@@ -11,7 +11,8 @@ using System.IO;
 using System.Linq;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
-using GLTFast;
+using GLTFast.Export;
+using GLTFast.Logging;
 using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
@@ -1071,6 +1072,90 @@ namespace ArenaUnity
             {
                 byte[] results = www.downloadHandler.data;
                 yield return results;
+            }
+        }
+
+        private IEnumerator HttpUploadFSRaw(string url, byte[] payload)
+        {
+            UnityWebRequest www = new UnityWebRequest(url);
+            //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
+            UploadHandler uploadHandler = new UploadHandlerRaw(payload);
+            if (!verifyCertificate && url.StartsWith("https://localhost"))
+            {   // TODO (mwfarb): should check for arena/not-arena host when debugging on localhost
+                www.certificateHandler = new SelfSignedCertificateHandler();
+            }
+            www.SetRequestHeader("X-Auth", fsToken);
+            // uploadHandler.contentType = "custom/content-type";
+            www.uploadHandler = uploadHandler;
+            while (!www.isDone)
+            {
+                DisplayCancelableProgressBar("ARENA URL", $"Uploading {url}", www.uploadProgress);
+                yield return null;
+            }
+#if UNITY_2020_1_OR_NEWER
+            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+#else
+            if (www.isNetworkError || www.isHttpError)
+#endif
+            {
+                Debug.LogWarning($"{www.error}: {www.url}");
+                yield break;
+            }
+            else
+            {
+                yield return true;
+            }
+        }
+
+        public void ExportGLTFBinaryStream(string name, GameObject[] gameObjects)
+        {
+            StartCoroutine(ExportGLTF( name,  gameObjects));
+        }
+
+        private IEnumerator ExportGLTF(string name, GameObject[] gameObjects)
+        { 
+            // export gltf to stream
+            var settings = new ExportSettings
+            {
+                Format = GltfFormat.Binary
+            };
+            var goSettings = new GameObjectExportSettings { OnlyActiveInHierarchy = false };
+            var export = new GameObjectExport(settings, gameObjectExportSettings: goSettings, logger: new ConsoleLogger());
+            export.AddScene(gameObjects, name);
+
+            MemoryStream stream = new MemoryStream();
+            var streamTask = export.SaveToStreamAndDispose(stream);
+            yield return new WaitUntil(() => streamTask.IsCompleted);
+            var streamSuccess = streamTask.Result;
+
+            // send stream to filestore
+            //var safeFilename = name.replace(/(\W+)/gi, '-');
+            var storeResPrefix = authState.is_staff ? $"users/{mqttUserName}/" : "";
+            var userFilePath = $"scenes/{sceneName}/{name}.glb";
+            var storeResPath = $"{storeResPrefix}{userFilePath}";
+            var storeExtPath = $"store/users/{mqttUserName}/{userFilePath}";
+
+            string uploadUrl = $"https://{hostAddress}/storemng/api/resources/{storeResPath}?override=true";
+            CoroutineWithData  cd = new CoroutineWithData(this, HttpUploadFSRaw(uploadUrl, stream.GetBuffer()));
+            yield return cd.coroutine;
+            if (isCrdSuccess(cd.result))
+            {
+                // send scene object metadata to MQTT
+                ArenaObjectJson msg = new ArenaObjectJson
+                {
+                    object_id = name,
+                    action = "create",
+                    persist = true,
+                    data = new ArenaObjectDataJson
+                    {
+                        object_type = "gltf-model",
+                        url = storeExtPath,
+                        position = ArenaUnity.ToArenaPosition(gameObjects[0].transform.localPosition),
+                        rotation = ArenaUnity.ToArenaRotationQuat(gameObjects[0].transform.localRotation),
+                    }
+                };
+                string payload = JsonConvert.SerializeObject(msg);
+                PublishObject(msg.object_id, payload, sceneObjectRights);
             }
         }
 

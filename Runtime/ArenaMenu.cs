@@ -4,16 +4,11 @@
  */
 
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using ArenaUnity.Schemas;
-using GLTFast.Export;
-using GLTFast.Logging;
 using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
 namespace ArenaUnity
@@ -201,7 +196,7 @@ namespace ArenaUnity
         [MenuItem("Assets/ARENA Export GLTF/GLTF-Binary (.glb)", true)]
         static bool ValidateCreateArenaObject()
         {
-            return ArenaClientScene.Instance != null && ArenaClientScene.Instance.mqttClientConnected;
+            return ArenaClientScene.Instance != null && ArenaClientScene.Instance.mqttClientConnected && ArenaClientScene.Instance.sceneObjectRights;
         }
 
         private static void PublishWireObject(MenuCommand menuCommand, string object_type, string matColor = null)
@@ -244,11 +239,11 @@ namespace ArenaUnity
             var go = command.context as GameObject;
             if (go != null)
             {
-                ExportBinaryStream(go.name, new[] { go });
+                ArenaClientScene.Instance.ExportGLTFBinaryStream(go.name, new[] { go });
             }
             else if (TryGetExportNameAndGameObjects(out var name, out var gameObjects))
             {
-                ExportBinaryStream(name, gameObjects);
+                ArenaClientScene.Instance.ExportGLTFBinaryStream(name, gameObjects);
             }
         }
 
@@ -256,36 +251,10 @@ namespace ArenaUnity
         {
             if (TryGetExportNameAndGameObjects(out var name, out var gameObjects))
             {
-                ExportBinaryStream(name, gameObjects);
+                ArenaClientScene.Instance.ExportGLTFBinaryStream(name, gameObjects);
             }
         }
 
-        static async Task<bool> ExportBinaryStream(string name, GameObject[] gameObjects)
-        {
-            var settings = new ExportSettings
-            {
-                Format = GltfFormat.Binary
-            };
-            var goSettings = new GameObjectExportSettings { OnlyActiveInHierarchy = false };
-            var export = new GameObjectExport(settings, gameObjectExportSettings: goSettings, logger: new ConsoleLogger());
-            export.AddScene(gameObjects, name);
-
-            MemoryStream stream = new MemoryStream();
-            bool streamSuccess = await export.SaveToStreamAndDispose(stream);
-
-            var storeResPrefix = authState.is_staff ? $"users/{username}/" : "";
-            var userFilePath = $"scenes/{sceneinput.value}/{resultFileOpen.name}";
-            var storeResPath = $"{storeResPrefix}{userFilePath}";
-
-            byte[] payload = stream.GetBuffer();
-            UnityWebRequest www = new UnityWebRequest($"https://localhost/storemng/api/resources/{storeResPath}?override=true");
-            UploadHandler uploadHandler = new UploadHandlerRaw(payload);
-            www.SetRequestHeader("X-Auth", fsToken);
-            // uploadHandler.contentType = "custom/content-type";
-            www.uploadHandler = uploadHandler;
-
-            return streamSuccess;
-        }
 
         static bool TryGetExportNameAndGameObjects(out string name, out GameObject[] gameObjects)
         {
