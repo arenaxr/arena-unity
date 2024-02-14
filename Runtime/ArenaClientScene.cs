@@ -1046,6 +1046,7 @@ namespace ArenaUnity
 
         private IEnumerator HttpRequestRaw(string url)
         {
+            Uri uri = new Uri(url);
             UnityWebRequest www = UnityWebRequest.Get(url);
             www.downloadHandler = new DownloadHandlerBuffer();
             //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
@@ -1056,7 +1057,7 @@ namespace ArenaUnity
             www.SendWebRequest();
             while (!www.isDone)
             {
-                DisplayCancelableProgressBar("ARENA URL", $"Downloading {url}", www.downloadProgress);
+                DisplayCancelableProgressBar("ARENA", $"Downloading {uri.Segments[uri.Segments.Length - 1]}...", www.downloadProgress);
                 yield return null;
             }
 #if UNITY_2020_1_OR_NEWER
@@ -1077,6 +1078,7 @@ namespace ArenaUnity
 
         private IEnumerator HttpUploadFSRaw(string url, byte[] payload)
         {
+            Uri uri = new Uri(url);
             UnityWebRequest www = new UnityWebRequest(url);
             //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
             UploadHandler uploadHandler = new UploadHandlerRaw(payload);
@@ -1089,7 +1091,7 @@ namespace ArenaUnity
             www.uploadHandler = uploadHandler;
             while (!www.isDone)
             {
-                DisplayCancelableProgressBar("ARENA URL", $"Uploading {url}", www.uploadProgress);
+                DisplayCancelableProgressBar("ARENA", $"Uploading {uri.Segments[uri.Segments.Length - 1]}...", www.uploadProgress);
                 yield return null;
             }
 #if UNITY_2020_1_OR_NEWER
@@ -1109,11 +1111,11 @@ namespace ArenaUnity
 
         public void ExportGLTFBinaryStream(string name, GameObject[] gameObjects)
         {
-            StartCoroutine(ExportGLTF( name,  gameObjects));
+            StartCoroutine(ExportGLTF(name, gameObjects));
         }
 
         private IEnumerator ExportGLTF(string name, GameObject[] gameObjects)
-        { 
+        {
             // export gltf to stream
             var settings = new ExportSettings
             {
@@ -1126,7 +1128,11 @@ namespace ArenaUnity
             MemoryStream stream = new MemoryStream();
             var streamTask = export.SaveToStreamAndDispose(stream);
             yield return new WaitUntil(() => streamTask.IsCompleted);
-            var streamSuccess = streamTask.Result;
+            if (!streamTask.Result)
+            {
+                Debug.LogError($"GLTF export to stream failed!");
+                yield break;
+            }
 
             // send stream to filestore
             //var safeFilename = name.replace(/(\W+)/gi, '-');
@@ -1136,27 +1142,30 @@ namespace ArenaUnity
             var storeExtPath = $"store/users/{mqttUserName}/{userFilePath}";
 
             string uploadUrl = $"https://{hostAddress}/storemng/api/resources/{storeResPath}?override=true";
-            CoroutineWithData  cd = new CoroutineWithData(this, HttpUploadFSRaw(uploadUrl, stream.GetBuffer()));
+            CoroutineWithData cd = new CoroutineWithData(this, HttpUploadFSRaw(uploadUrl, stream.GetBuffer()));
             yield return cd.coroutine;
-            if (isCrdSuccess(cd.result))
+            if (!isCrdSuccess(cd.result))
             {
-                // send scene object metadata to MQTT
-                ArenaObjectJson msg = new ArenaObjectJson
-                {
-                    object_id = name,
-                    action = "create",
-                    persist = true,
-                    data = new ArenaObjectDataJson
-                    {
-                        object_type = "gltf-model",
-                        url = storeExtPath,
-                        position = ArenaUnity.ToArenaPosition(gameObjects[0].transform.localPosition),
-                        rotation = ArenaUnity.ToArenaRotationQuat(gameObjects[0].transform.localRotation),
-                    }
-                };
-                string payload = JsonConvert.SerializeObject(msg);
-                PublishObject(msg.object_id, payload, sceneObjectRights);
+                Debug.LogError($"GLTF file upload failed!");
+                yield break;
             }
+
+            // send scene object metadata to MQTT
+            ArenaObjectJson msg = new ArenaObjectJson
+            {
+                object_id = name,
+                action = "create",
+                persist = true,
+                data = new ArenaObjectDataJson
+                {
+                    object_type = "gltf-model",
+                    url = storeExtPath,
+                    position = ArenaUnity.ToArenaPosition(gameObjects[0].transform.localPosition),
+                    rotation = ArenaUnity.ToArenaRotationQuat(gameObjects[0].transform.localRotation),
+                }
+            };
+            string payload = JsonConvert.SerializeObject(msg);
+            PublishObject(msg.object_id, payload, sceneObjectRights);
         }
 
         //TODO (mwfarb): prevent publish and throw errors on publishing without rights
