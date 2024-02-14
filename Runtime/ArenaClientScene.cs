@@ -1079,16 +1079,17 @@ namespace ArenaUnity
         private IEnumerator HttpUploadFSRaw(string url, byte[] payload)
         {
             Uri uri = new Uri(url);
-            UnityWebRequest www = new UnityWebRequest(url);
+            UnityWebRequest www = new UnityWebRequest(url, "POST");
             //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
-            UploadHandler uploadHandler = new UploadHandlerRaw(payload);
             if (!verifyCertificate && url.StartsWith("https://localhost"))
             {   // TODO (mwfarb): should check for arena/not-arena host when debugging on localhost
                 www.certificateHandler = new SelfSignedCertificateHandler();
             }
             www.SetRequestHeader("X-Auth", fsToken);
+            UploadHandler uploadHandler = new UploadHandlerRaw(payload);
             // uploadHandler.contentType = "custom/content-type";
             www.uploadHandler = uploadHandler;
+            www.SendWebRequest();
             while (!www.isDone)
             {
                 DisplayCancelableProgressBar("ARENA", $"Uploading {uri.Segments[uri.Segments.Length - 1]}...", www.uploadProgress);
@@ -1133,6 +1134,8 @@ namespace ArenaUnity
                 Debug.LogError($"GLTF export to stream failed!");
                 yield break;
             }
+            byte[] gltfBuffer = stream.GetBuffer();
+            Debug.LogWarning($"stream is {gltfBuffer.Length} bytes");
 
             // send stream to filestore
             //var safeFilename = name.replace(/(\W+)/gi, '-');
@@ -1142,19 +1145,22 @@ namespace ArenaUnity
             var storeExtPath = $"store/users/{mqttUserName}/{userFilePath}";
 
             string uploadUrl = $"https://{hostAddress}/storemng/api/resources/{storeResPath}?override=true";
-            CoroutineWithData cd = new CoroutineWithData(this, HttpUploadFSRaw(uploadUrl, stream.GetBuffer()));
+            Debug.LogWarning($"file upload attempt {uploadUrl}");
+            CoroutineWithData cd = new CoroutineWithData(this, HttpUploadFSRaw(uploadUrl, gltfBuffer));
             yield return cd.coroutine;
             if (!isCrdSuccess(cd.result))
             {
                 Debug.LogError($"GLTF file upload failed!");
                 yield break;
             }
+            Debug.LogWarning($"file upload result {cd.result}");
 
             // send scene object metadata to MQTT
             ArenaObjectJson msg = new ArenaObjectJson
             {
                 object_id = name,
                 action = "create",
+                type = "object",
                 persist = true,
                 data = new ArenaObjectDataJson
                 {
