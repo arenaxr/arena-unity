@@ -52,6 +52,7 @@ namespace ArenaUnity
         private string idToken = null;
         protected string csrfToken = null;
         protected string fsToken = null;
+        protected ArenaUserStateJson authState;
         private static UserCredential credential;
 
         // local paths
@@ -297,16 +298,16 @@ namespace ArenaUnity
                 cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/user_state", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
-                var user = JsonConvert.DeserializeObject<ArenaUserStateJson>(cd.result.ToString());
-                if (user.authenticated)
+                authState = JsonConvert.DeserializeObject<ArenaUserStateJson>(cd.result.ToString());
+                if (authState.authenticated)
                 {
-                    userName = user.username;
+                    userName = authState.username;
                 }
                 if (string.IsNullOrWhiteSpace(namespaceName))
                 {
-                    if (user.authenticated)
+                    if (authState.authenticated)
                     {
-                        namespaceName = user.username;
+                        namespaceName = authState.username;
                     }
                     else
                     {
