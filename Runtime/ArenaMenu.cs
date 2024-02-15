@@ -180,7 +180,7 @@ namespace ArenaUnity
         [MenuItem("GameObject/ARENA/Triangle", true)]
         static bool ValidateCreateArenaObject()
         {
-            return ArenaClientScene.Instance != null && ArenaClientScene.Instance.mqttClientConnected;
+            return ArenaClientScene.Instance != null && ArenaClientScene.Instance.mqttClientConnected && ArenaClientScene.Instance.sceneObjectRights;
         }
 
         private static void PublishWireObject(MenuCommand menuCommand, string object_type, string matColor = null)
