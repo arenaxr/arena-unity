@@ -1041,6 +1041,7 @@ namespace ArenaUnity
 
         private IEnumerator HttpRequestRaw(string url)
         {
+            Uri uri = new Uri(url);
             UnityWebRequest www = UnityWebRequest.Get(url);
             www.downloadHandler = new DownloadHandlerBuffer();
             //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
@@ -1051,7 +1052,7 @@ namespace ArenaUnity
             www.SendWebRequest();
             while (!www.isDone)
             {
-                DisplayCancelableProgressBar("ARENA URL", $"Downloading {url}", www.downloadProgress);
+                DisplayCancelableProgressBar("ARENA", $"Downloading {uri.Segments[uri.Segments.Length - 1]}...", www.downloadProgress);
                 yield return null;
             }
 #if UNITY_2020_1_OR_NEWER
@@ -1068,6 +1069,7 @@ namespace ArenaUnity
                 byte[] results = www.downloadHandler.data;
                 yield return results;
             }
+            ClearProgressBar();
         }
 
         //TODO (mwfarb): prevent publish and throw errors on publishing without rights
