@@ -143,6 +143,12 @@ namespace ArenaUnity
                     rotationEuler.Z
                 ), invertY);
         }
+        public static Quaternion UnityToGltfRotationQuat(Quaternion rotationQuat)
+        {
+            var euler = rotationQuat.eulerAngles;
+            euler.y += 180;
+            return Quaternion.Euler(euler);
+        }
         public static Quaternion GltfToUnityRotationQuat(Quaternion rotationQuat)
         {
             var euler = rotationQuat.eulerAngles;
