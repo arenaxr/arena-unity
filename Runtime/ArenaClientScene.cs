@@ -322,18 +322,18 @@ namespace ArenaUnity
                 if (arenaObjs != null && !arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
                 {
                     // there isnt already an object in the scene created by the user with the same object_id
-                    if (GameObject.Find(msg.object_id) == null)
+                    // if (GameObject.Find(msg.object_id) == null)
+                    // {
+                    IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
+                    foreach (var uri in uris)
                     {
-                        IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
-                        foreach (var uri in uris)
+                        if (!string.IsNullOrWhiteSpace(uri))
                         {
-                            if (!string.IsNullOrWhiteSpace(uri))
-                            {
-                                cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
-                                yield return cd.coroutine;
-                            }
+                            cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
+                            yield return cd.coroutine;
                         }
                     }
+                    // }
                     CreateUpdateObject(msg, msg.attributes);
                 }
                 objects_num++;
@@ -521,12 +521,12 @@ namespace ArenaUnity
                 Debug.Log($"Loading object '{msg.object_id}'..."); // show new objects in log
 #endif
                 // check if theres already an object in unity, if so don't make a new one
-                gobj = GameObject.Find((string)msg.object_id);
-                if (gobj == null)
-                {
-                    gobj = new GameObject();
-                    gobj.name = msg.object_id;
-                }
+                // gobj = GameObject.Find((string)msg.object_id);
+                // if (gobj == null)
+                // {
+                gobj = new GameObject();
+                gobj.name = msg.object_id;
+                // }
                 aobj = gobj.GetComponent<ArenaObject>();
                 if (aobj == null)
                 {
@@ -1279,19 +1279,19 @@ namespace ArenaUnity
                         float ttl = (msg.ttl != null) ? (float)msg.ttl : 0f;
                         bool persist = Convert.ToBoolean(msg.persist);
 
-                        // there isnt already an object in the scene created by the user with the same object_id
-                        if (GameObject.Find((string)object_id) == null)
+                        // // there isnt already an object in the scene created by the user with the same object_id
+                        // if (GameObject.Find((string)object_id) == null)
+                        // {
+                        IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
+                        foreach (var uri in uris)
                         {
-                            IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
-                            foreach (var uri in uris)
+                            if (!string.IsNullOrWhiteSpace(uri))
                             {
-                                if (!string.IsNullOrWhiteSpace(uri))
-                                {
-                                    cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
-                                    yield return cd.coroutine;
-                                }
+                                cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
+                                yield return cd.coroutine;
                             }
                         }
+                        // }
                         CreateUpdateObject(msg, msg.data, menuCommand);
                         break;
                     case "delete":
