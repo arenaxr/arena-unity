@@ -1114,11 +1114,42 @@ namespace ArenaUnity
 
         public void ExportGLTFBinaryStream(string name, GameObject[] gameObjects)
         {
-            StartCoroutine(ExportGLTF(name, gameObjects));
+            bool success = true;
+            foreach(var go in gameObjects)
+            {
+                if (go.GetComponents<ArenaObject>().Length > 0) {
+                    success = false;
+                    Debug.LogWarning($"GLTF Export ignored for existing ArenaObject component {name}.");
+                }
+                if (go.GetComponents<ArenaCamera>().Length > 0)
+                {
+                    success = false;
+                    Debug.LogWarning($"GLTF Export ignored for existing ArenaCamera component {name}.");
+                }
+                if (go.GetComponents<ArenaClientScene>().Length > 0)
+                {
+                    success = false;
+                    Debug.LogWarning($"GLTF Export ignored for existing ArenaClientScene component {name}.");
+                }
+            }
+            if (success) {
+                StartCoroutine(ExportGLTF(name, gameObjects));
+            }
         }
 
         private IEnumerator ExportGLTF(string name, GameObject[] gameObjects)
         {
+            // TODO (mwfarb): find better way to export with local position/rotation
+
+            // determine if we should update the local position
+            var rootObjPos = gameObjects[0].transform.position;
+
+            // ATM glTFast exports models with world origin, so we do a trick for now,
+            // by moving the model to the desired export position, export, and then return it.
+
+            // move single model to desired export translation
+            gameObjects[0].transform.position = Vector3.zero;
+
             // export gltf to stream
             var settings = new ExportSettings { Format = GltfFormat.Binary };
             var goSettings = new GameObjectExportSettings { OnlyActiveInHierarchy = false };
@@ -1135,6 +1166,9 @@ namespace ArenaUnity
             }
             byte[] gltfBuffer = stream.GetBuffer();
             Debug.LogWarning($"stream is {gltfBuffer.Length} bytes");
+
+            // return single model to original export translation
+            gameObjects[0].transform.position = rootObjPos;
 
             // send stream to filestore
             //var safeFilename = name.replace(/(\W+)/gi, '-');
@@ -1166,13 +1200,9 @@ namespace ArenaUnity
                 {
                     object_type = "gltf-model",
                     url = storeExtPath,
-                    // position = ArenaUnity.ToArenaPosition(gameObjects[0].transform.position),
-                    // rotation = ArenaUnity.ToArenaRotationQuat(gameObjects[0].transform.rotation),
-                    // TODO: (mwfarb) use world origin for now, since it is baked into the export
-                    position = ArenaUnity.ToArenaPosition(Vector3.zero),
+                    position = ArenaUnity.ToArenaPosition(rootObjPos),
                     rotation = ArenaUnity.ToArenaRotationQuat(
                         ArenaUnity.GltfToUnityRotationQuat(Quaternion.identity)),
-                    // TODO: (mwfarb) add attribution information
                 }
             };
             string payload = JsonConvert.SerializeObject(msg);

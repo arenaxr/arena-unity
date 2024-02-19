@@ -255,7 +255,6 @@ namespace ArenaUnity
             }
         }
 
-
         static bool TryGetExportNameAndGameObjects(out string name, out GameObject[] gameObjects)
         {
             var transforms = Selection.GetTransforms(SelectionMode.Assets | SelectionMode.TopLevel);
