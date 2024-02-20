@@ -5,10 +5,13 @@ arena-unity uses some third-party libraries in its package. Some have been modif
 - https://github.com/OliviaLynn/Unity-UDP-ARENA-Demo
 - https://github.com/gpvigano/M2MqttUnity
 - https://github.com/Siccity/GLTFUtility
+- https://github.com/JamesNK/Newtonsoft.Json
 - https://github.com/primaryobjects/unity-to-aframe
 - https://github.com/NCEEGEE/PrettyHierarchy
 - https://github.com/mattatz/unity-mesh-builder
 - https://github.com/mrdoob/three.js
+- https://github.com/atteneder/glTFast
+- https://github.com/atteneder/DracoUnity
 
 ## NuGet
 - https://www.nuget.org/packages/Google.Apis
@@ -19,5 +22,4 @@ arena-unity uses some third-party libraries in its package. Some have been modif
 - https://www.nuget.org/packages/Microsoft.IdentityModel.Logging
 - https://www.nuget.org/packages/Microsoft.IdentityModel.Tokens
 - https://www.nuget.org/packages/MimeMapping
-- https://www.nuget.org/packages/Newtonsoft.Json
 - https://www.nuget.org/packages/System.IdentityModel.Tokens.Jwt
