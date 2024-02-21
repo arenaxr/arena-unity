@@ -321,9 +321,6 @@ namespace ArenaUnity
 
                 if (arenaObjs != null && !arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
                 {
-                    // there isnt already an object in the scene created by the user with the same object_id
-                    // if (GameObject.Find(msg.object_id) == null)
-                    // {
                     IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
                     foreach (var uri in uris)
                     {
@@ -333,7 +330,6 @@ namespace ArenaUnity
                             yield return cd.coroutine;
                         }
                     }
-                    // }
                     CreateUpdateObject(msg, msg.attributes);
                 }
                 objects_num++;
@@ -520,19 +516,10 @@ namespace ArenaUnity
 #if !UNITY_EDITOR
                 Debug.Log($"Loading object '{msg.object_id}'..."); // show new objects in log
 #endif
-                // check if theres already an object in unity, if so don't make a new one
-                // gobj = GameObject.Find((string)msg.object_id);
-                // if (gobj == null)
-                // {
                 gobj = new GameObject();
                 gobj.name = msg.object_id;
-                // }
-                aobj = gobj.GetComponent<ArenaObject>();
-                if (aobj == null)
-                {
-                    aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
-                    arenaObjs[msg.object_id] = gobj;
-                }
+                aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
+                arenaObjs[msg.object_id] = gobj;
                 aobj.Created = true;
                 if (msg.persist.HasValue)
                     aobj.persist = (bool)msg.persist;
@@ -956,7 +943,7 @@ namespace ArenaUnity
         private void AttachGltf(string fullUrl, GameObject gobj, ArenaObject aobj = null)
         {
             if (fullUrl == null) return;
-            AnimationClip[] clips = null;
+            //AnimationClip[] clips = null;
             GameObject mobj = null;
             //var i = new ImportSettings();
             //i.animationSettings.useLegacyClips = true;
@@ -1088,7 +1075,6 @@ namespace ArenaUnity
             }
             www.SetRequestHeader("X-Auth", fsToken);
             UploadHandler uploadHandler = new UploadHandlerRaw(payload);
-            // uploadHandler.contentType = "custom/content-type";
             www.uploadHandler = uploadHandler;
             www.SendWebRequest();
             while (!www.isDone)
@@ -1115,9 +1101,10 @@ namespace ArenaUnity
         public void ExportGLTFBinaryStream(string name, GameObject[] gameObjects)
         {
             bool success = true;
-            foreach(var go in gameObjects)
+            foreach (var go in gameObjects)
             {
-                if (go.GetComponents<ArenaObject>().Length > 0) {
+                if (go.GetComponents<ArenaObject>().Length > 0)
+                {
                     success = false;
                     Debug.LogWarning($"GLTF Export ignored for existing ArenaObject component {name}.");
                 }
@@ -1132,7 +1119,8 @@ namespace ArenaUnity
                     Debug.LogWarning($"GLTF Export ignored for existing ArenaClientScene component {name}.");
                 }
             }
-            if (success) {
+            if (success)
+            {
                 StartCoroutine(ExportGLTF(name, gameObjects));
             }
         }
@@ -1309,9 +1297,6 @@ namespace ArenaUnity
                         float ttl = (msg.ttl != null) ? (float)msg.ttl : 0f;
                         bool persist = Convert.ToBoolean(msg.persist);
 
-                        // // there isnt already an object in the scene created by the user with the same object_id
-                        // if (GameObject.Find((string)object_id) == null)
-                        // {
                         IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
                         foreach (var uri in uris)
                         {
@@ -1321,7 +1306,6 @@ namespace ArenaUnity
                                 yield return cd.coroutine;
                             }
                         }
-                        // }
                         CreateUpdateObject(msg, msg.data, menuCommand);
                         break;
                     case "delete":
