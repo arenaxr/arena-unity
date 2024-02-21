@@ -2,6 +2,23 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.12.0](https://github.com/arenaxr/arena-unity/compare/v0.11.1...v0.12.0) (2024-02-21)
+
+
+### Features
+
+* **gltf:** add glTFast library, allowing export of Unity models as GLTF to filestore ([#89](https://github.com/arenaxr/arena-unity/issues/89)) ([14748d7](https://github.com/arenaxr/arena-unity/commit/14748d7ac761a61cfd5fb3958140f9cc9c51e529))
+* **hands:** allow hands rendering to be diabled ([cf3f3da](https://github.com/arenaxr/arena-unity/commit/cf3f3dadf416fcce3561f28a9b56dd117f00e7c3))
+
+
+### Bug Fixes
+
+* add reverse gltf export rotation ([073c44f](https://github.com/arenaxr/arena-unity/commit/073c44f320d1c083c1baf45110324b4e62557127))
+* check scene pemissions for menu options ([c1e3dbf](https://github.com/arenaxr/arena-unity/commit/c1e3dbfc11c649cbd29c015dde8cfe7ec0ea986e))
+* **gltf:** add logging of gltf export upload status ([8d1c343](https://github.com/arenaxr/arena-unity/commit/8d1c3433d39b7226b68bbee498baf97080309ee3))
+* simplify and always close download progress bar ([1865bc4](https://github.com/arenaxr/arena-unity/commit/1865bc457f5c2a1ed560fdd49d50a3b6b2435a41))
+* use protected json storage for user state ([ff413e3](https://github.com/arenaxr/arena-unity/commit/ff413e329c2ae0d29bfb38dd05bec89d4e1da1a8))
+
 ## [0.11.1](https://github.com/arenaxr/arena-unity/compare/v0.11.0...v0.11.1) (2023-11-03)
 
 
