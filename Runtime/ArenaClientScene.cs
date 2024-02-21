@@ -1106,17 +1106,17 @@ namespace ArenaUnity
                 if (go.GetComponents<ArenaObject>().Length > 0)
                 {
                     success = false;
-                    Debug.LogWarning($"GLTF Export ignored for existing ArenaObject component {name}.");
+                    Debug.LogWarning($"GLTF export ignored for existing ArenaObject component {name}.");
                 }
                 if (go.GetComponents<ArenaCamera>().Length > 0)
                 {
                     success = false;
-                    Debug.LogWarning($"GLTF Export ignored for existing ArenaCamera component {name}.");
+                    Debug.LogWarning($"GLTF export ignored for existing ArenaCamera component {name}.");
                 }
                 if (go.GetComponents<ArenaClientScene>().Length > 0)
                 {
                     success = false;
-                    Debug.LogWarning($"GLTF Export ignored for existing ArenaClientScene component {name}.");
+                    Debug.LogWarning($"GLTF export ignored for existing ArenaClientScene component {name}.");
                 }
             }
             if (success)
@@ -1153,7 +1153,6 @@ namespace ArenaUnity
                 yield break;
             }
             byte[] gltfBuffer = stream.GetBuffer();
-            Debug.LogWarning($"stream is {gltfBuffer.Length} bytes");
 
             // return single model to original export translation
             gameObjects[0].transform.position = rootObjPos;
@@ -1166,7 +1165,6 @@ namespace ArenaUnity
             var storeExtPath = $"store/users/{mqttUserName}/{userFilePath}";
 
             string uploadUrl = $"https://{hostAddress}/storemng/api/resources/{storeResPath}?override=true";
-            Debug.LogWarning($"file upload attempt {uploadUrl}");
             CoroutineWithData cd = new CoroutineWithData(this, HttpUploadFSRaw(uploadUrl, gltfBuffer));
             yield return cd.coroutine;
             if (!isCrdSuccess(cd.result))
@@ -1174,7 +1172,7 @@ namespace ArenaUnity
                 Debug.LogError($"GLTF file upload failed!");
                 yield break;
             }
-            Debug.LogWarning($"file upload result {cd.result}");
+            Debug.Log($"GLTF export uploaded to {hostAddress}/{storeExtPath}");
 
             // send scene object metadata to MQTT
             var object_id = name;
