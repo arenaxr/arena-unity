@@ -11,11 +11,12 @@ using System.IO;
 using System.Linq;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
+using GLTFast.Export;
+using GLTFast.Logging;
 using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Siccity.GLTFUtility;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -102,19 +103,18 @@ namespace ArenaUnity
         static readonly string[] requiredShadersStandardRP = {
             "Standard",
             "Unlit/Color",
-            "GLTFUtility/Standard (Metallic)",
-            "GLTFUtility/Standard Transparent (Metallic)",
-            "GLTFUtility/Standard (Specular)",
-            "GLTFUtility/Standard Transparent (Specular)",
+            "glTF/PbrMetallicRoughness",
+            "glTF/PbrSpecularGlossiness",
+            "glTF/Unlit",
         };
         static readonly string[] requiredShadersURPHDRP = {
             // "Standard",
             // "Unlit/Color",
-            "GLTFUtility/URP/Standard (Metallic)",
-            "GLTFUtility/URP/Standard Transparent (Metallic)",
-            "GLTFUtility/URP/Standard (Specular)",
-            "GLTFUtility/URP/Standard Transparent (Specular)",
+            "glTF/PbrMetallicRoughness",
+            "glTF/PbrSpecularGlossiness",
+            "glTF/Unlit",
         };
+        // TODO: (mwfarb) confirm URP shaders are correct
 
         protected override void OnEnable()
         {
@@ -321,17 +321,13 @@ namespace ArenaUnity
 
                 if (arenaObjs != null && !arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
                 {
-                    // there isnt already an object in the scene created by the user with the same object_id
-                    if (GameObject.Find(msg.object_id) == null)
+                    IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
+                    foreach (var uri in uris)
                     {
-                        IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
-                        foreach (var uri in uris)
+                        if (!string.IsNullOrWhiteSpace(uri))
                         {
-                            if (!string.IsNullOrWhiteSpace(uri))
-                            {
-                                cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
-                                yield return cd.coroutine;
-                            }
+                            cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
+                            yield return cd.coroutine;
                         }
                     }
                     CreateUpdateObject(msg, msg.attributes);
@@ -520,19 +516,10 @@ namespace ArenaUnity
 #if !UNITY_EDITOR
                 Debug.Log($"Loading object '{msg.object_id}'..."); // show new objects in log
 #endif
-                // check if theres already an object in unity, if so don't make a new one
-                gobj = GameObject.Find((string)msg.object_id);
-                if (gobj == null)
-                {
-                    gobj = new GameObject();
-                    gobj.name = msg.object_id;
-                }
-                aobj = gobj.GetComponent<ArenaObject>();
-                if (aobj == null)
-                {
-                    aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
-                    arenaObjs[msg.object_id] = gobj;
-                }
+                gobj = new GameObject();
+                gobj.name = msg.object_id;
+                aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
+                arenaObjs[msg.object_id] = gobj;
                 aobj.Created = true;
                 if (msg.persist.HasValue)
                     aobj.persist = (bool)msg.persist;
@@ -665,7 +652,7 @@ namespace ArenaUnity
                         if (assetPath != null)
                         {
                             aobj.gltfUrl = url;
-                            AttachGltf(assetPath, gobj, aobj);
+                            AttachGltf(ConstructRemoteUrl(url).AbsoluteUri, gobj, aobj);
                         }
                     }
                     break;
@@ -864,7 +851,7 @@ namespace ArenaUnity
                     {
                         // add model child to camera
                         GameObject hmobj = new GameObject(headModelId);
-                        AttachGltf(localpath, hmobj);
+                        AttachGltf(ConstructRemoteUrl(json.headModelPath).AbsoluteUri, hmobj);
                         hmobj.transform.localPosition = Vector3.zero;
                         hmobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
                         hmobj.transform.localScale = Vector3.one;
@@ -914,7 +901,7 @@ namespace ArenaUnity
                     {
                         // add model child to hand
                         GameObject hmobj = new GameObject(handModelId);
-                        AttachGltf(localpath, hmobj);
+                        AttachGltf(ConstructRemoteUrl(url).AbsoluteUri, hmobj);
                         hmobj.transform.localPosition = Vector3.zero;
                         hmobj.transform.localRotation = Quaternion.identity;
                         hmobj.transform.localScale = Vector3.one;
@@ -953,25 +940,30 @@ namespace ArenaUnity
             }
         }
 
-        private void AttachGltf(string assetPath, GameObject gobj, ArenaObject aobj = null)
+        private void AttachGltf(string fullUrl, GameObject gobj, ArenaObject aobj = null)
         {
-            if (assetPath == null) return;
-            AnimationClip[] clips = null;
+            if (fullUrl == null) return;
+            //AnimationClip[] clips = null;
             GameObject mobj = null;
-            var i = new ImportSettings();
-            i.animationSettings.useLegacyClips = true;
+            //var i = new ImportSettings();
+            //i.animationSettings.useLegacyClips = true;
             try
             {
-                mobj = Importer.LoadFromFile(assetPath, i, out clips);
+                mobj = new GameObject();
+                var gltf = mobj.AddComponent<GLTFast.GltfAsset>();
+                gltf.Url = fullUrl;
+                // TODO: (mwfarb) add a error handler in the main thread if the url is 404
+                // TODO: (mwfarb) add a load complete handler to manage the animations
+                //mobj = Importer.LoadFromFile(assetPath, i, out clips);
             }
             catch (Exception err)
             {
-                Debug.LogWarning($"Unable to load GTLF at {assetPath}. {err.Message}");
+                Debug.LogWarning($"Unable to load GTLF at {fullUrl}. {err.Message}");
             }
             if (mobj != null)
             {
-                if (clips != null && aobj != null)
-                    AssignAnimations(aobj, mobj, clips);
+                //if (clips != null && aobj != null)
+                //    AssignAnimations(aobj, mobj, clips);
                 mobj.transform.parent = gobj.transform;
                 mobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(mobj.transform.localRotation);
                 foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
@@ -1070,6 +1062,139 @@ namespace ArenaUnity
                 yield return results;
             }
             ClearProgressBar();
+        }
+
+        private IEnumerator HttpUploadFSRaw(string url, byte[] payload)
+        {
+            Uri uri = new Uri(url);
+            UnityWebRequest www = new UnityWebRequest(url, "POST");
+            //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
+            if (!verifyCertificate && url.StartsWith("https://localhost"))
+            {   // TODO (mwfarb): should check for arena/not-arena host when debugging on localhost
+                www.certificateHandler = new SelfSignedCertificateHandler();
+            }
+            www.SetRequestHeader("X-Auth", fsToken);
+            UploadHandler uploadHandler = new UploadHandlerRaw(payload);
+            www.uploadHandler = uploadHandler;
+            www.SendWebRequest();
+            while (!www.isDone)
+            {
+                DisplayCancelableProgressBar("ARENA", $"Uploading {uri.Segments[uri.Segments.Length - 1]}...", www.uploadProgress);
+                yield return null;
+            }
+#if UNITY_2020_1_OR_NEWER
+            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+#else
+            if (www.isNetworkError || www.isHttpError)
+#endif
+            {
+                Debug.LogWarning($"{www.error}: {www.url}");
+                yield break;
+            }
+            else
+            {
+                yield return true;
+            }
+            ClearProgressBar();
+        }
+
+        public void ExportGLTFBinaryStream(string name, GameObject[] gameObjects)
+        {
+            bool success = true;
+            foreach (var go in gameObjects)
+            {
+                if (go.GetComponents<ArenaObject>().Length > 0)
+                {
+                    success = false;
+                    Debug.LogWarning($"GLTF Export ignored for existing ArenaObject component {name}.");
+                }
+                if (go.GetComponents<ArenaCamera>().Length > 0)
+                {
+                    success = false;
+                    Debug.LogWarning($"GLTF Export ignored for existing ArenaCamera component {name}.");
+                }
+                if (go.GetComponents<ArenaClientScene>().Length > 0)
+                {
+                    success = false;
+                    Debug.LogWarning($"GLTF Export ignored for existing ArenaClientScene component {name}.");
+                }
+            }
+            if (success)
+            {
+                StartCoroutine(ExportGLTF(name, gameObjects));
+            }
+        }
+
+        private IEnumerator ExportGLTF(string name, GameObject[] gameObjects)
+        {
+            // TODO (mwfarb): find better way to export with local position/rotation
+
+            // determine if we should update the local position
+            var rootObjPos = gameObjects[0].transform.position;
+
+            // ATM glTFast exports models with world origin, so we do a trick for now,
+            // by moving the model to the desired export position, export, and then return it.
+
+            // move single model to desired export translation
+            gameObjects[0].transform.position = Vector3.zero;
+
+            // export gltf to stream
+            var settings = new ExportSettings { Format = GltfFormat.Binary };
+            var goSettings = new GameObjectExportSettings { OnlyActiveInHierarchy = false };
+            var export = new GameObjectExport(settings, gameObjectExportSettings: goSettings, logger: new ConsoleLogger());
+            export.AddScene(gameObjects, name);
+
+            MemoryStream stream = new MemoryStream();
+            var streamTask = export.SaveToStreamAndDispose(stream);
+            yield return new WaitUntil(() => streamTask.IsCompleted);
+            if (!streamTask.Result)
+            {
+                Debug.LogError($"GLTF export to stream failed!");
+                yield break;
+            }
+            byte[] gltfBuffer = stream.GetBuffer();
+            Debug.LogWarning($"stream is {gltfBuffer.Length} bytes");
+
+            // return single model to original export translation
+            gameObjects[0].transform.position = rootObjPos;
+
+            // send stream to filestore
+            //var safeFilename = name.replace(/(\W+)/gi, '-');
+            var storeResPrefix = authState.is_staff ? $"users/{mqttUserName}/" : "";
+            var userFilePath = $"scenes/{sceneName}/{name}.glb";
+            var storeResPath = $"{storeResPrefix}{userFilePath}";
+            var storeExtPath = $"store/users/{mqttUserName}/{userFilePath}";
+
+            string uploadUrl = $"https://{hostAddress}/storemng/api/resources/{storeResPath}?override=true";
+            Debug.LogWarning($"file upload attempt {uploadUrl}");
+            CoroutineWithData cd = new CoroutineWithData(this, HttpUploadFSRaw(uploadUrl, gltfBuffer));
+            yield return cd.coroutine;
+            if (!isCrdSuccess(cd.result))
+            {
+                Debug.LogError($"GLTF file upload failed!");
+                yield break;
+            }
+            Debug.LogWarning($"file upload result {cd.result}");
+
+            // send scene object metadata to MQTT
+            var object_id = name;
+            ArenaObjectJson msg = new ArenaObjectJson
+            {
+                object_id = object_id,
+                action = "create",
+                type = "object",
+                persist = true,
+                data = new ArenaObjectDataJson
+                {
+                    object_type = "gltf-model",
+                    url = storeExtPath,
+                    position = ArenaUnity.ToArenaPosition(rootObjPos),
+                    rotation = ArenaUnity.ToArenaRotationQuat(
+                        ArenaUnity.GltfToUnityRotationQuat(Quaternion.identity)),
+                }
+            };
+            string payload = JsonConvert.SerializeObject(msg);
+            PublishObject(msg.object_id, payload, sceneObjectRights);
         }
 
         //TODO (mwfarb): prevent publish and throw errors on publishing without rights
@@ -1172,17 +1297,13 @@ namespace ArenaUnity
                         float ttl = (msg.ttl != null) ? (float)msg.ttl : 0f;
                         bool persist = Convert.ToBoolean(msg.persist);
 
-                        // there isnt already an object in the scene created by the user with the same object_id
-                        if (GameObject.Find((string)object_id) == null)
+                        IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
+                        foreach (var uri in uris)
                         {
-                            IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
-                            foreach (var uri in uris)
+                            if (!string.IsNullOrWhiteSpace(uri))
                             {
-                                if (!string.IsNullOrWhiteSpace(uri))
-                                {
-                                    cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
-                                    yield return cd.coroutine;
-                                }
+                                cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
+                                yield return cd.coroutine;
                             }
                         }
                         CreateUpdateObject(msg, msg.data, menuCommand);

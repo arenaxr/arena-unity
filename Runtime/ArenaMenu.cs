@@ -4,10 +4,12 @@
  */
 
 using System.Globalization;
+using System.Linq;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ArenaUnity
 {
@@ -157,6 +159,18 @@ namespace ArenaUnity
             PublishWireObject(menuCommand, "triangle", MatColor);
         }
 
+        [MenuItem("Assets/ARENA Export GLTF/GLTF-Binary (.glb)", false, 32)]
+        static void ExportSelectionBinaryMenu()
+        {
+            ExportSelection();
+        }
+
+        [MenuItem("GameObject/ARENA Export GLTF/GLTF-Binary (.glb)", false, 31)]
+        static void ExportGameObjectBinaryMenu(MenuCommand command)
+        {
+            ExportGameObject(command);
+        }
+
         [MenuItem("GameObject/ARENA/Entity", true)]
         [MenuItem("GameObject/ARENA/GLTF Model", true)]
         [MenuItem("GameObject/ARENA/Image", true)]
@@ -178,6 +192,8 @@ namespace ArenaUnity
         [MenuItem("GameObject/ARENA/Torus", true)]
         [MenuItem("GameObject/ARENA/TorusKnot", true)]
         [MenuItem("GameObject/ARENA/Triangle", true)]
+        [MenuItem("GameObject/ARENA Export GLTF/GLTF-Binary (.glb)", true)]
+        [MenuItem("Assets/ARENA Export GLTF/GLTF-Binary (.glb)", true)]
         static bool ValidateCreateArenaObject()
         {
             return ArenaClientScene.Instance != null && ArenaClientScene.Instance.mqttClientConnected && ArenaClientScene.Instance.sceneObjectRights;
@@ -217,6 +233,46 @@ namespace ArenaUnity
             string payload = JsonConvert.SerializeObject(msg);
             client.PublishObject(msg.object_id, payload, client.sceneObjectRights);
         }
+
+        static void ExportGameObject(MenuCommand command)
+        {
+            var go = command.context as GameObject;
+            if (go != null)
+            {
+                ArenaClientScene.Instance.ExportGLTFBinaryStream(go.name, new[] { go });
+            }
+            else if (TryGetExportNameAndGameObjects(out var name, out var gameObjects))
+            {
+                ArenaClientScene.Instance.ExportGLTFBinaryStream(name, gameObjects);
+            }
+        }
+
+        static void ExportSelection()
+        {
+            if (TryGetExportNameAndGameObjects(out var name, out var gameObjects))
+            {
+                ArenaClientScene.Instance.ExportGLTFBinaryStream(name, gameObjects);
+            }
+        }
+
+        static bool TryGetExportNameAndGameObjects(out string name, out GameObject[] gameObjects)
+        {
+            var transforms = Selection.GetTransforms(SelectionMode.Assets | SelectionMode.TopLevel);
+            if (transforms.Length > 0)
+            {
+                name = transforms.Length > 1
+                    ? SceneManager.GetActiveScene().name
+                    : Selection.activeObject.name;
+
+                gameObjects = transforms.Select(x => x.gameObject).ToArray();
+                return true;
+            }
+
+            name = null;
+            gameObjects = null;
+            return false;
+        }
+
 #endif
     }
 }
