@@ -160,9 +160,9 @@ namespace ArenaUnity
                 }
             }
 
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
             StartCoroutine(ConnectArena());
-#endif
+//#endif
         }
 
         /// <summary>
