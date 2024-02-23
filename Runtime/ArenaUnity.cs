@@ -257,6 +257,14 @@ namespace ArenaUnity
                 renderer.enabled = data.remoteRender.Enabled;
         }
 
+        public static void ApplyArmarker(GameObject gobj, ArenaObjectDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaArmarker>(out var c))
+                c = gobj.AddComponent<ArenaArmarker>();
+            c.json = JsonConvert.DeserializeObject<ArenaArmarkerJson>(MergeRawJson(c.json, data.armarker));
+            c.apply = true;
+        }
+
         public static void ApplyClickListener(GameObject gobj, ArenaObjectDataJson data)
         {
             if (!gobj.TryGetComponent<ArenaClickListener>(out var c))

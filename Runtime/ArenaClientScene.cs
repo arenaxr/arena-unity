@@ -273,7 +273,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
         [MenuItem("ARENA/Signout")]
 #endif
-        internal static void SignoutArena()
+        public static void SignoutArena()
         {
 #if UNITY_EDITOR
             if (Application.isPlaying)
@@ -832,7 +832,7 @@ namespace ArenaUnity
 
                     // expected attributes
                     // TODO: case "animation": ArenaUnity.ApplyAnimation(gobj, data); break;
-                    // TODO: case "armarker": ArenaUnity.ApplyArmarker(gobj, data); break;
+                    case "armarker": ArenaUnity.ApplyArmarker(gobj, data); break;
                     case "click-listener": ArenaUnity.ApplyClickListener(gobj, data); break;
                     // TODO: case "box-collision-listener": ArenaUnity.ApplyBoxCollisionListener(gobj, data); break;
                     // TODO: case "collision-listener": ArenaUnity.ApplyCollisionListener(gobj, data); break;
