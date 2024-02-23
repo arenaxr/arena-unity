@@ -163,6 +163,9 @@ namespace ArenaUnity
             }
 
 #if UNITY_EDITOR
+            // Editor use can change the Auth Method, Hostname, Namespace, Scene in Inspector easily, however
+            // built apps (non-editor) want to change those parameters in UIs/UX processes they create.
+            // So prevent non-editor builds from connecting automatically, so developers can allow user edits.
             StartCoroutine(ConnectArena());
 #endif
         }
