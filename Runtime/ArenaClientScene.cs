@@ -1175,7 +1175,7 @@ namespace ArenaUnity
                 Debug.LogError($"GLTF file upload failed!");
                 yield break;
             }
-            Debug.Log($"GLTF export uploaded to {hostAddress}/{storeExtPath}");
+            Debug.Log($"GLTF export uploaded to https://{hostAddress}/{storeExtPath}");
 
             // send scene object metadata to MQTT
             var object_id = name;
