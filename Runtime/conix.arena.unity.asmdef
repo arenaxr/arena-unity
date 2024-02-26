@@ -5,6 +5,7 @@
         "Unity.TextMeshPro",
         "glTFast",
         "glTFast.Export",
+        "glTFast.Material",
         "Draco"
     ],
     "includePlatforms": [],

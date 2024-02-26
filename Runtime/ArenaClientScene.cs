@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
+using GLTFast;
 using GLTFast.Export;
 using GLTFast.Logging;
 using Google.Apis.Auth.OAuth2;
@@ -106,6 +107,12 @@ namespace ArenaUnity
             "glTF/PbrMetallicRoughness",
             "glTF/PbrSpecularGlossiness",
             "glTF/Unlit",
+            "Hidden/glTFExportMaskMap",
+            "Hidden/glTFExportNormal",
+            "Hidden/glTFExportSmoothness",
+            "Hidden/glTFExportMetalGloss",
+            "Hidden/glTFExportOcclusion",
+            "Hidden/glTFExportColor",
         };
         static readonly string[] requiredShadersURPHDRP = {
             // "Standard",
@@ -161,6 +168,7 @@ namespace ArenaUnity
                     LogAndExit($"Required shader '{shader}' not found in project.");
                 }
             }
+            Shader.WarmupAllShaders();
 
 #if UNITY_EDITOR
             // Editor use can change the Auth Method, Hostname, Namespace, Scene in Inspector easily, however
@@ -953,7 +961,7 @@ namespace ArenaUnity
             try
             {
                 mobj = new GameObject();
-                var gltf = mobj.AddComponent<GLTFast.GltfAsset>();
+                var gltf = mobj.AddComponent<GltfAsset>();
                 gltf.Url = fullUrl;
                 // TODO: (mwfarb) add a error handler in the main thread if the url is 404
                 // TODO: (mwfarb) add a load complete handler to manage the animations
@@ -1148,9 +1156,9 @@ namespace ArenaUnity
             export.AddScene(gameObjects, name);
 
             MemoryStream stream = new MemoryStream();
-            var streamTask = export.SaveToStreamAndDispose(stream);
-            yield return new WaitUntil(() => streamTask.IsCompleted);
-            if (!streamTask.Result)
+            var exportTask = export.SaveToStreamAndDispose(stream);
+            yield return new WaitUntil(() => exportTask.IsCompleted);
+            if (!exportTask.Result)
             {
                 Debug.LogError($"GLTF export to stream failed!");
                 yield break;
@@ -1196,6 +1204,7 @@ namespace ArenaUnity
             };
             string payload = JsonConvert.SerializeObject(msg);
             PublishObject(msg.object_id, payload, sceneObjectRights);
+            yield return true;
         }
 
         //TODO (mwfarb): prevent publish and throw errors on publishing without rights
