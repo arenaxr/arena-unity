@@ -2,6 +2,7 @@
     "name": "conix.arena.unity.Editor",
     "rootNamespace": "",
     "references": [
+        "Unity.TextMeshPro",
         "Unity.TextMeshPro.Editor",
         "Unity.EditorCoroutines.Editor",
         "PrettyHierarchy",
