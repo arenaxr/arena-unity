@@ -107,12 +107,14 @@ namespace ArenaUnity
             "glTF/PbrMetallicRoughness",
             "glTF/PbrSpecularGlossiness",
             "glTF/Unlit",
+#if UNITY_EDITOR
             "Hidden/glTFExportMaskMap",
             "Hidden/glTFExportNormal",
             "Hidden/glTFExportSmoothness",
             "Hidden/glTFExportMetalGloss",
             "Hidden/glTFExportOcclusion",
             "Hidden/glTFExportColor",
+#endif
         };
         static readonly string[] requiredShadersURPHDRP = {
             // "Standard",
@@ -121,7 +123,6 @@ namespace ArenaUnity
             "glTF/PbrSpecularGlossiness",
             "glTF/Unlit",
         };
-        // TODO: (mwfarb) confirm URP shaders are correct
 
         protected override void OnEnable()
         {
