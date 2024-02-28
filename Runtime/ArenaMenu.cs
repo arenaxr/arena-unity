@@ -175,7 +175,8 @@ namespace ArenaUnity
         internal static void ExportGameObjectBinaryAdvancedMenu(MenuCommand menuCommand)
         {
             ArenaGltfExportAdvancedWindow window = (ArenaGltfExportAdvancedWindow)EditorWindow.GetWindow(typeof(ArenaGltfExportAdvancedWindow));
-            // window.Init("gltf-model", menuCommand);
+            TryGetExportNameAndGameObjects(out var name, out var gameObjects);
+            window.Init(name, gameObjects, menuCommand);
             window.Show();
         }
 
@@ -201,6 +202,7 @@ namespace ArenaUnity
         [MenuItem("GameObject/ARENA/TorusKnot", true)]
         [MenuItem("GameObject/ARENA/Triangle", true)]
         [MenuItem("GameObject/ARENA Export GLTF/GLTF-Binary (.glb)", true)]
+        [MenuItem("GameObject/ARENA Export GLTF/GLTF-Binary Advanced", true)]
         [MenuItem("Assets/ARENA Export GLTF/GLTF-Binary (.glb)", true)]
         [MenuItem("Assets/ARENA Export GLTF/GLTF-Binary Advanced", true)]
         static bool ValidateCreateArenaObject()

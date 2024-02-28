@@ -1110,8 +1110,13 @@ namespace ArenaUnity
             ClearProgressBar();
         }
 
-        public void ExportGLTFBinaryStream(string name, GameObject[] gameObjects)
+        public void ExportGLTFBinaryStream(string name, GameObject[] gameObjects, ExportSettings exportSettings = null)
         {
+            exportSettings ??= new ExportSettings { };
+
+            // ARENA upload only supports GLB formats ATM
+            exportSettings.Format = GltfFormat.Binary;
+
             bool success = true;
             foreach (var go in gameObjects)
             {
@@ -1133,11 +1138,11 @@ namespace ArenaUnity
             }
             if (success)
             {
-                StartCoroutine(ExportGLTF(name, gameObjects));
+                StartCoroutine(ExportGLTF(name, gameObjects, exportSettings));
             }
         }
 
-        private IEnumerator ExportGLTF(string name, GameObject[] gameObjects)
+        private IEnumerator ExportGLTF(string name, GameObject[] gameObjects, ExportSettings exportSettings)
         {
             // TODO (mwfarb): find better way to export with local position/rotation
 
@@ -1151,9 +1156,8 @@ namespace ArenaUnity
             gameObjects[0].transform.position = Vector3.zero;
 
             // export gltf to stream
-            var settings = new ExportSettings { Format = GltfFormat.Binary };
             var goSettings = new GameObjectExportSettings { OnlyActiveInHierarchy = false };
-            var export = new GameObjectExport(settings, gameObjectExportSettings: goSettings, logger: new ConsoleLogger());
+            var export = new GameObjectExport(exportSettings, gameObjectExportSettings: goSettings, logger: new ConsoleLogger());
             export.AddScene(gameObjects, name);
 
             MemoryStream stream = new MemoryStream();
