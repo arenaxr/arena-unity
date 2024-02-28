@@ -171,6 +171,14 @@ namespace ArenaUnity
             ExportGameObject(command);
         }
 
+        [MenuItem("GameObject/ARENA Export GLTF/GLTF-Binary Advanced", false, 31)]
+        internal static void ExportGameObjectBinaryAdvancedMenu(MenuCommand menuCommand)
+        {
+            ArenaGltfExportAdvancedWindow window = (ArenaGltfExportAdvancedWindow)EditorWindow.GetWindow(typeof(ArenaGltfExportAdvancedWindow));
+            // window.Init("gltf-model", menuCommand);
+            window.Show();
+        }
+
         [MenuItem("GameObject/ARENA/Entity", true)]
         [MenuItem("GameObject/ARENA/GLTF Model", true)]
         [MenuItem("GameObject/ARENA/Image", true)]
@@ -194,6 +202,7 @@ namespace ArenaUnity
         [MenuItem("GameObject/ARENA/Triangle", true)]
         [MenuItem("GameObject/ARENA Export GLTF/GLTF-Binary (.glb)", true)]
         [MenuItem("Assets/ARENA Export GLTF/GLTF-Binary (.glb)", true)]
+        [MenuItem("Assets/ARENA Export GLTF/GLTF-Binary Advanced", true)]
         static bool ValidateCreateArenaObject()
         {
             return ArenaClientScene.Instance != null && ArenaClientScene.Instance.mqttClientConnected && ArenaClientScene.Instance.sceneObjectRights;
