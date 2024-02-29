@@ -3,6 +3,7 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
+using System.Collections;
 using GLTFast;
 using GLTFast.Export;
 using UnityEditor;
@@ -13,33 +14,55 @@ namespace ArenaUnity
 #if UNITY_EDITOR
     public class ArenaGltfExportAdvancedWindow : EditorWindow
     {
-        private MenuCommand menuCommand;
         private string objectName;
         private GameObject[] gameObjects;
+        private string[] layerNames;
 
-        internal void Init(string name, GameObject[] gameObjects, MenuCommand menuCommand)
+        internal void Init(string name, GameObject[] gameObjects)
         {
             this.objectName = name;
             this.gameObjects = gameObjects;
-            this.menuCommand = menuCommand;
+
+            // generate user's list of layers
+            ArrayList layers = new ArrayList();
+            for (int i = 0; i <= 31; i++)
+            {
+                var layer = LayerMask.LayerToName(i);
+                layers.Add($"{i + 1}: {layer}");
+            }
+            layerNames = (string[])layers.ToArray(typeof(string));
         }
 
         void OnGUI()
         {
             objectName = EditorGUILayout.TextField("Export Object Name", objectName);
 
+            GUILayout.Space(10f);
+            GUILayout.Label("Export Settings", EditorStyles.boldLabel);
+
             ArenaGltfExportAdvanced.Deterministic = EditorGUILayout.Toggle(
                 "Deterministic", ArenaGltfExportAdvanced.Deterministic);
 
             ArenaGltfExportAdvanced.ComponentMask = (int)(ComponentType)EditorGUILayout.EnumFlagsField(
-                "Export Components", (ComponentType)ArenaGltfExportAdvanced.ComponentMask);
-
-            ArenaGltfExportAdvanced.Compression = (int)(Compression)EditorGUILayout.EnumPopup(
-                "Compression", (Compression)ArenaGltfExportAdvanced.Compression);
+                "Components Exported", (ComponentType)ArenaGltfExportAdvanced.ComponentMask);
 
             ArenaGltfExportAdvanced.LightIntensityFactor = EditorGUILayout.FloatField(
                 "Light Intensity Factor", ArenaGltfExportAdvanced.LightIntensityFactor);
 
+            ArenaGltfExportAdvanced.Compression = (int)(Compression)EditorGUILayout.EnumPopup(
+                "Compression", (Compression)ArenaGltfExportAdvanced.Compression);
+
+            GUILayout.Space(10f);
+            GUILayout.Label("Game Object Export Settings", EditorStyles.boldLabel);
+
+            ArenaGltfExportAdvanced.DisabledComponents = EditorGUILayout.Toggle(
+                "Disabled Components", ArenaGltfExportAdvanced.DisabledComponents);
+
+            ArenaGltfExportAdvanced.OnlyActiveInHierarchy = EditorGUILayout.Toggle(
+                "Only Active In Hierarchy", ArenaGltfExportAdvanced.OnlyActiveInHierarchy);
+
+            ArenaGltfExportAdvanced.LayerMask = (LayerMask)EditorGUILayout.MaskField(
+                "Layers Exported", ArenaGltfExportAdvanced.LayerMask, layerNames);
 
             GUILayout.FlexibleSpace();
 
@@ -54,9 +77,13 @@ namespace ArenaUnity
             {
                 ArenaGltfExportAdvanced.ComponentMask = (int)ArenaGltfExportAdvanced.defES.ComponentMask;
                 ArenaGltfExportAdvanced.Deterministic = ArenaGltfExportAdvanced.defES.Deterministic;
-                ArenaGltfExportAdvanced.Compression = (int)ArenaGltfExportAdvanced.defES.Compression;
                 ArenaGltfExportAdvanced.LightIntensityFactor = ArenaGltfExportAdvanced.defES.LightIntensityFactor;
+                ArenaGltfExportAdvanced.Compression = (int)ArenaGltfExportAdvanced.defES.Compression;
                 // TODO (mwfarb) ArenaGltfExportAdvanced.DracoSettings = ArenaGltfExportAdvanced.defES.DracoSettings;
+
+                ArenaGltfExportAdvanced.DisabledComponents = ArenaGltfExportAdvanced.defGOES.DisabledComponents;
+                ArenaGltfExportAdvanced.OnlyActiveInHierarchy = ArenaGltfExportAdvanced.defGOES.OnlyActiveInHierarchy;
+                ArenaGltfExportAdvanced.LayerMask = (int)ArenaGltfExportAdvanced.defGOES.LayerMask;
             }
 
             GUI.backgroundColor = Color.green;
@@ -68,6 +95,13 @@ namespace ArenaUnity
                     Deterministic = ArenaGltfExportAdvanced.Deterministic,
                     Compression = (Compression)ArenaGltfExportAdvanced.Compression,
                     LightIntensityFactor = ArenaGltfExportAdvanced.LightIntensityFactor,
+                    // DracoSettings = DracoExportSettings.SpeedSettings,
+                },
+                new GameObjectExportSettings
+                {
+                    DisabledComponents = ArenaGltfExportAdvanced.DisabledComponents,
+                    OnlyActiveInHierarchy = ArenaGltfExportAdvanced.OnlyActiveInHierarchy,
+                    LayerMask = (LayerMask)ArenaGltfExportAdvanced.LayerMask,
                 });
                 Close();
             }

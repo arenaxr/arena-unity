@@ -88,5 +88,63 @@ namespace ArenaUnity
             }
         }
 
+        public static bool DisabledComponents
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return EditorPrefs.GetBool("DisabledComponents", defGOES.DisabledComponents);
+#else
+                return false;
+#endif
+            }
+
+            set
+            {
+#if UNITY_EDITOR
+                EditorPrefs.SetBool("DisabledComponents", value);
+#endif
+            }
+        }
+
+
+        public static bool OnlyActiveInHierarchy
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return EditorPrefs.GetBool("OnlyActiveInHierarchy", defGOES.OnlyActiveInHierarchy);
+#else
+                return false;
+#endif
+            }
+
+            set
+            {
+#if UNITY_EDITOR
+                EditorPrefs.SetBool("OnlyActiveInHierarchy", value);
+#endif
+            }
+        }
+
+        public static int LayerMask
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return EditorPrefs.GetInt("LayerMask", (int)defGOES.LayerMask);
+#else
+                return false;
+#endif
+            }
+
+            set
+            {
+#if UNITY_EDITOR
+                EditorPrefs.SetInt("LayerMask", value);
+#endif
+            }
+        }
+
     }
 }
