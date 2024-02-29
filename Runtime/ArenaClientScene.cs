@@ -681,7 +681,8 @@ namespace ArenaUnity
                         if (!gobj.TryGetComponent<Camera>(out var cam))
                             cam = gobj.AddComponent<Camera>();
                         //cam = gobj.transform.gameObject.AddComponent<Camera>();
-                        cam.nearClipPlane = 0.1f; // match arena
+                        // TODO: cam.nearClipPlane = 0.005f; // match arena
+                        cam.nearClipPlane = 0.1f; // move near clip out since local cam hard to see in model
                         cam.farClipPlane = 10000f; // match arena
                         cam.fieldOfView = 80f; // match arena
                         cam.targetDisplay = 8; // render on least-used display
