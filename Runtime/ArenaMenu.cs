@@ -165,10 +165,38 @@ namespace ArenaUnity
             ExportSelection();
         }
 
-        [MenuItem("GameObject/ARENA Export GLTF/GLTF-Binary (.glb)", false, 31)]
-        static void ExportGameObjectBinaryMenu(MenuCommand command)
+        [MenuItem("Assets/ARENA Export GLTF/GLTF-Binary Advanced", false, 31)]
+        internal static void ExportGameObjectBinaryAdvancedMenu()
         {
-            ExportGameObject(command);
+            ArenaGltfExportAdvancedWindow window = (ArenaGltfExportAdvancedWindow)EditorWindow.GetWindow(typeof(ArenaGltfExportAdvancedWindow));
+            if (TryGetExportNameAndGameObjects(out var name, out var gameObjects))
+            {
+                window.Init(name, gameObjects);
+                window.Show();
+            }
+        }
+
+        [MenuItem("GameObject/ARENA Export GLTF/GLTF-Binary (.glb)", false, 31)]
+        static void ExportGameObjectBinaryMenu(MenuCommand menuCommand)
+        {
+            ExportGameObject(menuCommand);
+        }
+
+        [MenuItem("GameObject/ARENA Export GLTF/GLTF-Binary Advanced", false, 31)]
+        internal static void ExportGameObjectBinaryAdvancedMenu(MenuCommand menuCommand)
+        {
+            ArenaGltfExportAdvancedWindow window = (ArenaGltfExportAdvancedWindow)EditorWindow.GetWindow(typeof(ArenaGltfExportAdvancedWindow));
+            var go = menuCommand.context as GameObject;
+            if (go != null)
+            {
+                window.Init(go.name, new[] { go });
+                window.Show();
+            }
+            else if (TryGetExportNameAndGameObjects(out var name, out var gameObjects))
+            {
+                window.Init(name, gameObjects);
+                window.Show();
+            }
         }
 
         [MenuItem("GameObject/ARENA/Entity", true)]
@@ -193,7 +221,9 @@ namespace ArenaUnity
         [MenuItem("GameObject/ARENA/TorusKnot", true)]
         [MenuItem("GameObject/ARENA/Triangle", true)]
         [MenuItem("GameObject/ARENA Export GLTF/GLTF-Binary (.glb)", true)]
+        [MenuItem("GameObject/ARENA Export GLTF/GLTF-Binary Advanced", true)]
         [MenuItem("Assets/ARENA Export GLTF/GLTF-Binary (.glb)", true)]
+        [MenuItem("Assets/ARENA Export GLTF/GLTF-Binary Advanced", true)]
         static bool ValidateCreateArenaObject()
         {
             return ArenaClientScene.Instance != null && ArenaClientScene.Instance.mqttClientConnected && ArenaClientScene.Instance.sceneObjectRights;
