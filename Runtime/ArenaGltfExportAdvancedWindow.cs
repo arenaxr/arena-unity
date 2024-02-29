@@ -8,6 +8,7 @@ using GLTFast;
 using GLTFast.Export;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.XR;
 
 namespace ArenaUnity
 {
@@ -51,6 +52,24 @@ namespace ArenaUnity
 
             ArenaGltfExportAdvanced.Compression = (int)(Compression)EditorGUILayout.EnumPopup(
                 "Compression", (Compression)ArenaGltfExportAdvanced.Compression);
+            if ((Compression)ArenaGltfExportAdvanced.Compression == Compression.Draco)
+            {
+                GUILayout.Space(10f);
+                GUILayout.Label("Draco Compression", EditorStyles.boldLabel);
+
+                ArenaGltfExportAdvanced.DracoColorQuantization = EditorGUILayout.IntField(
+                    "Color Quantization", ArenaGltfExportAdvanced.DracoColorQuantization);
+                ArenaGltfExportAdvanced.DracoDecodingSpeed = EditorGUILayout.IntField(
+                    "Decoding Speed", ArenaGltfExportAdvanced.DracoDecodingSpeed);
+                ArenaGltfExportAdvanced.DracoEncodingSpeed = EditorGUILayout.IntField(
+                    "Encoding Speed", ArenaGltfExportAdvanced.DracoEncodingSpeed);
+                ArenaGltfExportAdvanced.DracoNormalQuantization = EditorGUILayout.IntField(
+                    "Normal Quantization", ArenaGltfExportAdvanced.DracoNormalQuantization);
+                ArenaGltfExportAdvanced.DracoPositionQuantization = EditorGUILayout.IntField(
+                    "Position Quantization", ArenaGltfExportAdvanced.DracoPositionQuantization);
+                ArenaGltfExportAdvanced.DracoTexCoordQuantization = EditorGUILayout.IntField(
+                    "Tex Coord Quantization", ArenaGltfExportAdvanced.DracoTexCoordQuantization);
+            }
 
             GUILayout.Space(10f);
             GUILayout.Label("Game Object Export Settings", EditorStyles.boldLabel);
@@ -79,7 +98,14 @@ namespace ArenaUnity
                 ArenaGltfExportAdvanced.Deterministic = ArenaGltfExportAdvanced.defES.Deterministic;
                 ArenaGltfExportAdvanced.LightIntensityFactor = ArenaGltfExportAdvanced.defES.LightIntensityFactor;
                 ArenaGltfExportAdvanced.Compression = (int)ArenaGltfExportAdvanced.defES.Compression;
-                // TODO (mwfarb) ArenaGltfExportAdvanced.DracoSettings = ArenaGltfExportAdvanced.defES.DracoSettings;
+                ArenaGltfExportAdvanced.DracoSettings = ArenaGltfExportAdvanced.defES.DracoSettings != null;
+
+                ArenaGltfExportAdvanced.DracoColorQuantization = ArenaGltfExportAdvanced.defDES.colorQuantization;
+                ArenaGltfExportAdvanced.DracoDecodingSpeed = ArenaGltfExportAdvanced.defDES.decodingSpeed;
+                ArenaGltfExportAdvanced.DracoEncodingSpeed = ArenaGltfExportAdvanced.defDES.encodingSpeed;
+                ArenaGltfExportAdvanced.DracoNormalQuantization = ArenaGltfExportAdvanced.defDES.normalQuantization;
+                ArenaGltfExportAdvanced.DracoPositionQuantization = ArenaGltfExportAdvanced.defDES.positionQuantization;
+                ArenaGltfExportAdvanced.DracoTexCoordQuantization = ArenaGltfExportAdvanced.defDES.texCoordQuantization;
 
                 ArenaGltfExportAdvanced.DisabledComponents = ArenaGltfExportAdvanced.defGOES.DisabledComponents;
                 ArenaGltfExportAdvanced.OnlyActiveInHierarchy = ArenaGltfExportAdvanced.defGOES.OnlyActiveInHierarchy;
@@ -89,20 +115,32 @@ namespace ArenaUnity
             GUI.backgroundColor = Color.green;
             if (GUILayout.Button("ARENA Export", GUILayout.Width(100), GUILayout.Height(30)))
             {
-                ArenaClientScene.Instance.ExportGLTFBinaryStream(objectName, gameObjects, new ExportSettings
+                ExportSettings exportSettings = new ExportSettings
                 {
                     ComponentMask = (ComponentType)ArenaGltfExportAdvanced.ComponentMask,
                     Deterministic = ArenaGltfExportAdvanced.Deterministic,
                     Compression = (Compression)ArenaGltfExportAdvanced.Compression,
                     LightIntensityFactor = ArenaGltfExportAdvanced.LightIntensityFactor,
-                    // DracoSettings = DracoExportSettings.SpeedSettings,
-                },
-                new GameObjectExportSettings
+                };
+                if (ArenaGltfExportAdvanced.DracoSettings)
+                {
+                    exportSettings.DracoSettings = new DracoExportSettings
+                    {
+                        colorQuantization = ArenaGltfExportAdvanced.DracoColorQuantization,
+                        decodingSpeed = ArenaGltfExportAdvanced.DracoDecodingSpeed,
+                        encodingSpeed = ArenaGltfExportAdvanced.DracoEncodingSpeed,
+                        normalQuantization = ArenaGltfExportAdvanced.DracoNormalQuantization,
+                        positionQuantization = ArenaGltfExportAdvanced.DracoPositionQuantization,
+                        texCoordQuantization = ArenaGltfExportAdvanced.DracoTexCoordQuantization,
+                    };
+                }
+                GameObjectExportSettings goeSettings = new GameObjectExportSettings
                 {
                     DisabledComponents = ArenaGltfExportAdvanced.DisabledComponents,
                     OnlyActiveInHierarchy = ArenaGltfExportAdvanced.OnlyActiveInHierarchy,
                     LayerMask = (LayerMask)ArenaGltfExportAdvanced.LayerMask,
-                });
+                };
+                ArenaClientScene.Instance.ExportGLTFBinaryStream(objectName, gameObjects, exportSettings, goeSettings);
                 Close();
             }
 

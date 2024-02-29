@@ -88,6 +88,139 @@ namespace ArenaUnity
             }
         }
 
+        public static bool DracoSettings
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return EditorPrefs.GetBool("DracoSettings", defES.DracoSettings != null);
+#else
+                return false;
+#endif
+            }
+
+            set
+            {
+#if UNITY_EDITOR
+                EditorPrefs.SetBool("DracoSettings", value);
+#endif
+            }
+        }
+
+        public static int DracoColorQuantization
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return EditorPrefs.GetInt("DracoColorQuantization", defDES.colorQuantization);
+#else
+                return false;
+#endif
+            }
+
+            set
+            {
+#if UNITY_EDITOR
+                EditorPrefs.SetInt("DracoColorQuantization", value);
+#endif
+            }
+        }
+
+        public static int DracoDecodingSpeed
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return EditorPrefs.GetInt("DracoDecodingSpeed", defDES.decodingSpeed);
+#else
+                return false;
+#endif
+            }
+
+            set
+            {
+#if UNITY_EDITOR
+                EditorPrefs.SetInt("DracoDecodingSpeed", value);
+#endif
+            }
+        }
+
+        public static int DracoEncodingSpeed
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return EditorPrefs.GetInt("DracoEncodingSpeed", defDES.encodingSpeed);
+#else
+                return false;
+#endif
+            }
+
+            set
+            {
+#if UNITY_EDITOR
+                EditorPrefs.SetInt("DracoEncodingSpeed", value);
+#endif
+            }
+        }
+
+        public static int DracoNormalQuantization
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return EditorPrefs.GetInt("DracoNormalQuantization", defDES.normalQuantization);
+#else
+                return false;
+#endif
+            }
+
+            set
+            {
+#if UNITY_EDITOR
+                EditorPrefs.SetInt("DracoNormalQuantization", value);
+#endif
+            }
+        }
+
+        public static int DracoPositionQuantization
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return EditorPrefs.GetInt("DracoPositionQuantization", defDES.positionQuantization);
+#else
+                return false;
+#endif
+            }
+
+            set
+            {
+#if UNITY_EDITOR
+                EditorPrefs.SetInt("DracoPositionQuantization", value);
+#endif
+            }
+        }
+
+        public static int DracoTexCoordQuantization
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return EditorPrefs.GetInt("DracoTexCoordQuantization", defDES.texCoordQuantization);
+#else
+                return false;
+#endif
+            }
+
+            set
+            {
+#if UNITY_EDITOR
+                EditorPrefs.SetInt("DracoTexCoordQuantization", value);
+#endif
+            }
+        }
+
         public static bool DisabledComponents
         {
             get
