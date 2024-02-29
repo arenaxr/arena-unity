@@ -2,6 +2,15 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.12.1](https://github.com/arenaxr/arena-unity/compare/v0.12.0...v0.12.1) (2024-02-29)
+
+
+### Bug Fixes
+
+* adding GLTF advanced export settings interface ([#93](https://github.com/arenaxr/arena-unity/issues/93)) ([ade17bb](https://github.com/arenaxr/arena-unity/commit/ade17bb621669d34504b3f2f24451f7d3b41d017))
+* only require glTFExport shaders in editor ([ea4da89](https://github.com/arenaxr/arena-unity/commit/ea4da8923de2ad4e2d05230366989625d9c46efb))
+* preempt user with Import TMP Essentials at load ([3f3c36d](https://github.com/arenaxr/arena-unity/commit/3f3c36ddd5554ee8bd11abfbab0b5373133f6619))
+
 ## [0.12.0](https://github.com/arenaxr/arena-unity/compare/v0.11.1...v0.12.0) (2024-02-21)
 
 
