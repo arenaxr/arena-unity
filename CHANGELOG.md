@@ -2,6 +2,13 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.12.2](https://github.com/arenaxr/arena-unity/compare/v0.12.1...v0.12.2) (2024-03-01)
+
+
+### Bug Fixes
+
+* **gltf:** allow ktx/meshopt decompression ([adf201f](https://github.com/arenaxr/arena-unity/commit/adf201f565b10453a1fe42736d255dce99f5cf52))
+
 ## [0.12.1](https://github.com/arenaxr/arena-unity/compare/v0.12.0...v0.12.1) (2024-02-29)
 
 
