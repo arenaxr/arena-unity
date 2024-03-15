@@ -26,6 +26,12 @@ using UnityEngine.Rendering;
 
 namespace ArenaUnity
 {
+    [Serializable]
+    public class ArenaMqttClientAdvanced
+    {
+        public bool verifyCertificate = true;
+    }
+
     /// <summary>
     /// Class to manage a singleton instance of the ARENA client connection.
     /// </summary>
@@ -46,6 +52,8 @@ namespace ArenaUnity
         public string namespaceName = null;
         [Tooltip("Name of the scene, without namespace ('example', not 'username/example', runtime changes ignored).")]
         public string sceneName = "example";
+
+        public ArenaMqttClientAdvanced advanced = new ArenaMqttClientAdvanced { verifyCertificate = true };
 
         [Header("Presence")]
         [Tooltip("Display other camera avatars in the scene")]
@@ -1050,8 +1058,8 @@ namespace ArenaUnity
             UnityWebRequest www = UnityWebRequest.Get(url);
             www.downloadHandler = new DownloadHandlerBuffer();
             //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
-            if (!verifyCertificate && url.StartsWith("https://localhost"))
-            {   // TODO (mwfarb): should check for arena/not-arena host when debugging on localhost
+            if (!verifyCertificate)
+            {
                 www.certificateHandler = new SelfSignedCertificateHandler();
             }
             www.SendWebRequest();
@@ -1082,8 +1090,8 @@ namespace ArenaUnity
             Uri uri = new Uri(url);
             UnityWebRequest www = new UnityWebRequest(url, "POST");
             //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
-            if (!verifyCertificate && url.StartsWith("https://localhost"))
-            {   // TODO (mwfarb): should check for arena/not-arena host when debugging on localhost
+            if (!verifyCertificate)
+            {
                 www.certificateHandler = new SelfSignedCertificateHandler();
             }
             www.SetRequestHeader("X-Auth", fsToken);
@@ -1372,6 +1380,11 @@ namespace ArenaUnity
                 Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
             else
                 Debug.LogWarning($"Permissions FAILED {dir}: {JsonConvert.SerializeObject(msg)}");
+        }
+
+        public void OnValidate()
+        {
+            verifyCertificate = advanced.verifyCertificate;
         }
 
         protected override void OnApplicationQuit()

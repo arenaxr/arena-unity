@@ -86,10 +86,6 @@ namespace ArenaUnity
             brokerPort = 8883;
             isEncrypted = true;
             sslProtocol = MqttSslProtocols.TLSv1_2;
-            if (hostAddress == "localhost")
-            {
-                verifyCertificate = false;
-            }
             StartCoroutine(PublishTickLatency());
         }
 
@@ -163,7 +159,7 @@ namespace ArenaUnity
 
         // Auth methods
 
-        internal static string  GetUnityAuthPath()
+        internal static string GetUnityAuthPath()
         {
             string userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             return Path.Combine(userHomePath, userDirArena, userSubDirUnity);
@@ -204,11 +200,6 @@ namespace ArenaUnity
                 Directory.CreateDirectory(sceneAuthDir);
             }
 #endif
-            if (hostAddress == "localhost")
-            {
-                verifyCertificate = false;
-            }
-
             string localMqttPath = Path.Combine(appFilesPath, mqttTokenFile);
             if (File.Exists(localMqttPath))
             {
