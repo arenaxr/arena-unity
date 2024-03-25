@@ -21,7 +21,7 @@ namespace ArenaUnity.Schemas
     /// A-Frame Environment presets. More properties at <a href='https://github.com/supermedium/aframe-environment-component'>https://github.com/supermedium/aframe-environment-component</a>
     /// </summary>
     [Serializable]
-    public class ArenaEnvironmentPresetsJson
+    public class ArenaEnvPresetsJson
     {
         [JsonIgnore]
         public readonly string componentName = "env-presets";

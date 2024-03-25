@@ -492,9 +492,9 @@ namespace ArenaUnity
 
         public static void ApplyEnvironmentPresets(GameObject gobj, ArenaArenaSceneOptionsJson data)
         {
-            if (!gobj.TryGetComponent<ArenaSceneEnvironmentalPresets>(out var c))
-                c = gobj.AddComponent<ArenaSceneEnvironmentalPresets>();
-            c.json = JsonConvert.DeserializeObject<ArenaEnvironmentPresetsJson>(data.EnvPresets.ToString());
+            if (!gobj.TryGetComponent<ArenaSceneEnvPresets>(out var c))
+                c = gobj.AddComponent<ArenaSceneEnvPresets>();
+            c.json = JsonConvert.DeserializeObject<ArenaEnvPresetsJson>(data.EnvPresets.ToString());
             c.apply = true;
         }
 

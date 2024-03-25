@@ -11,9 +11,9 @@ using UnityEngine;
 
 namespace ArenaUnity.Components
 {
-    public class ArenaSceneEnvironmentalPresets : ArenaComponent
+    public class ArenaSceneEnvPresets : ArenaComponent
     {
-        public ArenaEnvironmentPresetsJson json = new ArenaEnvironmentPresetsJson();
+        public ArenaEnvPresetsJson json = new ArenaEnvPresetsJson();
 
         protected override void ApplyRender()
         {
