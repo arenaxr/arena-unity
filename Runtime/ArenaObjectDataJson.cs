@@ -248,14 +248,6 @@ namespace ArenaUnity
             return (attribution != null);
         }
 
-        [JsonProperty(PropertyName = "particle-system")]
-        [Tooltip("Particle system component for A-Frame. ")]
-        public ArenaParticleSystemJson particleSystem = null;
-        public bool ShouldSerializeparticleSystem()
-        {
-            return (particleSystem != null);
-        }
-
         [JsonProperty(PropertyName = "spe-particles")]
         [Tooltip("GPU based particle systems in A-Frame. ")]
         public ArenaSpeParticlesJson speParticles = null;
