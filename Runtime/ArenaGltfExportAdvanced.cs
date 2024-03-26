@@ -8,9 +8,9 @@ namespace ArenaUnity
     public class ArenaGltfExportAdvanced
     {
         // defaults
-        public static ExportSettings defES = new() { };
-        public static GameObjectExportSettings defGOES = new() { };
-        public static DracoExportSettings defDES = new() { };
+        public static ExportSettings defES = new ExportSettings() { };
+        public static GameObjectExportSettings defGOES = new GameObjectExportSettings() { };
+        public static DracoExportSettings defDES = new DracoExportSettings() { };
 
         public static int ComponentMask
         {

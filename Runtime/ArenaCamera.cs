@@ -97,12 +97,11 @@ namespace ArenaUnity
             }
 
             // minimum transform information
-            ArenaObjectDataJson dataUnity = new ArenaObjectDataJson
+            ArenaCameraJson dataUnity = new ArenaCameraJson
             {
-                object_type = "camera",
                 position = ArenaUnity.ToArenaPosition(transform.localPosition),
                 rotation = ArenaUnity.ToArenaRotationQuat(transform.localRotation), // always send quaternions over the wire
-                arenaUser = new ArenaArenaUserJson
+                ArenaUser = new ArenaArenaUserJson
                 {
                     displayName = displayName,
                     headModelPath = headModelPath,

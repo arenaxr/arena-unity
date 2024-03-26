@@ -169,7 +169,7 @@ namespace ArenaUnity
                     LogAndExit($"Required shader '{shader}' not found in project.");
                 }
             }
-            Shader.WarmupAllShaders();
+            //Shader.WarmupAllShaders();
 
 #if UNITY_EDITOR
             // Editor use can change the Auth Method, Hostname, Namespace, Scene in Inspector easily, however
@@ -605,7 +605,7 @@ namespace ArenaUnity
 
         private void UpdateObjectMessage(ArenaObjectJson msg, object indata, ArenaObject aobj, GameObject gobj, JObject jData)
         {
-            ArenaObjectDataJson data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
+            ArenaDataJson data = JsonConvert.DeserializeObject<ArenaDataJson>(indata.ToString());
 
             // modify Unity attributes
             bool worldPositionStays = false; // default: most children need relative position
@@ -686,9 +686,9 @@ namespace ArenaUnity
                         cam.farClipPlane = 10000f; // match arena
                         cam.fieldOfView = 80f; // match arena
                         cam.targetDisplay = 8; // render on least-used display
-                        var json = new ArenaArenaUserJson();
-                        json = JsonConvert.DeserializeObject<ArenaArenaUserJson>(ArenaUnity.MergeRawJson(json, data.arenaUser));
-                        AttachAvatar(msg.object_id, json, gobj);
+                        var json = new ArenaCameraJson();
+                        json = JsonConvert.DeserializeObject<ArenaCameraJson>(ArenaUnity.MergeRawJson(json, data));
+                        AttachAvatar(msg.object_id, json.ArenaUser, gobj);
                     }
                     break;
                 case "handLeft":
@@ -1198,7 +1198,7 @@ namespace ArenaUnity
                 action = "create",
                 type = "object",
                 persist = true,
-                data = new ArenaObjectDataJson
+                data = new ArenaDataJson
                 {
                     object_type = "gltf-model",
                     url = storeExtPath,

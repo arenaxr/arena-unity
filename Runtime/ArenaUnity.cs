@@ -239,7 +239,7 @@ namespace ArenaUnity
 
         // object components
 
-        public static void ApplyVisible(GameObject gobj, ArenaObjectDataJson data)
+        public static void ApplyVisible(GameObject gobj, ArenaDataJson data)
         {
             // TODO (mwfarb): handle realtime renderer changes from unity.
             // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
@@ -252,7 +252,7 @@ namespace ArenaUnity
                 light.enabled = (bool)data.visible;
             }
         }
-        public static void ApplyRemoteRender(GameObject gobj, ArenaObjectDataJson data)
+        public static void ApplyRemoteRender(GameObject gobj, ArenaDataJson data)
         {
             // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
             foreach (Renderer renderer in gobj.GetComponentsInChildren<Renderer>(true))
@@ -265,7 +265,7 @@ namespace ArenaUnity
             }
         }
 
-        public static void ApplyClickListener(GameObject gobj, ArenaObjectDataJson data)
+        public static void ApplyClickListener(GameObject gobj, ArenaDataJson data)
         {
             if (!gobj.TryGetComponent<ArenaClickListener>(out var c))
                 c = gobj.AddComponent<ArenaClickListener>();
@@ -273,7 +273,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyAnimationMixer(GameObject gobj, ArenaObjectDataJson data)
+        public static void ApplyAnimationMixer(GameObject gobj, ArenaDataJson data)
         {
             if (!gobj.TryGetComponent<ArenaAnimationMixer>(out var c))
                 c = gobj.AddComponent<ArenaAnimationMixer>();
@@ -281,7 +281,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyAttribution(GameObject gobj, ArenaObjectDataJson data)
+        public static void ApplyAttribution(GameObject gobj, ArenaDataJson data)
         {
             if (!gobj.TryGetComponent<ArenaAttribution>(out var c))
                 c = gobj.AddComponent<ArenaAttribution>();
@@ -289,7 +289,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyMaterial(GameObject gobj, ArenaObjectDataJson data)
+        public static void ApplyMaterial(GameObject gobj, ArenaDataJson data)
         {
             if (!gobj.TryGetComponent<ArenaMaterial>(out var c))
                 c = gobj.AddComponent<ArenaMaterial>();

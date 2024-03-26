@@ -249,7 +249,7 @@ namespace ArenaUnity
                 type = "object",
                 persist = true,
             };
-            ArenaObjectDataJson data = new ArenaObjectDataJson
+            ArenaDataJson data = new ArenaDataJson
             {
                 object_type = object_type,
                 position = ArenaUnity.ToArenaPosition(cameraPoint),

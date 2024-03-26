@@ -6,15 +6,14 @@
 using System;
 using System.Runtime.Serialization;
 using ArenaUnity.Components;
-using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
-namespace ArenaUnity
+namespace ArenaUnity.Schemas
 {
     [Serializable]
-    public class ArenaObjectDataJson
+    public class ArenaDataJson
     {
         [JsonProperty(PropertyName = "object_type")]
         [Tooltip("3D object type.")]
