@@ -18,7 +18,7 @@ using UnityEngine;
 namespace ArenaUnity.Schemas
 {
     /// <summary>
-    /// A location marker (such as an AprilTag, a lightAnchor, or an UWB tag), used to anchor scenes, or scene objects, in the real world.
+    /// A location marker (such as an AprilTag, a lightAnchor, or an UWB tag, or a vive, or an optitrack), used to anchor scenes, or scene objects, in the real world.
     /// </summary>
     [Serializable]
     public class ArenaArmarkerJson
@@ -95,11 +95,15 @@ namespace ArenaUnity.Schemas
             Lightanchor,
             [EnumMember(Value = "uwb")]
             Uwb,
+            [EnumMember(Value = "vive")]
+            Vive,
+            [EnumMember(Value = "optitrack")]
+            Optitrack,
         }
         private static MarkertypeType defMarkertype = MarkertypeType.Apriltag36h11;
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(PropertyName = "markertype")]
-        [Tooltip("The marker type (apriltag_36h11, lightanchor, uwb)")]
+        [Tooltip("The marker type (apriltag_36h11, lightanchor, uwb, vive, optitrack)")]
         public MarkertypeType Markertype = defMarkertype;
         public bool ShouldSerializeMarkertype()
         {
