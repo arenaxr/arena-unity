@@ -308,16 +308,17 @@ namespace ArenaUnity
                     if (authState.authenticated)
                     {
                         namespaceName = authState.username;
+
+                        // get fs login
+                        cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/storelogin", csrfToken, form));
+                        yield return cd.coroutine;
+                        if (!isCrdSuccess(cd.result)) yield break;
                     }
                     else
                     {
                         namespaceName = "public";
                     }
                 }
-                // get fs login
-                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/storelogin", csrfToken, form));
-                yield return cd.coroutine;
-                if (!isCrdSuccess(cd.result)) yield break;
 
                 // get arena user mqtt token
                 form.AddField("id_auth", tokenType);
