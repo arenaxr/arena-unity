@@ -2,6 +2,13 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.12.3](https://github.com/arenaxr/arena-unity/compare/v0.12.2...v0.12.3) (2024-04-04)
+
+
+### Bug Fixes
+
+* **auth:** do not attempt filestore auth for anonymous ([41c8223](https://github.com/arenaxr/arena-unity/commit/41c82239a123af361623482c1f3f24b305c34dd7))
+
 ## [0.12.2](https://github.com/arenaxr/arena-unity/compare/v0.12.1...v0.12.2) (2024-03-01)
 
 
