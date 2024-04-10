@@ -19,7 +19,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetInt("ComponentMask", (int)defES.ComponentMask);
 #else
-                return false;
+                return (int)defES.ComponentMask;
 #endif
             }
 
@@ -38,7 +38,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetInt("Compression", (int)defES.Compression);
 #else
-                return false;
+                return (int)defES.Compression;
 #endif
             }
 
@@ -57,7 +57,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetBool("Deterministic", defES.Deterministic);
 #else
-                return false;
+                return defES.Deterministic;
 #endif
             }
 
@@ -76,7 +76,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetFloat("LightIntensityFactor", defES.LightIntensityFactor);
 #else
-                return false;
+                return defES.LightIntensityFactor;
 #endif
             }
 
@@ -95,7 +95,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetBool("DracoSettings", defES.DracoSettings != null);
 #else
-                return false;
+                return defES.DracoSettings != null;
 #endif
             }
 
@@ -114,7 +114,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetInt("DracoColorQuantization", defDES.colorQuantization);
 #else
-                return false;
+                return defDES.colorQuantization;
 #endif
             }
 
@@ -133,7 +133,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetInt("DracoDecodingSpeed", defDES.decodingSpeed);
 #else
-                return false;
+                return defDES.decodingSpeed;
 #endif
             }
 
@@ -152,7 +152,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetInt("DracoEncodingSpeed", defDES.encodingSpeed);
 #else
-                return false;
+                return defDES.encodingSpeed;
 #endif
             }
 
@@ -171,7 +171,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetInt("DracoNormalQuantization", defDES.normalQuantization);
 #else
-                return false;
+                return defDES.normalQuantization;
 #endif
             }
 
@@ -190,7 +190,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetInt("DracoPositionQuantization", defDES.positionQuantization);
 #else
-                return false;
+                return defDES.positionQuantization;
 #endif
             }
 
@@ -209,7 +209,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetInt("DracoTexCoordQuantization", defDES.texCoordQuantization);
 #else
-                return false;
+                return defDES.texCoordQuantization;
 #endif
             }
 
@@ -228,7 +228,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetBool("DisabledComponents", defGOES.DisabledComponents);
 #else
-                return false;
+                return defGOES.DisabledComponents;
 #endif
             }
 
@@ -248,7 +248,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetBool("OnlyActiveInHierarchy", defGOES.OnlyActiveInHierarchy);
 #else
-                return false;
+                return defGOES.OnlyActiveInHierarchy;
 #endif
             }
 
@@ -267,7 +267,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
                 return EditorPrefs.GetInt("LayerMask", (int)defGOES.LayerMask);
 #else
-                return false;
+                return (int)defGOES.LayerMask;
 #endif
             }
 
