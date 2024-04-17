@@ -6,8 +6,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Google.Apis.Auth.OAuth2;
@@ -374,14 +374,14 @@ namespace ArenaUnity
                 willMessage = JsonConvert.SerializeObject(msg);
             }
 
-            var handler = new JwtSecurityTokenHandler();
-            JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
-            permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
+            string payloadJson = Base64UrlDecode(auth.token.Split('.')[1]);
+            JObject payload = JObject.Parse(payloadJson);
+            permissions = JToken.Parse(payloadJson).ToString(Formatting.Indented);
             if (string.IsNullOrWhiteSpace(namespaceName))
             {
-                namespaceName = payloadJson.Sub;
+                namespaceName = (string)payload.SelectToken("sub");
             }
-            mqttExpires = (long)payloadJson.Exp;
+            mqttExpires = (long)payload.SelectToken("exp");
             DateTimeOffset dateTimeOffSet = DateTimeOffset.FromUnixTimeSeconds(mqttExpires);
             TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now.ToUniversalTime());
             Debug.Log($"MQTT Token expires in {ArenaUnity.TimeSpanToString(duration)}");
@@ -389,6 +389,12 @@ namespace ArenaUnity
             // background mqtt connect
             Connect();
             yield return namespaceName;
+        }
+
+        public static string Base64UrlDecode(string base64)
+        {
+            string base64Padded = base64.PadRight(base64.Length + (4 - base64.Length % 4) % 4, '=');
+            return Encoding.UTF8.GetString(Convert.FromBase64String(base64Padded));
         }
 
         /// <summary>
