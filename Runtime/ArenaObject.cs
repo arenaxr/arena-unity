@@ -5,7 +5,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
@@ -164,7 +163,7 @@ namespace ArenaUnity
                 persist = persist,
             };
             transformOnly = created ? transformOnly : false;
-            ArenaObjectDataJson dataUnity = new ArenaObjectDataJson();
+            ArenaDataJson dataUnity = new ArenaDataJson();
             if (!string.IsNullOrEmpty(object_type))
                 dataUnity.object_type = object_type;
             else

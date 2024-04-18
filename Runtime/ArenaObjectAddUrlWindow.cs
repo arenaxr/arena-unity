@@ -4,6 +4,7 @@
  */
 
 using System;
+using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
@@ -54,7 +55,7 @@ namespace ArenaUnity
                     persist = true,
                 };
                 Quaternion rotOut = Quaternion.identity;
-                ArenaObjectDataJson data = new ArenaObjectDataJson
+                ArenaDataJson data = new ArenaDataJson
                 {
                     object_type = object_type,
                     url = object_url,

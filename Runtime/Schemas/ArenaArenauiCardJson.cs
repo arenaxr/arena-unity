@@ -124,6 +124,16 @@ namespace ArenaUnity.Schemas
             return (ImgSize != defImgSize);
         }
 
+        private static float defTextImageRatio = 0.5f;
+        [JsonProperty(PropertyName = "textImageRatio")]
+        [Tooltip("Text to Image Width Ratio")]
+        public float TextImageRatio = defTextImageRatio;
+        public bool ShouldSerializeTextImageRatio()
+        {
+            // textImageRatio
+            return (TextImageRatio != defTextImageRatio);
+        }
+
         private static float defFontSize = 0.035f;
         [JsonProperty(PropertyName = "fontSize")]
         [Tooltip("Font Size")]
@@ -144,7 +154,7 @@ namespace ArenaUnity.Schemas
             return (WidthScale != defWidthScale);
         }
 
-        private static bool defCloseButton = true;
+        private static bool defCloseButton = false;
         [JsonProperty(PropertyName = "closeButton")]
         [Tooltip("Show close button")]
         public bool CloseButton = defCloseButton;
@@ -170,6 +180,24 @@ namespace ArenaUnity.Schemas
         {
             // font
             return (Font != defFont);
+        }
+
+        public enum ThemeType
+        {
+            [EnumMember(Value = "light")]
+            Light,
+            [EnumMember(Value = "dark")]
+            Dark,
+        }
+        private static ThemeType defTheme = ThemeType.Light;
+        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty(PropertyName = "theme")]
+        [Tooltip("Color Theme")]
+        public ThemeType Theme = defTheme;
+        public bool ShouldSerializeTheme()
+        {
+            // theme
+            return (Theme != defTheme);
         }
 
         // General json object management

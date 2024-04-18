@@ -6,8 +6,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Google.Apis.Auth.OAuth2;
@@ -17,6 +17,9 @@ using Google.Apis.Util.Store;
 using M2MqttUnity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt;
@@ -48,6 +51,8 @@ namespace ArenaUnity
         // internal variables
         private string idToken = null;
         protected string csrfToken = null;
+        protected string fsToken = null;
+        protected ArenaUserStateJson authState;
         private static UserCredential credential;
 
         // local paths
@@ -55,7 +60,6 @@ namespace ArenaUnity
         const string mqttTokenFile = ".arena_mqtt_auth";
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
-        protected string userHomePath { get; private set; }
         public string appFilesPath { get; private set; }
         public string userid { get; private set; }
         public string camid { get; private set; }
@@ -70,7 +74,6 @@ namespace ArenaUnity
 
         public enum Auth { Anonymous, Google, Manual };
         public bool IsShuttingDown { get; internal set; }
-
 
         private List<byte[]> eventMessages = new List<byte[]>();
 
@@ -160,9 +163,14 @@ namespace ArenaUnity
 
         // Auth methods
 
+        internal static string GetUnityAuthPath()
+        {
+            string userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+            return Path.Combine(userHomePath, userDirArena, userSubDirUnity);
+        }
+
         protected virtual void OnEnable()
         {
-            userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             appFilesPath = Application.isMobilePlatform ? Application.persistentDataPath : "";
         }
 
@@ -185,12 +193,17 @@ namespace ArenaUnity
         private IEnumerator Signin(string sceneName, string namespaceName, string realm, bool camera, string latencyTopic)
         {
             networkLatencyTopic = latencyTopic;
-            string sceneAuthDir = Path.Combine(userHomePath, userDirArena, userSubDirUnity, hostAddress, "s");
+            string sceneAuthDir = Path.Combine(GetUnityAuthPath(), hostAddress, "s");
             string userGAuthPath = sceneAuthDir;
             string userMqttPath = Path.Combine(sceneAuthDir, mqttTokenFile);
             string mqttToken = null;
             CoroutineWithData cd;
-
+#if UNITY_EDITOR && !( UNITY_ANDROID || UNITY_IOS )
+            if (!Directory.Exists(sceneAuthDir))
+            {
+                Directory.CreateDirectory(sceneAuthDir);
+            }
+#endif
             if (hostAddress == "localhost")
             {
                 verifyCertificate = false;
@@ -226,6 +239,7 @@ namespace ArenaUnity
                 {
                     case Auth.Anonymous:
                         // prefix all anon users with "anonymous-"
+                        Debug.Log("Using anonymous MQTT token.");
                         tokenType = "anonymous";
                         userName = $"anonymous-unity";
                         break;
@@ -267,7 +281,7 @@ namespace ArenaUnity
                         tokenType = "google-installed";
                         break;
                     case Auth.Manual:
-                        Debug.LogError($"Authentication type '{authType}' missing local token file: {localMqttPath}.");
+                        Debug.LogError($"Authentication type Manual missing local token file: {localMqttPath}.");
                         yield break;
                     default:
                         Debug.LogError($"Invalid ARENA authentication type: '{tokenType}'");
@@ -277,28 +291,40 @@ namespace ArenaUnity
                 // get arena CSRF token
                 yield return HttpRequestAuth($"https://{hostAddress}/user/login");
 
-                // get arena user account state
                 WWWForm form = new WWWForm();
                 if (idToken != null) form.AddField("id_token", idToken);
+
+                // get arena user account state
                 cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/user_state", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
-                var user = JsonConvert.DeserializeObject<ArenaUserStateJson>(cd.result.ToString());
-                if (user.authenticated)
+                authState = JsonConvert.DeserializeObject<ArenaUserStateJson>(cd.result.ToString());
+                if (authState.authenticated)
                 {
-                    userName = user.username;
+                    userName = authState.username;
+
+                    // get fs login
+                    cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/storelogin", csrfToken, form));
+                    yield return cd.coroutine;
+                    if (!isCrdSuccess(cd.result)) yield break;
+                    if (string.IsNullOrWhiteSpace(fsToken))
+                    {
+                        Debug.LogError($"Invalid file store token = {fsToken}");
+                        yield break;
+                    }
                 }
                 if (string.IsNullOrWhiteSpace(namespaceName))
                 {
-                    if (user.authenticated)
+                    if (authState.authenticated)
                     {
-                        namespaceName = user.username;
+                        namespaceName = authState.username;
                     }
                     else
                     {
                         namespaceName = "public";
                     }
                 }
+
                 // get arena user mqtt token
                 form.AddField("id_auth", tokenType);
                 form.AddField("username", userName);
@@ -320,10 +346,11 @@ namespace ArenaUnity
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
                 mqttToken = cd.result.ToString();
-
+#if UNITY_EDITOR && !( UNITY_ANDROID || UNITY_IOS )
                 StreamWriter writer = new StreamWriter(userMqttPath);
                 writer.Write(mqttToken);
                 writer.Close();
+#endif
             }
 
             var auth = JsonConvert.DeserializeObject<ArenaMqttAuthJson>(mqttToken);
@@ -352,14 +379,14 @@ namespace ArenaUnity
                 willMessage = JsonConvert.SerializeObject(msg);
             }
 
-            var handler = new JwtSecurityTokenHandler();
-            JwtPayload payloadJson = handler.ReadJwtToken(auth.token).Payload;
-            permissions = JToken.Parse(payloadJson.SerializeToJson()).ToString(Formatting.Indented);
+            string payloadJson = Base64UrlDecode(auth.token.Split('.')[1]);
+            JObject payload = JObject.Parse(payloadJson);
+            permissions = JToken.Parse(payloadJson).ToString(Formatting.Indented);
             if (string.IsNullOrWhiteSpace(namespaceName))
             {
-                namespaceName = payloadJson.Sub;
+                namespaceName = (string)payload.SelectToken("sub");
             }
-            mqttExpires = (long)payloadJson.Exp;
+            mqttExpires = (long)payload.SelectToken("exp");
             DateTimeOffset dateTimeOffSet = DateTimeOffset.FromUnixTimeSeconds(mqttExpires);
             TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now.ToUniversalTime());
             Debug.Log($"MQTT Token expires in {ArenaUnity.TimeSpanToString(duration)}");
@@ -367,6 +394,30 @@ namespace ArenaUnity
             // background mqtt connect
             Connect();
             yield return namespaceName;
+        }
+
+        public static string Base64UrlDecode(string base64)
+        {
+            string base64Padded = base64.PadRight(base64.Length + (4 - base64.Length % 4) % 4, '=');
+            return Encoding.UTF8.GetString(Convert.FromBase64String(base64Padded));
+        }
+
+        /// <summary>
+        /// Remove ARENA authentication.
+        /// </summary>
+#if UNITY_EDITOR
+        [MenuItem("ARENA/Signout")]
+#endif
+        internal static void SignoutArena()
+        {
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+                EditorApplication.ExitPlaymode();
+#endif
+            string unityAuthPath = GetUnityAuthPath();
+            if (Directory.Exists(unityAuthPath))
+                Directory.Delete(unityAuthPath, true);
+            Debug.Log("Signed out of the ARENA.");
         }
 
         private static Stream ToStream(string str)
@@ -415,6 +466,8 @@ namespace ArenaUnity
                         csrfToken = GetCookie(SetCookie, "csrftoken");
                     else if (SetCookie.Contains("csrf="))
                         csrfToken = GetCookie(SetCookie, "csrf");
+                    if (SetCookie.Contains("auth="))
+                        fsToken = GetCookie(SetCookie, "auth");
                 }
                 yield return www.downloadHandler.text;
             }
@@ -425,13 +478,13 @@ namespace ArenaUnity
             return result != null && result.ToString() != "UnityEngine.Networking.UnityWebRequestAsyncOperation";
         }
 
-        private string GetCookie(string SetCookie, string csrftag)
+        private string GetCookie(string SetCookie, string cookieTag)
         {
             string csrfCookie = null;
-            Regex rxCookie = new Regex($"{csrftag}=(?<csrf_token>.{64});");
+            Regex rxCookie = new Regex($"(^| ){cookieTag}=([^;]+)");
             MatchCollection cookieMatches = rxCookie.Matches(SetCookie);
             if (cookieMatches.Count > 0)
-                csrfCookie = cookieMatches[0].Groups["csrf_token"].Value;
+                csrfCookie = cookieMatches[0].Groups[2].Value;
             return csrfCookie;
         }
 

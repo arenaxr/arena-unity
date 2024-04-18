@@ -419,7 +419,7 @@
             },
             "color": "#ffffff",
             "spe-particles": {
-                "texture": "textures/fog.png",
+                "texture": "static/images/textures/fog.png",
                 "velocity": "1 30 0",
                 "velocitySpread": "2 1 0.2",
                 "particleCount": 50,
@@ -455,7 +455,7 @@
             },
             "color": "#ffffff",
             "spe-particles": {
-                "texture": "textures/explosion_sheet.png",
+                "texture": "static/images/textures/explosion_sheet.png",
                 "textureFrames": "5 5",
                 "velocity": "4 100 0",
                 "acceleration": "0 10 0",
@@ -496,7 +496,7 @@
             },
             "color": "#ffffff",
             "spe-particles": {
-                "texture": "textures/square.png",
+                "texture": "static/images/textures/square.png",
                 "color": "yellow,red",
                 "particleCount": 3,
                 "maxAge": 0.5,

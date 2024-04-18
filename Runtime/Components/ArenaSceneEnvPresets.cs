@@ -1,32 +1,23 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
-// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
-
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace ArenaUnity
+namespace ArenaUnity.Components
 {
-    public class ArenaMeshCone : ArenaMesh
+    public class ArenaSceneEnvPresets : ArenaComponent
     {
-        public ArenaConeJson json = new ArenaConeJson();
+        public ArenaEnvPresetsJson json = new ArenaEnvPresetsJson();
 
         protected override void ApplyRender()
         {
-            filter.sharedMesh = CylinderBuilder.Build(
-                json.RadiusTop,
-                json.RadiusBottom,
-                json.Height,
-                json.SegmentsRadial,
-                json.SegmentsHeight,
-                json.OpenEnded,
-                Mathf.PI / 180 * json.ThetaStart,
-                Mathf.PI / 180 * json.ThetaLength
-            );
+            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
         }
 
         public override void UpdateObject()
@@ -37,7 +28,7 @@ namespace ArenaUnity
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null)
                 {
-                    aobj.PublishUpdate($"{newJson}");
+                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
                     apply = true;
                 }
             }

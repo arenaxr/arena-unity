@@ -1,6 +1,79 @@
 # Changelog
 
-ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
+arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
+
+## [0.12.3](https://github.com/arenaxr/arena-unity/compare/v0.12.2...v0.12.3) (2024-04-04)
+
+
+### Bug Fixes
+
+* **auth:** do not attempt filestore auth for anonymous ([41c8223](https://github.com/arenaxr/arena-unity/commit/41c82239a123af361623482c1f3f24b305c34dd7))
+
+## [0.12.2](https://github.com/arenaxr/arena-unity/compare/v0.12.1...v0.12.2) (2024-03-01)
+
+
+### Bug Fixes
+
+* **gltf:** allow ktx/meshopt decompression ([adf201f](https://github.com/arenaxr/arena-unity/commit/adf201f565b10453a1fe42736d255dce99f5cf52))
+
+## [0.12.1](https://github.com/arenaxr/arena-unity/compare/v0.12.0...v0.12.1) (2024-02-29)
+
+
+### Bug Fixes
+
+* adding GLTF advanced export settings interface ([#93](https://github.com/arenaxr/arena-unity/issues/93)) ([ade17bb](https://github.com/arenaxr/arena-unity/commit/ade17bb621669d34504b3f2f24451f7d3b41d017))
+* only require glTFExport shaders in editor ([ea4da89](https://github.com/arenaxr/arena-unity/commit/ea4da8923de2ad4e2d05230366989625d9c46efb))
+* preempt user with Import TMP Essentials at load ([3f3c36d](https://github.com/arenaxr/arena-unity/commit/3f3c36ddd5554ee8bd11abfbab0b5373133f6619))
+
+## [0.12.0](https://github.com/arenaxr/arena-unity/compare/v0.11.1...v0.12.0) (2024-02-21)
+
+
+### Features
+
+* **gltf:** add glTFast library, allowing export of Unity models as GLTF to filestore ([#89](https://github.com/arenaxr/arena-unity/issues/89)) ([14748d7](https://github.com/arenaxr/arena-unity/commit/14748d7ac761a61cfd5fb3958140f9cc9c51e529))
+* **hands:** allow hands rendering to be diabled ([cf3f3da](https://github.com/arenaxr/arena-unity/commit/cf3f3dadf416fcce3561f28a9b56dd117f00e7c3))
+
+
+### Bug Fixes
+
+* add reverse gltf export rotation ([073c44f](https://github.com/arenaxr/arena-unity/commit/073c44f320d1c083c1baf45110324b4e62557127))
+* check scene pemissions for menu options ([c1e3dbf](https://github.com/arenaxr/arena-unity/commit/c1e3dbfc11c649cbd29c015dde8cfe7ec0ea986e))
+* **gltf:** add logging of gltf export upload status ([8d1c343](https://github.com/arenaxr/arena-unity/commit/8d1c3433d39b7226b68bbee498baf97080309ee3))
+* simplify and always close download progress bar ([1865bc4](https://github.com/arenaxr/arena-unity/commit/1865bc457f5c2a1ed560fdd49d50a3b6b2435a41))
+* use protected json storage for user state ([ff413e3](https://github.com/arenaxr/arena-unity/commit/ff413e329c2ae0d29bfb38dd05bec89d4e1da1a8))
+
+## [0.11.1](https://github.com/arenaxr/arena-unity/compare/v0.11.0...v0.11.1) (2023-11-03)
+
+
+### Bug Fixes
+
+* **auth:** fixed failed Signout command ([6b13ced](https://github.com/arenaxr/arena-unity/commit/6b13ced690234d1e919b45535011bdee1fde805b))
+* **light:** disable Light component from visible/remote-render ([1df5030](https://github.com/arenaxr/arena-unity/commit/1df5030ff702ed19bfdd271e1298542150ffbe55))
+
+## [0.11.0](https://github.com/arenaxr/arena-unity/compare/v0.10.4...v0.11.0) (2023-11-02)
+
+* **BREAKING CHANGE**: All `arena-user` attributes (descriptors of users in the scene) now are published under the
+                       `arena-user` key within the `data` block, rather than the top-level or directly under `data`
+                       of the of the MQTT message.
+
+### Features
+
+* **arena-user:** updated camera objects to use arena-user component schema ([#86](https://github.com/arenaxr/arena-unity/issues/86)) ([6268c33](https://github.com/arenaxr/arena-unity/commit/6268c3376e06bb5666637c6575da83677c93eb8e))
+
+
+### Bug Fixes
+
+* **arenaui:** added theme/font updates for arenaui json ([00fbb37](https://github.com/arenaxr/arena-unity/commit/00fbb37f33f4d22f3cd913db932f0bf562fce988))
+
+## [0.10.4](https://github.com/arenaxr/arena-unity/compare/v0.10.3...v0.10.4) (2023-10-13)
+
+
+### Bug Fixes
+
+* **auth:** allow ios/android builds to skip writing token to disk  ([#83](https://github.com/arenaxr/arena-unity/issues/83)) ([59a9f8b](https://github.com/arenaxr/arena-unity/commit/59a9f8b0f6f39e7c50f6a6dd8d3fea361e09231c))
+* **mesh:** added cone flat bottom, added cone/cylinder thetaLength ([a536ead](https://github.com/arenaxr/arena-unity/commit/a536ead960d3d48c982961aaf1c02418f3d3ca25))
+* **rotation:** corrected support for deprecated euler still in wire format ([285eb4d](https://github.com/arenaxr/arena-unity/commit/285eb4d8f66d3e87fb7b5bf95b635a51e563b4d8))
+* **visible/renderer:** loop through all child objects for setting renderer enabled ([06cf60f](https://github.com/arenaxr/arena-unity/commit/06cf60f29129eda35b27380522405e770a055186))
 
 ## [0.10.3](https://github.com/arenaxr/arena-unity/compare/v0.10.2...v0.10.3) (2023-10-08)
 
@@ -298,13 +371,13 @@ ARENA-unity notable changes. Started 2021-11-30 (version 0.0.1).
 * **objects:** remove problimatic auto-rename ([65a2512](https://github.com/arenaxr/arena-unity/commit/65a2512ea135cb752d9c2cb7bc3f9c830edf27f1))
 * **primitive:** match more primitives to a-frame defaults ([42e57ce](https://github.com/arenaxr/arena-unity/commit/42e57cee336b756c20257e783cf136ea86d4a4e3))
 
-## [0.0.14](https://github.com/conix-center/ARENA-unity/compare/0.0.13...v0.0.14) (2022-07-14)
+## [0.0.14](https://github.com/arenaxr/arena-unity/compare/0.0.13...v0.0.14) (2022-07-14)
 
 
 ### Bug Fixes
 
-* **editor:** improve arena object inspector color light theme ([213f263](https://github.com/conix-center/ARENA-unity/commit/213f2636fe7ad876bb98bf2b7300fd0ee869d53c))
-* spelling ([c8d364f](https://github.com/conix-center/ARENA-unity/commit/c8d364fcae08dfd6100ef622ab6f8cabbef02743))
+* **editor:** improve arena object inspector color light theme ([213f263](https://github.com/arenaxr/arena-unity/commit/213f2636fe7ad876bb98bf2b7300fd0ee869d53c))
+* spelling ([c8d364f](https://github.com/arenaxr/arena-unity/commit/c8d364fcae08dfd6100ef622ab6f8cabbef02743))
 
 ## [0.0.13] - 2022-02-28
 ### Added

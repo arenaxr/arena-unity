@@ -6,8 +6,8 @@
 using System;
 using System.Collections;
 using System.Linq;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TMPro;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEditor.PackageManager;
@@ -42,6 +42,15 @@ namespace ArenaUnity.Editor
 
             _listRequest = Client.List();
             EditorApplication.update += OnUpdate;
+
+            // Remind user that they need to Import TMP Essentials to use ARENA.
+            // Since this cannot be done at Runtime, preempt loading TMP in the Editor,
+            // otherwise the first ARENA Text object loaded will open the Import TMP Essentials
+            // dialog at Runtime and the TMPro library does not allow this.
+            var obj = new GameObject();
+            obj.AddComponent<TextMeshPro>();
+            UnityEngine.Object.DestroyImmediate(obj);
+            // TODO (mwfarb) find a better way to ask users to Import TMP Essentials
         }
 
         private static void HandleListRequestCompletion()

@@ -2,10 +2,12 @@
     "name": "conix.arena.unity.Editor",
     "rootNamespace": "",
     "references": [
+        "Unity.TextMeshPro",
         "Unity.TextMeshPro.Editor",
         "Unity.EditorCoroutines.Editor",
-        "Siccity.GLTFUtility.Editor",
-        "PrettyHierarchy"
+        "PrettyHierarchy",
+        "glTFast.Editor",
+        "Draco.Editor"
     ],
     "includePlatforms": [
         "Editor"

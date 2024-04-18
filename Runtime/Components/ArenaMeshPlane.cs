@@ -13,39 +13,16 @@ namespace ArenaUnity
 {
     public class ArenaMeshPlane : ArenaMesh
     {
-        public enum PlaneType
-        {
-            Default, Noise
-        };
-
-        [SerializeField] internal PlaneType type = PlaneType.Default;
         public ArenaPlaneJson json = new ArenaPlaneJson();
 
         protected override void ApplyRender()
         {
-            // Since this uses "triangles" = "segments", multiply by 2 so each "segment" gets 2 triangles
-            switch (type)
-            {
-                case PlaneType.Noise:
-                    // TODO (mwfarb): try to support noise plane, possibly with ocean wire object from a-frame extras:
-                    filter.sharedMesh = PlaneBuilder.Build(new ParametricPlanePerlin(
-                        Vector2.zero,
-                        new Vector2(2f, 2f), 0.5f),
-                        json.Width,
-                        json.Height,
-                        json.SegmentsWidth,
-                        json.SegmentsHeight
-                    );
-                    break;
-                default:
-                    filter.sharedMesh = PlaneBuilder.Build(
-                        json.Width,
-                        json.Height,
-                        json.SegmentsWidth,
-                        json.SegmentsHeight
-                    );
-                    break;
-            }
+            filter.sharedMesh = PlaneBuilder.Build(
+               json.Width,
+               json.Height,
+               json.SegmentsWidth,
+               json.SegmentsHeight
+            );
         }
 
         public override void UpdateObject()

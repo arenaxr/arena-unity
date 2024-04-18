@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -11,11 +11,13 @@ using System.IO;
 using System.Linq;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
+using GLTFast;
+using GLTFast.Export;
+using GLTFast.Logging;
 using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Siccity.GLTFUtility;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -48,6 +50,8 @@ namespace ArenaUnity
         [Header("Presence")]
         [Tooltip("Display other camera avatars in the scene")]
         public bool renderCameras = true;
+        [Tooltip("Display other avatars' hand controllers in the scene")]
+        public bool renderHands = true;
         [Tooltip("Display VR Controller Rays")]
         public bool drawControllerRays = false;
 
@@ -100,18 +104,24 @@ namespace ArenaUnity
         static readonly string[] requiredShadersStandardRP = {
             "Standard",
             "Unlit/Color",
-            "GLTFUtility/Standard (Metallic)",
-            "GLTFUtility/Standard Transparent (Metallic)",
-            "GLTFUtility/Standard (Specular)",
-            "GLTFUtility/Standard Transparent (Specular)",
+            "glTF/PbrMetallicRoughness",
+            "glTF/PbrSpecularGlossiness",
+            "glTF/Unlit",
+#if UNITY_EDITOR
+            "Hidden/glTFExportMaskMap",
+            "Hidden/glTFExportNormal",
+            "Hidden/glTFExportSmoothness",
+            "Hidden/glTFExportMetalGloss",
+            "Hidden/glTFExportOcclusion",
+            "Hidden/glTFExportColor",
+#endif
         };
         static readonly string[] requiredShadersURPHDRP = {
             // "Standard",
             // "Unlit/Color",
-            "GLTFUtility/URP/Standard (Metallic)",
-            "GLTFUtility/URP/Standard Transparent (Metallic)",
-            "GLTFUtility/URP/Standard (Specular)",
-            "GLTFUtility/URP/Standard Transparent (Specular)",
+            "glTF/PbrMetallicRoughness",
+            "glTF/PbrSpecularGlossiness",
+            "glTF/Unlit",
         };
 
         protected override void OnEnable()
@@ -159,10 +169,14 @@ namespace ArenaUnity
                     LogAndExit($"Required shader '{shader}' not found in project.");
                 }
             }
+            //Shader.WarmupAllShaders();
 
-//#if UNITY_EDITOR
+#if UNITY_EDITOR
+            // Editor use can change the Auth Method, Hostname, Namespace, Scene in Inspector easily, however
+            // built apps (non-editor) want to change those parameters in UIs/UX processes they create.
+            // So prevent non-editor builds from connecting automatically, so developers can allow user edits.
             StartCoroutine(ConnectArena());
-//#endif
+#endif
         }
 
         /// <summary>
@@ -267,22 +281,6 @@ namespace ArenaUnity
             arenaObjs.Clear();
         }
 
-        /// <summary>
-        /// Remove ARENA authentication.
-        /// </summary>
-#if UNITY_EDITOR
-        [MenuItem("ARENA/Signout")]
-#endif
-        public static void SignoutArena()
-        {
-#if UNITY_EDITOR
-            if (Application.isPlaying)
-                EditorApplication.ExitPlaymode();
-#endif
-            if (Directory.Exists(GoogleWebAuthorizationBroker.Folder))
-                Directory.Delete(GoogleWebAuthorizationBroker.Folder, true);
-            Debug.Log("Logged out of the ARENA");
-        }
         // Update is called once per frame
         protected override void Update()
         {
@@ -335,17 +333,13 @@ namespace ArenaUnity
 
                 if (arenaObjs != null && !arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
                 {
-                    // there isnt already an object in the scene created by the user with the same object_id
-                    if (GameObject.Find(msg.object_id) == null)
+                    IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
+                    foreach (var uri in uris)
                     {
-                        IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
-                        foreach (var uri in uris)
+                        if (!string.IsNullOrWhiteSpace(uri))
                         {
-                            if (!string.IsNullOrWhiteSpace(uri))
-                            {
-                                cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
-                                yield return cd.coroutine;
-                            }
+                            cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
+                            yield return cd.coroutine;
                         }
                     }
                     CreateUpdateObject(msg, msg.attributes);
@@ -361,16 +355,6 @@ namespace ArenaUnity
             var root = (JContainer)JToken.Parse(JsonConvert.SerializeObject(data));
             var uris = root.DescendantsAndSelf().OfType<JProperty>().Where(p => tagList.Contains(p.Name)).Select(p => p.Value.Value<string>());
             return uris;
-        }
-
-        private bool isElement(object el)
-        {
-            return el != null;
-        }
-
-        private bool isElementEmpty(object el)
-        {
-            return string.IsNullOrWhiteSpace((string)el);
         }
 
         internal Uri ConstructRemoteUrl(string srcUrl)
@@ -531,7 +515,7 @@ namespace ArenaUnity
 #endif
         }
 
-        private void CreateUpdateObject(ArenaObjectJson msg, object indata, string displayName = null, object menuCommand = null)
+        private void CreateUpdateObject(ArenaObjectJson msg, object indata, object menuCommand = null)
         {
             ArenaObject aobj = null;
             if (arenaObjs.TryGetValue(msg.object_id, out GameObject gobj))
@@ -544,19 +528,10 @@ namespace ArenaUnity
 #if !UNITY_EDITOR
                 Debug.Log($"Loading object '{msg.object_id}'..."); // show new objects in log
 #endif
-                // check if theres already an object in unity, if so don't make a new one
-                gobj = GameObject.Find((string)msg.object_id);
-                if (gobj == null)
-                {
-                    gobj = new GameObject();
-                    gobj.name = msg.object_id;
-                }
-                aobj = gobj.GetComponent<ArenaObject>();
-                if (aobj == null)
-                {
-                    aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
-                    arenaObjs[msg.object_id] = gobj;
-                }
+                gobj = new GameObject();
+                gobj.name = msg.object_id;
+                aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
+                arenaObjs[msg.object_id] = gobj;
                 aobj.Created = true;
                 if (msg.persist.HasValue)
                     aobj.persist = (bool)msg.persist;
@@ -588,13 +563,13 @@ namespace ArenaUnity
             switch (msg.type)
             {
                 case "object":
-                    UpdateObjectMessage(msg, indata, displayName, aobj, gobj, jData);
+                    UpdateObjectMessage(msg, indata, aobj, gobj, jData);
                     break;
                 case "scene-options":
                     UpdateSceneOptionsMessage(indata, gobj, jData);
                     break;
                 case "program":
-                    // TODO (mwfarb): define program implementation or lack thereofd
+                    // TODO (mwfarb): define program implementation or lack thereof
                     break;
             }
 
@@ -628,9 +603,9 @@ namespace ArenaUnity
             }
         }
 
-        private void UpdateObjectMessage(ArenaObjectJson msg, object indata, string displayName, ArenaObject aobj, GameObject gobj, JObject jData)
+        private void UpdateObjectMessage(ArenaObjectJson msg, object indata, ArenaObject aobj, GameObject gobj, JObject jData)
         {
-            ArenaObjectDataJson data = JsonConvert.DeserializeObject<ArenaObjectDataJson>(indata.ToString());
+            ArenaDataJson data = JsonConvert.DeserializeObject<ArenaDataJson>(indata.ToString());
 
             // modify Unity attributes
             bool worldPositionStays = false; // default: most children need relative position
@@ -696,7 +671,7 @@ namespace ArenaUnity
                         if (assetPath != null)
                         {
                             aobj.gltfUrl = url;
-                            AttachGltf(assetPath, gobj, aobj);
+                            AttachGltf(ConstructRemoteUrl(url).AbsoluteUri, gobj, aobj);
                         }
                     }
                     break;
@@ -713,16 +688,22 @@ namespace ArenaUnity
                         if (!gobj.TryGetComponent<Camera>(out var cam))
                             cam = gobj.AddComponent<Camera>();
                         //cam = gobj.transform.gameObject.AddComponent<Camera>();
-                        cam.nearClipPlane = 0.1f; // match arena
+                        // TODO: cam.nearClipPlane = 0.005f; // match arena
+                        cam.nearClipPlane = 0.1f; // move near clip out since local cam hard to see in model
                         cam.farClipPlane = 10000f; // match arena
                         cam.fieldOfView = 80f; // match arena
                         cam.targetDisplay = 8; // render on least-used display
-                        AttachAvatar(msg.object_id, JsonConvert.DeserializeObject<ArenaCameraJson>(indata.ToString()), displayName, gobj);
+                        var json = new ArenaCameraJson();
+                        json = JsonConvert.DeserializeObject<ArenaCameraJson>(ArenaUnity.MergeRawJson(json, data));
+                        AttachAvatar(msg.object_id, json.ArenaUser, gobj);
                     }
                     break;
                 case "handLeft":
                 case "handRight":
-                    AttachHand(msg.object_id, url, gobj);
+                    if (renderHands)
+                    {
+                        AttachHand(msg.object_id, url, gobj);
+                    }
                     break;
             }
 
@@ -776,9 +757,8 @@ namespace ArenaUnity
             }
             if (data.rotation != null)
             {
-                // TODO: needed? bool invertY = !((string)data.object_type == "camera");
                 bool invertY = true;
-                if (isElement(data.rotation.W)) // quaternion
+                if (jData.SelectToken("rotation.w") != null) // quaternion
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
                 else // euler
                     gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
@@ -856,7 +836,6 @@ namespace ArenaUnity
                     // TODO: case "screenshareable": ArenaUnity.ApplyScreensharable(gobj, data); break;
                     // TODO: case "video-control": ArenaUnity.ApplyVideoControl(gobj, data); break;
                     case "attribution": ArenaUnity.ApplyAttribution(gobj, data); break;
-                    // TODO: case "particle-system": ArenaUnity.ApplyParticleSystem(gobj, data); break;
                     // TODO: case "spe-particles": ArenaUnity.ApplySpeParticles(gobj, data); break;
                     // TODO: case "buffer": ArenaUnity.ApplyBuffer(gobj, data); break;
                     // TODO: case "jitsi-video": ArenaUnity.ApplyJitsiVideo(gobj, data); break;
@@ -867,19 +846,22 @@ namespace ArenaUnity
                     // TODO: case "modelUpdate": ArenaUnity.ApplyModelUpdate(gobj, data); break;
                     case "material":
                         ArenaUnity.ApplyMaterial(gobj, data);
-                        if (isElement(data.material.Src))
+                        if (!string.IsNullOrEmpty(data.material.Src))
                             AttachMaterialTexture(checkLocalAsset((string)data.material.Src), gobj);
                         break;
                 }
             }
         }
 
-        internal void AttachAvatar(string object_id, ArenaCameraJson data, string displayName, GameObject gobj)
+        internal void AttachAvatar(string object_id, ArenaArenaUserJson json, GameObject gobj)
         {
+            json.headModelPath ??= arenaDefaults.headModelPath;
+            json.displayName ??= arenaDefaults.userName;
+
             bool worldPositionStays = false;
-            if (data.headModelPath != null)
+            if (json.headModelPath != null)
             {
-                string localpath = checkLocalAsset(data.headModelPath);
+                string localpath = checkLocalAsset(json.headModelPath);
                 if (localpath != null)
                 {
                     string headModelId = $"head-model-{object_id}";
@@ -888,7 +870,7 @@ namespace ArenaUnity
                     {
                         // add model child to camera
                         GameObject hmobj = new GameObject(headModelId);
-                        AttachGltf(localpath, hmobj);
+                        AttachGltf(ConstructRemoteUrl(json.headModelPath).AbsoluteUri, hmobj);
                         hmobj.transform.localPosition = Vector3.zero;
                         hmobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
                         hmobj.transform.localScale = Vector3.one;
@@ -902,7 +884,7 @@ namespace ArenaUnity
                     {
                         // update text
                         TextMeshPro tm = foundHeadText.GetComponent<TextMeshPro>();
-                        tm.text = displayName;
+                        tm.text = json.displayName;
                     }
                     else
                     {
@@ -910,9 +892,9 @@ namespace ArenaUnity
                         GameObject htobj = new GameObject(headTextId);
                         TextMeshPro tm = htobj.transform.gameObject.AddComponent<TextMeshPro>();
                         tm.alignment = TextAlignmentOptions.Center;
-                        tm.color = ArenaUnity.ToUnityColor((string)data.color);
+                        tm.color = ArenaUnity.ToUnityColor((string)json.color);
                         tm.fontSize = 5;
-                        tm.text = displayName;
+                        tm.text = json.displayName;
 
                         htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
                         htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
@@ -938,7 +920,7 @@ namespace ArenaUnity
                     {
                         // add model child to hand
                         GameObject hmobj = new GameObject(handModelId);
-                        AttachGltf(localpath, hmobj);
+                        AttachGltf(ConstructRemoteUrl(url).AbsoluteUri, hmobj);
                         hmobj.transform.localPosition = Vector3.zero;
                         hmobj.transform.localRotation = Quaternion.identity;
                         hmobj.transform.localScale = Vector3.one;
@@ -977,25 +959,30 @@ namespace ArenaUnity
             }
         }
 
-        private void AttachGltf(string assetPath, GameObject gobj, ArenaObject aobj = null)
+        private void AttachGltf(string fullUrl, GameObject gobj, ArenaObject aobj = null)
         {
-            if (assetPath == null) return;
-            AnimationClip[] clips = null;
+            if (fullUrl == null) return;
+            //AnimationClip[] clips = null;
             GameObject mobj = null;
-            var i = new ImportSettings();
-            i.animationSettings.useLegacyClips = true;
+            //var i = new ImportSettings();
+            //i.animationSettings.useLegacyClips = true;
             try
             {
-                mobj = Importer.LoadFromFile(assetPath, i, out clips);
+                mobj = new GameObject();
+                var gltf = mobj.AddComponent<GltfAsset>();
+                gltf.Url = fullUrl;
+                // TODO: (mwfarb) add a error handler in the main thread if the url is 404
+                // TODO: (mwfarb) add a load complete handler to manage the animations
+                //mobj = Importer.LoadFromFile(assetPath, i, out clips);
             }
             catch (Exception err)
             {
-                Debug.LogWarning($"Unable to load GTLF at {assetPath}. {err.Message}");
+                Debug.LogWarning($"Unable to load GTLF at {fullUrl}. {err.Message}");
             }
             if (mobj != null)
             {
-                if (clips != null && aobj != null)
-                    AssignAnimations(aobj, mobj, clips);
+                //if (clips != null && aobj != null)
+                //    AssignAnimations(aobj, mobj, clips);
                 mobj.transform.parent = gobj.transform;
                 mobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(mobj.transform.localRotation);
                 foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
@@ -1065,6 +1052,7 @@ namespace ArenaUnity
 
         private IEnumerator HttpRequestRaw(string url)
         {
+            Uri uri = new Uri(url);
             UnityWebRequest www = UnityWebRequest.Get(url);
             www.downloadHandler = new DownloadHandlerBuffer();
             //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
@@ -1075,7 +1063,7 @@ namespace ArenaUnity
             www.SendWebRequest();
             while (!www.isDone)
             {
-                DisplayCancelableProgressBar("ARENA URL", $"Downloading {url}", www.downloadProgress);
+                DisplayCancelableProgressBar("ARENA", $"Downloading {uri.Segments[uri.Segments.Length - 1]}...", www.downloadProgress);
                 yield return null;
             }
 #if UNITY_2020_1_OR_NEWER
@@ -1092,6 +1080,143 @@ namespace ArenaUnity
                 byte[] results = www.downloadHandler.data;
                 yield return results;
             }
+            ClearProgressBar();
+        }
+
+        private IEnumerator HttpUploadFSRaw(string url, byte[] payload)
+        {
+            Uri uri = new Uri(url);
+            UnityWebRequest www = new UnityWebRequest(url, "POST");
+            //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
+            if (!verifyCertificate && url.StartsWith("https://localhost"))
+            {   // TODO (mwfarb): should check for arena/not-arena host when debugging on localhost
+                www.certificateHandler = new SelfSignedCertificateHandler();
+            }
+            www.SetRequestHeader("X-Auth", fsToken);
+            UploadHandler uploadHandler = new UploadHandlerRaw(payload);
+            www.uploadHandler = uploadHandler;
+            www.SendWebRequest();
+            while (!www.isDone)
+            {
+                DisplayCancelableProgressBar("ARENA", $"Uploading {uri.Segments[uri.Segments.Length - 1]}...", www.uploadProgress);
+                yield return null;
+            }
+#if UNITY_2020_1_OR_NEWER
+            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+#else
+            if (www.isNetworkError || www.isHttpError)
+#endif
+            {
+                Debug.LogWarning($"{www.error}: {www.url}");
+                yield break;
+            }
+            else
+            {
+                yield return true;
+            }
+            ClearProgressBar();
+        }
+
+        public void ExportGLTFBinaryStream(string name, GameObject[] gameObjects, ExportSettings exportSettings = null, GameObjectExportSettings goeSettings = null)
+        {
+            exportSettings ??= new ExportSettings { };
+            goeSettings ??= new GameObjectExportSettings { };
+
+            // ARENA upload only supports GLB formats ATM
+            exportSettings.Format = GltfFormat.Binary;
+
+            bool success = true;
+            foreach (var go in gameObjects)
+            {
+                if (go.GetComponents<ArenaObject>().Length > 0)
+                {
+                    success = false;
+                    Debug.LogWarning($"GLTF export ignored for existing ArenaObject component {name}.");
+                }
+                if (go.GetComponents<ArenaCamera>().Length > 0)
+                {
+                    success = false;
+                    Debug.LogWarning($"GLTF export ignored for existing ArenaCamera component {name}.");
+                }
+                if (go.GetComponents<ArenaClientScene>().Length > 0)
+                {
+                    success = false;
+                    Debug.LogWarning($"GLTF export ignored for existing ArenaClientScene component {name}.");
+                }
+            }
+            if (success)
+            {
+                StartCoroutine(ExportGLTF(name, gameObjects, exportSettings, goeSettings));
+            }
+        }
+
+        private IEnumerator ExportGLTF(string name, GameObject[] gameObjects, ExportSettings exportSettings, GameObjectExportSettings goeSettings)
+        {
+            // TODO (mwfarb): find better way to export with local position/rotation
+
+            // determine if we should update the local position
+            var rootObjPos = gameObjects[0].transform.position;
+
+            // ATM glTFast exports models with world origin, so we do a trick for now,
+            // by moving the model to the desired export position, export, and then return it.
+
+            // move single model to desired export translation
+            gameObjects[0].transform.position = Vector3.zero;
+
+            // export gltf to stream
+            var export = new GameObjectExport(exportSettings, goeSettings, logger: new ConsoleLogger());
+            export.AddScene(gameObjects, name);
+
+            MemoryStream stream = new MemoryStream();
+            var exportTask = export.SaveToStreamAndDispose(stream);
+            yield return new WaitUntil(() => exportTask.IsCompleted);
+            if (!exportTask.Result)
+            {
+                Debug.LogError($"GLTF export to stream failed!");
+                yield break;
+            }
+            byte[] gltfBuffer = stream.GetBuffer();
+
+            // return single model to original export translation
+            gameObjects[0].transform.position = rootObjPos;
+
+            // send stream to filestore
+            //var safeFilename = name.replace(/(\W+)/gi, '-');
+            var storeResPrefix = authState.is_staff ? $"users/{mqttUserName}/" : "";
+            var userFilePath = $"scenes/{sceneName}/{name}.glb";
+            var storeResPath = $"{storeResPrefix}{userFilePath}";
+            var storeExtPath = $"store/users/{mqttUserName}/{userFilePath}";
+
+            string uploadUrl = $"https://{hostAddress}/storemng/api/resources/{storeResPath}?override=true";
+            CoroutineWithData cd = new CoroutineWithData(this, HttpUploadFSRaw(uploadUrl, gltfBuffer));
+            yield return cd.coroutine;
+            if (!isCrdSuccess(cd.result))
+            {
+                Debug.LogError($"GLTF file upload failed!");
+                yield break;
+            }
+            Debug.Log($"GLTF export uploaded to https://{hostAddress}/{storeExtPath}");
+
+            // send scene object metadata to MQTT
+            var object_id = name;
+            ArenaObjectJson msg = new ArenaObjectJson
+            {
+                object_id = object_id,
+                action = "create",
+                type = "object",
+                persist = true,
+                data = new ArenaDataJson
+                {
+                    object_type = "gltf-model",
+                    url = storeExtPath,
+                    position = ArenaUnity.ToArenaPosition(rootObjPos),
+                    rotation = ArenaUnity.ToArenaRotationQuat(
+                        ArenaUnity.GltfToUnityRotationQuat(Quaternion.identity)),
+                }
+            };
+            string payload = JsonConvert.SerializeObject(msg);
+            PublishObject(msg.object_id, payload, sceneObjectRights);
+            yield return true;
         }
 
         //TODO (mwfarb): prevent publish and throw errors on publishing without rights
@@ -1191,23 +1316,19 @@ namespace ArenaUnity
                     case "update":
                         object_id = (string)msg.object_id;
                         string msg_type = (string)msg.type;
-                        float ttl = isElement(msg.ttl) ? (float)msg.ttl : 0f;
+                        float ttl = (msg.ttl != null) ? (float)msg.ttl : 0f;
                         bool persist = Convert.ToBoolean(msg.persist);
 
-                        // there isnt already an object in the scene created by the user with the same object_id
-                        if (GameObject.Find((string)object_id) == null)
+                        IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
+                        foreach (var uri in uris)
                         {
-                            IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
-                            foreach (var uri in uris)
+                            if (!string.IsNullOrWhiteSpace(uri))
                             {
-                                if (!string.IsNullOrWhiteSpace(uri))
-                                {
-                                    cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
-                                    yield return cd.coroutine;
-                                }
+                                cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
+                                yield return cd.coroutine;
                             }
                         }
-                        CreateUpdateObject(msg, msg.data, msg.displayName, menuCommand);
+                        CreateUpdateObject(msg, msg.data, menuCommand);
                         break;
                     case "delete":
                         object_id = (string)msg.object_id;

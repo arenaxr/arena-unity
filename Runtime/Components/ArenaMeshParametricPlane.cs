@@ -11,21 +11,20 @@ using UnityEngine;
 
 namespace ArenaUnity
 {
-    public class ArenaMeshCone : ArenaMesh
+    public class ArenaMeshParametricPlane : ArenaMesh
     {
-        public ArenaConeJson json = new ArenaConeJson();
+        public ArenaPlaneJson json = new ArenaPlaneJson();
 
         protected override void ApplyRender()
         {
-            filter.sharedMesh = CylinderBuilder.Build(
-                json.RadiusTop,
-                json.RadiusBottom,
+            // TODO (mwfarb): try to support noise plane, possibly with ocean wire object from a-frame extras:
+            filter.sharedMesh = PlaneBuilder.Build(new ParametricPlanePerlin(
+                Vector2.zero,
+                new Vector2(2f, 2f), 0.5f),
+                json.Width,
                 json.Height,
-                json.SegmentsRadial,
-                json.SegmentsHeight,
-                json.OpenEnded,
-                Mathf.PI / 180 * json.ThetaStart,
-                Mathf.PI / 180 * json.ThetaLength
+                json.SegmentsWidth,
+                json.SegmentsHeight
             );
         }
 

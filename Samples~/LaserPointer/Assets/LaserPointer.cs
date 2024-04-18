@@ -89,7 +89,7 @@ public class LaserPointer : MonoBehaviour
             type = "object",
             ttl = 1,
         };
-        var data1 = new ArenaObjectDataJson
+        var data1 = new ArenaDataJson
         {
             object_type = "sphere",
             position = end,

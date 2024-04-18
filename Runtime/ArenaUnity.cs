@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -104,18 +104,6 @@ namespace ArenaUnity
             }
             return positions;
         }
-        public static void ToUnityMesh(ref Mesh mesh)
-        {
-            // reverse position on vertex/normal on Z axis
-            mesh.vertices = ToUnityPosition(mesh.vertices);
-            mesh.normals = ToUnityPosition(mesh.normals);
-            // reverse winding order of triangles such that outer normals are preserved
-            List<int> tri = new List<int>();
-            mesh.GetTriangles(tri, 0);
-            Debug.Log(tri.Count);
-            tri.Reverse();
-            mesh.SetTriangles(tri, 0);
-        }
 
         // rotation
         public static ArenaRotationJson ToArenaRotationQuat(Quaternion rotationQuat, bool invertY = true)
@@ -146,26 +134,20 @@ namespace ArenaUnity
                 (float)rotationQuat.w
             );
         }
-        /// <summary>
-        /// Converts Vector3 rotationEuler to dynamic rotationEuler. CAUTION: Do not use for ARENA!
-        /// A merge with quaternion type will leave a mix of xyz euler and w quaternion = badness.
-        /// </summary>
-        public static ArenaVector3Json ToArenaRotationEuler(Vector3 rotationEuler, bool invertY = true)
-        {
-            return new ArenaVector3Json
-            {
-                X = ArenaFloat(-rotationEuler.x),
-                Y = ArenaFloat(rotationEuler.y * (invertY ? -1 : 1)),
-                Z = ArenaFloat(rotationEuler.z)
-            };
-        }
         public static Quaternion ToUnityRotationEuler(ArenaRotationJson rotationEuler, bool invertY = true)
         {
-            return Quaternion.Euler(
-                -(float)rotationEuler.X,
-                (float)rotationEuler.Y * (invertY ? -1 : 1),
-                (float)rotationEuler.Z
-            );
+            return ToUnityRotationQuat(
+                Quaternion.Euler(
+                    rotationEuler.X,
+                    rotationEuler.Y,
+                    rotationEuler.Z
+                ), invertY);
+        }
+        public static Quaternion UnityToGltfRotationQuat(Quaternion rotationQuat)
+        {
+            var euler = rotationQuat.eulerAngles;
+            euler.y += 180;
+            return Quaternion.Euler(euler);
         }
         public static Quaternion GltfToUnityRotationQuat(Quaternion rotationQuat)
         {
@@ -173,11 +155,9 @@ namespace ArenaUnity
             euler.y -= 180;
             return Quaternion.Euler(euler);
         }
-        public static ArenaRotationJson ToArenaRotationPlaneMesh(Quaternion rotationQuat)
-        {
-            rotationQuat *= Quaternion.Euler(90, 0, 0);
-            return ToArenaRotationQuat(rotationQuat);
-        }
+        // CAUTION: Do not use ToArenaRotationEuler() for ARENA!
+        // A merge with quaternion type will leave a mix of xyz euler and w quaternion = badness.
+        // public static ArenaVector3Json ToArenaRotationEuler(Vector3 rotationEuler, bool invertY = true) { }
 
         // scale
         public static ArenaVector3Json ToArenaScale(Vector3 scale)
@@ -196,6 +176,24 @@ namespace ArenaUnity
                 (float)scale.Y,
                 (float)scale.Z
             );
+        }
+
+        // mesh
+        public static void ToUnityMesh(ref Mesh mesh)
+        {
+            // reverse position on vertex/normal on Z axis
+            mesh.vertices = ToUnityPosition(mesh.vertices);
+            mesh.normals = ToUnityPosition(mesh.normals);
+            // reverse winding order of triangles such that outer normals are preserved
+            List<int> tri = new List<int>();
+            mesh.GetTriangles(tri, 0);
+            tri.Reverse();
+            mesh.SetTriangles(tri, 0);
+        }
+        public static ArenaRotationJson ToArenaRotationPlaneMesh(Quaternion rotationQuat)
+        {
+            rotationQuat *= Quaternion.Euler(90, 0, 0);
+            return ToArenaRotationQuat(rotationQuat);
         }
 
         // color
@@ -241,23 +239,33 @@ namespace ArenaUnity
 
         // object components
 
-        public static void ApplyVisible(GameObject gobj, ArenaObjectDataJson data)
+        public static void ApplyVisible(GameObject gobj, ArenaDataJson data)
         {
             // TODO (mwfarb): handle realtime renderer changes from unity.
             // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
-            var renderer = gobj.GetComponent<Renderer>();
-            if (renderer != null)
+            foreach (Renderer renderer in gobj.GetComponentsInChildren<Renderer>(true))
+            {
                 renderer.enabled = (bool)data.visible;
+            }
+            foreach (Light light in gobj.GetComponentsInChildren<Light>(true))
+            {
+                light.enabled = (bool)data.visible;
+            }
         }
-        public static void ApplyRemoteRender(GameObject gobj, ArenaObjectDataJson data)
+        public static void ApplyRemoteRender(GameObject gobj, ArenaDataJson data)
         {
             // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
-            var renderer = gobj.GetComponent<Renderer>();
-            if (renderer != null)
+            foreach (Renderer renderer in gobj.GetComponentsInChildren<Renderer>(true))
+            {
                 renderer.enabled = data.remoteRender.Enabled;
+            }
+            foreach (Light light in gobj.GetComponentsInChildren<Light>(true))
+            {
+                light.enabled = data.remoteRender.Enabled;
+            }
         }
 
-        public static void ApplyArmarker(GameObject gobj, ArenaObjectDataJson data)
+        public static void ApplyArmarker(GameObject gobj, ArenaDataJson data)
         {
             if (!gobj.TryGetComponent<ArenaArmarker>(out var c))
                 c = gobj.AddComponent<ArenaArmarker>();
@@ -265,7 +273,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyClickListener(GameObject gobj, ArenaObjectDataJson data)
+        public static void ApplyClickListener(GameObject gobj, ArenaDataJson data)
         {
             if (!gobj.TryGetComponent<ArenaClickListener>(out var c))
                 c = gobj.AddComponent<ArenaClickListener>();
@@ -273,7 +281,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyAnimationMixer(GameObject gobj, ArenaObjectDataJson data)
+        public static void ApplyAnimationMixer(GameObject gobj, ArenaDataJson data)
         {
             if (!gobj.TryGetComponent<ArenaAnimationMixer>(out var c))
                 c = gobj.AddComponent<ArenaAnimationMixer>();
@@ -281,7 +289,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyAttribution(GameObject gobj, ArenaObjectDataJson data)
+        public static void ApplyAttribution(GameObject gobj, ArenaDataJson data)
         {
             if (!gobj.TryGetComponent<ArenaAttribution>(out var c))
                 c = gobj.AddComponent<ArenaAttribution>();
@@ -289,7 +297,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyMaterial(GameObject gobj, ArenaObjectDataJson data)
+        public static void ApplyMaterial(GameObject gobj, ArenaDataJson data)
         {
             if (!gobj.TryGetComponent<ArenaMaterial>(out var c))
                 c = gobj.AddComponent<ArenaMaterial>();
@@ -516,9 +524,9 @@ namespace ArenaUnity
 
         public static void ApplyEnvironmentPresets(GameObject gobj, ArenaArenaSceneOptionsJson data)
         {
-            if (!gobj.TryGetComponent<ArenaSceneEnvironmentalPresets>(out var c))
-                c = gobj.AddComponent<ArenaSceneEnvironmentalPresets>();
-            c.json = JsonConvert.DeserializeObject<ArenaEnvironmentPresetsJson>(data.EnvPresets.ToString());
+            if (!gobj.TryGetComponent<ArenaSceneEnvPresets>(out var c))
+                c = gobj.AddComponent<ArenaSceneEnvPresets>();
+            c.json = JsonConvert.DeserializeObject<ArenaEnvPresetsJson>(data.EnvPresets.ToString());
             c.apply = true;
         }
 
