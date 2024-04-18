@@ -6,6 +6,7 @@
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace ArenaUnity
 {
@@ -16,6 +17,7 @@ namespace ArenaUnity
         protected override void ApplyRender()
         {
             // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            Debug.Log("UI Button Panel!");
         }
 
         public override void UpdateObject()

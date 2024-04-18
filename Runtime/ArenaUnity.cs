@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -265,6 +265,14 @@ namespace ArenaUnity
             }
         }
 
+        public static void ApplyArmarker(GameObject gobj, ArenaDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaArmarker>(out var c))
+                c = gobj.AddComponent<ArenaArmarker>();
+            c.json = JsonConvert.DeserializeObject<ArenaArmarkerJson>(MergeRawJson(c.json, data.armarker));
+            c.apply = true;
+        }
+
         public static void ApplyClickListener(GameObject gobj, ArenaDataJson data)
         {
             if (!gobj.TryGetComponent<ArenaClickListener>(out var c))
@@ -487,6 +495,30 @@ namespace ArenaUnity
             text.json = JsonConvert.DeserializeObject<ArenaTextJson>(MergeRawJson(text.json, indata));
             text.apply = true;
         }
+
+        //ARENAUI Objects
+        public static void ApplyWireArenauiCard(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireArenauiCard>(out var text))
+                text = gobj.AddComponent<ArenaWireArenauiCard>();
+            text.json = JsonConvert.DeserializeObject<ArenaArenauiCardJson>(MergeRawJson(text.json, indata));
+            text.apply = true;
+        }
+        public static void ApplyWireArenauiButtonPanel(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireArenauiButtonPanel>(out var text))
+                text = gobj.AddComponent<ArenaWireArenauiButtonPanel>();
+            text.json = JsonConvert.DeserializeObject<ArenaArenauiButtonPanelJson>(MergeRawJson(text.json, indata));
+            text.apply = true;
+        }
+        public static void ApplyWireArenauiPrompt(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireArenauiPrompt>(out var text))
+                text = gobj.AddComponent<ArenaWireArenauiPrompt>();
+            text.json = JsonConvert.DeserializeObject<ArenaArenauiPromptJson>(MergeRawJson(text.json, indata));
+            text.apply = true;
+        }        
+
 
         // scene options components
 

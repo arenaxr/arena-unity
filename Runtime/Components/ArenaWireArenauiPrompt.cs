@@ -6,6 +6,7 @@
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace ArenaUnity
 {
@@ -16,6 +17,13 @@ namespace ArenaUnity
         protected override void ApplyRender()
         {
             // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            Debug.Log("UI Prompt!");
+
+
+            //1. create canvas
+            //2. create Title
+            //3. create Description
+            //4. create Buttons (Confirm / Cancel)
         }
 
         public override void UpdateObject()

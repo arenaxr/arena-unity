@@ -36,6 +36,7 @@ namespace ArenaUnity
                 {
                     case ArenaLightJson.TypeType.Directional:
                         light.type = LightType.Directional;
+                        gameObject.transform.LookAt(new Vector3(0,0,0));
                         break;
                     case ArenaLightJson.TypeType.Point:
                         light.type = LightType.Point;
@@ -50,7 +51,7 @@ namespace ArenaUnity
                 light.intensity = (float)json.Intensity;
                 if (json.Color != null)
                     light.color = ArenaUnity.ToUnityColor((string)json.Color);
-                light.shadows = !json.CastShadow ? LightShadows.None : LightShadows.Hard;
+                light.shadows = !json.CastShadow ? LightShadows.None : LightShadows.Soft;
             }
         }
 

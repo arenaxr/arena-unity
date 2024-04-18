@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -649,9 +649,16 @@ namespace ArenaUnity
                 case "text": ArenaUnity.ApplyWireText(indata, gobj); break;
                 case "line": ArenaUnity.ApplyWireLine(indata, gobj); break;
                 case "thickline": ArenaUnity.ApplyWireThickline(indata, gobj); break;
-                // TODO: case "arenaui-card": ArenaUnity.ApplyWireArenauiCard(indata, gobj); break;
-                // TODO: case "arenaui-button-panel": ArenaUnity.ApplyWireArenauiButtonPanel(indata, gobj); break;
-                // TODO: case "arenaui-prompt": ArenaUnity.ApplyWireArenauiPrompt(indata, gobj); break;
+                
+                // ARENAUI bjects
+                // TODO: 
+                case "arenaui-card": ArenaUnity.ApplyWireArenauiCard(indata, gobj); break;
+                // TODO: 
+                case "arenaui-button-panel": ArenaUnity.ApplyWireArenauiButtonPanel(indata, gobj); break;
+                // TODO: 
+                case "arenaui-prompt": ArenaUnity.ApplyWireArenauiPrompt(indata, gobj); break;
+
+
                 // TODO: case "ocean": ArenaUnity.ApplyWireOcean(indata, gobj); break;
                 // TODO: case "pcd-model": ArenaUnity.ApplyWirePcdModel(indata, gobj); break;
                 // TODO: case "threejs-scene": ArenaUnity.ApplyWireThreejsScene(indata, gobj); break;
@@ -805,7 +812,7 @@ namespace ArenaUnity
 
                     // expected attributes
                     // TODO: case "animation": ArenaUnity.ApplyAnimation(gobj, data); break;
-                    // TODO: case "armarker": ArenaUnity.ApplyArmarker(gobj, data); break;
+                    case "armarker": ArenaUnity.ApplyArmarker(gobj, data); break;
                     case "click-listener": ArenaUnity.ApplyClickListener(gobj, data); break;
                     // TODO: case "box-collision-listener": ArenaUnity.ApplyBoxCollisionListener(gobj, data); break;
                     // TODO: case "collision-listener": ArenaUnity.ApplyCollisionListener(gobj, data); break;
