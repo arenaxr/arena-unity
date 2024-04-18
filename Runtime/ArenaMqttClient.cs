@@ -163,7 +163,7 @@ namespace ArenaUnity
 
         // Auth methods
 
-        internal static string  GetUnityAuthPath()
+        internal static string GetUnityAuthPath()
         {
             string userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             return Path.Combine(userHomePath, userDirArena, userSubDirUnity);
@@ -302,17 +302,22 @@ namespace ArenaUnity
                 if (authState.authenticated)
                 {
                     userName = authState.username;
+
+                    // get fs login
+                    cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/storelogin", csrfToken, form));
+                    yield return cd.coroutine;
+                    if (!isCrdSuccess(cd.result)) yield break;
+                    if (string.IsNullOrWhiteSpace(fsToken))
+                    {
+                        Debug.LogError($"Invalid file store token = {fsToken}");
+                        yield break;
+                    }
                 }
                 if (string.IsNullOrWhiteSpace(namespaceName))
                 {
                     if (authState.authenticated)
                     {
                         namespaceName = authState.username;
-
-                        // get fs login
-                        cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/storelogin", csrfToken, form));
-                        yield return cd.coroutine;
-                        if (!isCrdSuccess(cd.result)) yield break;
                     }
                     else
                     {
