@@ -408,7 +408,7 @@ namespace ArenaUnity
 #if UNITY_EDITOR
         [MenuItem("ARENA/Signout")]
 #endif
-        internal static void SignoutArena()
+        public static void SignoutArena()
         {
 #if UNITY_EDITOR
             if (Application.isPlaying)
