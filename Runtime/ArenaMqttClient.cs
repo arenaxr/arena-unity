@@ -302,16 +302,6 @@ namespace ArenaUnity
                 if (authState.authenticated)
                 {
                     userName = authState.username;
-
-                    // get fs login
-                    cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/storelogin", csrfToken, form));
-                    yield return cd.coroutine;
-                    if (!isCrdSuccess(cd.result)) yield break;
-                    if (string.IsNullOrWhiteSpace(fsToken))
-                    {
-                        Debug.LogError($"Invalid file store token = {fsToken}");
-                        yield break;
-                    }
                 }
                 if (string.IsNullOrWhiteSpace(namespaceName))
                 {
@@ -394,6 +384,25 @@ namespace ArenaUnity
             // background mqtt connect
             Connect();
             yield return namespaceName;
+        }
+
+        protected IEnumerator GetFSLoginForUser()
+        {
+            WWWForm form = new WWWForm();
+            if (idToken != null) form.AddField("id_token", idToken);
+
+            CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/storelogin", csrfToken, form));
+            yield return cd.coroutine;
+            if (!isCrdSuccess(cd.result)) yield break;
+            if (string.IsNullOrWhiteSpace(fsToken))
+            {
+                Debug.LogError($"Invalid file store token = {fsToken}");
+                yield break;
+            }
+            else
+            {
+                yield return true;
+            }
         }
 
         public static string Base64UrlDecode(string base64)

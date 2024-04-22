@@ -649,7 +649,7 @@ namespace ArenaUnity
                 case "text": ArenaUnity.ApplyWireText(indata, gobj); break;
                 case "line": ArenaUnity.ApplyWireLine(indata, gobj); break;
                 case "thickline": ArenaUnity.ApplyWireThickline(indata, gobj); break;
-                
+
                 // ARENAUI bjects
                 // TODO: 
                 case "arenaui-card": ArenaUnity.ApplyWireArenauiCard(indata, gobj); break;
@@ -1152,7 +1152,22 @@ namespace ArenaUnity
 
         private IEnumerator ExportGLTF(string name, GameObject[] gameObjects, ExportSettings exportSettings, GameObjectExportSettings goeSettings)
         {
+            CoroutineWithData cd;
+
             // TODO (mwfarb): find better way to export with local position/rotation
+
+            // request FS login if this is the first time.
+            if (fsToken == null)
+            {
+                cd = new CoroutineWithData(this, GetFSLoginForUser());
+                yield return cd.coroutine;
+                if (!isCrdSuccess(cd.result))
+                {
+                    Debug.LogError($"Filestore login failed!");
+                    yield break;
+                }
+                ;
+            }
 
             // determine if we should update the local position
             var rootObjPos = gameObjects[0].transform.position;
@@ -1188,7 +1203,7 @@ namespace ArenaUnity
             var storeExtPath = $"store/users/{mqttUserName}/{userFilePath}";
 
             string uploadUrl = $"https://{hostAddress}/storemng/api/resources/{storeResPath}?override=true";
-            CoroutineWithData cd = new CoroutineWithData(this, HttpUploadFSRaw(uploadUrl, gltfBuffer));
+            cd = new CoroutineWithData(this, HttpUploadFSRaw(uploadUrl, gltfBuffer));
             yield return cd.coroutine;
             if (!isCrdSuccess(cd.result))
             {
