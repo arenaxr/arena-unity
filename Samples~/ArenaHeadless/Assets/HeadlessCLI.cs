@@ -23,6 +23,8 @@ public class HeadlessCLI : MonoBehaviour
             string namespaceName = arguments[1];
             string sceneName = arguments[2];
 
+            scene.authType = ArenaMqttClient.Auth.Anonymous;
+
             // Set namespace and scenename to arguments
             scene.namespaceName = namespaceName;
             scene.sceneName = sceneName;
