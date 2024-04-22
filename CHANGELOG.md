@@ -2,6 +2,18 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.12.4](https://github.com/arenaxr/arena-unity/compare/v0.12.3...v0.12.4) (2024-04-22)
+
+
+### Bug Fixes
+
+* **auth:** add error check for possible malformed file store token ([cf1c893](https://github.com/arenaxr/arena-unity/commit/cf1c8933cf851da8a6c1e4ffab121db4fa0a1f42))
+* **auth:** replace Jwt lib with direct token deserialization ([fedad99](https://github.com/arenaxr/arena-unity/commit/fedad997944f59f55fece422bff37bc28191cb1c))
+* **filestore:** move fs login to just-in-time at export ([c2a8cb2](https://github.com/arenaxr/arena-unity/commit/c2a8cb2db59157d51e298ce73751427d2aaece1b))
+* **gltf:** fixed build failure for non-editor builds ([f2b4f70](https://github.com/arenaxr/arena-unity/commit/f2b4f7031154f2d163acc6b776afc71aad08cec6))
+* **ios:** restore requires ios link lbs for m2mqtt ([47de58f](https://github.com/arenaxr/arena-unity/commit/47de58f1b56e7bdd790f695be7389e757b750549))
+* update draco decompression to 5.1.2 with vOS support ([60fee51](https://github.com/arenaxr/arena-unity/commit/60fee51877758c4f53687c9cfe9b6f1a7d70da0d))
+
 ## [0.12.3](https://github.com/arenaxr/arena-unity/compare/v0.12.2...v0.12.3) (2024-04-04)
 
 
