@@ -967,12 +967,13 @@ namespace ArenaUnity
             var i = new ImportSettings();
             i.AnimationMethod = AnimationMethod.Legacy;
 
-            var gltf = new GLTFast.GltfImport();
-            var success = await gltf.LoadFile(assetPath, null, i);
-            if (success)
+            var gltf = new GltfImport();
+            if (await gltf.LoadFile(assetPath, null, i))
             {
-                success = await gltf.InstantiateSceneAsync(gobj.transform);
-                //mobj = gltf.
+                if(await gltf.InstantiateSceneAsync(gobj.transform))
+                {
+                    mobj = gobj.transform.GetChild(0).gameObject; // TODO: find better child method
+                }
             }
             else
             {
