@@ -13,7 +13,6 @@ namespace ArenaUnity
     public class ArenaWireArenauiButtonPanel : ArenaComponent
     {
         // ARENA arenaui-button-panel component unity conversion status:
-        // TODO: object_type
         // TODO: buttons
         // TODO: title
         // TODO: vertical

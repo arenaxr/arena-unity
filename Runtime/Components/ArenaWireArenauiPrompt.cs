@@ -13,7 +13,6 @@ namespace ArenaUnity
     public class ArenaWireArenauiPrompt : ArenaComponent
     {
         // ARENA arenaui-prompt component unity conversion status:
-        // TODO: object_type
         // TODO: title
         // TODO: description
         // TODO: buttons

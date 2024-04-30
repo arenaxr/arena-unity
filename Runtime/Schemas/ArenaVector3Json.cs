@@ -18,7 +18,7 @@ using UnityEngine;
 namespace ArenaUnity.Schemas
 {
     /// <summary>
-    /// 
+    /// Vector3
     /// </summary>
     [Serializable]
     public class ArenaVector3Json

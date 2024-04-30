@@ -3,22 +3,31 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
-using ArenaUnity.Components;
+// Modified from: https://github.com/mattatz/unity-mesh-builder/tree/master/Assets/Packages/MeshBuilder/Scripts/Demo
+
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 
 namespace ArenaUnity
 {
-    public class ArenaWireThreeJsScene : ArenaComponent
+    public class ArenaMeshRoundedbox : ArenaMesh
     {
-        // ARENA threejs-scene component unity conversion status:
-        // TODO: url
+        // ARENA roundedbox component unity conversion status:
+        // DONE: depth
+        // DONE: height
+        // DONE: width
+        // TODO: radius
+        // TODO: radiusSegments
 
-        public ArenaThreejsSceneJson json = new ArenaThreejsSceneJson();
+        public ArenaRoundedboxJson json = new ArenaRoundedboxJson();
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            filter.sharedMesh = CubeBuilder.Build(
+                json.Width,
+                json.Height,
+                json.Depth
+            );
         }
 
         public override void UpdateObject()

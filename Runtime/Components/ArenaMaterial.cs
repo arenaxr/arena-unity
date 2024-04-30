@@ -18,7 +18,7 @@ namespace ArenaUnity.Components
         // TODO: alphaTest
         // TODO: anisotropy
         // TODO: blending
-        // TODO: color
+        // DONE: color
         // TODO: combine
         // TODO: depthTest
         // TODO: depthWrite
@@ -31,19 +31,19 @@ namespace ArenaUnity.Components
         // TODO: metalness
         // TODO: npot
         // TODO: offset
-        // TODO: opacity
+        // DONE: opacity
         // TODO: reflectivity
         // TODO: refract
         // TODO: refractionRatio
         // TODO: repeat
         // TODO: roughness
-        // TODO: shader
+        // TODO: shader, DONE but not phong
         // TODO: shininess
         // TODO: side
         // TODO: specular
         // TODO: src
         // TODO: toneMapped
-        // TODO: transparent
+        // DONE: transparent
         // TODO: vertexColorsEnabled
         // TODO: visible
         // TODO: width

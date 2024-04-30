@@ -14,14 +14,13 @@ namespace ArenaUnity
     public class ArenaMeshCylinder : ArenaMesh
     {
         // ARENA cylinder component unity conversion status:
-        // TODO: object_type
-        // TODO: height
-        // TODO: openEnded
-        // TODO: radius
-        // TODO: segmentsHeight
-        // TODO: segmentsRadial
-        // TODO: thetaLength
-        // TODO: thetaStart
+        // DONE: height
+        // DONE: openEnded
+        // DONE: radius
+        // DONE: segmentsHeight
+        // DONE: segmentsRadial
+        // DONE: thetaLength
+        // DONE: thetaStart
 
         public ArenaCylinderJson json = new ArenaCylinderJson();
 

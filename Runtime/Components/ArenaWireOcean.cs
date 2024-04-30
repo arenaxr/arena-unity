@@ -12,7 +12,6 @@ namespace ArenaUnity
     public class ArenaWireOcean : ArenaComponent
     {
         // ARENA ocean component unity conversion status:
-        // TODO: object_type
         // TODO: width
         // TODO: depth
         // TODO: density

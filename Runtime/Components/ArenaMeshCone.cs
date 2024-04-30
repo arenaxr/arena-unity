@@ -14,15 +14,14 @@ namespace ArenaUnity
     public class ArenaMeshCone : ArenaMesh
     {
         // ARENA cone component unity conversion status:
-        // TODO: object_type
-        // TODO: height
-        // TODO: openEnded
-        // TODO: radiusBottom
-        // TODO: radiusTop
-        // TODO: segmentsHeight
-        // TODO: segmentsRadial
-        // TODO: thetaLength
-        // TODO: thetaStart
+        // DONE: height
+        // DONE: openEnded
+        // DONE: radiusBottom
+        // DONE: radiusTop
+        // DONE: segmentsHeight
+        // DONE: segmentsRadial
+        // DONE: thetaLength
+        // DONE: thetaStart
 
         public ArenaConeJson json = new ArenaConeJson();
 

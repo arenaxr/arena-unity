@@ -15,10 +15,9 @@ namespace ArenaUnity
     public class ArenaMeshTriangle : ArenaMesh
     {
         // ARENA triangle component unity conversion status:
-        // TODO: object_type
-        // TODO: vertexA
-        // TODO: vertexB
-        // TODO: vertexC
+        // DONE: vertexA
+        // DONE: vertexB
+        // DONE: vertexC
 
         public ArenaTriangleJson json = new ArenaTriangleJson();
 

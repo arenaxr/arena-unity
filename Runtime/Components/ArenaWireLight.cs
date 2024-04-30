@@ -15,15 +15,14 @@ namespace ArenaUnity
     public class ArenaWireLight : ArenaComponent
     {
         // ARENA light component unity conversion status:
-        // TODO: object_type
-        // TODO: angle
-        // TODO: castShadow
-        // TODO: color
+        // DONE: angle
+        // DONE: castShadow
+        // DONE: color
         // TODO: decay
-        // TODO: distance
+        // DONE: distance
         // TODO: envMap
         // TODO: groundColor
-        // TODO: intensity
+        // DONE: intensity
         // TODO: light
         // TODO: penumbra
         // TODO: shadowBias
@@ -39,7 +38,7 @@ namespace ArenaUnity
         // TODO: shadowMapWidth
         // TODO: shadowRadius
         // TODO: target
-        // TODO: type
+        // DONE: type
 
         public ArenaLightJson json = new ArenaLightJson();
 

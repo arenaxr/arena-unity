@@ -9,12 +9,13 @@ using Newtonsoft.Json;
 
 namespace ArenaUnity
 {
-    public class ArenaWireThreeJsScene : ArenaComponent
+    public class ArenaWireUrdfModel : ArenaComponent
     {
-        // ARENA threejs-scene component unity conversion status:
+        // ARENA urdf-model component unity conversion status:
         // TODO: url
+        // TODO: joints
 
-        public ArenaThreejsSceneJson json = new ArenaThreejsSceneJson();
+        public ArenaUrdfModelJson json = new ArenaUrdfModelJson();
 
         protected override void ApplyRender()
         {

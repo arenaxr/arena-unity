@@ -12,13 +12,12 @@ namespace ArenaUnity
     public class ArenaMeshVideosphere : ArenaMesh
     {
         // ARENA videosphere component unity conversion status:
-        // TODO: object_type
         // TODO: autoplay
         // TODO: crossOrigin
         // TODO: loop
-        // TODO: radius
-        // TODO: segmentsHeight
-        // TODO: segmentsWidth
+        // DONE: radius
+        // DONE: segmentsHeight
+        // DONE: segmentsWidth
         // TODO: src
 
         public ArenaVideosphereJson json = new ArenaVideosphereJson();

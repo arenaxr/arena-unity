@@ -13,11 +13,10 @@ namespace ArenaUnity
     public class ArenaWireLine : ArenaComponent
     {
         // ARENA line component unity conversion status:
-        // TODO: object_type
-        // TODO: color
-        // TODO: end
+        // DONE: color
+        // DONE: end
         // TODO: opacity
-        // TODO: start
+        // DONE: start
         // TODO: visible
 
         public ArenaLineJson json = new ArenaLineJson();

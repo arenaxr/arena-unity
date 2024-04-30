@@ -11,9 +11,8 @@ namespace ArenaUnity
     public class ArenaMeshTetrahedron : ArenaMesh
     {
         // ARENA tetrahedron component unity conversion status:
-        // TODO: object_type
-        // TODO: detail
-        // TODO: radius
+        // DONE: detail
+        // DONE: radius
 
         public ArenaTetrahedronJson json = new ArenaTetrahedronJson();
 

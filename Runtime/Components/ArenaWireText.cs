@@ -15,26 +15,25 @@ namespace ArenaUnity
     public class ArenaWireText : ArenaComponent
     {
         // ARENA text component unity conversion status:
-        // TODO: object_type
         // TODO: align
         // TODO: alphaTest
-        // TODO: anchor
-        // TODO: baseline
-        // TODO: color
+        // DONE: anchor
+        // DONE: baseline
+        // DONE: color
         // TODO: font
         // TODO: fontImage
-        // TODO: height
+        // DONE: height
         // TODO: letterSpacing
         // TODO: lineHeight
         // TODO: opacity
         // TODO: shader
         // TODO: side
         // TODO: tabSize
-        // TODO: text
+        // DONE: text
         // TODO: transparent
-        // TODO: value
+        // DONE: value
         // TODO: whiteSpace
-        // TODO: width
+        // DONE: width
         // TODO: wrapCount
         // TODO: wrapPixels
         // TODO: xOffset

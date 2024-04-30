@@ -12,7 +12,6 @@ namespace ArenaUnity
     public class ArenaWireEntity : ArenaComponent
     {
         // ARENA entity component unity conversion status:
-        // TODO: object_type
         // TODO: geometry
         // TODO: panel
 

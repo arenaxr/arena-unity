@@ -1,20 +1,23 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
-using ArenaUnity.Components;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
+using UnityEngine;
 
-namespace ArenaUnity
+namespace ArenaUnity.Components
 {
-    public class ArenaWireThreeJsScene : ArenaComponent
+    public class ArenaGltfMorph : ArenaComponent
     {
-        // ARENA threejs-scene component unity conversion status:
-        // TODO: url
+        // ARENA gltf-morph component unity conversion status:
+        // TODO: morphtarget
+        // TODO: value
 
-        public ArenaThreejsSceneJson json = new ArenaThreejsSceneJson();
+        public ArenaGltfMorphJson json = new ArenaGltfMorphJson();
 
         protected override void ApplyRender()
         {
@@ -29,7 +32,7 @@ namespace ArenaUnity
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null)
                 {
-                    aobj.PublishUpdate($"{newJson}");
+                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
                     apply = true;
                 }
             }

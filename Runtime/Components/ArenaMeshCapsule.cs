@@ -11,11 +11,10 @@ namespace ArenaUnity
     public class ArenaMeshCapsule : ArenaMesh
     {
         // ARENA capsule component unity conversion status:
-        // TODO: object_type
-        // TODO: length
-        // TODO: radius
-        // TODO: segmentsCap
-        // TODO: segmentsRadial
+        // DONE: length
+        // DONE: radius
+        // DONE: segmentsCap
+        // DONE: segmentsRadial
 
         public ArenaCapsuleJson json = new ArenaCapsuleJson();
 

@@ -16,11 +16,10 @@ namespace ArenaUnity
     public class ArenaWireThickline : ArenaComponent
     {
         // ARENA thickline component unity conversion status:
-        // TODO: object_type
-        // TODO: color
-        // TODO: lineWidth
-        // TODO: lineWidthStyler
-        // TODO: path
+        // DONE: color, not working
+        // DONE: lineWidth
+        // DONE: lineWidthStyler
+        // DONE: path
 
         public ArenaThicklineJson json = new ArenaThicklineJson();
 

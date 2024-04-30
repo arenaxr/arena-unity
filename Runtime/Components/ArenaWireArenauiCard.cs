@@ -13,7 +13,6 @@ namespace ArenaUnity
     public class ArenaWireArenauiCard : ArenaComponent
     {
         // ARENA arenaui-card component unity conversion status:
-        // TODO: object_type
         // TODO: title
         // TODO: body
         // TODO: bodyAlign

@@ -13,12 +13,11 @@ namespace ArenaUnity
     public class ArenaMeshSphere : ArenaMesh
     {
         // ARENA sphere component unity conversion status:
-        // TODO: object_type
         // TODO: phiLength
         // TODO: phiStart
-        // TODO: radius
-        // TODO: segmentsHeight
-        // TODO: segmentsWidth
+        // DONE: radius
+        // DONE: segmentsHeight
+        // DONE: segmentsWidth
         // TODO: thetaLength
         // TODO: thetaStart
 

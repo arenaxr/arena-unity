@@ -13,7 +13,7 @@ namespace ArenaUnity.Components
     public class ArenaClickListener : ArenaComponent
     {
         // ARENA click-listener component unity conversion status:
-        // TODO: enabled
+        // DONE: enabled
         // TODO: bubble
 
         private Camera _camera;

@@ -14,11 +14,10 @@ namespace ArenaUnity
     public class ArenaMeshPlane : ArenaMesh
     {
         // ARENA plane component unity conversion status:
-        // TODO: object_type
-        // TODO: height
-        // TODO: segmentsHeight
-        // TODO: segmentsWidth
-        // TODO: width
+        // DONE: height
+        // DONE: segmentsHeight
+        // DONE: segmentsWidth
+        // DONE: width
 
         public ArenaPlaneJson json = new ArenaPlaneJson();
 
