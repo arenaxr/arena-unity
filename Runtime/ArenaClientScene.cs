@@ -962,17 +962,17 @@ namespace ArenaUnity
         private async void AttachGltf(string assetPath, GameObject gobj, ArenaObject aobj = null)
         {
             if (assetPath == null) return;
-            AnimationClip[] clips = null;
             GameObject mobj = null;
             var i = new ImportSettings();
             i.AnimationMethod = AnimationMethod.Legacy;
 
             var gltf = new GltfImport();
-            if (await gltf.LoadFile(assetPath, null, i))
+            Uri uri = new Uri(Path.GetFullPath(assetPath));
+            if (await gltf.LoadFile(assetPath, uri, i))
             {
-                if(await gltf.InstantiateSceneAsync(gobj.transform))
+                if (await gltf.InstantiateSceneAsync(gobj.transform))
                 {
-                    mobj = gobj.transform.GetChild(0).gameObject; // TODO: find better child method
+                    mobj = gobj.transform.GetChild(0).gameObject; // TODO (mwfarb): find better child method
                 }
             }
             else
@@ -981,9 +981,8 @@ namespace ArenaUnity
             }
             if (mobj != null)
             {
-                if (clips != null && aobj != null)
-                    AssignAnimations(aobj, mobj, clips);
-                mobj.transform.parent = gobj.transform;
+                if (aobj != null)
+                    AssignAnimations(aobj, mobj);
                 mobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(mobj.transform.localRotation);
                 foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
                 {   // prevent inadvertent editing of gltf elements
@@ -992,21 +991,21 @@ namespace ArenaUnity
             }
         }
 
-        private void AssignAnimations(ArenaObject aobj, GameObject mobj, AnimationClip[] clips)
+        // TODO (mwfarb): move AssignAnimations to animation mixer component editor
+        private void AssignAnimations(ArenaObject aobj, GameObject mobj)
         {
-            if (clips != null && clips.Length > 0)
+#if UNITY_EDITOR
+            Animation anim = mobj.GetComponent<Animation>();
+            if (anim != null)
             {
                 aobj.animations = new List<string>();
-                Animation anim = mobj.AddComponent<Animation>();
+                AnimationClip[] clips = AnimationUtility.GetAnimationClips(mobj);
                 foreach (AnimationClip clip in clips)
                 {
-                    clip.legacy = true;
-                    anim.AddClip(clip, clip.name);
-                    //anim.clip = anim.GetClip(clip.name);
-                    //anim.wrapMode = WrapMode.Loop;
                     aobj.animations.Add(clip.name);
                 }
             }
+#endif
         }
 
         private void AttachImage(string assetPath, GameObject gobj)
