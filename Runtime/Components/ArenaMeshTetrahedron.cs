@@ -10,6 +10,10 @@ namespace ArenaUnity
 {
     public class ArenaMeshTetrahedron : ArenaMesh
     {
+        // ARENA tetrahedron component unity conversion status:
+        // DONE: detail
+        // DONE: radius
+
         public ArenaTetrahedronJson json = new ArenaTetrahedronJson();
 
         protected override void ApplyRender()

@@ -11,6 +11,13 @@ namespace ArenaUnity
 {
     public class ArenaWireImage : ArenaComponent
     {
+        // ARENA image component unity conversion status:
+        // DONE: url, TODO: move code here from ArenaClientScene
+        // TODO: height
+        // TODO: segmentsHeight
+        // TODO: segmentsWidth
+        // TODO: width
+
         public ArenaImageJson json = new ArenaImageJson();
 
         protected override void ApplyRender()

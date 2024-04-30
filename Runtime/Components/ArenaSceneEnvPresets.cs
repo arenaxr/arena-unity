@@ -13,6 +13,37 @@ namespace ArenaUnity.Components
 {
     public class ArenaSceneEnvPresets : ArenaComponent
     {
+        // ARENA env-presets component unity conversion status:
+        // TODO: active
+        // TODO: dressing
+        // TODO: dressingAmount
+        // TODO: dressingColor
+        // TODO: dressingOnPlayArea
+        // TODO: dressingScale
+        // TODO: dressingUniformScale
+        // TODO: dressingVariance
+        // TODO: flatShading
+        // TODO: fog
+        // TODO: grid
+        // TODO: gridColor
+        // TODO: ground
+        // TODO: groundColor
+        // TODO: groundColor2
+        // TODO: groundScale
+        // TODO: groundTexture
+        // TODO: groundYScale
+        // TODO: hideInAR
+        // TODO: horizonColor
+        // TODO: lighting
+        // TODO: lightPosition
+        // TODO: playArea
+        // TODO: preset
+        // TODO: seed
+        // TODO: shadow
+        // TODO: shadowSize
+        // TODO: skyColor
+        // TODO: skyType
+
         public ArenaEnvPresetsJson json = new ArenaEnvPresetsJson();
 
         protected override void ApplyRender()

@@ -12,6 +12,10 @@ namespace ArenaUnity
 {
     public class ArenaMeshIcosahedron : ArenaMesh
     {
+        // ARENA icosahedron component unity conversion status:
+        // DONE: detail
+        // DONE: radius
+
         public ArenaIcosahedronJson json = new ArenaIcosahedronJson();
 
         protected override void ApplyRender()

@@ -13,6 +13,9 @@ namespace ArenaUnity.Components
 {
     public class ArenaModelUpdate : ArenaComponent
     {
+        // ARENA modelUpdate component unity conversion status:
+        // TODO: looping through every named element for position and rotation
+
         public ArenaModelUpdateJson json = new ArenaModelUpdateJson();
 
         protected override void ApplyRender()

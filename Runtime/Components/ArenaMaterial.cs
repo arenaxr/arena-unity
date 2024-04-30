@@ -14,6 +14,42 @@ namespace ArenaUnity.Components
 {
     public class ArenaMaterial : ArenaComponent
     {
+        // ARENA material component unity conversion status:
+        // TODO: alphaTest
+        // TODO: anisotropy
+        // TODO: blending
+        // DONE: color
+        // TODO: combine
+        // TODO: depthTest
+        // TODO: depthWrite
+        // TODO: dithering
+        // TODO: emissive
+        // TODO: emissiveIntensity
+        // TODO: flatShading
+        // TODO: fog
+        // TODO: height
+        // TODO: metalness
+        // TODO: npot
+        // TODO: offset
+        // DONE: opacity
+        // TODO: reflectivity
+        // TODO: refract
+        // TODO: refractionRatio
+        // TODO: repeat
+        // TODO: roughness
+        // DONE: shader, TODO: add phong
+        // TODO: shininess
+        // TODO: side
+        // TODO: specular
+        // TODO: src
+        // TODO: toneMapped
+        // DONE: transparent
+        // TODO: vertexColorsEnabled
+        // TODO: visible
+        // TODO: width
+        // TODO: wireframe
+        // TODO: wireframeLinewidth
+
         public enum MatRendMode
         {   // TODO: the standards for "_Mode" seem to be missing?
             Opaque = 0,
@@ -48,8 +84,7 @@ namespace ArenaUnity.Components
 
                     Color c = material.GetColor(ArenaUnity.ColorPropertyName);
                     material.SetColor(ArenaUnity.ColorPropertyName, new Color(c.r, c.g, c.b, json.Opacity));
-                    if (json.Shader != null)
-                        material.shader.name = json.Shader == "flat" ? "Unlit/Color" : "Standard";
+                    material.shader.name = json.Shader == ArenaMaterialJson.ShaderType.Flat ? "Unlit/Color" : "Standard";
 
                     // For runtime set/change transparency mode, follow GUI params
                     // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/StandardShaderGUI.cs#L344
@@ -103,12 +138,12 @@ namespace ArenaUnity.Components
             {
                 default:
                 case "Standard":
-                    data.Shader = "standard"; break;
+                    data.Shader = ArenaMaterialJson.ShaderType.Standard; break;
                 case "Unlit/Color":
                 case "Unlit/Texture":
                 case "Unlit/Texture Colored":
                 case "Legacy Shaders/Transparent/Diffuse":
-                    data.Shader = "flat"; break;
+                    data.Shader = ArenaMaterialJson.ShaderType.Flat; break;
             }
             //data.url = ToArenaTexture(mat);
             if (mat.HasProperty(ArenaUnity.ColorPropertyName))

@@ -13,6 +13,10 @@ namespace ArenaUnity.Components
 {
     public class ArenaJitsiVideo : ArenaComponent
     {
+        // ARENA jitsi-video component unity conversion status:
+        // TODO: jitsiId
+        // TODO: displayName
+
         public ArenaJitsiVideoJson json = new ArenaJitsiVideoJson();
 
         protected override void ApplyRender()

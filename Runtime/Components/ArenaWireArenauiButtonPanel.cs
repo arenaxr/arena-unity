@@ -12,6 +12,14 @@ namespace ArenaUnity
 {
     public class ArenaWireArenauiButtonPanel : ArenaComponent
     {
+        // ARENA arenaui-button-panel component unity conversion status:
+        // TODO: buttons
+        // TODO: title
+        // TODO: vertical
+        // TODO: font
+        // TODO: theme
+        // TODO: materialSides
+
         public ArenaArenauiButtonPanelJson json = new ArenaArenauiButtonPanelJson();
 
         protected override void ApplyRender()

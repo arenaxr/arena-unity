@@ -13,6 +13,14 @@ namespace ArenaUnity.Components
 {
     public class ArenaBlip : ArenaComponent
     {
+        // ARENA blip component unity conversion status:
+        // TODO: blipin
+        // TODO: blipout
+        // TODO: geometry
+        // TODO: planes
+        // TODO: duration
+        // TODO: applyDescendants
+
         public ArenaBlipJson json = new ArenaBlipJson();
 
         protected override void ApplyRender()

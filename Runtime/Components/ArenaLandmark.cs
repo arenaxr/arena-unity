@@ -13,6 +13,15 @@ namespace ArenaUnity.Components
 {
     public class ArenaLandmark : ArenaComponent
     {
+        // ARENA landmark component unity conversion status:
+        // TODO: randomRadiusMin
+        // TODO: randomRadiusMax
+        // TODO: offsetPosition
+        // TODO: constrainToNavMesh
+        // TODO: startingPosition
+        // TODO: lookAtLandmark
+        // TODO: label
+
         public ArenaLandmarkJson json = new ArenaLandmarkJson();
 
         protected override void ApplyRender()

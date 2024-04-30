@@ -12,6 +12,14 @@ namespace ArenaUnity
 {
     public class ArenaMeshBox : ArenaMesh
     {
+        // ARENA box component unity conversion status:
+        // DONE: depth
+        // DONE: height
+        // DONE: segmentsDepth
+        // DONE: segmentsHeight
+        // DONE: segmentsWidth
+        // DONE: width
+
         public ArenaBoxJson json = new ArenaBoxJson();
 
         protected override void ApplyRender()

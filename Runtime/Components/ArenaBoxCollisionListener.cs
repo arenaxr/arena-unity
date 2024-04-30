@@ -13,6 +13,10 @@ namespace ArenaUnity.Components
 {
     public class ArenaBoxCollisionListener : ArenaComponent
     {
+        // ARENA box-collision-listener component unity conversion status:
+        // TODO: enabled
+        // TODO: dynamic
+
         public ArenaBoxCollisionListenerJson json = new ArenaBoxCollisionListenerJson();
 
         protected override void ApplyRender()

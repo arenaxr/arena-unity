@@ -13,6 +13,10 @@ namespace ArenaUnity.Components
 {
     public class ArenaGotoLandmark : ArenaComponent
     {
+        // ARENA goto-landmark component unity conversion status:
+        // TODO: on
+        // TODO: landmark
+
         public ArenaGotoLandmarkJson json = new ArenaGotoLandmarkJson();
 
         protected override void ApplyRender()

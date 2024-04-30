@@ -11,6 +11,10 @@ namespace ArenaUnity
 {
     public class ArenaWireEntity : ArenaComponent
     {
+        // ARENA entity component unity conversion status:
+        // TODO: geometry
+        // TODO: panel
+
         public ArenaEntityJson json = new ArenaEntityJson();
 
         protected override void ApplyRender()

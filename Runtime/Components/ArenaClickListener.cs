@@ -12,6 +12,10 @@ namespace ArenaUnity.Components
     [HelpURL("https://docs.arenaxr.org/content/schemas/arena-aframe-components.html#click-listener")]
     public class ArenaClickListener : ArenaComponent
     {
+        // ARENA click-listener component unity conversion status:
+        // DONE: enabled
+        // TODO: bubble
+
         private Camera _camera;
         private ArenaCamera _arenaCam;
 

@@ -14,6 +14,11 @@ namespace ArenaUnity
 
     public class ArenaMeshTriangle : ArenaMesh
     {
+        // ARENA triangle component unity conversion status:
+        // DONE: vertexA
+        // DONE: vertexB
+        // DONE: vertexC
+
         public ArenaTriangleJson json = new ArenaTriangleJson();
 
         protected override void ApplyRender()

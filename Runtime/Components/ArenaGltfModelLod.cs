@@ -13,6 +13,12 @@ namespace ArenaUnity.Components
 {
     public class ArenaGltfModelLod : ArenaComponent
     {
+        // ARENA gltf-model-lod component unity conversion status:
+        // TODO: detailedUrl
+        // TODO: detailedDistance
+        // TODO: updateRate
+        // TODO: retainCache
+
         public ArenaGltfModelLodJson json = new ArenaGltfModelLodJson();
 
         protected override void ApplyRender()

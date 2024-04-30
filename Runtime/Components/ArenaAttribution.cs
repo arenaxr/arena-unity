@@ -13,6 +13,16 @@ namespace ArenaUnity.Components
 {
     public class ArenaAttribution : ArenaComponent
     {
+        // ARENA attribution component unity conversion status:
+        // TODO: author
+        // TODO: authorURL
+        // TODO: license
+        // TODO: licenseURL
+        // TODO: source
+        // TODO: sourceURL
+        // TODO: title
+        // TODO: extractAssetExtras
+
         public ArenaAttributionJson json = new ArenaAttributionJson();
 
         protected override void ApplyRender()

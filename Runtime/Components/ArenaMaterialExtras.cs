@@ -13,6 +13,14 @@ namespace ArenaUnity.Components
 {
     public class ArenaMaterialExtras : ArenaComponent
     {
+        // ARENA material-extras component unity conversion status:
+        // TODO: overrideSrc
+        // TODO: colorSpace
+        // TODO: colorWrite
+        // TODO: renderOrder
+        // TODO: transparentOccluder
+        // TODO: gltfOpacity
+
         public ArenaMaterialExtrasJson json = new ArenaMaterialExtrasJson();
 
         protected override void ApplyRender()

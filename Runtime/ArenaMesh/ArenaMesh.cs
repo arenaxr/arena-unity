@@ -69,6 +69,10 @@ namespace ArenaUnity
                     var box = gobj.GetComponent<ArenaMeshBox>();
                     data = box.json;
                     break;
+                case "ArenaUnity.ArenaMeshRoundedbox":
+                    var rbox = gobj.GetComponent<ArenaMeshRoundedbox>();
+                    data = rbox.json;
+                    break;
                 case "ArenaUnity.ArenaMeshCone":
                     var cone = gobj.GetComponent<ArenaMeshCone>();
                     data = cone.json;

@@ -14,6 +14,31 @@ namespace ArenaUnity
 {
     public class ArenaWireText : ArenaComponent
     {
+        // ARENA text component unity conversion status:
+        // TODO: align
+        // TODO: alphaTest
+        // DONE: anchor
+        // DONE: baseline
+        // DONE: color
+        // TODO: font
+        // TODO: fontImage
+        // DONE: height
+        // TODO: letterSpacing
+        // TODO: lineHeight
+        // TODO: opacity
+        // TODO: shader
+        // TODO: side
+        // TODO: tabSize
+        // DONE: text
+        // TODO: transparent
+        // DONE: value
+        // TODO: whiteSpace
+        // DONE: width
+        // TODO: wrapCount
+        // TODO: wrapPixels
+        // TODO: xOffset
+        // TODO: zOffset
+
         public ArenaTextJson json = new ArenaTextJson();
 
         protected override void ApplyRender()
@@ -25,16 +50,17 @@ namespace ArenaUnity
                 tm = gameObject.AddComponent<TextMeshPro>();
             tm.fontSize = 2;
 
-            if (json.text != null)
-                tm.text = json.text; // data.text is deprecated, users get a console warning at json injest
+            if (json.Text != null)
+                tm.text = json.Text; // data.text is deprecated, users get a console warning at json injest
             else if (json.Value != null)
-                tm.text = (string)json.Value;
+                tm.text = json.Value;
             if (json.Color != null)
-                tm.color = ArenaUnity.ToUnityColor((string)json.Color);
+                tm.color = ArenaUnity.ToUnityColor(json.Color);
 
             RectTransform rt = gameObject.GetComponent<RectTransform>();
-            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (float)json.Width);
-            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (float)json.Height);
+            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, json.Width);
+            if (json.Height != null)
+                rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (float)json.Height);
             rt.ForceUpdateRectTransforms();
             string anchor = json.Anchor.ToString();
             string baseline = json.Baseline.ToString();

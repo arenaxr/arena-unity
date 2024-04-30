@@ -13,6 +13,10 @@ namespace ArenaUnity.Components
 {
     public class ArenaShadow : ArenaComponent
     {
+        // ARENA shadow component unity conversion status:
+        // TODO: cast
+        // TODO: receive
+
         public ArenaShadowJson json = new ArenaShadowJson();
 
         protected override void ApplyRender()

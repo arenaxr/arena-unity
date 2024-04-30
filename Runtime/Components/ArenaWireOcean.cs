@@ -11,6 +11,17 @@ namespace ArenaUnity
 {
     public class ArenaWireOcean : ArenaComponent
     {
+        // ARENA ocean component unity conversion status:
+        // TODO: width
+        // TODO: depth
+        // TODO: density
+        // TODO: amplitude
+        // TODO: amplitudeVariance
+        // TODO: speed
+        // TODO: speedVariance
+        // TODO: color
+        // TODO: opacity
+
         public ArenaOceanJson json = new ArenaOceanJson();
 
         protected override void ApplyRender()

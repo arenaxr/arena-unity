@@ -14,6 +14,32 @@ namespace ArenaUnity
 {
     public class ArenaWireLight : ArenaComponent
     {
+        // ARENA light component unity conversion status:
+        // DONE: angle
+        // DONE: castShadow
+        // DONE: color
+        // TODO: decay
+        // DONE: distance
+        // TODO: envMap
+        // TODO: groundColor
+        // DONE: intensity
+        // TODO: light
+        // TODO: penumbra
+        // TODO: shadowBias
+        // TODO: shadowCameraBottom
+        // TODO: shadowCameraFar
+        // TODO: shadowCameraFov
+        // TODO: shadowCameraLeft
+        // TODO: shadowCameraNear
+        // TODO: shadowCameraRight
+        // TODO: shadowCameraTop
+        // TODO: shadowCameraVisible
+        // TODO: shadowMapHeight
+        // TODO: shadowMapWidth
+        // TODO: shadowRadius
+        // TODO: target
+        // DONE: type
+
         public ArenaLightJson json = new ArenaLightJson();
 
         protected override void ApplyRender()
@@ -23,9 +49,9 @@ namespace ArenaUnity
             if (json.Type == ArenaLightJson.TypeType.Ambient)
             {
                 RenderSettings.ambientMode = AmbientMode.Flat;
-                RenderSettings.ambientIntensity = (float)json.Intensity;
+                RenderSettings.ambientIntensity = json.Intensity;
                 if (json.Color != null)
-                    RenderSettings.ambientLight = ArenaUnity.ToUnityColor((string)json.Color);
+                    RenderSettings.ambientLight = ArenaUnity.ToUnityColor(json.Color);
             }
             else
             {
@@ -40,17 +66,17 @@ namespace ArenaUnity
                         break;
                     case ArenaLightJson.TypeType.Point:
                         light.type = LightType.Point;
-                        light.range = (float)json.Distance;
+                        light.range = json.Distance;
                         break;
                     case ArenaLightJson.TypeType.Spot:
                         light.type = LightType.Spot;
-                        light.range = (float)json.Distance;
-                        light.spotAngle = (float)json.Angle;
+                        light.range = json.Distance;
+                        light.spotAngle = json.Angle;
                         break;
                 }
-                light.intensity = (float)json.Intensity;
+                light.intensity = json.Intensity;
                 if (json.Color != null)
-                    light.color = ArenaUnity.ToUnityColor((string)json.Color);
+                    light.color = ArenaUnity.ToUnityColor(json.Color);
                 light.shadows = !json.CastShadow ? LightShadows.None : LightShadows.Soft;
             }
         }

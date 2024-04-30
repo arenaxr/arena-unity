@@ -13,6 +13,16 @@ namespace ArenaUnity.Components
 {
     public class ArenaVideoControl : ArenaComponent
     {
+        // ARENA video-control component unity conversion status:
+        // TODO: frame_object
+        // TODO: video_object
+        // TODO: video_path
+        // TODO: anyone_clicks
+        // TODO: video_loop
+        // TODO: autoplay
+        // TODO: volume
+        // TODO: cleanup
+
         public ArenaVideoControlJson json = new ArenaVideoControlJson();
 
         protected override void ApplyRender()

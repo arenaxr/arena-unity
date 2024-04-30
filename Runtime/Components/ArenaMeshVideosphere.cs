@@ -11,6 +11,15 @@ namespace ArenaUnity
 {
     public class ArenaMeshVideosphere : ArenaMesh
     {
+        // ARENA videosphere component unity conversion status:
+        // TODO: autoplay
+        // TODO: crossOrigin
+        // TODO: loop
+        // DONE: radius
+        // DONE: segmentsHeight
+        // DONE: segmentsWidth
+        // TODO: src
+
         public ArenaVideosphereJson json = new ArenaVideosphereJson();
 
         protected override void ApplyRender()

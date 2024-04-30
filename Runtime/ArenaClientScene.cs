@@ -892,7 +892,7 @@ namespace ArenaUnity
                         GameObject htobj = new GameObject(headTextId);
                         TextMeshPro tm = htobj.transform.gameObject.AddComponent<TextMeshPro>();
                         tm.alignment = TextAlignmentOptions.Center;
-                        tm.color = ArenaUnity.ToUnityColor((string)json.color);
+                        tm.color = ArenaUnity.ToUnityColor(json.color);
                         tm.fontSize = 5;
                         tm.text = json.displayName;
 

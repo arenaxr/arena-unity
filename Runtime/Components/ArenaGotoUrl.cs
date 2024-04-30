@@ -13,6 +13,11 @@ namespace ArenaUnity.Components
 {
     public class ArenaGotoUrl : ArenaComponent
     {
+        // ARENA goto-url component unity conversion status:
+        // TODO: dest
+        // TODO: on
+        // TODO: url
+
         public ArenaGotoUrlJson json = new ArenaGotoUrlJson();
 
         protected override void ApplyRender()

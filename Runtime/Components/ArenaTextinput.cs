@@ -13,6 +13,12 @@ namespace ArenaUnity.Components
 {
     public class ArenaTextinput : ArenaComponent
     {
+        // ARENA textinput component unity conversion status:
+        // TODO: on
+        // TODO: title
+        // TODO: label
+        // TODO: placeholder
+
         public ArenaTextinputJson json = new ArenaTextinputJson();
 
         protected override void ApplyRender()
