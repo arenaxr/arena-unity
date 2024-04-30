@@ -13,7 +13,7 @@ namespace ArenaUnity
     public class ArenaWireLine : ArenaComponent
     {
         // ARENA line component unity conversion status:
-        // DONE: color
+        // DONE: color, TODO (mwfarb): find "Default-Line" material
         // DONE: end
         // TODO: opacity
         // DONE: start

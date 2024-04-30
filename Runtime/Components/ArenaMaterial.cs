@@ -14,7 +14,7 @@ namespace ArenaUnity.Components
 {
     public class ArenaMaterial : ArenaComponent
     {
-       // ARENA material component unity conversion status:
+        // ARENA material component unity conversion status:
         // TODO: alphaTest
         // TODO: anisotropy
         // TODO: blending
@@ -37,7 +37,7 @@ namespace ArenaUnity.Components
         // TODO: refractionRatio
         // TODO: repeat
         // TODO: roughness
-        // TODO: shader, DONE but not phong
+        // DONE: shader, TODO: add phong
         // TODO: shininess
         // TODO: side
         // TODO: specular

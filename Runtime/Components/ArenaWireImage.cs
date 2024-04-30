@@ -12,7 +12,7 @@ namespace ArenaUnity
     public class ArenaWireImage : ArenaComponent
     {
         // ARENA image component unity conversion status:
-        // TODO: url
+        // DONE: url, TODO: move code here from ArenaClientScene
         // TODO: height
         // TODO: segmentsHeight
         // TODO: segmentsWidth

@@ -12,7 +12,7 @@ namespace ArenaUnity
     public class ArenaWireGltfModel : ArenaComponent
     {
         // ARENA gltf-model component unity conversion status:
-        // TODO: url
+        // DONE: url, TODO: move code here from ArenaClientScene
 
         public ArenaGltfModelJson json = new ArenaGltfModelJson();
 

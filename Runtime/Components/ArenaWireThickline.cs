@@ -16,7 +16,7 @@ namespace ArenaUnity
     public class ArenaWireThickline : ArenaComponent
     {
         // ARENA thickline component unity conversion status:
-        // DONE: color, not working
+        // DONE: color, TODO (mwfarb): find "Default-Line" material
         // DONE: lineWidth
         // DONE: lineWidthStyler
         // DONE: path
