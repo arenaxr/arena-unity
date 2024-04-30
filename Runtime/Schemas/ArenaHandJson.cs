@@ -54,11 +54,15 @@ namespace ArenaUnity.Schemas
             return (scale != null);
         }
 
+        // General json object management
         [OnError]
         internal void OnError(StreamingContext context, ErrorContext errorContext)
         {
             Debug.LogWarning($"{errorContext.Error.Message}: {errorContext.OriginalObject}");
             errorContext.Handled = true;
         }
+
+        [JsonExtensionData]
+        private IDictionary<string, JToken> _additionalData;
     }
 }
