@@ -24,6 +24,8 @@ namespace ArenaUnity.Components
 
             DrawDefaultInspector();
 
+            if (am.json == null) return; // not ready
+
             // add any animation buttons
             if (aobj != null && aobj.animations != null && aobj.animations.Count > 0)
             {

@@ -650,12 +650,12 @@ namespace ArenaUnity
                 case "line": ArenaUnity.ApplyWireLine(indata, gobj); break;
                 case "thickline": ArenaUnity.ApplyWireThickline(indata, gobj); break;
 
-                // ARENAUI bjects
-                // TODO: 
+                // ARENAUI objects
+                // TODO:
                 case "arenaui-card": ArenaUnity.ApplyWireArenauiCard(indata, gobj); break;
-                // TODO: 
+                // TODO:
                 case "arenaui-button-panel": ArenaUnity.ApplyWireArenauiButtonPanel(indata, gobj); break;
-                // TODO: 
+                // TODO:
                 case "arenaui-prompt": ArenaUnity.ApplyWireArenauiPrompt(indata, gobj); break;
 
 
@@ -671,7 +671,7 @@ namespace ArenaUnity
                         if (assetPath != null)
                         {
                             aobj.gltfUrl = url;
-                            AttachGltf(ConstructRemoteUrl(url).AbsoluteUri, gobj, aobj);
+                            AttachGltf(assetPath, gobj, aobj);
                         }
                     }
                     break;
@@ -870,7 +870,7 @@ namespace ArenaUnity
                     {
                         // add model child to camera
                         GameObject hmobj = new GameObject(headModelId);
-                        AttachGltf(ConstructRemoteUrl(json.headModelPath).AbsoluteUri, hmobj);
+                        AttachGltf(localpath, hmobj);
                         hmobj.transform.localPosition = Vector3.zero;
                         hmobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
                         hmobj.transform.localScale = Vector3.one;
@@ -920,7 +920,7 @@ namespace ArenaUnity
                     {
                         // add model child to hand
                         GameObject hmobj = new GameObject(handModelId);
-                        AttachGltf(ConstructRemoteUrl(url).AbsoluteUri, hmobj);
+                        AttachGltf(localpath, hmobj);
                         hmobj.transform.localPosition = Vector3.zero;
                         hmobj.transform.localRotation = Quaternion.identity;
                         hmobj.transform.localScale = Vector3.one;
@@ -959,31 +959,30 @@ namespace ArenaUnity
             }
         }
 
-        private void AttachGltf(string fullUrl, GameObject gobj, ArenaObject aobj = null)
+        private async void AttachGltf(string assetPath, GameObject gobj, ArenaObject aobj = null)
         {
-            if (fullUrl == null) return;
-            //AnimationClip[] clips = null;
+            if (assetPath == null) return;
             GameObject mobj = null;
-            //var i = new ImportSettings();
-            //i.animationSettings.useLegacyClips = true;
-            try
+            var i = new ImportSettings();
+            i.AnimationMethod = AnimationMethod.Legacy;
+
+            var gltf = new GltfImport();
+            Uri uri = new Uri(Path.GetFullPath(assetPath));
+            if (await gltf.LoadFile(assetPath, uri, i))
             {
-                mobj = new GameObject();
-                var gltf = mobj.AddComponent<GltfAsset>();
-                gltf.Url = fullUrl;
-                // TODO: (mwfarb) add a error handler in the main thread if the url is 404
-                // TODO: (mwfarb) add a load complete handler to manage the animations
-                //mobj = Importer.LoadFromFile(assetPath, i, out clips);
+                if (await gltf.InstantiateSceneAsync(gobj.transform))
+                {
+                    mobj = gobj.transform.GetChild(0).gameObject; // TODO (mwfarb): find better child method
+                }
             }
-            catch (Exception err)
+            else
             {
-                Debug.LogWarning($"Unable to load GTLF at {fullUrl}. {err.Message}");
+                Debug.LogWarning($"Unable to load GTLF at {assetPath}.");
             }
             if (mobj != null)
             {
-                //if (clips != null && aobj != null)
-                //    AssignAnimations(aobj, mobj, clips);
-                mobj.transform.parent = gobj.transform;
+                if (aobj != null)
+                    AssignAnimations(aobj, mobj);
                 mobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(mobj.transform.localRotation);
                 foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
                 {   // prevent inadvertent editing of gltf elements
@@ -992,21 +991,21 @@ namespace ArenaUnity
             }
         }
 
-        private void AssignAnimations(ArenaObject aobj, GameObject mobj, AnimationClip[] clips)
+        // TODO (mwfarb): move AssignAnimations to animation mixer component editor
+        private void AssignAnimations(ArenaObject aobj, GameObject mobj)
         {
-            if (clips != null && clips.Length > 0)
+#if UNITY_EDITOR
+            Animation anim = mobj.GetComponent<Animation>();
+            if (anim != null)
             {
                 aobj.animations = new List<string>();
-                Animation anim = mobj.AddComponent<Animation>();
+                AnimationClip[] clips = AnimationUtility.GetAnimationClips(mobj);
                 foreach (AnimationClip clip in clips)
                 {
-                    clip.legacy = true;
-                    anim.AddClip(clip, clip.name);
-                    //anim.clip = anim.GetClip(clip.name);
-                    //anim.wrapMode = WrapMode.Loop;
                     aobj.animations.Add(clip.name);
                 }
             }
+#endif
         }
 
         private void AttachImage(string assetPath, GameObject gobj)
