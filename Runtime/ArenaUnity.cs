@@ -534,7 +534,7 @@ namespace ArenaUnity
         {
             if (!gobj.TryGetComponent<ArenaSceneEnvPresets>(out var c))
                 c = gobj.AddComponent<ArenaSceneEnvPresets>();
-            c.json = JsonConvert.DeserializeObject<ArenaEnvPresetsJson>(data.EnvPresets.ToString());
+            c.json = JsonConvert.DeserializeObject<ArenaEnvPresetsJson>(MergeRawJson(c.json, data.EnvPresets));
             c.apply = true;
         }
 
@@ -542,7 +542,7 @@ namespace ArenaUnity
         {
             if (!gobj.TryGetComponent<ArenaSceneOptions>(out var c))
                 c = gobj.AddComponent<ArenaSceneOptions>();
-            c.json = JsonConvert.DeserializeObject<ArenaSceneOptionsJson>(data.SceneOptions.ToString());
+            c.json = JsonConvert.DeserializeObject<ArenaSceneOptionsJson>(MergeRawJson(c.json, data.SceneOptions));
             c.apply = true;
         }
 
@@ -550,7 +550,7 @@ namespace ArenaUnity
         {
             if (!gobj.TryGetComponent<ArenaSceneRendererSettings>(out var c))
                 c = gobj.AddComponent<ArenaSceneRendererSettings>();
-            c.json = JsonConvert.DeserializeObject<ArenaRendererSettingsJson>(data.RendererSettings.ToString());
+            c.json = JsonConvert.DeserializeObject<ArenaRendererSettingsJson>(MergeRawJson(c.json, data.RendererSettings));
             c.apply = true;
         }
 
@@ -558,7 +558,7 @@ namespace ArenaUnity
         {
             if (!gobj.TryGetComponent<ArenaScenePostProcessing>(out var c))
                 c = gobj.AddComponent<ArenaScenePostProcessing>();
-            c.json = JsonConvert.DeserializeObject<ArenaPostProcessingJson>(data.PostProcessing.ToString());
+            c.json = JsonConvert.DeserializeObject<ArenaPostProcessingJson>(MergeRawJson(c.json, data.PostProcessing));
             c.apply = true;
         }
 
