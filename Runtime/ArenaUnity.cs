@@ -326,7 +326,7 @@ namespace ArenaUnity
                 case "octahedron": ApplyWireOctahedron(data, gobj); break;
                 case "plane": ApplyWirePlane(data, gobj); break;
                 case "ring": ApplyWireRing(data, gobj); break;
-                // TODO: case "roundedbox": ApplyWireRoundedbox(indata, gobj); break;
+                case "roundedbox": ApplyWireRoundedbox(data, gobj); break;
                 case "sphere": ApplyWireSphere(data, gobj); break;
                 case "tetrahedron": ApplyWireTetrahedron(data, gobj); break;
                 case "torus": ApplyWireTorus(data, gobj); break;
@@ -456,6 +456,14 @@ namespace ArenaUnity
             box.apply = true;
         }
 
+        public static void ApplyWireRoundedbox(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaMeshRoundedbox>(out var roundedbox))
+                roundedbox = gobj.AddComponent<ArenaMeshRoundedbox>();
+            roundedbox.json = JsonConvert.DeserializeObject<ArenaRoundedboxJson>(MergeRawJson(roundedbox.json, indata));
+            roundedbox.apply = true;
+        }
+
         public static void ApplyWireCapsule(object indata, GameObject gobj)
         {
             if (!gobj.TryGetComponent<ArenaMeshCapsule>(out var capsule))
@@ -517,7 +525,7 @@ namespace ArenaUnity
                 text = gobj.AddComponent<ArenaWireArenauiPrompt>();
             text.json = JsonConvert.DeserializeObject<ArenaArenauiPromptJson>(MergeRawJson(text.json, indata));
             text.apply = true;
-        }        
+        }
 
 
         // scene options components
