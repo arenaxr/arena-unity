@@ -13,6 +13,15 @@ namespace ArenaUnity.Components
 {
     public class ArenaDynamicBody : ArenaComponent
     {
+        // ARENA dynamic-body component unity conversion status:
+        // TODO: mass
+        // TODO: linearDamping
+        // TODO: angularDamping
+        // TODO: shape
+        // TODO: cylinderAxis
+        // TODO: sphereRadius
+        // TODO: type
+
         public ArenaDynamicBodyJson json = new ArenaDynamicBodyJson();
 
         protected override void ApplyRender()

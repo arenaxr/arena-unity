@@ -13,6 +13,10 @@ namespace ArenaUnity.Components
 {
     public class ArenaMultisrc : ArenaComponent
     {
+        // ARENA multisrc component unity conversion status:
+        // TODO: srcs
+        // TODO: srcspath
+
         public ArenaMultisrcJson json = new ArenaMultisrcJson();
 
         protected override void ApplyRender()

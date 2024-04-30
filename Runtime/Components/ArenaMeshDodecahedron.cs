@@ -10,6 +10,11 @@ namespace ArenaUnity
 {
     public class ArenaMeshDodecahedron : ArenaMesh
     {
+        // ARENA dodecahedron component unity conversion status:
+        // TODO: object_type
+        // TODO: detail
+        // TODO: radius
+
         public ArenaDodecahedronJson json = new ArenaDodecahedronJson();
 
         protected override void ApplyRender()

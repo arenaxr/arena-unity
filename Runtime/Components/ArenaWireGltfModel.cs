@@ -11,6 +11,10 @@ namespace ArenaUnity
 {
     public class ArenaWireGltfModel : ArenaComponent
     {
+        // ARENA gltf-model component unity conversion status:
+        // TODO: object_type
+        // TODO: url
+
         public ArenaGltfModelJson json = new ArenaGltfModelJson();
 
         protected override void ApplyRender()

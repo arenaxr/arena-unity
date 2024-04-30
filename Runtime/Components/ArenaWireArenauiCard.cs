@@ -12,6 +12,23 @@ namespace ArenaUnity
 {
     public class ArenaWireArenauiCard : ArenaComponent
     {
+        // ARENA arenaui-card component unity conversion status:
+        // TODO: object_type
+        // TODO: title
+        // TODO: body
+        // TODO: bodyAlign
+        // TODO: img
+        // TODO: imgCaption
+        // TODO: imgDirection
+        // TODO: imgSize
+        // TODO: textImageRatio
+        // TODO: fontSize
+        // TODO: widthScale
+        // TODO: closeButton
+        // TODO: font
+        // TODO: theme
+        // TODO: materialSides
+
         public ArenaArenauiCardJson json = new ArenaArenauiCardJson();
 
         protected override void ApplyRender()

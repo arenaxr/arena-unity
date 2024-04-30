@@ -13,6 +13,14 @@ namespace ArenaUnity
 {
     public class ArenaMeshTorus : ArenaMesh
     {
+        // ARENA torus component unity conversion status:
+        // TODO: object_type
+        // TODO: arc
+        // TODO: radius
+        // TODO: radiusTubular
+        // TODO: segmentsRadial
+        // TODO: segmentsTubular
+
         public ArenaTorusJson json = new ArenaTorusJson();
 
         protected override void ApplyRender()

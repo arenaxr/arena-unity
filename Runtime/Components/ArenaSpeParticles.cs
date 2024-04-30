@@ -13,6 +13,68 @@ namespace ArenaUnity.Components
 {
     public class ArenaSpeParticles : ArenaComponent
     {
+        // ARENA spe-particles component unity conversion status:
+        // TODO: acceleration
+        // TODO: accelerationDistribution
+        // TODO: accelerationSpread
+        // TODO: activeMultiplier
+        // TODO: affectedByFog
+        // TODO: alphaTest
+        // TODO: angle
+        // TODO: angleSpread
+        // TODO: blending
+        // TODO: color
+        // TODO: colorSpread
+        // TODO: depthTest
+        // TODO: depthWrite
+        // TODO: direction
+        // TODO: distribution
+        // TODO: drag
+        // TODO: dragSpread
+        // TODO: duration
+        // TODO: emitterScale
+        // TODO: enableInEditor
+        // TODO: enabled
+        // TODO: frustumCulled
+        // TODO: hasPerspective
+        // TODO: maxAge
+        // TODO: maxAgeSpread
+        // TODO: opacity
+        // TODO: opacitySpread
+        // TODO: particleCount
+        // TODO: positionDistribution
+        // TODO: positionOffset
+        // TODO: positionSpread
+        // TODO: radius
+        // TODO: radiusScale
+        // TODO: randomizeAcceleration
+        // TODO: randomizeAngle
+        // TODO: randomizeColor
+        // TODO: randomizeDrag
+        // TODO: randomizeOpacity
+        // TODO: randomizePosition
+        // TODO: randomizeRotation
+        // TODO: randomizeSize
+        // TODO: randomizeVelocity
+        // TODO: relative
+        // TODO: rotation
+        // TODO: rotationAxis
+        // TODO: rotationAxisSpread
+        // TODO: rotationSpread
+        // TODO: rotationStatic
+        // TODO: size
+        // TODO: sizeSpread
+        // TODO: texture
+        // TODO: textureFrameCount
+        // TODO: textureFrameLoop
+        // TODO: textureFrames
+        // TODO: useTransparency
+        // TODO: velocity
+        // TODO: velocityDistribution
+        // TODO: velocitySpread
+        // TODO: wiggle
+        // TODO: wiggleSpread
+
         public ArenaSpeParticlesJson json = new ArenaSpeParticlesJson();
 
         protected override void ApplyRender()

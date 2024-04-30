@@ -13,6 +13,15 @@ namespace ArenaUnity.Components
 {
     public class ArenaScenePostProcessing : ArenaComponent
     {
+        // ARENA post-processing component unity conversion status:
+        // TODO: bloom
+        // TODO: sao
+        // TODO: ssao
+        // TODO: pixel
+        // TODO: glitch
+        // TODO: fxaa
+        // TODO: smaa
+
         public ArenaPostProcessingJson json = new ArenaPostProcessingJson();
 
         protected override void ApplyRender()

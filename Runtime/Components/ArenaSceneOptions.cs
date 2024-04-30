@@ -13,6 +13,25 @@ namespace ArenaUnity.Components
 {
     public class ArenaSceneOptions : ArenaComponent
     {
+        // ARENA scene-options component unity conversion status:
+        // TODO: clickableOnlyEvents
+        // TODO: distanceModel
+        // TODO: sceneHeadModels
+        // TODO: jitsiHost
+        // TODO: maxAVDist
+        // TODO: navMesh
+        // TODO: networkedLocationSolver
+        // TODO: privateScene
+        // TODO: refDistance
+        // TODO: rolloffFactor
+        // TODO: screenshare
+        // TODO: videoFrustumCulling
+        // TODO: videoDistanceConstraints
+        // TODO: videoDefaultResolutionConstraint
+        // TODO: volume
+        // TODO: physics
+        // TODO: ar-hit-test
+
         public ArenaSceneOptionsJson json = new ArenaSceneOptionsJson();
 
         protected override void ApplyRender()

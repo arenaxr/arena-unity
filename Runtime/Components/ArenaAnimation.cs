@@ -13,6 +13,25 @@ namespace ArenaUnity.Components
 {
     public class ArenaAnimation : ArenaComponent
     {
+        // ARENA animation component unity conversion status:
+        // TODO: autoplay
+        // TODO: delay
+        // TODO: dir
+        // TODO: dur
+        // TODO: easing
+        // TODO: elasticity
+        // TODO: enabled
+        // TODO: from
+        // TODO: isRawProperty
+        // TODO: loop
+        // TODO: pauseEvents
+        // TODO: property
+        // TODO: resumeEvents
+        // TODO: round
+        // TODO: startEvents
+        // TODO: to
+        // TODO: type
+
         public ArenaAnimationJson json = new ArenaAnimationJson();
 
         protected override void ApplyRender()

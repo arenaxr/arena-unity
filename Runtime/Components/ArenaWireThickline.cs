@@ -15,6 +15,13 @@ namespace ArenaUnity
 {
     public class ArenaWireThickline : ArenaComponent
     {
+        // ARENA thickline component unity conversion status:
+        // TODO: object_type
+        // TODO: color
+        // TODO: lineWidth
+        // TODO: lineWidthStyler
+        // TODO: path
+
         public ArenaThicklineJson json = new ArenaThicklineJson();
 
         protected override void ApplyRender()
@@ -29,7 +36,7 @@ namespace ArenaUnity
             line.useWorldSpace = false; // match arena thickline which always uses position
             if (json.Path != null)
             {
-                string[] nodes = ((string)json.Path).Split(new char[] { ',' });
+                string[] nodes = json.Path.Split(new char[] { ',' });
                 line.positionCount = nodes.Length;
                 for (var i = 0; i < nodes.Length; i++)
                 {
@@ -37,11 +44,11 @@ namespace ArenaUnity
                     line.SetPosition(i, position);
                 }
             }
-            pixelWidth = (float)json.LineWidth;
+            pixelWidth = json.LineWidth;
             if (line.material == null) // TODO (mwfarb): find "Default-Line" material
                 line.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
             if (json.Color != null)
-                line.startColor = line.endColor = ArenaUnity.ToUnityColor((string)json.Color);
+                line.startColor = line.endColor = ArenaUnity.ToUnityColor(json.Color);
 
             // convert arena thickline pixels vs unity meters
             float numkeys = 2;

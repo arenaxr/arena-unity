@@ -11,6 +11,10 @@ namespace ArenaUnity
 {
     public class ArenaWireThreeJsScene : ArenaComponent
     {
+        // ARENA threejs-scene component unity conversion status:
+        // TODO: object_type
+        // TODO: url
+
         public ArenaThreejsSceneJson json = new ArenaThreejsSceneJson();
 
         protected override void ApplyRender()

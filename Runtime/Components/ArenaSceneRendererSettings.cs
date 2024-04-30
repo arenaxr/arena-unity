@@ -13,6 +13,12 @@ namespace ArenaUnity.Components
 {
     public class ArenaSceneRendererSettings: ArenaComponent
     {
+        // ARENA renderer-settings component unity conversion status:
+        // TODO: localClippingEnabled
+        // TODO: outputColorSpace
+        // TODO: physicallyCorrectLights
+        // TODO: sortObjects
+
         public ArenaRendererSettingsJson json = new ArenaRendererSettingsJson();
 
         protected override void ApplyRender()

@@ -11,6 +11,12 @@ namespace ArenaUnity
 {
     public class ArenaWirePcdModel : ArenaComponent
     {
+        // ARENA pcd-model component unity conversion status:
+        // TODO: object_type
+        // TODO: url
+        // TODO: pointSize
+        // TODO: pointColor
+
         public ArenaPcdModelJson json = new ArenaPcdModelJson();
 
         protected override void ApplyRender()

@@ -12,6 +12,14 @@ namespace ArenaUnity
 {
     public class ArenaWireLine : ArenaComponent
     {
+        // ARENA line component unity conversion status:
+        // TODO: object_type
+        // TODO: color
+        // TODO: end
+        // TODO: opacity
+        // TODO: start
+        // TODO: visible
+
         public ArenaLineJson json = new ArenaLineJson();
 
         protected override void ApplyRender()
@@ -27,15 +35,15 @@ namespace ArenaUnity
             if (json.Start != null && json.End != null)
             {
                 Vector3[] nodes = {
-                            ArenaUnity.ToUnityPosition((ArenaVector3Json)json.Start),
-                            ArenaUnity.ToUnityPosition((ArenaVector3Json)json.End),
+                            ArenaUnity.ToUnityPosition(json.Start),
+                            ArenaUnity.ToUnityPosition(json.End),
                         };
                 line.SetPositions(nodes);
             }
             if (line.material == null) // TODO (mwfarb): find "Default-Line" material
                 line.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
             if (json.Color != null)
-                line.startColor = line.endColor = ArenaUnity.ToUnityColor((string)json.Color);
+                line.startColor = line.endColor = ArenaUnity.ToUnityColor(json.Color);
             line.widthMultiplier = pixelWidth * ArenaUnity.LineSinglePixelInMeters;
         }
 

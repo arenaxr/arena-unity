@@ -13,6 +13,11 @@ namespace ArenaUnity.Components
 {
     public class ArenaImpulse : ArenaComponent
     {
+        // ARENA impulse component unity conversion status:
+        // TODO: force
+        // TODO: on
+        // TODO: position
+
         public ArenaImpulseJson json = new ArenaImpulseJson();
 
         protected override void ApplyRender()

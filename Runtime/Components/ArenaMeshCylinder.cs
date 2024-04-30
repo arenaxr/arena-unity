@@ -13,6 +13,16 @@ namespace ArenaUnity
 {
     public class ArenaMeshCylinder : ArenaMesh
     {
+        // ARENA cylinder component unity conversion status:
+        // TODO: object_type
+        // TODO: height
+        // TODO: openEnded
+        // TODO: radius
+        // TODO: segmentsHeight
+        // TODO: segmentsRadial
+        // TODO: thetaLength
+        // TODO: thetaStart
+
         public ArenaCylinderJson json = new ArenaCylinderJson();
 
         protected override void ApplyRender()

@@ -14,15 +14,15 @@ namespace ArenaUnity.Components
     [HelpURL("https://docs.arenaxr.org/content/schemas/message/animation-mixer")]
     public class ArenaAnimationMixer : ArenaComponent
     {
-        // ARENA Property Handling Status
+        // ARENA animation-mixer component unity conversion status:
+        // DONE: clampWhenFinished
         // DONE: clip
-        // TODO: duration
         // DONE: crossFadeDuration
+        // TODO: duration
         // DONE: loop
         // TODO: repetitions
-        // DONE: timeScale
-        // DONE: clampWhenFinished
         // DONE: startAt
+        // DONE: timeScale
 
         // NOTE: There is an easy clip parser but only #if UNITY_EDITOR (AnimationUtility.GetAnimationClips()).
 
@@ -65,8 +65,8 @@ namespace ArenaUnity.Components
                 {
                     // set each animation on separate layer so all can be played
                     anim[animations[i]].layer = i;
-                    anim[animations[i]].speed = (float)json.TimeScale;
-                    anim[animations[i]].time = (float)(json.StartAt / 1000);
+                    anim[animations[i]].speed = json.TimeScale;
+                    anim[animations[i]].time = json.StartAt / 1000;
                     bool includeClip = false;
                     if (json.Clip.Contains("*")) // only use regex for wildcards
                     {
@@ -79,7 +79,7 @@ namespace ArenaUnity.Components
                     }
                     if (includeClip)
                     {
-                        float fadeLength = (float)(json.CrossFadeDuration);
+                        float fadeLength = json.CrossFadeDuration;
                         if (fadeLength > 0)
                             anim.CrossFade(animations[i], fadeLength);
                         else

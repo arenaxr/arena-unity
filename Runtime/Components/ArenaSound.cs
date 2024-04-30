@@ -13,6 +13,19 @@ namespace ArenaUnity.Components
 {
     public class ArenaSound : ArenaComponent
     {
+        // ARENA sound component unity conversion status:
+        // TODO: autoplay
+        // TODO: distanceModel
+        // TODO: loop
+        // TODO: maxDistance
+        // TODO: on
+        // TODO: poolSize
+        // TODO: positional
+        // TODO: refDistance
+        // TODO: rolloffFactor
+        // TODO: src
+        // TODO: volume
+
         public ArenaSoundJson json = new ArenaSoundJson();
 
         protected override void ApplyRender()

@@ -13,6 +13,18 @@ namespace ArenaUnity.Components
 {
     public class ArenaArmarker : ArenaComponent
     {
+        // ARENA armarker component unity conversion status:
+        // TODO: publish
+        // TODO: buildable
+        // TODO: dynamic
+        // TODO: ele
+        // TODO: lat
+        // TODO: long
+        // TODO: markerid
+        // TODO: markertype
+        // TODO: size
+        // TODO: url
+
         public ArenaArmarkerJson json = new ArenaArmarkerJson();
 
         protected override void ApplyRender()

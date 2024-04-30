@@ -12,6 +12,16 @@ namespace ArenaUnity
 {
     public class ArenaMeshSphere : ArenaMesh
     {
+        // ARENA sphere component unity conversion status:
+        // TODO: object_type
+        // TODO: phiLength
+        // TODO: phiStart
+        // TODO: radius
+        // TODO: segmentsHeight
+        // TODO: segmentsWidth
+        // TODO: thetaLength
+        // TODO: thetaStart
+
         public ArenaSphereJson json = new ArenaSphereJson();
 
         protected override void ApplyRender()

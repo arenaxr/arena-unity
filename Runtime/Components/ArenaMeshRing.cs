@@ -13,6 +13,15 @@ namespace ArenaUnity
 {
     public class ArenaMeshRing : ArenaMesh
     {
+        // ARENA ring component unity conversion status:
+        // TODO: object_type
+        // TODO: radiusInner
+        // TODO: radiusOuter
+        // TODO: segmentsPhi
+        // TODO: segmentsTheta
+        // TODO: thetaLength
+        // TODO: thetaStart
+
         public ArenaRingJson json = new ArenaRingJson();
 
         protected override void ApplyRender()
