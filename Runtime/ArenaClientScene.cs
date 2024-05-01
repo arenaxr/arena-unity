@@ -853,6 +853,7 @@ namespace ArenaUnity
             }
         }
 
+        // TODO (mwfarb): move AttachAvatar to arena-camera component
         internal void AttachAvatar(string object_id, ArenaArenaUserJson json, GameObject gobj)
         {
             json.headModelPath ??= arenaDefaults.headModelPath;
@@ -906,6 +907,7 @@ namespace ArenaUnity
             }
         }
 
+        // TODO (mwfarb): move AttachHand to arena-hand component
         internal void AttachHand(string object_id, string url, GameObject gobj)
         {
             bool worldPositionStays = false;
@@ -945,6 +947,7 @@ namespace ArenaUnity
             return assetPath;
         }
 
+        // TODO (mwfarb): move AttachMaterialTexture to material component
         private void AttachMaterialTexture(string assetPath, GameObject gobj)
         {
             if (assetPath == null) return;
@@ -959,9 +962,11 @@ namespace ArenaUnity
             }
         }
 
+        // TODO (mwfarb): move AttachGltf to gltf-model component
         private async void AttachGltf(string assetPath, GameObject gobj, ArenaObject aobj = null)
         {
             if (assetPath == null) return;
+            AnimationClip[] clips = null;
             GameObject mobj = null;
             var imSet = new ImportSettings
             {
@@ -971,6 +976,15 @@ namespace ArenaUnity
             Uri uri = new Uri(Path.GetFullPath(assetPath));
             if (await gltf.LoadFile(assetPath, uri, imSet))
             {
+                clips = gltf.GetAnimationClips();
+                if (clips != null && aobj != null)
+                {   // save animation names for easy animation-mixer reference at runtime
+                    aobj.animations = new List<string>();
+                    foreach (AnimationClip clip in clips)
+                    {
+                        aobj.animations.Add(clip.name);
+                    }
+                }
                 var inSet = new InstantiationSettings
                 {
                     SceneObjectCreation = SceneObjectCreation.Always
@@ -979,6 +993,13 @@ namespace ArenaUnity
                 if (await gltf.InstantiateSceneAsync(instantiator))
                 {
                     mobj = gobj.transform.GetChild(0).gameObject; // TODO (mwfarb): find better child method
+
+                    // TODO (mwfarb): find a better way to chain commponent dependancies than this
+                    var am = gobj.GetComponent<ArenaAnimationMixer>();
+                    if (am != null)
+                    {
+                        am.apply = true;
+                    }
                 }
             }
             else
@@ -987,8 +1008,6 @@ namespace ArenaUnity
             }
             if (mobj != null)
             {
-                if (aobj != null)
-                    AssignAnimations(aobj, mobj);
                 mobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(mobj.transform.localRotation);
                 foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
                 {   // prevent inadvertent editing of gltf elements
@@ -997,23 +1016,7 @@ namespace ArenaUnity
             }
         }
 
-        // TODO (mwfarb): move AssignAnimations to animation mixer component editor
-        private void AssignAnimations(ArenaObject aobj, GameObject mobj)
-        {
-#if UNITY_EDITOR
-            Animation anim = mobj.GetComponent<Animation>();
-            if (anim != null)
-            {
-                aobj.animations = new List<string>();
-                AnimationClip[] clips = AnimationUtility.GetAnimationClips(mobj);
-                foreach (AnimationClip clip in clips)
-                {
-                    aobj.animations.Add(clip.name);
-                }
-            }
-#endif
-        }
-
+        // TODO (mwfarb): move AttachImage to image component
         private void AttachImage(string assetPath, GameObject gobj)
         {
             if (assetPath == null) return;
@@ -1027,6 +1030,7 @@ namespace ArenaUnity
             }
         }
 
+        // TODO (mwfarb): move AssignImage to image component
         private static Sprite LoadSpriteFromFile(string assetPath)
         {
             if (assetPath == null) return null;

@@ -28,7 +28,7 @@ namespace ArenaUnity.Components
 
         [Tooltip("Serializable JSON attributes for Arena animation-mixer")]
         public ArenaAnimationMixerJson json = new ArenaAnimationMixerJson();
-        internal List<string> animations = null;
+        internal List<string> animations = new List<string>();
 
         protected override void ApplyRender()
         {
