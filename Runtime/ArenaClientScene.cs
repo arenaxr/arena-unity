@@ -963,14 +963,20 @@ namespace ArenaUnity
         {
             if (assetPath == null) return;
             GameObject mobj = null;
-            var i = new ImportSettings();
-            i.AnimationMethod = AnimationMethod.Legacy;
-
+            var imSet = new ImportSettings
+            {
+                AnimationMethod = AnimationMethod.Legacy
+            };
             var gltf = new GltfImport();
             Uri uri = new Uri(Path.GetFullPath(assetPath));
-            if (await gltf.LoadFile(assetPath, uri, i))
+            if (await gltf.LoadFile(assetPath, uri, imSet))
             {
-                if (await gltf.InstantiateSceneAsync(gobj.transform))
+                var inSet = new InstantiationSettings
+                {
+                    SceneObjectCreation = SceneObjectCreation.Always
+                };
+                var instantiator = new GameObjectInstantiator(gltf, gobj.transform, logger: new ConsoleLogger(), inSet);
+                if (await gltf.InstantiateSceneAsync(instantiator))
                 {
                     mobj = gobj.transform.GetChild(0).gameObject; // TODO (mwfarb): find better child method
                 }
