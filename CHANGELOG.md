@@ -2,6 +2,16 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.12.5](https://github.com/arenaxr/arena-unity/compare/v0.12.4...v0.12.5) (2024-05-01)
+
+
+### Bug Fixes
+
+* **gltf:** correctly animate animation-mixer clips on play ([dd2e0c7](https://github.com/arenaxr/arena-unity/commit/dd2e0c7a615a0abc985d77ed2cda8f6ef85446b3))
+* **gltf:** ensure gltfs load with unique scene root object ([0befaa4](https://github.com/arenaxr/arena-unity/commit/0befaa46e6c85d6b445a8c21f3f5282d589f4bf2))
+* **gltf:** force local gltf file load, restore animations ([495359c](https://github.com/arenaxr/arena-unity/commit/495359c0531888e5a98018635fe8cfaae2d22e96))
+* **gltf:** load downloaded gltf asset file manually ([edf21ab](https://github.com/arenaxr/arena-unity/commit/edf21ab5cae421ff789ac79d37d034cee6103b96))
+
 ## [0.12.4](https://github.com/arenaxr/arena-unity/compare/v0.12.3...v0.12.4) (2024-04-22)
 
 
