@@ -117,8 +117,8 @@ namespace ArenaUnity
 #endif
         };
         static readonly string[] requiredShadersURPHDRP = {
-            // "Standard",
-            // "Unlit/Color",
+            "Lit",
+            "Unlit/Color",
             "glTF/PbrMetallicRoughness",
             "glTF/PbrSpecularGlossiness",
             "glTF/Unlit",
