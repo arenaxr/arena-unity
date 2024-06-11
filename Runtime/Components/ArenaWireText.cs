@@ -51,7 +51,7 @@ namespace ArenaUnity
             tm.fontSize = 2;
 
             if (json.Text != null)
-                tm.text = json.Text; // data.text is deprecated, users get a console warning at json injest
+                tm.text = json.Text; // data.text is deprecated, users get a console warning at json ingest
             else if (json.Value != null)
                 tm.text = json.Value;
             if (json.Color != null)

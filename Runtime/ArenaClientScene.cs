@@ -1320,7 +1320,7 @@ namespace ArenaUnity
         }
 
         /// <summary>
-        /// Injest point for messages to recieve in the local scene. Messages may not have arrived
+        /// Ingest point for messages to recieve in the local scene. Messages may not have arrived
         /// via MQTT, and thus may not have a topic.
         /// </summary>
         /// <param name="message">The JSON ARENA wire format string.</param>
