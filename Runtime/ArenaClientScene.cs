@@ -87,7 +87,7 @@ namespace ArenaUnity
         internal ArenaDefaultsJson arenaDefaults { get; private set; }
 
         // Define callbacks
-        public delegate void DecodeMessageDelegate(string topic, byte[] message);
+        public delegate void DecodeMessageDelegate(string message);
         public DecodeMessageDelegate OnMessageCallback = null; // null, until library user instantiates.
 
         public string originalName { get; private set; }
@@ -1281,6 +1281,12 @@ namespace ArenaUnity
             PublishSceneMessage($"{sceneTopic}/{source}", msg, hasPermissions);
         }
 
+        /// <summary>
+        /// Egress point for messages to send to remote graph scenes.
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <param name="msg"></param>
+        /// <param name="hasPermissions"></param>
         private void PublishSceneMessage(string topic, ArenaObjectJson msg, bool hasPermissions)
         {
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
@@ -1308,23 +1314,23 @@ namespace ArenaUnity
 
         protected override void DecodeMessage(string topic, byte[] message)
         {
-            // Call the delegate if a user has defined it
-            if (OnMessageCallback != null) OnMessageCallback(topic, message);
-            ProcessMessage(message);
-        }
-
-        internal void ProcessMessage(string message, object menuCommand = null)
-        {
-            byte[] payload = System.Text.Encoding.UTF8.GetBytes(message);
-            ProcessMessage(payload);
-        }
-
-        internal void ProcessMessage(byte[] message, object menuCommand = null)
-        {
+            // TODO (mwfarb): perform any message validation here based on topic
             string msgJson = System.Text.Encoding.UTF8.GetString(message);
-            ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(msgJson);
+            ProcessMessage(msgJson);
+        }
+
+        /// <summary>
+        /// Injest point for messages to recieve in the local scene. Messages may not have arrived
+        /// via MQTT, and thus may not have a topic.
+        /// </summary>
+        /// <param name="message">The JSON ARENA wire format string.</param>
+        public void ProcessMessage(string message)
+        {
+            // Call the delegate if a user has defined it
+            OnMessageCallback?.Invoke(message);
+            ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
             LogMessage("Received", msg);
-            StartCoroutine(ProcessArenaMessage(msg, menuCommand));
+            StartCoroutine(ProcessArenaMessage(msg));
         }
 
         private IEnumerator ProcessArenaMessage(ArenaObjectJson msg, object menuCommand = null)
