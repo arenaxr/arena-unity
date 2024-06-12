@@ -87,7 +87,7 @@ namespace ArenaUnity
         internal ArenaDefaultsJson arenaDefaults { get; private set; }
 
         // Define callbacks
-        public delegate void DecodeMessageDelegate(string message);
+        public delegate void DecodeMessageDelegate(string topic, string message);
         public DecodeMessageDelegate OnMessageCallback = null; // null, until library user instantiates.
 
         public string originalName { get; private set; }
@@ -1316,18 +1316,19 @@ namespace ArenaUnity
         {
             // TODO (mwfarb): perform any message validation here based on topic
             string msgJson = System.Text.Encoding.UTF8.GetString(message);
-            ProcessMessage(msgJson);
+            ProcessMessage(topic, msgJson);
         }
 
         /// <summary>
-        /// Ingest point for messages to recieve in the local scene. Messages may not have arrived
-        /// via MQTT, and thus may not have a topic.
+        /// Ingest point for messages to be recieved in the local scene.
         /// </summary>
+        /// <param name="topic">The MQTT topic.</param>
         /// <param name="message">The JSON ARENA wire format string.</param>
-        public void ProcessMessage(string message)
+        public void ProcessMessage(string topic, string message)
         {
             // Call the delegate if a user has defined it
-            OnMessageCallback?.Invoke(message);
+            OnMessageCallback?.Invoke(topic, message);
+
             ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
             LogMessage("Received", msg);
             StartCoroutine(ProcessArenaMessage(msg));
