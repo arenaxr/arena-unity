@@ -2,6 +2,18 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.13.0](https://github.com/arenaxr/arena-unity/compare/v0.12.5...v0.13.0) (2024-06-12)
+
+
+### Features
+
+* **scene:** allow injest of non-mqtt scene messages ([0614860](https://github.com/arenaxr/arena-unity/commit/061486046c15c7fd5388d5172833111a42ee36e6))
+
+
+### Bug Fixes
+
+* **scene:** change message callback to use topic+message ([3f09bd3](https://github.com/arenaxr/arena-unity/commit/3f09bd348d86a2f3fd9007689e33fec344d473c2))
+
 ## [0.12.5](https://github.com/arenaxr/arena-unity/compare/v0.12.4...v0.12.5) (2024-05-01)
 
 
