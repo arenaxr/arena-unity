@@ -37,17 +37,17 @@ namespace ArenaUnity
             toUid = touid;
             clientId = clientid;
         }
-        public string REALM { get; }
-        public string nameSpace { get; }
-        public string sceneName { get; }
-        public string userName { get; }
-        public string idTag { get; }
-        public string camName { get; }
-        public string uuid { get; }
-        public string userObj { get; }
-        public string objectId { get; }
-        public string toUid { get; }
-        public string clientId { get; }
+        public readonly string REALM { get; }
+        public readonly string nameSpace { get; }
+        public readonly string sceneName { get; }
+        public readonly string userName { get; }
+        public readonly string idTag { get; }
+        public readonly string camName { get; }
+        public readonly string uuid { get; }
+        public readonly string userObj { get; }
+        public readonly string objectId { get; }
+        public readonly string toUid { get; }
+        public readonly string clientId { get; }
 
 #pragma warning disable format
         // Disable auto-format to keep alignment for readability

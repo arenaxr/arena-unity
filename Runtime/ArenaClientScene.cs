@@ -227,8 +227,7 @@ namespace ArenaUnity
                 sceneTopic = new ArenaTopics(
                     realm: arenaDefaults.realm,
                     name_space: namespaceName,
-                    scenename: sceneName,
-                    clientid: client.ClientId
+                    scenename: sceneName
                 );
                 sceneUrl = $"https://{hostAddress}/{namespaceName}/{sceneName}";
             }
@@ -1262,7 +1261,7 @@ namespace ArenaUnity
                 realm: sceneTopic.REALM,
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
-                clientid: sceneTopic.clientId,
+                clientid: client.ClientId,
                 objectid: object_id
             );
             PublishSceneMessage(objTopic.PUB_SCENE_OBJECTS, msg, hasPermissions);
