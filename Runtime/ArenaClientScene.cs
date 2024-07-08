@@ -77,7 +77,7 @@ namespace ArenaUnity
 
         public bool persistLoaded { get; private set; } = false;
 
-        private string sceneTopic = null;
+        private ArenaTopics sceneTopic;
         public Dictionary<string, GameObject> arenaObjs { get; private set; } = new Dictionary<string, GameObject>();
         internal Dictionary<string, GameObject> childObjs = new Dictionary<string, GameObject>();
         internal List<string> pendingDelete = new List<string>();
@@ -224,7 +224,12 @@ namespace ArenaUnity
             if (cd.result != null)
             {
                 if (string.IsNullOrWhiteSpace(namespaceName)) namespaceName = cd.result.ToString();
-                sceneTopic = $"{arenaDefaults.realm}/s/{namespaceName}/{sceneName}";
+                sceneTopic = new ArenaTopics(
+                    realm: arenaDefaults.realm,
+                    namespacE: namespaceName,
+                    scenename: sceneName,
+                    clientid: client.ClientId
+                );
                 sceneUrl = $"https://{hostAddress}/{namespaceName}/{sceneName}";
             }
             if (permissions == null)
@@ -233,9 +238,10 @@ namespace ArenaUnity
                 yield break;
             }
             ArenaMqttTokenClaimsJson perms = JsonConvert.DeserializeObject<ArenaMqttTokenClaimsJson>(permissions);
+            var testTopic = sceneTopic.PUB_SCENE_OBJECTS;
             foreach (string pubperm in perms.publ)
             {
-                if (sceneTopic.StartsWith((pubperm).TrimEnd(new char[] { '/', '#' }))) sceneObjectRights = true;
+                if (testTopic.StartsWith((pubperm).TrimEnd(new char[] { '/', '#' }))) sceneObjectRights = true;
             }
             // publish arena cameras where requested
             bool foundFirstCam = false;
@@ -1252,7 +1258,14 @@ namespace ArenaUnity
         {
             ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(msgJson);
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{client.ClientId}/{object_id}", msg, hasPermissions);
+            var objTopic = new ArenaTopics(
+                realm: sceneTopic.REALM,
+                namespacE: sceneTopic.nameSpace,
+                scenename: sceneTopic.sceneName,
+                clientid: sceneTopic.clientId,
+                objectid: object_id
+            );
+            PublishSceneMessage(objTopic.PUB_SCENE_OBJECTS, msg, hasPermissions);
         }
 
         /// <summary>
@@ -1262,7 +1275,13 @@ namespace ArenaUnity
         {
             ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(msgJson);
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{object_id}", msg, hasPermissions);
+            var camTopic = new ArenaTopics(
+                realm: sceneTopic.REALM,
+                namespacE: sceneTopic.nameSpace,
+                scenename: sceneTopic.sceneName,
+                camname: object_id
+            );
+            PublishSceneMessage(camTopic.PUB_SCENE_RENDER, msg, hasPermissions);
         }
 
         /// <summary>
@@ -1278,7 +1297,13 @@ namespace ArenaUnity
                 data = JsonConvert.DeserializeObject(msgJsonData),
             };
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{source}", msg, hasPermissions);
+            var evtTopic = new ArenaTopics(
+                realm: sceneTopic.REALM,
+                namespacE: sceneTopic.nameSpace,
+                scenename: sceneTopic.sceneName,
+                objectid: source
+            );
+            PublishSceneMessage(evtTopic.PUB_SCENE_OBJECTS, msg, hasPermissions);
         }
 
         /// <summary>
@@ -1302,7 +1327,7 @@ namespace ArenaUnity
         protected override void OnConnected()
         {
             base.OnConnected();
-            Subscribe(new string[] { $"{sceneTopic}/#" });
+            Subscribe(new string[] { sceneTopic.SUB_SCENE_PUBLIC });
             name = $"{originalName} (MQTT Connected)";
         }
 
