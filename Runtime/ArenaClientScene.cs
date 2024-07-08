@@ -226,7 +226,7 @@ namespace ArenaUnity
                 if (string.IsNullOrWhiteSpace(namespaceName)) namespaceName = cd.result.ToString();
                 sceneTopic = new ArenaTopics(
                     realm: arenaDefaults.realm,
-                    namespacE: namespaceName,
+                    name_space: namespaceName,
                     scenename: sceneName,
                     clientid: client.ClientId
                 );
@@ -1260,7 +1260,7 @@ namespace ArenaUnity
             msg.timestamp = GetTimestamp();
             var objTopic = new ArenaTopics(
                 realm: sceneTopic.REALM,
-                namespacE: sceneTopic.nameSpace,
+                name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
                 clientid: sceneTopic.clientId,
                 objectid: object_id
@@ -1277,7 +1277,7 @@ namespace ArenaUnity
             msg.timestamp = GetTimestamp();
             var camTopic = new ArenaTopics(
                 realm: sceneTopic.REALM,
-                namespacE: sceneTopic.nameSpace,
+                name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
                 camname: object_id
             );
@@ -1299,7 +1299,7 @@ namespace ArenaUnity
             msg.timestamp = GetTimestamp();
             var evtTopic = new ArenaTopics(
                 realm: sceneTopic.REALM,
-                namespacE: sceneTopic.nameSpace,
+                name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
                 objectid: source
             );

@@ -13,7 +13,7 @@ namespace ArenaUnity
         */
         public ArenaTopics(
             string realm = "",
-            string namespacE = "",
+            string name_space = "",
             string scenename = "",
             string username = "",
             string idtag = "",
@@ -24,8 +24,9 @@ namespace ArenaUnity
             string touid = "",
             string clientid = ""
             )
+        {
             REALM = realm;
-            nameSpace = namespacE;
+            nameSpace = name_space;
             sceneName = scenename;
             userName = username;
             idTag = idtag;
