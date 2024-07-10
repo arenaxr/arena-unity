@@ -45,11 +45,21 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
-        private static string defPointColor = "#7f7f7f";
+        private static string defPointColor = "";
         [JsonProperty(PropertyName = "pointColor")]
         [Tooltip("Color of the points.")]
         public string PointColor = defPointColor;
         public bool ShouldSerializePointColor()
+        {
+            // pointColor
+            return (PointColor != defPointColor);
+        }
+
+        private static float defOpacity = 1f;
+        [JsonProperty(PropertyName = "opacity")]
+        [Tooltip("Opacity of all points.")]
+        public float Opacity = defOpacity;
+        public bool ShouldSerializeOpacity()
         {
             return true; // required in json schema
         }

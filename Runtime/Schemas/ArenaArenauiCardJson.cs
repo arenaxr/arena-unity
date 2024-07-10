@@ -73,7 +73,8 @@ namespace ArenaUnity.Schemas
         public string Img = defImg;
         public bool ShouldSerializeImg()
         {
-            return true; // required in json schema
+            // img
+            return (Img != defImg);
         }
 
         private static string defImgCaption = "";
