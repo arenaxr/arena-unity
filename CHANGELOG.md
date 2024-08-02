@@ -2,6 +2,13 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [0.14.0](https://github.com/arenaxr/arena-unity/compare/v0.13.0...v0.14.0) (2024-08-02)
+
+
+### Features
+
+* **scene-options:** load navMesh model in scene ([7e8182a](https://github.com/arenaxr/arena-unity/commit/7e8182a082ef98a9e41442a970a6ca644ac98db2))
+
 ## [0.13.0](https://github.com/arenaxr/arena-unity/compare/v0.12.5...v0.13.0) (2024-06-12)
 
 
