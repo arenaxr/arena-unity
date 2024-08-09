@@ -463,6 +463,15 @@ namespace ArenaUnity
 #endif
             {
                 Debug.LogWarning($"{www.error}: {www.url}");
+                if (!string.IsNullOrWhiteSpace(www.downloadHandler?.text))
+                {
+                    Debug.LogWarning(www.downloadHandler.text);
+                }
+                if (www.responseCode == 401 || www.responseCode == 403)
+                {
+                    Debug.LogWarning($"Do you have a valid ARENA account on {www.uri.Host}?");
+                    Debug.LogWarning($"Create an account in a web browser at: {www.uri.Scheme}{www.uri.Host}/user");
+                }
                 yield break;
             }
             else
