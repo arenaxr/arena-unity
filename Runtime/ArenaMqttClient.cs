@@ -289,13 +289,13 @@ namespace ArenaUnity
                 }
 
                 // get arena CSRF token
-                yield return HttpRequestAuth($"https://{hostAddress}/user/login");
+                yield return HttpRequestAuth($"https://{hostAddress}/user/v2/login");
 
                 WWWForm form = new WWWForm();
                 if (idToken != null) form.AddField("id_token", idToken);
 
                 // get arena user account state
-                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/user_state", csrfToken, form));
+                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/v2/user_state", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
                 authState = JsonConvert.DeserializeObject<ArenaUserStateJson>(cd.result.ToString());
@@ -332,7 +332,7 @@ namespace ArenaUnity
                 {
                     form.AddField("scene", $"{namespaceName}/{sceneName}");
                 }
-                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/mqtt_auth", csrfToken, form));
+                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/v2/mqtt_auth", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
                 mqttToken = cd.result.ToString();
@@ -391,7 +391,7 @@ namespace ArenaUnity
             WWWForm form = new WWWForm();
             if (idToken != null) form.AddField("id_token", idToken);
 
-            CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/storelogin", csrfToken, form));
+            CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/v2/storelogin", csrfToken, form));
             yield return cd.coroutine;
             if (!isCrdSuccess(cd.result)) yield break;
             if (string.IsNullOrWhiteSpace(fsToken))
