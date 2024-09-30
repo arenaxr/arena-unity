@@ -22,7 +22,8 @@ namespace ArenaUnity
             string userobj = "",
             string objectid = "",
             string touid = "",
-            string clientid = ""
+            string clientid = "",
+            string devicename = ""
             )
         {
             REALM = realm;
@@ -36,6 +37,7 @@ namespace ArenaUnity
             objectId = objectid;
             toUid = touid;
             clientId = clientid;
+            deviceName = devicename;
         }
         public readonly string REALM { get; }
         public readonly string nameSpace { get; }
@@ -48,41 +50,41 @@ namespace ArenaUnity
         public readonly string objectId { get; }
         public readonly string toUid { get; }
         public readonly string clientId { get; }
+        public readonly string deviceName { get; }
 
 #pragma warning disable format
         // Disable auto-format to keep alignment for readability
 
          // SUBSCRIBE
         public string SUB_NETWORK               { get { return "$NETWORK"; } }
-        public string SUB_CHAT_PUBLIC           { get { return $"{REALM}/c/{nameSpace}/o/#"; } }
-        public string SUB_CHAT_PRIVATE          { get { return $"{REALM}/c/{nameSpace}/p/{idTag}/#"; } }
-        public string SUB_DEVICE                { get { return $"{REALM}/d/{userName}/#"; } } // All client placeholder
+        public string SUB_DEVICE                { get { return $"{REALM}/d/{deviceName}/#"; } } // All client placeholder
         public string SUB_PROC_REG              { get { return $"{REALM}/proc/reg"; } }
         public string SUB_PROC_CTL              { get { return $"{REALM}/proc/control/{uuid}/#"; } }
         public string SUB_PROC_DBG              { get { return $"{REALM}/proc/debug/{uuid}"; } }
         public string SUB_SCENE_PUBLIC          { get { return $"{REALM}/s/{nameSpace}/{sceneName}/+/+"; } }
-        public string SUB_SCENE_PRIVATE         { get { return $"{REALM}/s/{nameSpace}/{sceneName}/+/+/{camName}/#"; } }
+        public string SUB_SCENE_PRIVATE         { get { return $"{REALM}/s/{nameSpace}/{sceneName}/+/+/{idTag}/#"; } }
 
         // PUBLISH
         public string PUB_NETWORK_LATENCY       { get { return "$NETWORK/latency"; } }
-        public string PUB_CHAT_PUBLIC           { get { return $"{REALM}/c/{nameSpace}/o/{idTag}"; } }
-        public string PUB_CHAT_PRIVATE          { get { return $"{REALM}/c/{nameSpace}/p/{toUid}/{idTag}"; } }
-        public string PUB_DEVICE                { get { return $"{REALM}/d/{nameSpace}/{sceneName}/{idTag}"; } }
+        public string PUB_DEVICE                { get { return $"{REALM}/d/{deviceName}/{idTag}"; } }
         public string PUB_PROC_REG              { get { return $"{REALM}/proc/reg"; } }
         public string PUB_PROC_CTL              { get { return $"{REALM}/proc/control"; } }
         public string PUB_PROC_DBG              { get { return $"{REALM}/proc/debug/{uuid}"; } }
         public string PUB_SCENE_PRESENCE        { get { return $"{REALM}/s/{nameSpace}/{sceneName}/x/{idTag}"; } }
+        public string PUB_SCENE_PRESENCE_PRIVATE{ get { return $"{REALM}/s/{nameSpace}/{sceneName}/x/{idTag}/{toUid}"; } }
+        public string PUB_SCENE_CHAT            { get { return $"{REALM}/s/{nameSpace}/{sceneName}/c/{idTag}"; } }
+        public string PUB_SCENE_CHAT_PRIVATE    { get { return $"{REALM}/s/{nameSpace}/{sceneName}/c/{idTag}/{toUid}"; } }
         public string PUB_SCENE_USER            { get { return $"{REALM}/s/{nameSpace}/{sceneName}/u/{userObj}"; } }
         public string PUB_SCENE_USER_PRIVATE    { get { return $"{REALM}/s/{nameSpace}/{sceneName}/u/{userObj}/{toUid}"; } } // Need to add face_ privs
         public string PUB_SCENE_OBJECTS         { get { return $"{REALM}/s/{nameSpace}/{sceneName}/o/{objectId}"; } } // All client placeholder
         public string PUB_SCENE_OBJECTS_PRIVATE { get { return $"{REALM}/s/{nameSpace}/{sceneName}/o/{objectId}/{toUid}"; } }
-        public string PUB_SCENE_RENDER          { get { return $"{REALM}/s/{nameSpace}/{sceneName}/r/{camName}"; } }
-        public string PUB_SCENE_RENDER_PRIVATE  { get { return $"{REALM}/s/{nameSpace}/{sceneName}/r/{camName}/-"; } } // To avoid unpriv sub
-        public string PUB_SCENE_ENV             { get { return $"{REALM}/s/{nameSpace}/{sceneName}/e/{camName}"; } }
-        public string PUB_SCENE_ENV_PRIVATE     { get { return $"{REALM}/s/{nameSpace}/{sceneName}/e/{camName}/-"; } } // To avoid unpriv sub
-        public string PUB_SCENE_PROGRAM         { get { return $"{REALM}/s/{nameSpace}/{sceneName}/p/{camName}"; } }
-        public string PUB_SCENE_PROGRAM_PRIVATE { get { return $"{REALM}/s/{nameSpace}/{sceneName}/p/{camName}/{toUid}"; } }
-        public string PUB_SCENE_DEBUG           { get { return $"{REALM}/s/{nameSpace}/{sceneName}/d/{camName}/-"; } } // To avoid unpriv sub
+        public string PUB_SCENE_RENDER          { get { return $"{REALM}/s/{nameSpace}/{sceneName}/r/{idTag}"; } }
+        public string PUB_SCENE_RENDER_PRIVATE  { get { return $"{REALM}/s/{nameSpace}/{sceneName}/r/{idTag}/-"; } } // To avoid unpriv sub
+        public string PUB_SCENE_ENV             { get { return $"{REALM}/s/{nameSpace}/{sceneName}/e/{idTag}"; } }
+        public string PUB_SCENE_ENV_PRIVATE     { get { return $"{REALM}/s/{nameSpace}/{sceneName}/e/{idTag}/-"; } } // To avoid unpriv sub
+        public string PUB_SCENE_PROGRAM         { get { return $"{REALM}/s/{nameSpace}/{sceneName}/p/{idTag}"; } }
+        public string PUB_SCENE_PROGRAM_PRIVATE { get { return $"{REALM}/s/{nameSpace}/{sceneName}/p/{idTag}/{toUid}"; } }
+        public string PUB_SCENE_DEBUG           { get { return $"{REALM}/s/{nameSpace}/{sceneName}/d/{idTag}/-"; } } // To avoid unpriv sub
 #pragma warning restore format
     }
 }
