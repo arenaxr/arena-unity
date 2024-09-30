@@ -143,7 +143,12 @@ namespace ArenaUnity
 
         public void Subscribe(string[] topics)
         {
-            if (client != null) client.Subscribe(topics, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
+            if (client != null)
+            {
+                var qosLevels = new byte[topics.Length];
+                Array.Fill(qosLevels, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE);
+                client.Subscribe(topics, qosLevels);
+            }
         }
 
         public void Unsubscribe(string[] topics)
@@ -507,9 +512,9 @@ namespace ArenaUnity
             return csrfCookie;
         }
 
-        public static bool MqttTopicMatch(string allowedTopic, string attemptTopic)
+        public static bool MqttTopicMatch(string allowTopic, string attemptTopic)
         {
-            var allowedRegex = allowedTopic.Replace(@"/", @"\/").Replace("+", @"[a-zA-Z0-9 _.-]*").Replace("#", @"[a-zA-Z0-9 \/_#+.-]*");
+            var allowedRegex = allowTopic.Replace(@"/", @"\/").Replace("+", @"[a-zA-Z0-9 _.-]*").Replace("#", @"[a-zA-Z0-9 \/_#+.-]*");
             var re = new Regex(allowedRegex);
             var matches = re.Matches(attemptTopic);
             foreach (var match in matches.ToList())

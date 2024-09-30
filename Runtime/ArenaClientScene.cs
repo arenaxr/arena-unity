@@ -228,6 +228,7 @@ namespace ArenaUnity
                     realm: arenaDefaults.realm,
                     name_space: namespaceName,
                     scenename: sceneName,
+                    userobj: userid,
                     camname: camid
                 );
                 sceneUrl = $"https://{hostAddress}/{namespaceName}/{sceneName}";
@@ -246,17 +247,19 @@ namespace ArenaUnity
             bool foundFirstCam = false;
             foreach (ArenaCamera cam in camlist)
             {
+                foreach (string pubperm in perms.publ)
+                {
+                    if (MqttTopicMatch(pubperm, sceneTopic.PUB_SCENE_USER)) cam.HasPermissions = true;
+                }
                 if ((cam.name == Camera.main.name || camlist.Length == 1) && !foundFirstCam)
                 {
                     // publish main/selected camera
-                    cam.HasPermissions = true; // TODO (mwfarb): client connection always gets at least one
                     cam.userid = userid;
                     cam.camid = camid;
                     foundFirstCam = true;
                 }
                 else
                 {
-                    cam.HasPermissions = sceneObjectRights;
                     // TODO (mwfarb): fix: other cameras are auto-generated, and account must have all scene rights
                     if (!sceneObjectRights)
                     {
