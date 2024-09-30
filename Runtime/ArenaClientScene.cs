@@ -98,7 +98,7 @@ namespace ArenaUnity
         const string prefixHandL = "handLeft_";
         const string prefixHandR = "handRight_";
         static readonly List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
-        static readonly string[] msgUriTags = { "url", "src", "overrideSrc", "detailedUrl", "headModelPath", "texture" };
+        static readonly string[] msgUriTags = { "url", "src", "obj", "mtl", "overrideSrc", "detailedUrl", "headModelPath", "texture", "navMesh" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
         static readonly string[] requiredShadersStandardRP = {
@@ -117,7 +117,7 @@ namespace ArenaUnity
 #endif
         };
         static readonly string[] requiredShadersURPHDRP = {
-            "Lit",
+            // "Lit",
             "Unlit/Color",
             "glTF/PbrMetallicRoughness",
             "glTF/PbrSpecularGlossiness",
@@ -392,7 +392,6 @@ namespace ArenaUnity
 
         private IEnumerator DownloadAssets(string messageType, string msgUrl)
         {
-            if (messageType != "object") yield break;
             Uri remoteUri = ConstructRemoteUrl(msgUrl);
             if (remoteUri == null) yield break;
             // don't download the same asset twice, or simultaneously
@@ -571,7 +570,7 @@ namespace ArenaUnity
                     UpdateObjectMessage(msg, indata, aobj, gobj, jData);
                     break;
                 case "scene-options":
-                    UpdateSceneOptionsMessage(indata, gobj, jData);
+                    UpdateSceneOptionsMessage(indata, aobj, gobj, jData);
                     break;
                 case "program":
                     // TODO (mwfarb): define program implementation or lack thereof
@@ -591,7 +590,7 @@ namespace ArenaUnity
             }
         }
 
-        private void UpdateSceneOptionsMessage(object indata, GameObject gobj, JObject jData)
+        private void UpdateSceneOptionsMessage(object indata, ArenaObject aobj, GameObject gobj, JObject jData)
         {
             ArenaArenaSceneOptionsJson data = JsonConvert.DeserializeObject<ArenaArenaSceneOptionsJson>(indata.ToString());
 
@@ -601,7 +600,19 @@ namespace ArenaUnity
                 switch (result.Key)
                 {
                     case "env-presets": ArenaUnity.ApplyEnvironmentPresets(gobj, data); break;
-                    case "scene-options": ArenaUnity.ApplySceneOptions(gobj, data); break;
+                    case "scene-options":
+                        if (!string.IsNullOrWhiteSpace(data.SceneOptions?.NavMesh))
+                        {
+                            // Attach navMesh model, to scene-options object
+                            var url = data.SceneOptions.NavMesh;
+                            string assetPath = checkLocalAsset(url);
+                            if (assetPath != null)
+                            {
+                                aobj.gltfUrl = url;
+                                AttachGltf(assetPath, gobj, aobj);
+                            }
+                        }
+                        ArenaUnity.ApplySceneOptions(gobj, data); break;
                     case "renderer-settings": ArenaUnity.ApplyRendererSettings(gobj, data); break;
                     case "post-processing": ArenaUnity.ApplyPostProcessing(gobj, data); break;
                 }

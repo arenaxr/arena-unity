@@ -36,6 +36,15 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
+        private static string defUrlBase = null;
+        [JsonProperty(PropertyName = "urlBase")]
+        [Tooltip("Base path for xacro/urdf package includes. This must be an absolute path with no trailing slash, e.g. '/store/users/username/robot'")]
+        public string UrlBase = defUrlBase;
+        public bool ShouldSerializeUrlBase()
+        {
+            return true; // required in json schema
+        }
+
         private static string defJoints = null;
         [JsonProperty(PropertyName = "joints")]
         [Tooltip("Set joint values (in degrees) in the form 'JointName1: ValueInDegrees1, JointName2: ValueInDegrees2, ...'. ")]
