@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -504,6 +505,21 @@ namespace ArenaUnity
             if (cookieMatches.Count > 0)
                 csrfCookie = cookieMatches[0].Groups[2].Value;
             return csrfCookie;
+        }
+
+        public static bool MqttTopicMatch(string allowedTopic, string attemptTopic)
+        {
+            var allowedRegex = allowedTopic.Replace(@"/", @"\/").Replace("+", @"[a-zA-Z0-9 _.-]*").Replace("#", @"[a-zA-Z0-9 \/_#+.-]*");
+            var re = new Regex(allowedRegex);
+            var matches = re.Matches(attemptTopic);
+            foreach (var match in matches.ToList())
+            {
+                if (match.Value == attemptTopic)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
     }

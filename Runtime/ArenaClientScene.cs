@@ -227,7 +227,8 @@ namespace ArenaUnity
                 sceneTopic = new ArenaTopics(
                     realm: arenaDefaults.realm,
                     name_space: namespaceName,
-                    scenename: sceneName
+                    scenename: sceneName,
+                    camname: camid
                 );
                 sceneUrl = $"https://{hostAddress}/{namespaceName}/{sceneName}";
             }
@@ -237,10 +238,9 @@ namespace ArenaUnity
                 yield break;
             }
             ArenaMqttTokenClaimsJson perms = JsonConvert.DeserializeObject<ArenaMqttTokenClaimsJson>(permissions);
-            var testTopic = sceneTopic.PUB_SCENE_OBJECTS;
             foreach (string pubperm in perms.publ)
             {
-                if (testTopic.StartsWith((pubperm).TrimEnd(new char[] { '/', '#' }))) sceneObjectRights = true;
+                if (MqttTopicMatch(pubperm, sceneTopic.PUB_SCENE_OBJECTS)) sceneObjectRights = true;
             }
             // publish arena cameras where requested
             bool foundFirstCam = false;
@@ -1289,9 +1289,9 @@ namespace ArenaUnity
                 realm: sceneTopic.REALM,
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
-                camname: object_id
+                userobj: object_id
             );
-            PublishSceneMessage(camTopic.PUB_SCENE_RENDER, msg, hasPermissions);
+            PublishSceneMessage(camTopic.PUB_SCENE_USER, msg, hasPermissions);
         }
 
         /// <summary>
@@ -1311,9 +1311,9 @@ namespace ArenaUnity
                 realm: sceneTopic.REALM,
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
-                objectid: source
+                userobj: source
             );
-            PublishSceneMessage(evtTopic.PUB_SCENE_OBJECTS, msg, hasPermissions);
+            PublishSceneMessage(evtTopic.PUB_SCENE_USER, msg, hasPermissions);
         }
 
         /// <summary>
@@ -1326,7 +1326,7 @@ namespace ArenaUnity
         {
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
             Publish(topic, payload); // remote
-            LogMessage("Sending", msg, hasPermissions);
+            LogMessage("Sending", topic, msg, hasPermissions);
         }
 
         private static string GetTimestamp()
@@ -1337,7 +1337,9 @@ namespace ArenaUnity
         protected override void OnConnected()
         {
             base.OnConnected();
-            Subscribe(new string[] { sceneTopic.SUB_SCENE_PUBLIC });
+            string[] topics = new string[] { sceneTopic.SUB_SCENE_PUBLIC, sceneTopic.SUB_SCENE_PRIVATE };
+            Subscribe(topics);
+            Debug.Log($"MQTT Subscribed to : {JsonConvert.SerializeObject(topics)}");
             name = $"{originalName} (MQTT Connected)";
         }
 
@@ -1365,7 +1367,7 @@ namespace ArenaUnity
             OnMessageCallback?.Invoke(topic, message);
 
             ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
-            LogMessage("Received", msg);
+            LogMessage("Received", topic, msg);
             StartCoroutine(ProcessArenaMessage(msg));
         }
 
@@ -1430,7 +1432,7 @@ namespace ArenaUnity
             }
         }
 
-        private void LogMessage(string dir, ArenaObjectJson msg, bool hasPermissions = true)
+        private void LogMessage(string dir, string topic, ArenaObjectJson msg, bool hasPermissions = true)
         {
             // determine logging level
             if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
@@ -1441,9 +1443,9 @@ namespace ArenaUnity
             }
             if (msg.action == "clientEvent" && !logMqttEvents) return;
             if (hasPermissions)
-                Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
+                Debug.Log($"{dir}: {topic} {JsonConvert.SerializeObject(msg)}");
             else
-                Debug.LogWarning($"Permissions FAILED {dir}: {JsonConvert.SerializeObject(msg)}");
+                Debug.LogWarning($"Permissions FAILED {dir}: {topic} {JsonConvert.SerializeObject(msg)}");
         }
 
         protected override void OnApplicationQuit()
