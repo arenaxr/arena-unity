@@ -363,23 +363,22 @@ namespace ArenaUnity
                 userid = auth.ids.userid;
                 camid = auth.ids.camid;
 
-                // TODO: will message can only delete the primary camera object, need a solution for multiple cameras
-
+                // will message can only remove the primary user presence
                 var lwtTopic = new ArenaTopics(
                     realm: realm,
                     name_space: namespaceName,
                     scenename: sceneName,
-                    clientid: client.ClientId,
-                    objectid: camid
+                    idtag: camid
                 );
                 willFlag = camera;
                 willTopic = lwtTopic.PUB_SCENE_PRESENCE;
                 ArenaObjectJson msg = new ArenaObjectJson
                 {
-                    object_id = camid,
+                    object_id = userid,
                     action = "leave",
                 };
                 willMessage = JsonConvert.SerializeObject(msg);
+                Debug.Log($"MQTT Last will: {willTopic} {willMessage}");
             }
 
             string payloadJson = Base64UrlDecode(auth.token.Split('.')[1]);

@@ -15,41 +15,32 @@ namespace ArenaUnity
             string realm = "",
             string name_space = "",
             string scenename = "",
-            string username = "",
             string idtag = "",
-            string camname = "",
             string uuId = "",
             string userobj = "",
             string objectid = "",
             string touid = "",
-            string clientid = "",
             string devicename = ""
             )
         {
             REALM = realm;
             nameSpace = name_space;
             sceneName = scenename;
-            userName = username;
             idTag = idtag;
-            camName = camname;
             uuid = uuId;
             userObj = userobj;
             objectId = objectid;
             toUid = touid;
-            clientId = clientid;
             deviceName = devicename;
         }
         public readonly string REALM { get; }
         public readonly string nameSpace { get; }
         public readonly string sceneName { get; }
-        public readonly string userName { get; }
         public readonly string idTag { get; }
-        public readonly string camName { get; }
         public readonly string uuid { get; }
         public readonly string userObj { get; }
         public readonly string objectId { get; }
         public readonly string toUid { get; }
-        public readonly string clientId { get; }
         public readonly string deviceName { get; }
 
 #pragma warning disable format

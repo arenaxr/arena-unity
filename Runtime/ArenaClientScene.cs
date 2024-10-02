@@ -228,9 +228,7 @@ namespace ArenaUnity
                     realm: arenaDefaults.realm,
                     name_space: namespaceName,
                     scenename: sceneName,
-                    clientid: client.ClientId,
-                    userobj: userid,
-                    camname: camid
+                    idtag: userid
                 );
                 sceneUrl = $"https://{hostAddress}/{namespaceName}/{sceneName}";
             }
@@ -1276,7 +1274,6 @@ namespace ArenaUnity
                 realm: sceneTopic.REALM,
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
-                clientid: client.ClientId,
                 objectid: object_id
             );
             PublishSceneMessage(objTopic.PUB_SCENE_OBJECTS, msg, hasPermissions);
@@ -1293,7 +1290,6 @@ namespace ArenaUnity
                 realm: sceneTopic.REALM,
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
-                clientid: client.ClientId,
                 userobj: object_id
             );
             PublishSceneMessage(camTopic.PUB_SCENE_USER, msg, hasPermissions);
@@ -1316,7 +1312,6 @@ namespace ArenaUnity
                 realm: sceneTopic.REALM,
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
-                clientid: client.ClientId,
                 userobj: source
             );
             PublishSceneMessage(evtTopic.PUB_SCENE_USER, msg, hasPermissions);
@@ -1343,7 +1338,13 @@ namespace ArenaUnity
         protected override void OnConnected()
         {
             base.OnConnected();
-            string[] topics = new string[] { sceneTopic.SUB_SCENE_PUBLIC, sceneTopic.SUB_SCENE_PRIVATE };
+            var subTopic = new ArenaTopics(
+                realm: sceneTopic.REALM,
+                name_space: sceneTopic.nameSpace,
+                scenename: sceneTopic.sceneName,
+                idtag: userid
+            );
+            string[] topics = new string[] { subTopic.SUB_SCENE_PUBLIC, subTopic.SUB_SCENE_PRIVATE };
             Subscribe(topics);
             Debug.Log($"MQTT Subscribed to : {JsonConvert.SerializeObject(topics)}");
             name = $"{originalName} (MQTT Connected)";
