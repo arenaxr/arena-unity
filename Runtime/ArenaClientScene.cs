@@ -228,6 +228,7 @@ namespace ArenaUnity
                     realm: arenaDefaults.realm,
                     name_space: namespaceName,
                     scenename: sceneName,
+                    clientid: client.ClientId,
                     userobj: userid,
                     camname: camid
                 );
@@ -1292,6 +1293,7 @@ namespace ArenaUnity
                 realm: sceneTopic.REALM,
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
+                clientid: client.ClientId,
                 userobj: object_id
             );
             PublishSceneMessage(camTopic.PUB_SCENE_USER, msg, hasPermissions);
@@ -1314,6 +1316,7 @@ namespace ArenaUnity
                 realm: sceneTopic.REALM,
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
+                clientid: client.ClientId,
                 userobj: source
             );
             PublishSceneMessage(evtTopic.PUB_SCENE_USER, msg, hasPermissions);
