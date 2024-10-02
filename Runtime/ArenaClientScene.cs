@@ -268,7 +268,7 @@ namespace ArenaUnity
                     }
                     var random = UnityEngine.Random.Range(0, 100000000);
                     cam.userid = $"{random:D8}_unity";
-                    cam.camid = $"camera-{random:D8}_unity";
+                    cam.camid = $"unpublished-{random:D8}_unity";
                 }
                 localCameraIds.Add(cam.camid);
             }

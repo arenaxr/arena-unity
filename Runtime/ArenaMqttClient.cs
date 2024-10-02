@@ -365,12 +365,19 @@ namespace ArenaUnity
 
                 // TODO: will message can only delete the primary camera object, need a solution for multiple cameras
 
+                var lwtTopic = new ArenaTopics(
+                    realm: realm,
+                    name_space: namespaceName,
+                    scenename: sceneName,
+                    clientid: client.ClientId,
+                    objectid: camid
+                );
                 willFlag = camera;
-                willTopic = $"{realm}/s/{namespaceName}/{sceneName}/{camid}";
+                willTopic = lwtTopic.PUB_SCENE_PRESENCE;
                 ArenaObjectJson msg = new ArenaObjectJson
                 {
                     object_id = camid,
-                    action = "delete",
+                    action = "leave",
                 };
                 willMessage = JsonConvert.SerializeObject(msg);
             }
