@@ -368,7 +368,7 @@ namespace ArenaUnity
                     realm: realm,
                     name_space: namespaceName,
                     scenename: sceneName,
-                    idtag: camid
+                    idtag: userid
                 );
                 willFlag = camera;
                 willTopic = lwtTopic.PUB_SCENE_PRESENCE;

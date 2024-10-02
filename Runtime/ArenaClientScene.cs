@@ -228,7 +228,8 @@ namespace ArenaUnity
                     realm: arenaDefaults.realm,
                     name_space: namespaceName,
                     scenename: sceneName,
-                    idtag: userid
+                    idtag: userid,
+                    userobj: camid
                 );
                 sceneUrl = $"https://{hostAddress}/{namespaceName}/{sceneName}";
             }
@@ -246,10 +247,6 @@ namespace ArenaUnity
             bool foundFirstCam = false;
             foreach (ArenaCamera cam in camlist)
             {
-                foreach (string pubperm in perms.publ)
-                {
-                    if (MqttTopicMatch(pubperm, sceneTopic.PUB_SCENE_USER)) cam.HasPermissions = true;
-                }
                 if ((cam.name == Camera.main.name || camlist.Length == 1) && !foundFirstCam)
                 {
                     // publish main/selected camera
@@ -267,6 +264,17 @@ namespace ArenaUnity
                     var random = UnityEngine.Random.Range(0, 100000000);
                     cam.userid = $"{random:D8}_unity";
                     cam.camid = $"unpublished-{random:D8}_unity";
+                }
+                var camTopic = new ArenaTopics(
+                    realm: arenaDefaults.realm,
+                    name_space: namespaceName,
+                    scenename: sceneName,
+                    idtag: cam.userid,
+                    userobj: cam.camid
+                );
+                foreach (string pubperm in perms.publ)
+                {
+                    if (MqttTopicMatch(pubperm, camTopic.PUB_SCENE_USER)) cam.HasPermissions = true;
                 }
                 localCameraIds.Add(cam.camid);
             }
