@@ -324,11 +324,9 @@ namespace ArenaUnity
                 // get arena user mqtt token
                 form.AddField("id_auth", tokenType);
                 form.AddField("username", userName);
-                if (camera)
-                {
-                    form.AddField("userid", "true");
-                    form.AddField("camid", "true");
-                }
+                // always request user-specific context, esp. for remote rendering
+                form.AddField("userid", "true");
+                form.AddField("camid", "true");
                 if (!string.IsNullOrWhiteSpace(realm))
                 {
                     form.AddField("realm", realm);
