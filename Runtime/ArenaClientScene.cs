@@ -42,6 +42,8 @@ namespace ArenaUnity
             Instance = this;
         }
 
+        public string realm { get; private set; }
+
         [Tooltip("Namespace (automated with username), but can be overridden (runtime changes ignored).")]
         public string namespaceName = null;
         [Tooltip("Name of the scene, without namespace ('example', not 'username/example', runtime changes ignored).")]
@@ -93,7 +95,6 @@ namespace ArenaUnity
         public string originalName { get; private set; }
 
         static string importPath = null;
-
         const string prefixCam = "camera_";
         const string prefixHandL = "handLeft_";
         const string prefixHandR = "handRight_";
@@ -214,18 +215,19 @@ namespace ArenaUnity
             JObject jsonVal = JObject.Parse(jsonString);
             arenaDefaults = jsonVal.SelectToken("ARENADefaults").ToObject<ArenaDefaultsJson>();
             brokerAddress = arenaDefaults.mqttHost;
+            realm = arenaDefaults.realm;
 
             // start auth flow and MQTT connection
             ArenaCamera[] camlist = FindObjectsOfType<ArenaCamera>();
             name = $"{originalName} (Authenticating...)";
-            cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, arenaDefaults.realm, camlist.Length > 0, arenaDefaults.latencyTopic));
+            cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, camlist.Length > 0, arenaDefaults.latencyTopic));
             yield return cd.coroutine;
             name = $"{originalName} (MQTT Connecting...)";
             if (cd.result != null)
             {
                 if (string.IsNullOrWhiteSpace(namespaceName)) namespaceName = cd.result.ToString();
                 sceneTopic = new ArenaTopics(
-                    realm: arenaDefaults.realm,
+                    realm: realm,
                     name_space: namespaceName,
                     scenename: sceneName,
                     idtag: userid,
@@ -266,7 +268,7 @@ namespace ArenaUnity
                     cam.camid = $"unpublished-{random:D8}_unity";
                 }
                 var camTopic = new ArenaTopics(
-                    realm: arenaDefaults.realm,
+                    realm: realm,
                     name_space: namespaceName,
                     scenename: sceneName,
                     idtag: cam.userid,
