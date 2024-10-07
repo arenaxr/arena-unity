@@ -54,6 +54,7 @@ namespace ArenaUnity
         public string SUB_PROC_DBG              { get { return $"{REALM}/proc/debug/{uuid}"; } }
         public string SUB_SCENE_PUBLIC          { get { return $"{REALM}/s/{nameSpace}/{sceneName}/+/+"; } }
         public string SUB_SCENE_PRIVATE         { get { return $"{REALM}/s/{nameSpace}/{sceneName}/+/+/{idTag}/#"; } }
+        public string SUB_SCENE_RENDER_PRIVATE  { get { return $"{REALM}/s/{nameSpace}/{sceneName}/r/+/{idTag}/#"; } }
 
         // PUBLISH
         public string PUB_NETWORK_LATENCY       { get { return "$NETWORK/latency"; } }

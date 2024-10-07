@@ -1349,14 +1349,14 @@ namespace ArenaUnity
         {
             base.OnConnected();
             var subTopic = new ArenaTopics(
-                realm: sceneTopic.REALM,
-                name_space: sceneTopic.nameSpace,
-                scenename: sceneTopic.sceneName,
-                idtag: userid
+                realm: realm,
+                name_space: namespaceName,
+                scenename: sceneName,
+                idtag: userid,
+                userobj: camid
             );
             string[] topics = new string[] { subTopic.SUB_SCENE_PUBLIC, subTopic.SUB_SCENE_PRIVATE };
             Subscribe(topics);
-            Debug.Log($"MQTT Subscribed to : {JsonConvert.SerializeObject(topics)}");
             name = $"{originalName} (MQTT Connected)";
         }
 

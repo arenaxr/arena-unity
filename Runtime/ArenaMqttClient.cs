@@ -148,6 +148,7 @@ namespace ArenaUnity
                 var qosLevels = new byte[topics.Length];
                 Array.Fill(qosLevels, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE);
                 client.Subscribe(topics, qosLevels);
+                Debug.Log($"MQTT Subscribed to : {JsonConvert.SerializeObject(topics)}");
             }
         }
 
