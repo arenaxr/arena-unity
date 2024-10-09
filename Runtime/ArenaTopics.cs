@@ -72,6 +72,7 @@ namespace ArenaUnity
         public string PUB_SCENE_OBJECTS_PRIVATE { get { return $"{REALM}/s/{nameSpace}/{sceneName}/o/{objectId}/{toUid}"; } }
         public string PUB_SCENE_RENDER          { get { return $"{REALM}/s/{nameSpace}/{sceneName}/r/{idTag}"; } }
         public string PUB_SCENE_RENDER_PRIVATE  { get { return $"{REALM}/s/{nameSpace}/{sceneName}/r/{idTag}/-"; } } // To avoid unpriv sub
+        public string PUB_SCENE_RENDER_PRI_SERV { get { return $"{REALM}/s/{nameSpace}/{sceneName}/r/-/{toUid}"; } }
         public string PUB_SCENE_ENV             { get { return $"{REALM}/s/{nameSpace}/{sceneName}/e/{idTag}"; } }
         public string PUB_SCENE_ENV_PRIVATE     { get { return $"{REALM}/s/{nameSpace}/{sceneName}/e/{idTag}/-"; } } // To avoid unpriv sub
         public string PUB_SCENE_PROGRAM         { get { return $"{REALM}/s/{nameSpace}/{sceneName}/p/{idTag}"; } }
