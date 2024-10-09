@@ -1383,9 +1383,34 @@ namespace ArenaUnity
             // Call the delegate if a user has defined it
             OnMessageCallback?.Invoke(topic, message);
 
-            ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
-            LogMessage("Received", topic, msg);
-            StartCoroutine(ProcessArenaMessage(msg));
+            // filter messages based on expected payload format
+            var topicSplit = topic.Split("/");
+            if (topicSplit.Length > 4)
+            {
+                var sceneMsgType = topicSplit[4];
+                switch (sceneMsgType)
+                {
+                    case "x":
+                    case "u":
+                    case "o":
+                        // handle scene objects, user objects, user presense
+                        ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
+                        LogMessage("Received", topic, msg);
+                        StartCoroutine(ProcessArenaMessage(msg));
+                        break;
+                    case "r":
+                    case "p":
+                    case "c":
+                        // remote render handled by arena-renderfusion add on package
+                        // chat not implemented in unity
+                        // program not implelmneted in unity
+                        break;
+                    default:
+                        // ????
+                        Debug.LogWarning($"Invalid scene message type: {sceneMsgType}");
+                        break;
+                }
+            }
         }
 
         private IEnumerator ProcessArenaMessage(ArenaObjectJson msg, object menuCommand = null)
