@@ -90,6 +90,7 @@ namespace ArenaUnity
                 object_id = camid,
                 action = created ? "update" : "create",
                 type = messageType,
+                ttl = 30,
             };
             if (string.IsNullOrWhiteSpace(displayName))
             {   // provide default name if needed

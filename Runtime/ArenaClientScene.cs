@@ -42,6 +42,8 @@ namespace ArenaUnity
             Instance = this;
         }
 
+        public string realm { get; private set; }
+
         [Tooltip("Namespace (automated with username), but can be overridden (runtime changes ignored).")]
         public string namespaceName = null;
         [Tooltip("Name of the scene, without namespace ('example', not 'username/example', runtime changes ignored).")]
@@ -77,7 +79,7 @@ namespace ArenaUnity
 
         public bool persistLoaded { get; private set; } = false;
 
-        private string sceneTopic = null;
+        private ArenaTopics sceneTopic;
         public Dictionary<string, GameObject> arenaObjs { get; private set; } = new Dictionary<string, GameObject>();
         internal Dictionary<string, GameObject> childObjs = new Dictionary<string, GameObject>();
         internal List<string> pendingDelete = new List<string>();
@@ -93,7 +95,6 @@ namespace ArenaUnity
         public string originalName { get; private set; }
 
         static string importPath = null;
-
         const string prefixCam = "camera_";
         const string prefixHandL = "handLeft_";
         const string prefixHandR = "handRight_";
@@ -214,17 +215,24 @@ namespace ArenaUnity
             JObject jsonVal = JObject.Parse(jsonString);
             arenaDefaults = jsonVal.SelectToken("ARENADefaults").ToObject<ArenaDefaultsJson>();
             brokerAddress = arenaDefaults.mqttHost;
+            realm = arenaDefaults.realm;
 
             // start auth flow and MQTT connection
             ArenaCamera[] camlist = FindObjectsOfType<ArenaCamera>();
             name = $"{originalName} (Authenticating...)";
-            cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, arenaDefaults.realm, camlist.Length > 0, arenaDefaults.latencyTopic));
+            cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, camlist.Length > 0, arenaDefaults.latencyTopic));
             yield return cd.coroutine;
             name = $"{originalName} (MQTT Connecting...)";
             if (cd.result != null)
             {
                 if (string.IsNullOrWhiteSpace(namespaceName)) namespaceName = cd.result.ToString();
-                sceneTopic = $"{arenaDefaults.realm}/s/{namespaceName}/{sceneName}";
+                sceneTopic = new ArenaTopics(
+                    realm: realm,
+                    name_space: namespaceName,
+                    scenename: sceneName,
+                    idtag: userid,
+                    userobj: camid
+                );
                 sceneUrl = $"https://{hostAddress}/{namespaceName}/{sceneName}";
             }
             if (permissions == null)
@@ -235,7 +243,7 @@ namespace ArenaUnity
             ArenaMqttTokenClaimsJson perms = JsonConvert.DeserializeObject<ArenaMqttTokenClaimsJson>(permissions);
             foreach (string pubperm in perms.publ)
             {
-                if (sceneTopic.StartsWith((pubperm).TrimEnd(new char[] { '/', '#' }))) sceneObjectRights = true;
+                if (MqttTopicMatch(pubperm, sceneTopic.PUB_SCENE_OBJECTS)) sceneObjectRights = true;
             }
             // publish arena cameras where requested
             bool foundFirstCam = false;
@@ -244,14 +252,12 @@ namespace ArenaUnity
                 if ((cam.name == Camera.main.name || camlist.Length == 1) && !foundFirstCam)
                 {
                     // publish main/selected camera
-                    cam.HasPermissions = true; // TODO (mwfarb): client connection always gets at least one
                     cam.userid = userid;
                     cam.camid = camid;
                     foundFirstCam = true;
                 }
                 else
                 {
-                    cam.HasPermissions = sceneObjectRights;
                     // TODO (mwfarb): fix: other cameras are auto-generated, and account must have all scene rights
                     if (!sceneObjectRights)
                     {
@@ -259,7 +265,18 @@ namespace ArenaUnity
                     }
                     var random = UnityEngine.Random.Range(0, 100000000);
                     cam.userid = $"{random:D8}_unity";
-                    cam.camid = $"camera-{random:D8}_unity";
+                    cam.camid = $"unpublished-{random:D8}_unity";
+                }
+                var camTopic = new ArenaTopics(
+                    realm: realm,
+                    name_space: namespaceName,
+                    scenename: sceneName,
+                    idtag: cam.userid,
+                    userobj: cam.camid
+                );
+                foreach (string pubperm in perms.publ)
+                {
+                    if (MqttTopicMatch(pubperm, camTopic.PUB_SCENE_USER)) cam.HasPermissions = true;
                 }
                 localCameraIds.Add(cam.camid);
             }
@@ -1263,7 +1280,13 @@ namespace ArenaUnity
         {
             ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(msgJson);
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{client.ClientId}/{object_id}", msg, hasPermissions);
+            var objTopic = new ArenaTopics(
+                realm: sceneTopic.REALM,
+                name_space: sceneTopic.nameSpace,
+                scenename: sceneTopic.sceneName,
+                objectid: object_id
+            );
+            PublishSceneMessage(objTopic.PUB_SCENE_OBJECTS, msg, hasPermissions);
         }
 
         /// <summary>
@@ -1273,7 +1296,13 @@ namespace ArenaUnity
         {
             ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(msgJson);
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{object_id}", msg, hasPermissions);
+            var camTopic = new ArenaTopics(
+                realm: sceneTopic.REALM,
+                name_space: sceneTopic.nameSpace,
+                scenename: sceneTopic.sceneName,
+                userobj: object_id
+            );
+            PublishSceneMessage(camTopic.PUB_SCENE_USER, msg, hasPermissions);
         }
 
         /// <summary>
@@ -1289,7 +1318,13 @@ namespace ArenaUnity
                 data = JsonConvert.DeserializeObject(msgJsonData),
             };
             msg.timestamp = GetTimestamp();
-            PublishSceneMessage($"{sceneTopic}/{source}", msg, hasPermissions);
+            var evtTopic = new ArenaTopics(
+                realm: sceneTopic.REALM,
+                name_space: sceneTopic.nameSpace,
+                scenename: sceneTopic.sceneName,
+                userobj: source
+            );
+            PublishSceneMessage(evtTopic.PUB_SCENE_USER, msg, hasPermissions);
         }
 
         /// <summary>
@@ -1302,7 +1337,7 @@ namespace ArenaUnity
         {
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
             Publish(topic, payload); // remote
-            LogMessage("Sending", msg, hasPermissions);
+            LogMessage("Sending", topic, msg, hasPermissions);
         }
 
         private static string GetTimestamp()
@@ -1313,7 +1348,15 @@ namespace ArenaUnity
         protected override void OnConnected()
         {
             base.OnConnected();
-            Subscribe(new string[] { $"{sceneTopic}/#" });
+            var subTopic = new ArenaTopics(
+                realm: realm,
+                name_space: namespaceName,
+                scenename: sceneName,
+                idtag: userid,
+                userobj: camid
+            );
+            string[] topics = new string[] { subTopic.SUB_SCENE_PUBLIC, subTopic.SUB_SCENE_PRIVATE };
+            Subscribe(topics);
             name = $"{originalName} (MQTT Connected)";
         }
 
@@ -1340,9 +1383,34 @@ namespace ArenaUnity
             // Call the delegate if a user has defined it
             OnMessageCallback?.Invoke(topic, message);
 
-            ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
-            LogMessage("Received", msg);
-            StartCoroutine(ProcessArenaMessage(msg));
+            // filter messages based on expected payload format
+            var topicSplit = topic.Split("/");
+            if (topicSplit.Length > 4)
+            {
+                var sceneMsgType = topicSplit[4];
+                switch (sceneMsgType)
+                {
+                    case "x":
+                    case "u":
+                    case "o":
+                        // handle scene objects, user objects, user presense
+                        ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
+                        LogMessage("Received", topic, msg);
+                        StartCoroutine(ProcessArenaMessage(msg));
+                        break;
+                    case "r":
+                    case "p":
+                    case "c":
+                        // remote render handled by arena-renderfusion add on package
+                        // chat not implemented in unity
+                        // program not implelmneted in unity
+                        break;
+                    default:
+                        // ????
+                        Debug.LogWarning($"Invalid scene message type: {sceneMsgType}");
+                        break;
+                }
+            }
         }
 
         private IEnumerator ProcessArenaMessage(ArenaObjectJson msg, object menuCommand = null)
@@ -1406,7 +1474,7 @@ namespace ArenaUnity
             }
         }
 
-        private void LogMessage(string dir, ArenaObjectJson msg, bool hasPermissions = true)
+        private void LogMessage(string dir, string topic, ArenaObjectJson msg, bool hasPermissions = true)
         {
             // determine logging level
             if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
@@ -1417,9 +1485,9 @@ namespace ArenaUnity
             }
             if (msg.action == "clientEvent" && !logMqttEvents) return;
             if (hasPermissions)
-                Debug.Log($"{dir}: {JsonConvert.SerializeObject(msg)}");
+                Debug.Log($"{dir}: {topic} {JsonConvert.SerializeObject(msg)}");
             else
-                Debug.LogWarning($"Permissions FAILED {dir}: {JsonConvert.SerializeObject(msg)}");
+                Debug.LogWarning($"Permissions FAILED {dir}: {topic} {JsonConvert.SerializeObject(msg)}");
         }
 
         protected override void OnApplicationQuit()
