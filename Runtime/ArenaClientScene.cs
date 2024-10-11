@@ -534,10 +534,10 @@ namespace ArenaUnity
         private void CreateUpdateObject(ArenaObjectJson msg, object indata, object menuCommand = null)
         {
             ArenaObject aobj = null;
-            if (arenaObjs.TryGetValue(msg.object_id, out GameObject gobj))
+            arenaObjs.TryGetValue(msg.object_id, out GameObject gobj);
+            if (gobj != null)
             {   // update local
-                if (gobj != null)
-                    aobj = gobj.GetComponent<ArenaObject>();
+                aobj = gobj.GetComponent<ArenaObject>();
             }
             else
             {   // create local
@@ -575,6 +575,8 @@ namespace ArenaUnity
             //        args.ErrorContext.Handled = true;
             //    },
             //});
+
+            if (aobj==null) Debug.LogError($"invalid aobj from {JsonConvert.SerializeObject(indata)}");
 
             switch (msg.type)
             {
