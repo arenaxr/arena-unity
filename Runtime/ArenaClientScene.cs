@@ -58,14 +58,22 @@ namespace ArenaUnity
         public bool drawControllerRays = false;
 
         [Header("Performance")]
-        [Tooltip("Console log MQTT object messages")]
+        [Tooltip("Console log MQTT scene object messages")]
         public bool logMqttObjects = false;
-        [Tooltip("Console log MQTT user messages")]
+        [Tooltip("Console log MQTT user object messages")]
         public bool logMqttUsers = false;
-        [Tooltip("Console log MQTT client event messages")]
-        public bool logMqttEvents = false;
-        [Tooltip("Console log MQTT non-persist messages")]
-        public bool logMqttNonPersist = false;
+        [Tooltip("Console log MQTT user presense messages")]
+        public bool logMqttPresense = false;
+        [Tooltip("Console log MQTT scene chat messsages")]
+        public bool logMqttRender = false;
+        [Tooltip("Console log MQTT render fusion messsages")]
+        public bool logMqttChats = false;
+        [Tooltip("Console log MQTT program messages")]
+        public bool logMqttPrograms = false;
+        [Tooltip("Console log MQTT environment messages")]
+        public bool logMqttEnvironment = false;
+        [Tooltip("Console log MQTT debug messages")]
+        public bool logMqttDebug = false;
         [Tooltip("Global publish frequency to publish detected transform changes (milliseconds)")]
         [Range(100, 1000)]
         public int globalUpdateMs = 100;
@@ -576,7 +584,7 @@ namespace ArenaUnity
             //    },
             //});
 
-            if (aobj==null) Debug.LogError($"invalid aobj from {JsonConvert.SerializeObject(indata)}");
+            if (aobj == null) Debug.LogError($"invalid aobj from {JsonConvert.SerializeObject(indata)}");
 
             switch (msg.type)
             {
@@ -1339,7 +1347,11 @@ namespace ArenaUnity
         {
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
             Publish(topic, payload); // remote
-            LogMessage("Sending", topic, msg, hasPermissions);
+            var topicSplit = topic.Split("/");
+            if (topicSplit.Length > 4)
+            {
+                LogMessage("Sent", topicSplit[4], topic, msg, hasPermissions);
+            }
         }
 
         private static string GetTimestamp()
@@ -1370,7 +1382,6 @@ namespace ArenaUnity
 
         protected override void DecodeMessage(string topic, byte[] message)
         {
-            // TODO (mwfarb): perform any message validation here based on topic
             string msgJson = System.Text.Encoding.UTF8.GetString(message);
             ProcessMessage(topic, msgJson);
         }
@@ -1385,6 +1396,8 @@ namespace ArenaUnity
             // Call the delegate if a user has defined it
             OnMessageCallback?.Invoke(topic, message);
 
+            // TODO (mwfarb): perform any message validation here based on topic
+
             // filter messages based on expected payload format
             var topicSplit = topic.Split("/");
             if (topicSplit.Length > 4)
@@ -1397,15 +1410,14 @@ namespace ArenaUnity
                     case "o":
                         // handle scene objects, user objects, user presense
                         ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
-                        LogMessage("Received", topic, msg);
+                        LogMessage("Received", sceneMsgType, topic, msg);
                         StartCoroutine(ProcessArenaMessage(msg));
                         break;
-                    case "r":
-                    case "p":
-                    case "c":
-                        // remote render handled by arena-renderfusion add on package
-                        // chat not implemented in unity
-                        // program not implelmneted in unity
+                    case "r": // remote render handled by arena-renderfusion package currently
+                    case "c": // chat not implemented in unity currently
+                    case "p": // program not implemented in unity currently
+                    case "e": // environment not implemented in unity currently
+                    case "d": // debig not implemented in unity currently
                         break;
                     default:
                         // ????
@@ -1476,16 +1488,38 @@ namespace ArenaUnity
             }
         }
 
-        private void LogMessage(string dir, string topic, ArenaObjectJson msg, bool hasPermissions = true)
+        private void LogMessage(string dir, string sceneMsgType, string topic, ArenaObjectJson msg, bool hasPermissions = true)
         {
             // determine logging level
-            if (!Convert.ToBoolean(msg.persist) && !logMqttNonPersist) return;
-            if (msg.type == "object")
+            switch (sceneMsgType)
             {
-                if (msg.object_id.StartsWith("camera_") && !logMqttUsers) return;
-                if (!logMqttObjects) return;
+                case "x":
+                    if (!logMqttPresense) return;
+                    break;
+                case "o":
+                    if (!logMqttObjects) return;
+                    break;
+                case "u":
+                    if (!logMqttUsers) return;
+                    break;
+                case "c":
+                    if (!logMqttChats) return;
+                    break;
+                case "r":
+                    if (!logMqttRender) return;
+                    break;
+                case "p":
+                    if (!logMqttPrograms) return;
+                    break;
+                case "d":
+                    if (!logMqttDebug) return;
+                    break;
+                case "e":
+                    if (!logMqttEnvironment) return;
+                    break;
+                default:
+                    break;
             }
-            if (msg.action == "clientEvent" && !logMqttEvents) return;
             if (hasPermissions)
                 Debug.Log($"{dir}: {topic} {JsonConvert.SerializeObject(msg)}");
             else
