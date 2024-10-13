@@ -1350,7 +1350,7 @@ namespace ArenaUnity
             var topicSplit = topic.Split("/");
             if (topicSplit.Length > 4)
             {
-                LogMessage("Sent", topicSplit[4], topic, msg, hasPermissions);
+                LogMessage("Sent", topicSplit[4], topic, JsonConvert.SerializeObject(msg), hasPermissions);
             }
         }
 
@@ -1403,14 +1403,16 @@ namespace ArenaUnity
             if (topicSplit.Length > 4)
             {
                 var sceneMsgType = topicSplit[4];
+                LogMessage("Received", sceneMsgType, topic, message);
                 switch (sceneMsgType)
                 {
                     case "x":
+                        // TODO (mwfarb): add handler
+                        break;
                     case "u":
                     case "o":
                         // handle scene objects, user objects, user presense
                         ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
-                        LogMessage("Received", sceneMsgType, topic, msg);
                         StartCoroutine(ProcessArenaMessage(msg));
                         break;
                     case "r": // remote render handled by arena-renderfusion package currently
@@ -1488,7 +1490,7 @@ namespace ArenaUnity
             }
         }
 
-        private void LogMessage(string dir, string sceneMsgType, string topic, ArenaObjectJson msg, bool hasPermissions = true)
+        private void LogMessage(string dir, string sceneMsgType, string topic, string msg, bool hasPermissions = true)
         {
             // determine logging level
             switch (sceneMsgType)
@@ -1521,9 +1523,9 @@ namespace ArenaUnity
                     break;
             }
             if (hasPermissions)
-                Debug.Log($"{dir}: {topic} {JsonConvert.SerializeObject(msg)}");
+                Debug.Log($"{dir}: {topic} {msg}");
             else
-                Debug.LogWarning($"Permissions FAILED {dir}: {topic} {JsonConvert.SerializeObject(msg)}");
+                Debug.LogWarning($"Permissions FAILED {dir}: {topic} {msg}");
         }
 
         protected override void OnApplicationQuit()
