@@ -1350,7 +1350,7 @@ namespace ArenaUnity
             var topicSplit = topic.Split("/");
             if (topicSplit.Length > 4)
             {
-                LogMessage("Sent", topicSplit[4], topic, JsonConvert.SerializeObject(msg), hasPermissions);
+                LogMessage("Sending", topicSplit[4], topic, JsonConvert.SerializeObject(msg), hasPermissions);
             }
         }
 
@@ -1366,8 +1366,7 @@ namespace ArenaUnity
                 realm: realm,
                 name_space: namespaceName,
                 scenename: sceneName,
-                idtag: userid,
-                userobj: camid
+                idtag: userid
             );
             string[] topics = new string[] { subTopic.SUB_SCENE_PUBLIC, subTopic.SUB_SCENE_PRIVATE };
             Subscribe(topics);

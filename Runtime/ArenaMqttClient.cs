@@ -148,7 +148,23 @@ namespace ArenaUnity
                 var qosLevels = new byte[topics.Length];
                 Array.Fill(qosLevels, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE);
                 client.Subscribe(topics, qosLevels);
-                Debug.Log($"MQTT Subscribed to : {JsonConvert.SerializeObject(topics)}");
+                ArenaMqttTokenClaimsJson perms = JsonConvert.DeserializeObject<ArenaMqttTokenClaimsJson>(permissions);
+                foreach (string topic in topics)
+                {
+                    bool subscribePermission = false;
+                    foreach (string subperm in perms.subs)
+                    {
+                        if (MqttTopicMatch(subperm, topic)) subscribePermission = true;
+                    }
+                    if (subscribePermission)
+                    {
+                        Debug.Log($"Subscribed to : {topic}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Subscribed FAILED to : {topic}");
+                    }
+                }
             }
         }
 
@@ -519,7 +535,7 @@ namespace ArenaUnity
 
         public static bool MqttTopicMatch(string allowTopic, string attemptTopic)
         {
-            var allowedRegex = allowTopic.Replace(@"/", @"\/").Replace("+", @"[a-zA-Z0-9 _.-]*").Replace("#", @"[a-zA-Z0-9 \/_#+.-]*");
+            var allowedRegex = allowTopic.Replace(@"/", @"\/").Replace("+", @"[a-zA-Z0-9 _+.-]*").Replace("#", @"[a-zA-Z0-9 \/_#+.-]*");
             var re = new Regex(allowedRegex);
             var matches = re.Matches(attemptTopic);
             foreach (var match in matches.ToList())
