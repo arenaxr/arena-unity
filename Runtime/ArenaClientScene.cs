@@ -560,9 +560,11 @@ namespace ArenaUnity
                 if (msg.persist.HasValue)
                     aobj.persist = (bool)msg.persist;
                 aobj.messageType = msg.type;
-                if (msg.ttl > 0)
+                if (msg.ttl != null)
                 {
-                    aobj.SetTtlDeleteTimer((float)msg.ttl);
+                    if (!gobj.TryGetComponent<ArenaTtl>(out var ttl))
+                        ttl = gobj.AddComponent<ArenaTtl>();
+                    ttl.SetTtlDeleteTimer((float)msg.ttl);
                 }
 #if UNITY_EDITOR
                 // local create context auto-select
