@@ -80,19 +80,6 @@ namespace ArenaUnity
             StartCoroutine(PublishTickThrottle());
         }
 
-
-        public void SetTtlDeleteTimer(float seconds)
-        {
-            StartCoroutine(TtlUpdater(seconds));
-        }
-
-        IEnumerator TtlUpdater(float seconds)
-        {
-            yield return new WaitForSeconds(seconds);
-            externalDelete = true;
-            Destroy(gameObject);
-        }
-
         IEnumerator PublishTickThrottle()
         {
             // TODO (mwfarb): prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily

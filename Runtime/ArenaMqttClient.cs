@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -142,7 +143,29 @@ namespace ArenaUnity
 
         public void Subscribe(string[] topics)
         {
-            if (client != null) client.Subscribe(topics, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
+            if (client != null)
+            {
+                var qosLevels = new byte[topics.Length];
+                Array.Fill(qosLevels, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE);
+                client.Subscribe(topics, qosLevels);
+                ArenaMqttTokenClaimsJson perms = JsonConvert.DeserializeObject<ArenaMqttTokenClaimsJson>(permissions);
+                foreach (string topic in topics)
+                {
+                    bool subscribePermission = false;
+                    foreach (string subperm in perms.subs)
+                    {
+                        if (MqttTopicMatch(subperm, topic)) subscribePermission = true;
+                    }
+                    if (subscribePermission)
+                    {
+                        Debug.Log($"Subscribed to : {topic}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Subscribed FAILED to : {topic}");
+                    }
+                }
+            }
         }
 
         public void Unsubscribe(string[] topics)
@@ -289,13 +312,13 @@ namespace ArenaUnity
                 }
 
                 // get arena CSRF token
-                yield return HttpRequestAuth($"https://{hostAddress}/user/login");
+                yield return HttpRequestAuth($"https://{hostAddress}/user/v2/login");
 
                 WWWForm form = new WWWForm();
                 if (idToken != null) form.AddField("id_token", idToken);
 
                 // get arena user account state
-                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/user_state", csrfToken, form));
+                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/v2/user_state", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
                 authState = JsonConvert.DeserializeObject<ArenaUserStateJson>(cd.result.ToString());
@@ -318,11 +341,9 @@ namespace ArenaUnity
                 // get arena user mqtt token
                 form.AddField("id_auth", tokenType);
                 form.AddField("username", userName);
-                if (camera)
-                {
-                    form.AddField("userid", "true");
-                    form.AddField("camid", "true");
-                }
+                // always request user-specific context, esp. for remote rendering
+                form.AddField("userid", "true");
+                form.AddField("camid", "true");
                 if (!string.IsNullOrWhiteSpace(realm))
                 {
                     form.AddField("realm", realm);
@@ -332,7 +353,7 @@ namespace ArenaUnity
                 {
                     form.AddField("scene", $"{namespaceName}/{sceneName}");
                 }
-                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/mqtt_auth", csrfToken, form));
+                cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/v2/mqtt_auth", csrfToken, form));
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
                 mqttToken = cd.result.ToString();
@@ -357,16 +378,22 @@ namespace ArenaUnity
                 userid = auth.ids.userid;
                 camid = auth.ids.camid;
 
-                // TODO: will message can only delete the primary camera object, need a solution for multiple cameras
-
+                // will message can only remove the primary user presence
+                var lwtTopic = new ArenaTopics(
+                    realm: realm,
+                    name_space: namespaceName,
+                    scenename: sceneName,
+                    idtag: userid
+                );
                 willFlag = camera;
-                willTopic = $"{realm}/s/{namespaceName}/{sceneName}/{camid}";
+                willTopic = lwtTopic.PUB_SCENE_PRESENCE;
                 ArenaObjectJson msg = new ArenaObjectJson
                 {
-                    object_id = camid,
-                    action = "delete",
+                    object_id = userid,
+                    action = "leave",
                 };
                 willMessage = JsonConvert.SerializeObject(msg);
+                Debug.Log($"MQTT Last will: {willTopic} {willMessage}");
             }
 
             string payloadJson = Base64UrlDecode(auth.token.Split('.')[1]);
@@ -391,7 +418,7 @@ namespace ArenaUnity
             WWWForm form = new WWWForm();
             if (idToken != null) form.AddField("id_token", idToken);
 
-            CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/storelogin", csrfToken, form));
+            CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/v2/storelogin", csrfToken, form));
             yield return cd.coroutine;
             if (!isCrdSuccess(cd.result)) yield break;
             if (string.IsNullOrWhiteSpace(fsToken))
@@ -504,6 +531,21 @@ namespace ArenaUnity
             if (cookieMatches.Count > 0)
                 csrfCookie = cookieMatches[0].Groups[2].Value;
             return csrfCookie;
+        }
+
+        public static bool MqttTopicMatch(string allowTopic, string attemptTopic)
+        {
+            var allowedRegex = allowTopic.Replace(@"/", @"\/").Replace("+", @"[a-zA-Z0-9 _+.-]*").Replace("#", @"[a-zA-Z0-9 \/_#+.-]*");
+            var re = new Regex(allowedRegex);
+            var matches = re.Matches(attemptTopic);
+            foreach (var match in matches.ToList())
+            {
+                if (match.Value == attemptTopic)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
     }
