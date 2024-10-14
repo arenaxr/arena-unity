@@ -557,15 +557,6 @@ namespace ArenaUnity
                 aobj = gobj.AddComponent(typeof(ArenaObject)) as ArenaObject;
                 arenaObjs[msg.object_id] = gobj;
                 aobj.Created = true;
-                if (msg.persist.HasValue)
-                    aobj.persist = (bool)msg.persist;
-                aobj.messageType = msg.type;
-                if (msg.ttl != null)
-                {
-                    if (!gobj.TryGetComponent<ArenaTtl>(out var ttl))
-                        ttl = gobj.AddComponent<ArenaTtl>();
-                    ttl.SetTtlDeleteTimer((float)msg.ttl);
-                }
 #if UNITY_EDITOR
                 // local create context auto-select
                 if (menuCommand != null)
@@ -575,6 +566,17 @@ namespace ArenaUnity
                     Selection.activeObject = gobj;
                 }
 #endif
+            }
+
+            // apply storage-level object properties
+            if (msg.persist.HasValue)
+                aobj.persist = (bool)msg.persist;
+            aobj.messageType = msg.type;
+            if (msg.ttl != null)
+            {
+                if (!gobj.TryGetComponent<ArenaTtl>(out var ttl))
+                    ttl = gobj.AddComponent<ArenaTtl>();
+                ttl.SetTtlDeleteTimer((float)msg.ttl);
             }
 
             JObject jData = JObject.Parse(JsonConvert.SerializeObject(indata));

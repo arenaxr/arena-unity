@@ -7,7 +7,7 @@ namespace ArenaUnity
     [RequireComponent(typeof(ArenaObject))]
     public class ArenaTtl : MonoBehaviour
     {
-        DateTime? expiration = null;
+        long? expiration = null;
 
         private void Start()
         {
@@ -15,23 +15,19 @@ namespace ArenaUnity
 
         public void SetTtlDeleteTimer(float seconds)
         {
-            DateTime now = DateTime.Now;
-            int secOnly = (int)Math.Truncate(seconds);
-            int msOnly = (int)Math.Truncate((seconds - secOnly) * 1000);
-            TimeSpan time = new(0, 0, 0, secOnly, msOnly);
-            expiration = now.Add(time);
+            expiration = DateTimeOffset.Now.ToUnixTimeMilliseconds() + (long)(seconds * 1000);
         }
 
         private void Update()
         {
-            Debug.Log($"ttl up: {expiration - DateTime.Now}");
-            if (expiration != null && expiration > DateTime.Now)
+            if (expiration != null && DateTimeOffset.Now.ToUnixTimeMilliseconds() > expiration)
             {
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null)
+                {
                     aobj.externalDelete = true;
-
-                Destroy(gameObject);
+                    Destroy(gameObject);
+                }
             }
         }
 
