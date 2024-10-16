@@ -306,7 +306,7 @@ namespace ArenaUnity.Schemas
             return (RemoteRender != defRemoteRender);
         }
 
-        private static object defVideoControl = null;
+        private static ArenaVideoControlJson defVideoControl = null;
         [JsonProperty(PropertyName = "video-control")]
         [Tooltip("Adds a video to an entity and controls its playback.")]
         public ArenaVideoControlJson VideoControl = defVideoControl;
