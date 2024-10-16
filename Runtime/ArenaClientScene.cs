@@ -651,11 +651,11 @@ namespace ArenaUnity
 
             // modify Unity attributes
             bool worldPositionStays = false; // default: most children need relative position
-            aobj.parentId = (string)data.parent;
-            string parent = (string)data.parent;
+            aobj.parentId = (string)data.Parent;
+            string parent = (string)data.Parent;
             string object_type = (string)data.object_type;
             aobj.object_type = object_type;
-            var url = !string.IsNullOrEmpty(data.src) ? data.src : data.url;
+            var url = !string.IsNullOrEmpty(data.Src) ? data.Src : data.Url;
 
             // handle wire object attributes
             switch (object_type)
@@ -793,29 +793,29 @@ namespace ArenaUnity
             }
 
             // apply transform triad
-            if (data.position != null)
+            if (data.Position != null)
             {
-                gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.position);
+                gobj.transform.localPosition = ArenaUnity.ToUnityPosition(data.Position);
             }
-            if (data.rotation != null)
+            if (data.Rotation != null)
             {
                 bool invertY = true;
                 if (jData.SelectToken("rotation.w") != null) // quaternion
-                    gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.rotation, invertY);
+                    gobj.transform.localRotation = ArenaUnity.ToUnityRotationQuat(data.Rotation, invertY);
                 else // euler
-                    gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.rotation, invertY);
+                    gobj.transform.localRotation = ArenaUnity.ToUnityRotationEuler(data.Rotation, invertY);
             }
-            if (data.scale != null)
+            if (data.Scale != null)
             {
-                gobj.transform.localScale = ArenaUnity.ToUnityScale(data.scale);
+                gobj.transform.localScale = ArenaUnity.ToUnityScale(data.Scale);
             }
 
             // apply rendering visibility attributes, before other on-wire object attributes
-            if (data.visible != null) // visible, if set is highest priority to enable/disable renderer
+            if (data.Visible) // visible, if set is highest priority to enable/disable renderer
             {
                 ArenaUnity.ApplyVisible(gobj, data);
             }
-            else if (data.remoteRender != null) // remote-render, if set is lowest priority to enable/disable renderer
+            else if (data.RemoteRender != null) // remote-render, if set is lowest priority to enable/disable renderer
             {
                 ArenaUnity.ApplyRemoteRender(gobj, data);
             }
@@ -830,8 +830,8 @@ namespace ArenaUnity
                         if (ArenaUnity.primitives.Contains(object_type))
                         {
                             Debug.LogWarning($"data.color is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.material.color instead.");
-                            data.material ??= new ArenaMaterialJson();
-                            data.material.Color = data.color;
+                            data.Material ??= new ArenaMaterialJson();
+                            data.Material.Color = data.Color;
                             ArenaUnity.ApplyMaterial(gobj, data);
                         }
                         break;
@@ -839,7 +839,7 @@ namespace ArenaUnity
                         if (object_type == "light")
                         {
                             Debug.LogWarning($"data.light.[property] is deprecated for object-id: {msg.object_id}, object_type: {object_type}, use data.[property] instead.");
-                            ArenaUnity.ApplyWireLight(data.light, gobj);
+                            ArenaUnity.ApplyWireLight(data.Light, gobj);
                         }
                         break;
                     case "src":
@@ -862,7 +862,7 @@ namespace ArenaUnity
                     // TODO: case "dynamic-body": ArenaUnity.ApplyDynamicBody(gobj, data); break;
                     case "geometry":
                         if (object_type == "entity")
-                            ArenaUnity.ApplyGeometry(null, data.geometry, gobj); break;
+                            ArenaUnity.ApplyGeometry(null, data.Geometry, gobj); break;
                     // TODO: case "goto-landmark": ArenaUnity.ApplyGotoLandmark(gobj, data); break;
                     // TODO: case "goto-url": ArenaUnity.ApplyGotoUrl(gobj, data); break;
                     // TODO: case "hide-on-enter-ar": ArenaUnity.ApplyHideOnEnterAr(gobj, data); break;
@@ -888,8 +888,8 @@ namespace ArenaUnity
                     // TODO: case "modelUpdate": ArenaUnity.ApplyModelUpdate(gobj, data); break;
                     case "material":
                         ArenaUnity.ApplyMaterial(gobj, data);
-                        if (!string.IsNullOrEmpty(data.material.Src))
-                            AttachMaterialTexture(checkLocalAsset((string)data.material.Src), gobj);
+                        if (!string.IsNullOrEmpty(data.Material.Src))
+                            AttachMaterialTexture(checkLocalAsset((string)data.Material.Src), gobj);
                         break;
                 }
             }
@@ -1274,9 +1274,9 @@ namespace ArenaUnity
                 data = new ArenaDataJson
                 {
                     object_type = "gltf-model",
-                    url = storeExtPath,
-                    position = ArenaUnity.ToArenaPosition(rootObjPos),
-                    rotation = ArenaUnity.ToArenaRotationQuat(
+                    Url = storeExtPath,
+                    Position = ArenaUnity.ToArenaPosition(rootObjPos),
+                    Rotation = ArenaUnity.ToArenaRotationQuat(
                         ArenaUnity.GltfToUnityRotationQuat(Quaternion.identity)),
                 }
             };

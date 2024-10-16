@@ -245,11 +245,11 @@ namespace ArenaUnity
             // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
             foreach (Renderer renderer in gobj.GetComponentsInChildren<Renderer>(true))
             {
-                renderer.enabled = (bool)data.visible;
+                renderer.enabled = (bool)data.Visible;
             }
             foreach (Light light in gobj.GetComponentsInChildren<Light>(true))
             {
-                light.enabled = (bool)data.visible;
+                light.enabled = (bool)data.Visible;
             }
         }
         public static void ApplyRemoteRender(GameObject gobj, ArenaDataJson data)
@@ -257,11 +257,11 @@ namespace ArenaUnity
             // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
             foreach (Renderer renderer in gobj.GetComponentsInChildren<Renderer>(true))
             {
-                renderer.enabled = data.remoteRender.Enabled;
+                renderer.enabled = data.RemoteRender.Enabled;
             }
             foreach (Light light in gobj.GetComponentsInChildren<Light>(true))
             {
-                light.enabled = data.remoteRender.Enabled;
+                light.enabled = data.RemoteRender.Enabled;
             }
         }
 
@@ -269,7 +269,7 @@ namespace ArenaUnity
         {
             if (!gobj.TryGetComponent<ArenaArmarker>(out var c))
                 c = gobj.AddComponent<ArenaArmarker>();
-            c.json = JsonConvert.DeserializeObject<ArenaArmarkerJson>(MergeRawJson(c.json, data.armarker));
+            c.json = JsonConvert.DeserializeObject<ArenaArmarkerJson>(MergeRawJson(c.json, data.Armarker));
             c.apply = true;
         }
 
@@ -277,7 +277,7 @@ namespace ArenaUnity
         {
             if (!gobj.TryGetComponent<ArenaClickListener>(out var c))
                 c = gobj.AddComponent<ArenaClickListener>();
-            c.json = JsonConvert.DeserializeObject<ArenaClickListenerJson>(MergeRawJson(c.json, data.clickListener));
+            c.json = JsonConvert.DeserializeObject<ArenaClickListenerJson>(MergeRawJson(c.json, data.ClickListener));
             c.apply = true;
         }
 
@@ -285,7 +285,7 @@ namespace ArenaUnity
         {
             if (!gobj.TryGetComponent<ArenaAnimationMixer>(out var c))
                 c = gobj.AddComponent<ArenaAnimationMixer>();
-            c.json = JsonConvert.DeserializeObject<ArenaAnimationMixerJson>(MergeRawJson(c.json, data.animationMixer));
+            c.json = JsonConvert.DeserializeObject<ArenaAnimationMixerJson>(MergeRawJson(c.json, data.AnimationMixer));
             c.apply = true;
         }
 
@@ -293,7 +293,7 @@ namespace ArenaUnity
         {
             if (!gobj.TryGetComponent<ArenaAttribution>(out var c))
                 c = gobj.AddComponent<ArenaAttribution>();
-            c.json = JsonConvert.DeserializeObject<ArenaAttributionJson>(MergeRawJson(c.json, data.attribution));
+            c.json = JsonConvert.DeserializeObject<ArenaAttributionJson>(MergeRawJson(c.json, data.Attribution));
             c.apply = true;
         }
 
@@ -301,7 +301,7 @@ namespace ArenaUnity
         {
             if (!gobj.TryGetComponent<ArenaMaterial>(out var c))
                 c = gobj.AddComponent<ArenaMaterial>();
-            c.json = JsonConvert.DeserializeObject<ArenaMaterialJson>(MergeRawJson(c.json, data.material));
+            c.json = JsonConvert.DeserializeObject<ArenaMaterialJson>(MergeRawJson(c.json, data.Material));
             c.apply = true;
         }
 

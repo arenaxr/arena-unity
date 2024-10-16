@@ -34,7 +34,8 @@ namespace ArenaUnity.Schemas
         public bool ClickableOnlyEvents = defClickableOnlyEvents;
         public bool ShouldSerializeClickableOnlyEvents()
         {
-            return true; // required in json schema
+            // clickableOnlyEvents
+            return (ClickableOnlyEvents != defClickableOnlyEvents);
         }
 
         public enum DistanceModelType
@@ -151,7 +152,8 @@ namespace ArenaUnity.Schemas
         public bool VideoFrustumCulling = defVideoFrustumCulling;
         public bool ShouldSerializeVideoFrustumCulling()
         {
-            return true; // required in json schema
+            // videoFrustumCulling
+            return (VideoFrustumCulling != defVideoFrustumCulling);
         }
 
         private static bool defVideoDistanceConstraints = true;
@@ -160,7 +162,8 @@ namespace ArenaUnity.Schemas
         public bool VideoDistanceConstraints = defVideoDistanceConstraints;
         public bool ShouldSerializeVideoDistanceConstraints()
         {
-            return true; // required in json schema
+            // videoDistanceConstraints
+            return (VideoDistanceConstraints != defVideoDistanceConstraints);
         }
 
         private static float defVideoDefaultResolutionConstraint = 180f;
@@ -169,7 +172,8 @@ namespace ArenaUnity.Schemas
         public float VideoDefaultResolutionConstraint = defVideoDefaultResolutionConstraint;
         public bool ShouldSerializeVideoDefaultResolutionConstraint()
         {
-            return true; // required in json schema
+            // videoDefaultResolutionConstraint
+            return (VideoDefaultResolutionConstraint != defVideoDefaultResolutionConstraint);
         }
 
         private static float defVolume = 1f;

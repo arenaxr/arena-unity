@@ -250,7 +250,7 @@ namespace ArenaUnity.Schemas
 
         private static string defText = null;
         [JsonProperty(PropertyName = "text")]
-        [Tooltip("DEPRECATED: data.text is deprecated for object_type: text, use data.value instead.")]
+        [Obsolete("DEPRECATED: data.text is deprecated for object_type: text, use data.value instead.")]
         public string Text = defText;
         public bool ShouldSerializeText()
         {

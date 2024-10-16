@@ -252,10 +252,10 @@ namespace ArenaUnity
             ArenaDataJson data = new ArenaDataJson
             {
                 object_type = object_type,
-                position = ArenaUnity.ToArenaPosition(cameraPoint),
+                Position = ArenaUnity.ToArenaPosition(cameraPoint),
             };
             if (matColor != null)
-                data.material = new ArenaMaterialJson
+                data.Material = new ArenaMaterialJson
                 {
                     Color = matColor,
                 };

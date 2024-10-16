@@ -159,25 +159,25 @@ namespace ArenaUnity
             var updatedData = new JObject();
 
             // minimum transform information
-            dataUnity.position = ArenaUnity.ToArenaPosition(transform.localPosition);
+            dataUnity.Position = ArenaUnity.ToArenaPosition(transform.localPosition);
             Quaternion rotOut = transform.localRotation;
-            dataUnity.rotation = ArenaUnity.ToArenaRotationQuat(rotOut); // always send quaternions over the wire
-            dataUnity.scale = ArenaUnity.ToArenaScale(transform.localScale);
+            dataUnity.Rotation = ArenaUnity.ToArenaRotationQuat(rotOut); // always send quaternions over the wire
+            dataUnity.Scale = ArenaUnity.ToArenaScale(transform.localScale);
             if (GetComponent<Collider>())
             {
                 updatedData.Merge(ArenaMesh.ToArenaDimensions(gameObject, out bool isUnityPlane));
                 if (isUnityPlane)
-                    dataUnity.rotation = ArenaUnity.ToArenaRotationPlaneMesh(rotOut);
+                    dataUnity.Rotation = ArenaUnity.ToArenaRotationPlaneMesh(rotOut);
             }
 
             if (transform.parent && transform.parent.gameObject.GetComponent<ArenaObject>() != null)
             {   // parent
-                dataUnity.parent = transform.parent.name;
+                dataUnity.Parent = transform.parent.name;
                 parentId = transform.parent.name;
             }
             else if (parentId != null)
             {   // unparent
-                dataUnity.parent = null;
+                dataUnity.Parent = null;
                 parentId = null;
             }
 

@@ -29,59 +29,56 @@ namespace ArenaUnity.Schemas
 
         private static float defDepth = 1f;
         [JsonProperty(PropertyName = "depth")]
-        [Tooltip("depth")]
+        [Obsolete("depth")]
         public float Depth = defDepth;
         public bool ShouldSerializeDepth()
         {
-            return true; // required in json schema
+            return false; // deprecated in json schema
         }
 
         private static float defHeight = 1f;
         [JsonProperty(PropertyName = "height")]
-        [Tooltip("height")]
+        [Obsolete("height")]
         public float Height = defHeight;
         public bool ShouldSerializeHeight()
         {
-            return true; // required in json schema
+            return false; // deprecated in json schema
         }
 
         private static int defSegmentsDepth = 1;
         [JsonProperty(PropertyName = "segmentsDepth")]
-        [Tooltip("segments depth")]
+        [Obsolete("segments depth")]
         public int SegmentsDepth = defSegmentsDepth;
         public bool ShouldSerializeSegmentsDepth()
         {
-            // segmentsDepth
-            return (SegmentsDepth != defSegmentsDepth);
+            return false; // deprecated in json schema
         }
 
         private static int defSegmentsHeight = 1;
         [JsonProperty(PropertyName = "segmentsHeight")]
-        [Tooltip("segments height")]
+        [Obsolete("segments height")]
         public int SegmentsHeight = defSegmentsHeight;
         public bool ShouldSerializeSegmentsHeight()
         {
-            // segmentsHeight
-            return (SegmentsHeight != defSegmentsHeight);
+            return false; // deprecated in json schema
         }
 
         private static int defSegmentsWidth = 1;
         [JsonProperty(PropertyName = "segmentsWidth")]
-        [Tooltip("segments width")]
+        [Obsolete("segments width")]
         public int SegmentsWidth = defSegmentsWidth;
         public bool ShouldSerializeSegmentsWidth()
         {
-            // segmentsWidth
-            return (SegmentsWidth != defSegmentsWidth);
+            return false; // deprecated in json schema
         }
 
         private static float defWidth = 1f;
         [JsonProperty(PropertyName = "width")]
-        [Tooltip("width")]
+        [Obsolete("width")]
         public float Width = defWidth;
         public bool ShouldSerializeWidth()
         {
-            return true; // required in json schema
+            return false; // deprecated in json schema
         }
 
         // General json object management

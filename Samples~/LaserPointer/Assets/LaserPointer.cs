@@ -92,9 +92,9 @@ public class LaserPointer : MonoBehaviour
         var data1 = new ArenaDataJson
         {
             object_type = "sphere",
-            position = end,
-            scale = ArenaUnity.ArenaUnity.ToArenaScale(_targetScale),
-            material = new ArenaMaterialJson
+            Position = end,
+            Scale = ArenaUnity.ArenaUnity.ToArenaScale(_targetScale),
+            Material = new ArenaMaterialJson
             {
                 Color = ArenaUnity.ArenaUnity.ToArenaColor(_laserColor),
             },

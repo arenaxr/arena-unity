@@ -58,9 +58,9 @@ namespace ArenaUnity
                 ArenaDataJson data = new ArenaDataJson
                 {
                     object_type = object_type,
-                    url = object_url,
-                    rotation = ArenaUnity.ToArenaRotationQuat(rotOut), // always send quaternions over the wire
-                    position = ArenaUnity.ToArenaPosition(cameraPoint),
+                    Url = object_url,
+                    Rotation = ArenaUnity.ToArenaRotationQuat(rotOut), // always send quaternions over the wire
+                    Position = ArenaUnity.ToArenaPosition(cameraPoint),
                 };
                 msg.data = data;
                 string payload = JsonConvert.SerializeObject(msg);

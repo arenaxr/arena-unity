@@ -105,14 +105,13 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
-        private static ArenaLightJson defLight = null;
+        private static object defLight = null;
         [JsonProperty(PropertyName = "light")]
-        [Tooltip("light")]
-        public ArenaLightJson Light = defLight;
+        [Obsolete("DEPRECATED: data.light.[property] is deprecated, use object_type: light and data.[property] instead.")]
+        public object Light = defLight;
         public bool ShouldSerializeLight()
         {
-            // light
-            return (Light != defLight);
+            return false; // deprecated in json schema
         }
 
         private static float defPenumbra = 0f;

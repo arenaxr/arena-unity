@@ -29,7 +29,7 @@ namespace ArenaUnity.Schemas
 
         private static object defGeometry = JsonConvert.DeserializeObject("");
         [JsonProperty(PropertyName = "geometry")]
-        [Tooltip("geometry")]
+        [Tooltip("The primitive mesh geometry.")]
         public object Geometry = defGeometry;
         public bool ShouldSerializeGeometry()
         {
