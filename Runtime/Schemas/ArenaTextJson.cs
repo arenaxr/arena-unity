@@ -251,7 +251,7 @@ namespace ArenaUnity.Schemas
         private static string defText = null;
         [JsonProperty(PropertyName = "text")]
         [Obsolete("DEPRECATED: data.text is deprecated for object_type: text, use data.value instead.")]
-        public string Text = defText;
+        public string Text { get; protected set; } = defText;
         public bool ShouldSerializeText()
         {
             return false; // deprecated in json schema

@@ -18,11 +18,16 @@ using UnityEngine;
 namespace ArenaUnity.Schemas
 {
     /// <summary>
-    /// The data object .
+    /// Wraps all attributes in JSON.
     /// </summary>
     [Serializable]
     public class ArenaDataJson
     {
+        [JsonIgnore]
+        public readonly string componentName = "data";
+
+        // data member-fields
+
         [JsonProperty(PropertyName = "object_type")]
         [Tooltip("3D object type.")]
         public string object_type = null;
@@ -30,8 +35,6 @@ namespace ArenaUnity.Schemas
         {
             return (object_type != null);
         }
-
-        // data member-fields
 
         private static string defParent = null;
         [JsonProperty(PropertyName = "parent")]
@@ -303,7 +306,7 @@ namespace ArenaUnity.Schemas
             return (RemoteRender != defRemoteRender);
         }
 
-        private static ArenaVideoControlJson defVideoControl = null;
+        private static object defVideoControl = null;
         [JsonProperty(PropertyName = "video-control")]
         [Tooltip("Adds a video to an entity and controls its playback.")]
         public ArenaVideoControlJson VideoControl = defVideoControl;
@@ -356,7 +359,7 @@ namespace ArenaUnity.Schemas
         private static string defColor = null;
         [JsonProperty(PropertyName = "color")]
         [Obsolete("DEPRECATED: data.color is deprecated for primitive geometry, use data.material.color instead.")]
-        public string Color = defColor;
+        public string Color { get; protected set; } = defColor;
         public bool ShouldSerializeColor()
         {
             return false; // deprecated in json schema
@@ -482,7 +485,7 @@ namespace ArenaUnity.Schemas
         private static object defLight = null;
         [JsonProperty(PropertyName = "light")]
         [Obsolete("DEPRECATED: data.light.[property] is deprecated, use object_type: light and data.[property] instead.")]
-        public object Light = defLight;
+        public object Light { get; protected set; } = defLight;
         public bool ShouldSerializeLight()
         {
             return false; // deprecated in json schema

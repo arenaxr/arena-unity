@@ -1217,7 +1217,6 @@ namespace ArenaUnity
                     Debug.LogError($"Filestore login failed!");
                     yield break;
                 }
-                ;
             }
 
             // determine if we should update the local position

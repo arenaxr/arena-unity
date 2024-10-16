@@ -108,7 +108,7 @@ namespace ArenaUnity.Schemas
         private static object defLight = null;
         [JsonProperty(PropertyName = "light")]
         [Obsolete("DEPRECATED: data.light.[property] is deprecated, use object_type: light and data.[property] instead.")]
-        public object Light = defLight;
+        public object Light { get; protected set; } = defLight;
         public bool ShouldSerializeLight()
         {
             return false; // deprecated in json schema

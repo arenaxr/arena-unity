@@ -30,7 +30,7 @@ namespace ArenaUnity.Schemas
         private static float defDepth = 1f;
         [JsonProperty(PropertyName = "depth")]
         [Obsolete("depth")]
-        public float Depth = defDepth;
+        public float Depth { get; protected set; } = defDepth;
         public bool ShouldSerializeDepth()
         {
             return false; // deprecated in json schema
@@ -39,7 +39,7 @@ namespace ArenaUnity.Schemas
         private static float defHeight = 1f;
         [JsonProperty(PropertyName = "height")]
         [Obsolete("height")]
-        public float Height = defHeight;
+        public float Height { get; protected set; } = defHeight;
         public bool ShouldSerializeHeight()
         {
             return false; // deprecated in json schema
@@ -48,7 +48,7 @@ namespace ArenaUnity.Schemas
         private static int defSegmentsDepth = 1;
         [JsonProperty(PropertyName = "segmentsDepth")]
         [Obsolete("segments depth")]
-        public int SegmentsDepth = defSegmentsDepth;
+        public int SegmentsDepth { get; protected set; } = defSegmentsDepth;
         public bool ShouldSerializeSegmentsDepth()
         {
             return false; // deprecated in json schema
@@ -57,7 +57,7 @@ namespace ArenaUnity.Schemas
         private static int defSegmentsHeight = 1;
         [JsonProperty(PropertyName = "segmentsHeight")]
         [Obsolete("segments height")]
-        public int SegmentsHeight = defSegmentsHeight;
+        public int SegmentsHeight { get; protected set; } = defSegmentsHeight;
         public bool ShouldSerializeSegmentsHeight()
         {
             return false; // deprecated in json schema
@@ -66,7 +66,7 @@ namespace ArenaUnity.Schemas
         private static int defSegmentsWidth = 1;
         [JsonProperty(PropertyName = "segmentsWidth")]
         [Obsolete("segments width")]
-        public int SegmentsWidth = defSegmentsWidth;
+        public int SegmentsWidth { get; protected set; } = defSegmentsWidth;
         public bool ShouldSerializeSegmentsWidth()
         {
             return false; // deprecated in json schema
@@ -75,7 +75,7 @@ namespace ArenaUnity.Schemas
         private static float defWidth = 1f;
         [JsonProperty(PropertyName = "width")]
         [Obsolete("width")]
-        public float Width = defWidth;
+        public float Width { get; protected set; } = defWidth;
         public bool ShouldSerializeWidth()
         {
             return false; // deprecated in json schema
