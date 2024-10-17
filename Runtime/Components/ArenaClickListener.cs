@@ -112,9 +112,9 @@ namespace ArenaUnity.Components
 
             ArenaEventJson data = new ArenaEventJson
             {
-                ClickPos = ArenaUnity.ToArenaPosition(camPosition),
-                Position = ArenaUnity.ToArenaPosition(hit.point),
-                Source = camName,
+                OriginPosition = ArenaUnity.ToArenaPosition(camPosition),
+                TargetPosition = ArenaUnity.ToArenaPosition(hit.point),
+                Target = camName,
             };
             string payload = JsonConvert.SerializeObject(data);
             if (ArenaClientScene.Instance)

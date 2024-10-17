@@ -28,32 +28,59 @@ namespace ArenaUnity.Schemas
 
         // event member-fields
 
+        private static string defTarget = null;
+        [JsonProperty(PropertyName = "target")]
+        [Tooltip("The `object_id` of event destination.")]
+        public string Target = defTarget;
+        public bool ShouldSerializeTarget()
+        {
+            return true; // required in json schema
+        }
+
+        private static ArenaVector3Json defTargetPosition = null;
+        [JsonProperty(PropertyName = "targetPosition")]
+        [Tooltip("The event destination position in 3D.")]
+        public ArenaVector3Json TargetPosition = defTargetPosition;
+        public bool ShouldSerializeTargetPosition()
+        {
+            return true; // required in json schema
+        }
+
+        private static ArenaVector3Json defOriginPosition = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1.6, 'z': 0}");
+        [JsonProperty(PropertyName = "originPosition")]
+        [Tooltip("The event origination position in 3D.")]
+        public ArenaVector3Json OriginPosition = defOriginPosition;
+        public bool ShouldSerializeOriginPosition()
+        {
+            // originPosition
+            return (OriginPosition != defOriginPosition);
+        }
+
         private static string defSource = null;
         [JsonProperty(PropertyName = "source")]
-        [Tooltip("The `object_id` of event origination. e.g camera or client program connection id.")]
-        public string Source = defSource;
+        [Obsolete("DEPRECATED: data.source is deprecated for clientEvent, use data.target instead.")]
+        public string Source { get; protected set; } = defSource;
         public bool ShouldSerializeSource()
         {
-            return true; // required in json schema
+            return false; // deprecated in json schema
         }
 
-        private static ArenaVector3Json defPosition = null;
+        private static object defPosition = null;
         [JsonProperty(PropertyName = "position")]
-        [Tooltip("The event destination position in 3D.")]
-        public ArenaVector3Json Position = defPosition;
+        [Obsolete("DEPRECATED: data.position is deprecated for clientEvent, use data.targetPosition instead.")]
+        public object Position { get; protected set; } = defPosition;
         public bool ShouldSerializePosition()
         {
-            return true; // required in json schema
+            return false; // deprecated in json schema
         }
 
-        private static ArenaVector3Json defClickPos = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1.6, 'z': 0}");
+        private static object defClickPos = null;
         [JsonProperty(PropertyName = "clickPos")]
-        [Tooltip("The event origination position in 3D.")]
-        public ArenaVector3Json ClickPos = defClickPos;
+        [Obsolete("DEPRECATED: data.clickPos is deprecated for clientEvent, use data.originPosition instead.")]
+        public object ClickPos { get; protected set; } = defClickPos;
         public bool ShouldSerializeClickPos()
         {
-            // clickPos
-            return (ClickPos != defClickPos);
+            return false; // deprecated in json schema
         }
 
         // General json object management

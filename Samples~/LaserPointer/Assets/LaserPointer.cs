@@ -47,8 +47,8 @@ public class LaserPointer : MonoBehaviour
         ArenaObjectJson m = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
         ArenaEventJson evt = JsonConvert.DeserializeObject<ArenaEventJson>(m.data.ToString());
 
-        ArenaVector3Json start = evt.ClickPos;
-        ArenaVector3Json end = evt.Position;
+        ArenaVector3Json start = evt.OriginPosition;
+        ArenaVector3Json end = evt.TargetPosition;
         start.Y = (float)start.Y - .1f; // lower position for visibility
 
         // laser

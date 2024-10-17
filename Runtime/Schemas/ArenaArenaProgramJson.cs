@@ -30,7 +30,7 @@ namespace ArenaUnity.Schemas
 
         private static string defName = null;
         [JsonProperty(PropertyName = "name")]
-        [Tooltip("Name of the program in the format namespace/program-name.")]
+        [Tooltip("Name of the program.")]
         public string Name = defName;
         public bool ShouldSerializeName()
         {
@@ -72,11 +72,29 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
+        private static string defFile = null;
+        [JsonProperty(PropertyName = "file")]
+        [Tooltip("The path to a `.wasm` file (e.g. `counter.wasm`, `user1/counter.wasm`) in the ARENA filestore, starting from the location field indicated below. See location. Example: user1/py/counter/counter.py should have file: `counter.py` and location: `user1/py/counter`. Note that the runtime will download all files in parent folder (e.g. you can add a requirements.txt)")]
+        public string File = defFile;
+        public bool ShouldSerializeFile()
+        {
+            return true; // required in json schema
+        }
+
         private static string defFilename = null;
         [JsonProperty(PropertyName = "filename")]
-        [Tooltip("Filename of the entry binary.")]
-        public string Filename = defFilename;
+        [Obsolete("DEPRECATED: data.filename is deprecated for type: program, use data.file and data.location instead.")]
+        public string Filename { get; protected set; } = defFilename;
         public bool ShouldSerializeFilename()
+        {
+            return false; // deprecated in json schema
+        }
+
+        private static string defLocation = null;
+        [JsonProperty(PropertyName = "location")]
+        [Tooltip("Filestore path starting at user home; Example: `user1/hello` for a program inside folder `hello` of user1. Should, at least be the user filesore home folder.")]
+        public string Location = defLocation;
+        public bool ShouldSerializeLocation()
         {
             return true; // required in json schema
         }
@@ -98,10 +116,16 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
-        private static string defParent = "pytest";
+        public enum ParentType
+        {
+            [EnumMember(Value = "arena-rt1")]
+            ArenaRt1,
+        }
+        private static ParentType defParent = ParentType.ArenaRt1;
+        [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(PropertyName = "parent")]
-        [Tooltip("Request the orchestrator to deploy to this runtime (can be a runtime name or UUID); usually left blank.")]
-        public string Parent = defParent;
+        [Tooltip("Request the orchestrator to deploy to this runtime (can be a runtime name or UUID); Temporarily must be arena-rt1.")]
+        public ParentType Parent = defParent;
         public bool ShouldSerializeParent()
         {
             return true; // required in json schema
@@ -109,7 +133,7 @@ namespace ArenaUnity.Schemas
 
         private static string[] defArgs = null;
         [JsonProperty(PropertyName = "args")]
-        [Tooltip("Command-line arguments (passed in argv). Supports variables: ${scene}, ${mqtth}, ${cameraid}, ${username}, ${runtimeid}, ${moduleid}, ${query-string-key}.")]
+        [Tooltip("Command-line arguments (passed in argv). Supports variables: ${scene}, ${mqtth}, ${userid}, ${username}, ${runtimeid}, ${moduleid}, ${query-string-key}.")]
         public string[] Args = defArgs;
         public bool ShouldSerializeArgs()
         {
@@ -119,14 +143,14 @@ namespace ArenaUnity.Schemas
 
         private static string[] defEnv = { "MID=${moduleid}", "SCENE=${scene}", "NAMESPACE=${namespace}", "MQTTH=${mqtth}", "REALM=realm" };
         [JsonProperty(PropertyName = "env")]
-        [Tooltip("Environment variables. Supports variables: ${scene}, ${namespace}, ${mqtth}, ${cameraid}, ${username}, ${runtimeid}, ${moduleid}, ${query-string-key}.")]
+        [Tooltip("Environment variables. Supports variables: ${scene}, ${namespace}, ${mqtth}, ${userid}, ${username}, ${runtimeid}, ${moduleid}, ${query-string-key}.")]
         public string[] Env = defEnv;
         public bool ShouldSerializeEnv()
         {
             return true; // required in json schema
         }
 
-        private static object[] defChannels = { JsonConvert.DeserializeObject("{'path': '/ch/${scene}', 'type': 'pubsub', 'mode': 'rw', 'params': {'topic': 'realm/s/${scene}'}}") };
+        private static object[] defChannels = { JsonConvert.DeserializeObject("{'path': '/ch/${scene}', 'type': 'pubsub', 'mode': 'rw', 'params': {'topic': 'realm/s/${scene}/${namespace}'}}") };
         [JsonProperty(PropertyName = "channels")]
         [Tooltip("Channels describe files representing access to IO from pubsub and client sockets (possibly more in the future; currently only supported for WASM programs).")]
         public object[] Channels = defChannels;
