@@ -2,6 +2,22 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.0.0](https://github.com/arenaxr/arena-unity/compare/v0.14.0...v1.0.0) (2024-10-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* Refactored topic structure for more granular flow and access ([#107](https://github.com/arenaxr/arena-unity/issues/107))
+
+### Features
+
+* Refactored topic structure for more granular flow and access ([#107](https://github.com/arenaxr/arena-unity/issues/107)) ([16ff39f](https://github.com/arenaxr/arena-unity/commit/16ff39ffbec73979de762fa51c6e097c0cbf4ea0))
+
+
+### Bug Fixes
+
+* **json:** prevent user editing of deprecated fields ([022b3cb](https://github.com/arenaxr/arena-unity/commit/022b3cbf05d7dc6a06a9a0cd70c22868ccbbd647))
+
 ## [0.14.0](https://github.com/arenaxr/arena-unity/compare/v0.13.0...v0.14.0) (2024-08-09)
 
 
