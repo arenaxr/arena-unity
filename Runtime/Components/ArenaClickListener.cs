@@ -114,11 +114,11 @@ namespace ArenaUnity.Components
             {
                 OriginPosition = ArenaUnity.ToArenaPosition(camPosition),
                 TargetPosition = ArenaUnity.ToArenaPosition(hit.point),
-                Target = camName,
+                Target = name,
             };
-            string payload = JsonConvert.SerializeObject(data);
+            string clientEventData = JsonConvert.SerializeObject(data);
             if (ArenaClientScene.Instance)
-                ArenaClientScene.Instance.PublishEvent(name, eventType, camName, payload);
+                ArenaClientScene.Instance.PublishEvent(eventType, camName, clientEventData);
         }
 
         protected override void ApplyRender()

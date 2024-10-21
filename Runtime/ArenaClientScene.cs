@@ -1321,11 +1321,11 @@ namespace ArenaUnity
         /// <summary>
         /// Camera events are published using a ObjectId-only topic, a user might only have permissions for their camid.
         /// </summary>
-        public void PublishEvent(string object_id, string eventType, string source, string msgJsonData, bool hasPermissions = true)
+        public void PublishEvent(string eventType, string source, string msgJsonData, bool hasPermissions = true)
         {
             ArenaObjectJson msg = new ArenaObjectJson
             {
-                object_id = object_id,
+                object_id = source,
                 action = "clientEvent",
                 type = eventType,
                 data = JsonConvert.DeserializeObject(msgJsonData),
@@ -1435,60 +1435,59 @@ namespace ArenaUnity
         {
             CoroutineWithData cd;
             // consume object updates
-            if (!localCameraIds.Contains((string)msg.object_id))
+            string object_id;
+            switch ((string)msg.action)
             {
-                string object_id;
-                switch ((string)msg.action)
-                {
-                    case "create":
-                    case "update":
-                        object_id = (string)msg.object_id;
-                        string msg_type = (string)msg.type;
-                        float ttl = (msg.ttl != null) ? (float)msg.ttl : 0f;
-                        bool persist = Convert.ToBoolean(msg.persist);
+                case "create":
+                case "update":
+                    object_id = (string)msg.object_id;
+                    string msg_type = (string)msg.type;
+                    float ttl = (msg.ttl != null) ? (float)msg.ttl : 0f;
+                    bool persist = Convert.ToBoolean(msg.persist);
 
-                        IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
-                        foreach (var uri in uris)
+                    IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
+                    foreach (var uri in uris)
+                    {
+                        if (!string.IsNullOrWhiteSpace(uri))
                         {
-                            if (!string.IsNullOrWhiteSpace(uri))
-                            {
-                                cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
-                                yield return cd.coroutine;
-                            }
+                            cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
+                            yield return cd.coroutine;
                         }
-                        CreateUpdateObject(msg, msg.data, menuCommand);
-                        break;
-                    case "delete":
-                        object_id = (string)msg.object_id;
-                        RemoveObject(object_id);
-                        // camera special case, look for hands to delete
-                        if (object_id.StartsWith(prefixCam))
-                        {
-                            string hand_left_id = $"{prefixHandL}{object_id.Substring(prefixCam.Length)}";
-                            string hand_right_id = $"{prefixHandR}{object_id.Substring(prefixCam.Length)}";
-                            RemoveObject(hand_left_id);
-                            RemoveObject(hand_right_id);
-                        }
-                        break;
-                    case "clientEvent":
-                        object_id = (string)msg.object_id;
-                        msg_type = (string)msg.type;
-                        ClientEventOnObject(object_id, msg_type, JsonConvert.SerializeObject(msg));
-                        break;
-                    default:
-                        break;
-                }
-                yield break;
+                    }
+                    CreateUpdateObject(msg, msg.data, menuCommand);
+                    break;
+                case "delete":
+                    object_id = (string)msg.object_id;
+                    RemoveObject(object_id);
+                    // camera special case, look for hands to delete
+                    if (object_id.StartsWith(prefixCam))
+                    {
+                        string hand_left_id = $"{prefixHandL}{object_id.Substring(prefixCam.Length)}";
+                        string hand_right_id = $"{prefixHandR}{object_id.Substring(prefixCam.Length)}";
+                        RemoveObject(hand_left_id);
+                        RemoveObject(hand_right_id);
+                    }
+                    break;
+                case "clientEvent":
+                    ClientEventOnObject(msg);
+                    break;
+                default:
+                    break;
             }
+            yield break;
         }
 
-        private void ClientEventOnObject(string object_id, string msg_type, string msg)
+        private void ClientEventOnObject(ArenaObjectJson msg)
         {
-            if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
+            var object_id = (string)msg.object_id;
+            var msg_type = (string)msg.type;
+            ArenaEventJson evt = JsonConvert.DeserializeObject<ArenaEventJson>(msg.data.ToString());
+            var target = evt.Target;
+            if (arenaObjs.TryGetValue(target, out GameObject gobj))
             {
                 // pass event on to click-listener is defined
                 ArenaClickListener acl = gobj.GetComponent<ArenaClickListener>();
-                if (acl != null && acl.OnEventCallback != null) acl.OnEventCallback(msg_type, msg);
+                if (acl != null && acl.OnEventCallback != null) acl.OnEventCallback(msg_type, JsonConvert.SerializeObject(msg));
             }
         }
 
