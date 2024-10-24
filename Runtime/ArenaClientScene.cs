@@ -103,7 +103,6 @@ namespace ArenaUnity
         public string originalName { get; private set; }
 
         static string importPath = null;
-        const string prefixCam = "camera_";
         const string prefixHandL = "handLeft_";
         const string prefixHandR = "handRight_";
         static readonly List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
@@ -1470,8 +1469,8 @@ namespace ArenaUnity
                     object_id = (string)msg.object_id;
                     RemoveObject(object_id);
                     // camera special case, look for hands to delete
-                    string hand_left_id = $"{prefixHandL}{object_id.Substring(prefixCam.Length)}";
-                    string hand_right_id = $"{prefixHandR}{object_id.Substring(prefixCam.Length)}";
+                    string hand_left_id = $"{prefixHandL}{object_id}";
+                    string hand_right_id = $"{prefixHandR}{object_id}";
                     RemoveObject(hand_left_id);
                     RemoveObject(hand_right_id);
                     break;
