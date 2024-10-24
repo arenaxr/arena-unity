@@ -1086,18 +1086,26 @@ namespace ArenaUnity
 
         private void RemoveObject(string object_id)
         {
-            if (arenaObjs.TryGetValue(object_id, out GameObject gobj))
+            // try to get internal list ref
+            if (!arenaObjs.TryGetValue(object_id, out GameObject gobj))
             {
-                // recursively remove children if any
-                foreach (Transform child in gobj.transform)
-                {
-                    RemoveObject(child.name);
-                }
-                // remove this
-                ArenaObject aobj = gobj.GetComponent<ArenaObject>();
-                aobj.externalDelete = true;
-                Destroy(gobj);
+                // try to get go ref
+                gobj = GameObject.Find(object_id);
             }
+            if (gobj == null) return;
+
+            // recursively remove children if any of go
+            foreach (Transform child in gobj.transform)
+            {
+                RemoveObject(child.name);
+            }
+            // remove go
+            if (gobj.TryGetComponent<ArenaObject>(out var aobj))
+            {
+                aobj.externalDelete = true;
+            }
+            Destroy(gobj);
+            // remove internal list ref
             arenaObjs.Remove(object_id);
         }
 
@@ -1409,8 +1417,6 @@ namespace ArenaUnity
                 switch (sceneMsgType)
                 {
                     case "x":
-                        // TODO (mwfarb): add handler
-                        break;
                     case "u":
                     case "o":
                         // handle scene objects, user objects, user presense
@@ -1459,14 +1465,15 @@ namespace ArenaUnity
                 case "delete":
                     object_id = (string)msg.object_id;
                     RemoveObject(object_id);
+                    break;
+                case "leave":
+                    object_id = (string)msg.object_id;
+                    RemoveObject(object_id);
                     // camera special case, look for hands to delete
-                    if (object_id.StartsWith(prefixCam))
-                    {
-                        string hand_left_id = $"{prefixHandL}{object_id.Substring(prefixCam.Length)}";
-                        string hand_right_id = $"{prefixHandR}{object_id.Substring(prefixCam.Length)}";
-                        RemoveObject(hand_left_id);
-                        RemoveObject(hand_right_id);
-                    }
+                    string hand_left_id = $"{prefixHandL}{object_id.Substring(prefixCam.Length)}";
+                    string hand_right_id = $"{prefixHandR}{object_id.Substring(prefixCam.Length)}";
+                    RemoveObject(hand_left_id);
+                    RemoveObject(hand_right_id);
                     break;
                 case "clientEvent":
                     ClientEventOnObject(msg);
