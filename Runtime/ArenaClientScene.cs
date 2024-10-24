@@ -23,6 +23,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
+using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace ArenaUnity
 {
@@ -1372,15 +1373,29 @@ namespace ArenaUnity
         protected override void OnConnected()
         {
             base.OnConnected();
+            name = $"{originalName} (MQTT Connected)";
             var subTopic = new ArenaTopics(
                 realm: realm,
                 name_space: namespaceName,
                 scenename: sceneName,
                 idtag: userid
             );
-            string[] topics = new string[] { subTopic.SUB_SCENE_PUBLIC, subTopic.SUB_SCENE_PRIVATE };
-            Subscribe(topics);
-            name = $"{originalName} (MQTT Connected)";
+            client.MqttMsgSubscribed += OnSubscribed;
+            Subscribe(subTopic.SUB_SCENE_PUBLIC);
+            Subscribe(subTopic.SUB_SCENE_PRIVATE);
+        }
+
+        private void OnSubscribed(object sender, MqttMsgSubscribedEventArgs e)
+        {
+            var validQos = new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE };
+            if (e.GrantedQoSLevels.Any(el => validQos.Contains(el)))
+            {
+                Debug.Log($"Subscribed to: {subscriptions[e.MessageId]}");
+            }
+            else
+            {
+                Debug.LogWarning($"Subscribed FAILED to: {subscriptions[e.MessageId]}");
+            }
         }
 
         protected override void OnDisconnected()
@@ -1469,10 +1484,8 @@ namespace ArenaUnity
                     object_id = (string)msg.object_id;
                     RemoveObject(object_id);
                     // camera special case, look for hands to delete
-                    string hand_left_id = $"{prefixHandL}{object_id}";
-                    string hand_right_id = $"{prefixHandR}{object_id}";
-                    RemoveObject(hand_left_id);
-                    RemoveObject(hand_right_id);
+                    RemoveObject($"{prefixHandL}{object_id}");
+                    RemoveObject($"{prefixHandR}{object_id}");
                     break;
                 case "clientEvent":
                     ClientEventOnObject(msg);

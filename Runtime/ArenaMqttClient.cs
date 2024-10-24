@@ -77,6 +77,7 @@ namespace ArenaUnity
         public bool IsShuttingDown { get; internal set; }
 
         private List<byte[]> eventMessages = new List<byte[]>();
+        protected Dictionary<ushort, string> subscriptions = new Dictionary<ushort, string>();
 
         // MQTT methods
 
@@ -141,36 +142,18 @@ namespace ArenaUnity
             if (client != null) client.Publish(topic, payload);
         }
 
-        public void Subscribe(string[] topics)
+        public void Subscribe(string topic)
         {
             if (client != null)
             {
-                var qosLevels = new byte[topics.Length];
-                Array.Fill(qosLevels, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE);
-                client.Subscribe(topics, qosLevels);
-                ArenaMqttTokenClaimsJson perms = JsonConvert.DeserializeObject<ArenaMqttTokenClaimsJson>(permissions);
-                foreach (string topic in topics)
-                {
-                    bool subscribePermission = false;
-                    foreach (string subperm in perms.subs)
-                    {
-                        if (MqttTopicMatch(subperm, topic)) subscribePermission = true;
-                    }
-                    if (subscribePermission)
-                    {
-                        Debug.Log($"Subscribed to : {topic}");
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Subscribed FAILED to : {topic}");
-                    }
-                }
+                var mid = client.Subscribe(new string[] { topic }, new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
+                subscriptions[mid] = topic;
             }
         }
 
         public void Unsubscribe(string[] topics)
         {
-            if (client != null) client.Unsubscribe(topics);
+            if (client != null) { client.Unsubscribe(topics); }
         }
 
         protected void OnDestroy()

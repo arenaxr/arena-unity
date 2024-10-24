@@ -49,7 +49,10 @@ public class LaserPointer : MonoBehaviour
 
         ArenaVector3Json start = evt.OriginPosition;
         ArenaVector3Json end = evt.TargetPosition;
-        start.Y = (float)start.Y - .1f; // lower position for visibility
+        // lower position for visibility
+        start.X = (float)start.X - .1f;
+        start.Y = (float)start.Y - .1f;
+        start.Z = (float)start.Z + .1f;
 
         // laser
         ArenaObjectJson msg = new ArenaObjectJson
