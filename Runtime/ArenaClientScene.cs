@@ -842,9 +842,6 @@ namespace ArenaUnity
                             ArenaUnity.ApplyWireLight(data.Light, gobj);
                         }
                         break;
-                    case "src":
-                        Debug.LogWarning($"data.src is deprecated for object-id: {msg.object_id}, for many object_types, use data.url instead.");
-                        break;
                     case "text":
                         if (object_type == "text")
                         {
