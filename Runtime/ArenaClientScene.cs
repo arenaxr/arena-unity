@@ -1326,6 +1326,12 @@ namespace ArenaUnity
             PublishSceneMessage(camTopic.PUB_SCENE_USER, msg, hasPermissions);
         }
 
+        [Obsolete("PublishEvent message signature has changed. Instreand of object_id, include data.target in msgJsonData.")]
+        public void PublishEvent(string object_id, string eventType, string source, string msgJsonData, bool hasPermissions = true)
+        {
+            PublishEvent(eventType, source, msgJsonData, hasPermissions);
+        }
+
         /// <summary>
         /// Camera events are published using a ObjectId-only topic, a user might only have permissions for their camid.
         /// </summary>
