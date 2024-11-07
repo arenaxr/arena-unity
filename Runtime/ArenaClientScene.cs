@@ -274,8 +274,8 @@ namespace ArenaUnity
                         Debug.LogWarning($"Using more than one ArenaCamera requires full scene permissions. Only one camera will be published.");
                     }
                     var random = UnityEngine.Random.Range(0, 100000000);
-                    cam.userid = $"{random:D8}_unity";
-                    cam.camid = $"unpublished-{random:D8}_unity";
+                    cam.userid = $"unpublished-unity_{random:D8}";
+                    cam.camid = $"cam-unpublished-unity_{random:D8}";
                 }
                 var camTopic = new ArenaTopics(
                     realm: realm,
