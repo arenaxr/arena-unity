@@ -239,6 +239,7 @@ namespace ArenaUnity
                     realm: realm,
                     name_space: namespaceName,
                     scenename: sceneName,
+                    userclient: userclient,
                     idtag: userid,
                     userobj: camid
                 );
@@ -280,6 +281,7 @@ namespace ArenaUnity
                     realm: realm,
                     name_space: namespaceName,
                     scenename: sceneName,
+                    userclient: userclient,
                     idtag: cam.userid,
                     userobj: cam.camid
                 );
