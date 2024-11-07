@@ -110,6 +110,7 @@ namespace ArenaUnity
         static readonly string[] msgUriTags = { "url", "src", "obj", "mtl", "overrideSrc", "detailedUrl", "headModelPath", "texture", "navMesh" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
+        private int msgTypeRenderIdx = (int)ArenaTopicTokens.SCENE_MSGTYPE;
         static readonly string[] requiredShadersStandardRP = {
             "Standard",
             "Unlit/Color",
@@ -238,6 +239,7 @@ namespace ArenaUnity
                     realm: realm,
                     name_space: namespaceName,
                     scenename: sceneName,
+                    userclient: userclient,
                     idtag: userid,
                     userobj: camid
                 );
@@ -272,13 +274,14 @@ namespace ArenaUnity
                         Debug.LogWarning($"Using more than one ArenaCamera requires full scene permissions. Only one camera will be published.");
                     }
                     var random = UnityEngine.Random.Range(0, 100000000);
-                    cam.userid = $"{random:D8}_unity";
-                    cam.camid = $"unpublished-{random:D8}_unity";
+                    cam.userid = $"unpublished-unity_{random:D8}";
+                    cam.camid = $"cam-unpublished-unity_{random:D8}";
                 }
                 var camTopic = new ArenaTopics(
                     realm: realm,
                     name_space: namespaceName,
                     scenename: sceneName,
+                    userclient: userclient,
                     idtag: cam.userid,
                     userobj: cam.camid
                 );
@@ -1302,6 +1305,7 @@ namespace ArenaUnity
                 realm: sceneTopic.REALM,
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
+                userclient: userclient,
                 objectid: object_id
             );
             PublishSceneMessage(objTopic.PUB_SCENE_OBJECTS, msg, hasPermissions);
@@ -1318,6 +1322,7 @@ namespace ArenaUnity
                 realm: sceneTopic.REALM,
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
+                userclient: userclient,
                 userobj: object_id
             );
             PublishSceneMessage(camTopic.PUB_SCENE_USER, msg, hasPermissions);
@@ -1346,6 +1351,7 @@ namespace ArenaUnity
                 realm: sceneTopic.REALM,
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
+                userclient: userclient,
                 userobj: source
             );
             PublishSceneMessage(evtTopic.PUB_SCENE_USER, msg, hasPermissions);
@@ -1362,7 +1368,7 @@ namespace ArenaUnity
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
             Publish(topic, payload); // remote
             var topicSplit = topic.Split("/");
-            if (topicSplit.Length > 4)
+            if (topicSplit.Length > msgTypeRenderIdx)
             {
                 LogMessage("Sending", topicSplit[4], topic, JsonConvert.SerializeObject(msg), hasPermissions);
             }
@@ -1425,11 +1431,12 @@ namespace ArenaUnity
 
             // TODO (mwfarb): perform any message validation here based on topic
 
+            // TODO (mwfarb): test that ignore own messages is still viable
             // filter messages based on expected payload format
             var topicSplit = topic.Split("/");
-            if (topicSplit.Length > 4)
+            if (topicSplit.Length > msgTypeRenderIdx)
             {
-                var sceneMsgType = topicSplit[4];
+                var sceneMsgType = topicSplit[msgTypeRenderIdx];
                 LogMessage("Received", sceneMsgType, topic, message);
                 switch (sceneMsgType)
                 {

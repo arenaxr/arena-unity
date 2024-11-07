@@ -63,6 +63,7 @@ namespace ArenaUnity
         const string userSubDirUnity = "unity";
         public string appFilesPath { get; private set; }
         public string userid { get; private set; }
+        public string userclient { get; private set; }
         public string camid { get; private set; }
         public string networkLatencyTopic { get; private set; } // network graph latency update
         static readonly int networkLatencyIntervalMs = 10000; // run network latency update every 10s
@@ -325,6 +326,7 @@ namespace ArenaUnity
                 form.AddField("id_auth", tokenType);
                 form.AddField("username", userName);
                 // always request user-specific context, esp. for remote rendering
+                form.AddField("client", "unity");
                 form.AddField("userid", "true");
                 form.AddField("camid", "true");
                 if (!string.IsNullOrWhiteSpace(realm))
@@ -359,6 +361,7 @@ namespace ArenaUnity
                     yield break;
                 }
                 userid = auth.ids.userid;
+                userclient = auth.ids.userclient;
                 camid = auth.ids.camid;
 
                 // will message can only remove the primary user presence
@@ -366,6 +369,7 @@ namespace ArenaUnity
                     realm: realm,
                     name_space: namespaceName,
                     scenename: sceneName,
+                    userclient: userclient,
                     idtag: userid
                 );
                 willFlag = camera;
