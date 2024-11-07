@@ -19,7 +19,10 @@ namespace ArenaUnity
     public class ArenaMqttAuthIdsJson
     {
         public string userid { get; set; }
+        public string userclient { get; set; }
         public string camid { get; set; }
+        public string handleftid { get; set; }
+        public string handrightid { get; set; }
 
         // General json object management
         [OnError]
