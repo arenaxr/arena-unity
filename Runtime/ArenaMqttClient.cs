@@ -65,6 +65,8 @@ namespace ArenaUnity
         public string userid { get; private set; }
         public string userclient { get; private set; }
         public string camid { get; private set; }
+        public string handleftid { get; private set; }
+        public string handrightid { get; private set; }
         public string networkLatencyTopic { get; private set; } // network graph latency update
         static readonly int networkLatencyIntervalMs = 10000; // run network latency update every 10s
 
@@ -197,7 +199,7 @@ namespace ArenaUnity
             return Signin(null, null, null, false, null);
         }
 
-        private IEnumerator Signin(string sceneName, string namespaceName, string realm, bool camera, string latencyTopic)
+        private IEnumerator Signin(string sceneName, string namespaceName, string realm, bool hasArenaCamera, string latencyTopic)
         {
             networkLatencyTopic = latencyTopic;
             string sceneAuthDir = Path.Combine(GetUnityAuthPath(), hostAddress, "s");
@@ -350,19 +352,35 @@ namespace ArenaUnity
             }
 
             var auth = JsonConvert.DeserializeObject<ArenaMqttAuthJson>(mqttToken);
+            // validate received token
+            if (auth == null || auth.username == null || auth.token == null)
+            {
+                Debug.LogError("Missing required jwt auth!!!!");
+                yield break;
+            }
             mqttUserName = auth.username;
             mqttPassword = auth.token;
 
-            if (camera)
+            // validate userids
+            if (auth.ids == null || auth.ids.userid == null || auth.ids.userclient == null)
             {
-                if (auth == null || auth.ids == null || auth.ids.userid == null || auth.ids.camid == null)
+                Debug.LogError("Missing required user ids!!!!");
+                yield break;
+            }
+            userid = auth.ids.userid;
+            userclient = auth.ids.userclient;
+
+            // publishing cam/hands? then last will is required
+            if (hasArenaCamera)
+            {
+                if (auth.ids.camid == null)
                 {
-                    Debug.LogError("Missing required userid and camid!!!! Do not 'publish camera' if this is Manual auth.");
+                    Debug.LogError("Missing required camid!!!! Do not 'publish camera' if this is Manual auth.");
                     yield break;
                 }
-                userid = auth.ids.userid;
-                userclient = auth.ids.userclient;
                 camid = auth.ids.camid;
+                handleftid = auth.ids.handleftid;
+                handrightid = auth.ids.handrightid;
 
                 // will message can only remove the primary user presence
                 var lwtTopic = new ArenaTopics(
@@ -372,7 +390,7 @@ namespace ArenaUnity
                     userclient: userclient,
                     idtag: userid
                 );
-                willFlag = camera;
+                willFlag = hasArenaCamera;
                 willTopic = lwtTopic.PUB_SCENE_PRESENCE;
                 ArenaObjectJson msg = new ArenaObjectJson
                 {
