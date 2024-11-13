@@ -259,7 +259,7 @@ namespace ArenaUnity
             bool foundFirstCam = false;
             foreach (ArenaCamera cam in camlist)
             {
-                if ((cam.name == Camera.main.name || camlist.Length == 1) && !foundFirstCam)
+                if ((Camera.main != null && cam.name == Camera.main.name || camlist.Length == 1) && !foundFirstCam)
                 {
                     // publish main/selected camera
                     cam.userid = userid;
