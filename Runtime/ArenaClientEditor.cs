@@ -58,7 +58,7 @@ namespace ArenaUnity
                 {
                     GUILayout.BeginVertical("Box");
                     GUILayout.Label("Permissions");
-                    scrollPos = GUILayout.BeginScrollView(scrollPos, false, false);
+                    scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(Mathf.Infinity), GUILayout.Height(250));
                     GUILayout.Label(script.permissions);
                     GUILayout.EndScrollView();
                     GUILayout.EndVertical();
