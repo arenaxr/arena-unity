@@ -2,6 +2,14 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.0.1](https://github.com/arenaxr/arena-unity/compare/v1.0.0...v1.0.1) (2024-11-13)
+
+
+### Bug Fixes
+
+* fix crash when main camera is undefined ([3aa7cb5](https://github.com/arenaxr/arena-unity/commit/3aa7cb541d177875b8835533b0700e5a3c2e01c7))
+* update flexibilty of user id parsing from auth ([95a0f3e](https://github.com/arenaxr/arena-unity/commit/95a0f3e94e37542fc0c176e89930478f79d0983f))
+
 ## [1.0.0](https://github.com/arenaxr/arena-unity/compare/v0.14.0...v1.0.0) (2024-11-07)
 
 
