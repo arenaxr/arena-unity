@@ -20,8 +20,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TMPro;
 using UnityEditor;
-using UnityEditor.PackageManager;
-using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
@@ -36,29 +34,6 @@ namespace ArenaUnity
     [DisallowMultipleComponent]
     public class ArenaClientScene : ArenaMqttClient
     {
-        static ListRequest Request;
-
-        [MenuItem("Window/List Package Example")]
-        static void List()
-        {
-            Request = Client.List();    // List packages installed for the Project
-            EditorApplication.update += Progress;
-        }
-
-        static void Progress()
-        {
-            if (Request.IsCompleted)
-            {
-                if (Request.Status == StatusCode.Success)
-                    foreach (var package in Request.Result)
-                        Debug.Log("Package name: " + package.name);
-                else if (Request.Status >= StatusCode.Failure)
-                    Debug.Log(Request.Error.message);
-
-                EditorApplication.update -= Progress;
-            }
-        }
-
         // Singleton instance of this connection object
         public static ArenaClientScene Instance { get; private set; }
 
