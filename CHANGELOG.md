@@ -2,6 +2,13 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.0.2](https://github.com/arenaxr/arena-unity/compare/v1.0.1...v1.0.2) (2024-11-15)
+
+
+### Bug Fixes
+
+* **auth:** add requirement renderfusion perms when package manager installed ([#111](https://github.com/arenaxr/arena-unity/issues/111)) ([688c901](https://github.com/arenaxr/arena-unity/commit/688c901a77ae47694bc147b19a769397b13ceadf))
+
 ## [1.0.1](https://github.com/arenaxr/arena-unity/compare/v1.0.0...v1.0.1) (2024-11-13)
 
 
