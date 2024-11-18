@@ -2,6 +2,14 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.0.3](https://github.com/arenaxr/arena-unity/compare/v1.0.2...v1.0.3) (2024-11-18)
+
+
+### Bug Fixes
+
+* **auth:** add username ui, env perms request ([e1bb27d](https://github.com/arenaxr/arena-unity/commit/e1bb27df73d282aa571d961bd75861164a05d229))
+* **auth:** only auto-detect renderfusion in editor ([f5737ea](https://github.com/arenaxr/arena-unity/commit/f5737ead5dd6fd289e02226b96f4b231e923762b))
+
 ## [1.0.2](https://github.com/arenaxr/arena-unity/compare/v1.0.1...v1.0.2) (2024-11-15)
 
 
