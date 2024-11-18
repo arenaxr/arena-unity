@@ -51,6 +51,15 @@ namespace ArenaUnity
         /// </summary>
         public long mqttExpires { get; private set; }
 
+        /// <summary>
+        /// Manual request for remote render "r" rights, pending account allowances.
+        /// </summary>
+        public bool requestRemoteRenderRights { get; set; }
+        /// <summary>
+        /// Manual request for environment "e" rights, pending account allowances.
+        /// </summary>
+        public bool requestEnvironmentRights { get; set; }
+
         // internal variables
         private string idToken = null;
         protected string csrfToken = null;
@@ -66,6 +75,7 @@ namespace ArenaUnity
         private const string packageNameRenderFusion = "io.conix.arena.renderfusion";
 
         public string appFilesPath { get; private set; }
+        public string username { get; private set; }
         public string userid { get; private set; }
         public string userclient { get; private set; }
         public string camid { get; private set; }
@@ -253,14 +263,13 @@ namespace ArenaUnity
             else
             {
                 string tokenType = "";
-                string userName = "";
                 switch (authType)
                 {
                     case Auth.Anonymous:
                         // prefix all anon users with "anonymous-"
                         Debug.Log("Using anonymous MQTT token.");
                         tokenType = "anonymous";
-                        userName = $"anonymous-unity";
+                        username = $"anonymous-unity";
                         break;
                     case Auth.Google:
                         // get oauth app credentials
@@ -320,7 +329,7 @@ namespace ArenaUnity
                 authState = JsonConvert.DeserializeObject<ArenaUserStateJson>(cd.result.ToString());
                 if (authState.authenticated)
                 {
-                    userName = authState.username;
+                    username = authState.username;
                 }
                 if (string.IsNullOrWhiteSpace(namespaceName))
                 {
@@ -336,11 +345,14 @@ namespace ArenaUnity
 
                 // get arena user mqtt token
                 form.AddField("id_auth", tokenType);
-                form.AddField("username", userName);
-                // always request user-specific context, esp. for remote rendering
+                form.AddField("username", username);
+                // always request user-specific context
                 form.AddField("client", "unity");
                 form.AddField("userid", "true");
-                form.AddField("camid", "true");
+                if (hasArenaCamera)
+                {
+                    form.AddField("camid", "true");
+                }
                 if (!string.IsNullOrWhiteSpace(realm))
                 {
                     form.AddField("realm", realm);
@@ -350,16 +362,28 @@ namespace ArenaUnity
                 {
                     form.AddField("scene", $"{namespaceName}/{sceneName}");
                 }
+                // manual rights requests
+                if (requestRemoteRenderRights)
+                {
+                    form.AddField("renderfusionid", "true");
+                }
+                if (requestEnvironmentRights)
+                {
+                    form.AddField("environmentid", "true");
+                }
 #if UNITY_EDITOR
-                // test for render fusion, request permissions if so
+                // auto-test for render fusion, request permissions if so
                 if (packageListRequest.IsCompleted)
                 {
                     if (packageListRequest.Status == StatusCode.Success)
                         foreach (var package in packageListRequest.Result)
                             if (package.name == packageNameRenderFusion)
+                            {
                                 form.AddField("renderfusionid", "true");
-                            else if (packageListRequest.Status >= StatusCode.Failure)
-                                Debug.LogWarning(packageListRequest.Error.message);
+                                requestRemoteRenderRights = true; // for display purposes
+                            }
+                    else if (packageListRequest.Status >= StatusCode.Failure)
+                        Debug.LogWarning(packageListRequest.Error.message);
                 }
                 else
                 {

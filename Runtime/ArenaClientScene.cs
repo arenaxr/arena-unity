@@ -1445,14 +1445,13 @@ namespace ArenaUnity
                     case "o":
                         // handle scene objects, user objects, user presense
                         ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
-                        Debug.Log(message);
                         StartCoroutine(ProcessArenaMessage(msg));
                         break;
                     case "r": // remote render handled by arena-renderfusion package currently
                     case "c": // chat not implemented in unity currently
                     case "p": // program not implemented in unity currently
                     case "e": // environment not implemented in unity currently
-                    case "d": // debig not implemented in unity currently
+                    case "d": // debug not implemented in unity currently
                         break;
                     default:
                         // ????

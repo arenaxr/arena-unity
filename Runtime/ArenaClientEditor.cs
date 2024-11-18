@@ -41,37 +41,49 @@ namespace ArenaUnity
             DrawDefaultInspector();
 
             // add readonly auth results
+            GUILayout.Space(5f);
+            EditorGUILayout.LabelField("Authentication", EditorStyles.boldLabel);
+
+            if (!string.IsNullOrWhiteSpace(script.username))
+            {
+                GUILayout.BeginHorizontal("Box");
+                GUILayout.Label("Username");
+                GUILayout.FlexibleSpace();
+                GUILayout.Label(script.username);
+                GUILayout.EndHorizontal();
+            }
+            if (!string.IsNullOrWhiteSpace(script.email))
+            {
+                GUILayout.BeginHorizontal("Box");
+                GUILayout.Label("Email");
+                GUILayout.FlexibleSpace();
+                GUILayout.Label(script.email);
+                GUILayout.EndHorizontal();
+            }
             if (!string.IsNullOrWhiteSpace(script.permissions))
             {
-                GUILayout.Space(5f);
-                EditorGUILayout.LabelField("Authentication", EditorStyles.boldLabel);
-
-                if (!string.IsNullOrWhiteSpace(script.email))
-                {
-                    GUILayout.BeginHorizontal("Box");
-                    GUILayout.Label("Email");
-                    GUILayout.FlexibleSpace();
-                    GUILayout.Label(script.email);
-                    GUILayout.EndHorizontal();
-                }
-                if (!string.IsNullOrWhiteSpace(script.permissions))
-                {
-                    GUILayout.BeginVertical("Box");
-                    GUILayout.Label("Permissions");
-                    scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(Mathf.Infinity), GUILayout.Height(250));
-                    GUILayout.Label(script.permissions);
-                    GUILayout.EndScrollView();
-                    GUILayout.EndVertical();
-                }
-                if (script.mqttExpires > 0)
-                {
-                    GUIStyle style = new GUIStyle(GUI.skin.label);
-                    style.richText = true;
-                    DateTimeOffset dateTimeOffSet = DateTimeOffset.FromUnixTimeSeconds(script.mqttExpires);
-                    TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now.ToUniversalTime());
-                    GUILayout.Label($"Expires in {ArenaUnity.TimeSpanToString(duration)}", style);
-                }
+                GUILayout.BeginVertical("Box");
+                GUILayout.Label("Permissions");
+                scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(Mathf.Infinity), GUILayout.Height(250));
+                GUILayout.Label(script.permissions);
+                GUILayout.EndScrollView();
+                GUILayout.EndVertical();
             }
+            else
+            {
+                GUILayout.Label("Permissions granted appear in Play mode.");
+            }
+            if (script.mqttExpires > 0)
+            {
+                GUIStyle style = new GUIStyle(GUI.skin.label);
+                style.richText = true;
+                DateTimeOffset dateTimeOffSet = DateTimeOffset.FromUnixTimeSeconds(script.mqttExpires);
+                TimeSpan duration = dateTimeOffSet.DateTime.Subtract(DateTime.Now.ToUniversalTime());
+                GUILayout.Label($"Expires in {ArenaUnity.TimeSpanToString(duration)}", style);
+            }
+            EditorGUILayout.LabelField("Additional Rights", EditorStyles.boldLabel);
+            script.requestRemoteRenderRights = EditorGUILayout.Toggle("Request Remote Render Host Rights", script.requestRemoteRenderRights);
+            script.requestEnvironmentRights = EditorGUILayout.Toggle("Request Environment Host Rights", script.requestEnvironmentRights);
         }
     }
 #endif

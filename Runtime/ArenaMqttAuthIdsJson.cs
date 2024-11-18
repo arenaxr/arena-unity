@@ -23,6 +23,8 @@ namespace ArenaUnity
         public string camid { get; set; }
         public string handleftid { get; set; }
         public string handrightid { get; set; }
+        public string renderfusionid { get; set; }
+        public string environmentid { get; set; }
 
         // General json object management
         [OnError]
