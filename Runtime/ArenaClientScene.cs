@@ -1445,6 +1445,7 @@ namespace ArenaUnity
                     case "o":
                         // handle scene objects, user objects, user presense
                         ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
+                        Debug.Log(message);
                         StartCoroutine(ProcessArenaMessage(msg));
                         break;
                     case "r": // remote render handled by arena-renderfusion package currently

@@ -20,9 +20,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
-#endif
 using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
+#endif
 using UnityEngine;
 using UnityEngine.Networking;
 using uPLibrary.Networking.M2Mqtt;
@@ -85,7 +85,9 @@ namespace ArenaUnity
 
         private List<byte[]> eventMessages = new List<byte[]>();
         protected Dictionary<ushort, string> subscriptions = new Dictionary<ushort, string>();
+#if UNITY_EDITOR
         private ListRequest packageListRequest;
+#endif
 
         // MQTT methods
 
@@ -100,7 +102,9 @@ namespace ArenaUnity
             {
                 verifyCertificate = false;
             }
+#if UNITY_EDITOR
             packageListRequest = Client.List(true); // request offline packages installed
+#endif
             StartCoroutine(PublishTickLatency());
         }
 
@@ -346,6 +350,7 @@ namespace ArenaUnity
                 {
                     form.AddField("scene", $"{namespaceName}/{sceneName}");
                 }
+#if UNITY_EDITOR
                 // test for render fusion, request permissions if so
                 if (packageListRequest.IsCompleted)
                 {
@@ -360,6 +365,7 @@ namespace ArenaUnity
                 {
                     Debug.LogWarning("Package Manager unable to query for render-fusion package!");
                 }
+#endif
                 // request token endpoint
                 cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/v2/mqtt_auth", csrfToken, form));
                 yield return cd.coroutine;
