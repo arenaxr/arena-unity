@@ -2,6 +2,13 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.1.0](https://github.com/arenaxr/arena-unity/compare/v1.0.3...v1.1.0) (2024-12-02)
+
+
+### Features
+
+* **mqtt:** Allow sending private object/user messages ([bb16f82](https://github.com/arenaxr/arena-unity/commit/bb16f82ce366c0eeb25b4485adc2fd71e5d43871))
+
 ## [1.0.3](https://github.com/arenaxr/arena-unity/compare/v1.0.2...v1.0.3) (2024-11-18)
 
 
