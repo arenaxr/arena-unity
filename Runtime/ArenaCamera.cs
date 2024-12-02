@@ -20,9 +20,9 @@ namespace ArenaUnity
         private float publishInterval; // varies
 
         private string messageType = "object";
-        private Color displayColor = Color.white;
-        internal string userid = null;
-        internal string camid = null;
+        public Color displayColor = Color.white;
+        public string userid = null;
+        public string camid = null;
 
         [Tooltip("User display name")]
         public string displayName = null;
@@ -117,7 +117,7 @@ namespace ArenaUnity
             msg.data = updatedData;
             string payload = JsonConvert.SerializeObject(msg);
             if (ArenaClientScene.Instance)
-                ArenaClientScene.Instance.PublishCamera(msg.object_id, payload, HasPermissions);
+                ArenaClientScene.Instance.PublishCamera(msg.object_id, payload);
             if (!created)
                 created = true;
 

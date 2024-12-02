@@ -96,6 +96,7 @@ namespace ArenaUnity
         internal List<string> parentalQueue = new List<string>();
         internal List<string> localCameraIds = new List<string>();
         internal ArenaDefaultsJson arenaDefaults { get; private set; }
+        internal ArenaMqttTokenClaimsJson perms { get; private set; }
 
         // Define callbacks
         public delegate void DecodeMessageDelegate(string topic, string message);
@@ -250,11 +251,8 @@ namespace ArenaUnity
                 LogAndExit("Permissions not received.");
                 yield break;
             }
-            ArenaMqttTokenClaimsJson perms = JsonConvert.DeserializeObject<ArenaMqttTokenClaimsJson>(permissions);
-            foreach (string pubperm in perms.publ)
-            {
-                if (MqttTopicMatch(pubperm, sceneTopic.PUB_SCENE_OBJECTS)) sceneObjectRights = true;
-            }
+            perms = JsonConvert.DeserializeObject<ArenaMqttTokenClaimsJson>(permissions);
+            sceneObjectRights = HasPerms(sceneTopic.PUB_SCENE_OBJECTS);
             // publish arena cameras where requested
             bool foundFirstCam = false;
             foreach (ArenaCamera cam in camlist)
@@ -285,15 +283,21 @@ namespace ArenaUnity
                     idtag: cam.userid,
                     userobj: cam.camid
                 );
-                foreach (string pubperm in perms.publ)
-                {
-                    if (MqttTopicMatch(pubperm, camTopic.PUB_SCENE_USER)) cam.HasPermissions = true;
-                }
+                cam.HasPermissions = HasPerms(camTopic.PUB_SCENE_USER);
                 localCameraIds.Add(cam.camid);
             }
 
             // get persistence objects
             StartCoroutine(SceneLoadPersist());
+        }
+
+        private bool HasPerms(string topic)
+        {
+            foreach (string pubperm in perms.publ)
+            {
+                if (MqttTopicMatch(pubperm, topic)) return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -331,7 +335,7 @@ namespace ArenaUnity
                             persist = true,
                         };
                         string payload = JsonConvert.SerializeObject(msg);
-                        PublishObject(msg.object_id, payload, sceneObjectRights);
+                        PublishObject(msg.object_id, payload);
                     }
                 }
 #endif
@@ -1288,16 +1292,17 @@ namespace ArenaUnity
                 }
             };
             string payload = JsonConvert.SerializeObject(msg);
-            PublishObject(msg.object_id, payload, sceneObjectRights);
+            PublishObject(msg.object_id, payload);
             yield return true;
         }
-
-        //TODO (mwfarb): prevent publish and throw errors on publishing without rights
 
         /// <summary>
         /// Object changes are published using a ClientId + ObjectId topic, a user must have permissions for the entire scene graph.
         /// </summary>
-        public void PublishObject(string object_id, string msgJson, bool hasPermissions = true)
+        /// <param name="object_id">The object id.</param>
+        /// <param name="msgJson">The wire-format JSON string paylod for the MQTT message.</param>
+        /// <param name="toUserId">The user id to send this message to, if private (optional).</param>
+        public void PublishObject(string object_id, string msgJson, string toUserId = null)
         {
             ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(msgJson);
             msg.timestamp = GetTimestamp();
@@ -1306,15 +1311,22 @@ namespace ArenaUnity
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
                 userclient: userclient,
-                objectid: object_id
+                objectid: object_id,
+                touid: toUserId
             );
-            PublishSceneMessage(objTopic.PUB_SCENE_OBJECTS, msg, hasPermissions);
+            if (toUserId == null)
+                PublishSceneMessage(objTopic.PUB_SCENE_OBJECTS, msg);
+            else
+                PublishSceneMessage(objTopic.PUB_SCENE_OBJECTS_PRIVATE, msg);
         }
 
         /// <summary>
         /// Camera presence changes are published using a ObjectId-only topic, a user might only have permissions for their camid.
         /// </summary>
-        public void PublishCamera(string object_id, string msgJson, bool hasPermissions = true)
+        /// <param name="object_id">The user id.</param>
+        /// <param name="msgJson">The wire-format JSON string paylod for the MQTT message.</param>
+        /// <param name="toUserId">The user id to send this message to, if private (optional).</param>
+        public void PublishCamera(string object_id, string msgJson, string toUserId = null)
         {
             ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(msgJson);
             msg.timestamp = GetTimestamp();
@@ -1323,21 +1335,29 @@ namespace ArenaUnity
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
                 userclient: userclient,
-                userobj: object_id
+                userobj: object_id,
+                touid: toUserId
             );
-            PublishSceneMessage(camTopic.PUB_SCENE_USER, msg, hasPermissions);
+            if (toUserId == null)
+                PublishSceneMessage(camTopic.PUB_SCENE_USER, msg);
+            else
+                PublishSceneMessage(camTopic.PUB_SCENE_USER_PRIVATE, msg);
         }
 
         [Obsolete("PublishEvent message signature has changed. Instreand of object_id, include data.target in msgJsonData.")]
         public void PublishEvent(string object_id, string eventType, string source, string msgJsonData, bool hasPermissions = true)
         {
-            PublishEvent(eventType, source, msgJsonData, hasPermissions);
+            PublishEvent(eventType, source, msgJsonData);
         }
 
         /// <summary>
         /// Camera events are published using a ObjectId-only topic, a user might only have permissions for their camid.
         /// </summary>
-        public void PublishEvent(string eventType, string source, string msgJsonData, bool hasPermissions = true)
+        /// <param name="eventType"The type of event message, e.g. "mousedown".</param>
+        /// <param name="source">The user id the event is from.</param>
+        /// <param name="msgJsonData">The wire-format JSON string paylod for the MQTT message, data section only.</param>
+        /// <param name="toUserId">The user id to send this message to, if private (optional).</param>
+        public void PublishEvent(string eventType, string source, string msgJsonData, string toUserId = null)
         {
             ArenaObjectJson msg = new ArenaObjectJson
             {
@@ -1352,19 +1372,22 @@ namespace ArenaUnity
                 name_space: sceneTopic.nameSpace,
                 scenename: sceneTopic.sceneName,
                 userclient: userclient,
-                userobj: source
+                userobj: source,
+                touid: toUserId
             );
-            PublishSceneMessage(evtTopic.PUB_SCENE_USER, msg, hasPermissions);
+            if (toUserId == null)
+                PublishSceneMessage(evtTopic.PUB_SCENE_USER, msg);
+            else
+                PublishSceneMessage(evtTopic.PUB_SCENE_USER_PRIVATE, msg);
         }
 
         /// <summary>
         /// Egress point for messages to send to remote graph scenes.
         /// </summary>
-        /// <param name="topic"></param>
-        /// <param name="msg"></param>
-        /// <param name="hasPermissions"></param>
-        private void PublishSceneMessage(string topic, ArenaObjectJson msg, bool hasPermissions)
+        private void PublishSceneMessage(string topic, ArenaObjectJson msg)
         {
+            // TODO (mwfarb): make warning of publishing without rights more effiecient
+            bool hasPermissions = HasPerms(topic);
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
             Publish(topic, payload); // remote
             var topicSplit = topic.Split("/");
@@ -1569,7 +1592,7 @@ namespace ArenaUnity
                     action = "delete",
                 };
                 string delCamMsg = JsonConvert.SerializeObject(msg);
-                PublishCamera(camid, delCamMsg, sceneObjectRights);
+                PublishCamera(camid, delCamMsg);
             }
             base.OnApplicationQuit();
         }

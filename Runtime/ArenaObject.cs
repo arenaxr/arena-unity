@@ -125,7 +125,7 @@ namespace ArenaUnity
             };
             string payload = JsonConvert.SerializeObject(msg);
             if (ArenaClientScene.Instance)
-                ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
+                ArenaClientScene.Instance.PublishObject(msg.object_id, payload);
             // add new object with new name, it pubs
             created = false;
             transform.hasChanged = true;
@@ -210,7 +210,7 @@ namespace ArenaUnity
             msg.data = transformOnly ? (object)dataUnity : updatedData;
             string payload = JsonConvert.SerializeObject(msg);
             if (ArenaClientScene.Instance)
-                ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
+                ArenaClientScene.Instance.PublishObject(msg.object_id, payload);
             if (!created)
                 created = true;
 
@@ -241,7 +241,7 @@ namespace ArenaUnity
             msg.data = all ? updatedData : JObject.Parse(objData);
             string payload = JsonConvert.SerializeObject(msg);
             if (ArenaClientScene.Instance)
-                ArenaClientScene.Instance.PublishObject(msg.object_id, payload, HasPermissions);
+                ArenaClientScene.Instance.PublishObject(msg.object_id, payload);
         }
 
         // object type

@@ -64,7 +64,7 @@ namespace ArenaUnity
                 };
                 msg.data = data;
                 string payload = JsonConvert.SerializeObject(msg);
-                client.PublishObject(msg.object_id, payload, client.sceneObjectRights);
+                client.PublishObject(msg.object_id, payload);
                 Close();
             }
 
