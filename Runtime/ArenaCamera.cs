@@ -20,15 +20,15 @@ namespace ArenaUnity
         private float publishInterval; // varies
 
         private string messageType = "object";
-        public Color displayColor = Color.white;
-        public string userid = null;
-        public string camid = null;
+        public Color displayColor { get; internal set; }
+        public string userid { get; internal set; }
+        public string camid { get; internal set; }
 
         [Tooltip("User display name")]
         public string displayName = null;
         [Tooltip("Path to user head model")]
         public string headModelPath = "/static/models/avatars/robobit.glb";
-        [Tooltip("Override (globalUpdateMs) publish frequency to publish detected transform changes (milliseconds)")]
+        [Tooltip("Override (cameraUpdateMs) publish frequency to publish detected transform changes (milliseconds)")]
         [Range(100, 1000)]
         public int cameraUpdateMs = 100;
 
