@@ -2,6 +2,14 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.1.1](https://github.com/arenaxr/arena-unity/compare/v1.1.0...v1.1.1) (2024-12-05)
+
+
+### Bug Fixes
+
+* **camera:** correct access control of userids ([7e5992f](https://github.com/arenaxr/arena-unity/commit/7e5992fdb0ebfb7bb0da84e2843d49cde5f13ec3))
+* **mqtt:** correct logging type from control of mqtt messages ([ab2550a](https://github.com/arenaxr/arena-unity/commit/ab2550a62b836377b8c0c0fb89ce644a0fa06d15))
+
 ## [1.1.0](https://github.com/arenaxr/arena-unity/compare/v1.0.3...v1.1.0) (2024-12-02)
 
 
