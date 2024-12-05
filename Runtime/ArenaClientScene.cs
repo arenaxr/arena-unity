@@ -1545,40 +1545,43 @@ namespace ArenaUnity
 
         private void LogMessage(string dir, string sceneMsgType, string topic, string msg, bool hasPermissions = true)
         {
-            // determine logging level
+            bool log = !hasPermissions; // default log any permision failure
+            // determine logging level for permision success
             switch (sceneMsgType)
             {
                 case "x":
-                    if (!logMqttPresense) return;
+                    if (logMqttPresense) log = true;
                     break;
                 case "o":
-                    if (!logMqttObjects) return;
+                    if (logMqttObjects) log = true;
                     break;
                 case "u":
-                    if (!logMqttUsers) return;
+                    if (logMqttUsers) log = true;
                     break;
                 case "c":
-                    if (!logMqttChats) return;
+                    if (logMqttChats) log = true;
                     break;
                 case "r":
-                    if (!logMqttRender) return;
+                    if (logMqttRender) log = true;
                     break;
                 case "p":
-                    if (!logMqttPrograms) return;
+                    if (logMqttPrograms) log = true;
                     break;
                 case "d":
-                    if (!logMqttDebug) return;
+                    if (logMqttDebug) log = true;
                     break;
                 case "e":
-                    if (!logMqttEnvironment) return;
+                    if (logMqttEnvironment) log = true;
                     break;
                 default:
                     break;
             }
-            if (hasPermissions)
-                Debug.Log($"{dir}: {topic} {msg}");
-            else
-                Debug.LogWarning($"Permissions FAILED {dir}: {topic} {msg}");
+            if (log) {
+                if (hasPermissions)
+                    Debug.Log($"{dir}: {topic} {msg}");
+                else
+                    Debug.LogWarning($"Permissions FAILED {dir}: {topic} {msg}");
+            }
         }
 
         protected override void OnApplicationQuit()
