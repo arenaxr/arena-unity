@@ -8,9 +8,9 @@
   "changelogUrl": "https://github.com/arenaxr/arena-unity/blob/main/CHANGELOG.md",
   "licensesUrl": "https://github.com/arenaxr/arena-unity/blob/main/LICENSE",
   "dependencies": {
-    "com.unity.cloud.gltfast": "6.8.0",
-    "com.unity.cloud.draco": "5.1.6",
-    "com.unity.cloud.ktx": "3.4.3",
+    "com.unity.cloud.gltfast": "6.10.1",
+    "com.unity.cloud.draco": "5.1.8",
+    "com.unity.cloud.ktx": "3.4.5",
     "com.unity.meshopt.decompress": "0.1.0-preview.7",
     "com.unity.nuget.newtonsoft-json": "3.0.2",
     "com.unity.collab-proxy": "1.2.16",
