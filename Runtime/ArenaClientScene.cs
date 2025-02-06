@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using GLTFast;
@@ -1217,8 +1218,6 @@ namespace ArenaUnity
         {
             CoroutineWithData cd;
 
-            // TODO (mwfarb): find better way to export with local position/rotation
-
             // request FS login if this is the first time.
             if (fsToken == null)
             {
@@ -1231,6 +1230,7 @@ namespace ArenaUnity
                 }
             }
 
+            // TODO (mwfarb): find better way to export with local position/rotation
             // determine if we should update the local position
             var rootObjPos = gameObjects[0].transform.position;
 
@@ -1252,33 +1252,23 @@ namespace ArenaUnity
                 Debug.LogError($"GLTF export to stream failed!");
                 yield break;
             }
-            byte[] gltfBuffer = stream.GetBuffer();
 
             // return single model to original export translation
             gameObjects[0].transform.position = rootObjPos;
 
-            // send stream to filestore
-            //var safeFilename = name.replace(/(\W+)/gi, '-');
-            var storeResPrefix = authState.is_staff ? $"users/{mqttUserName}/" : "";
-            var userFilePath = $"scenes/{sceneName}/{name}.glb";
-            var storeResPath = $"{storeResPrefix}{userFilePath}";
-            var storeExtPath = $"store/users/{mqttUserName}/{userFilePath}";
+            var destFilePath = $"{name}.glb";
+            byte[] fileBuffer = stream.GetBuffer();
 
-            string uploadUrl = $"https://{hostAddress}/storemng/api/resources/{storeResPath}?override=true";
-            cd = new CoroutineWithData(this, HttpUploadFSRaw(uploadUrl, gltfBuffer));
+            // send stream to filestore
+            cd = new CoroutineWithData(this, UploadStoreFile(fileBuffer, destFilePath));
             yield return cd.coroutine;
-            if (!isCrdSuccess(cd.result))
-            {
-                Debug.LogError($"GLTF file upload failed!");
-                yield break;
-            }
-            Debug.Log($"GLTF export uploaded to https://{hostAddress}/{storeExtPath}");
+            var storeExtPath = (string)cd.result;
+            if (string.IsNullOrEmpty(storeExtPath)) yield break;
 
             // send scene object metadata to MQTT
-            var object_id = name;
             ArenaObjectJson msg = new ArenaObjectJson
             {
-                object_id = object_id,
+                object_id = name,
                 action = "create",
                 type = "object",
                 persist = true,
@@ -1294,6 +1284,55 @@ namespace ArenaUnity
             string payload = JsonConvert.SerializeObject(msg);
             PublishObject(msg.object_id, payload);
             yield return true;
+        }
+
+        /// <summary>
+        /// Upload a file to the filestore using the user's Google account.
+        /// </summary>
+        /// <param name="srcFilePath">Local path to the file to upload.</param>
+        /// <param name="destFilePath">Destination file path, can include dirs. Defaults to filename from srcFilePath.</param>
+        /// <returns></returns>
+        public IEnumerator UploadStoreFile(string srcFilePath, string destFilePath=null)
+        {
+            if (destFilePath == null)
+                destFilePath = Path.GetFileName(srcFilePath);
+            byte[] fileBuffer = File.ReadAllBytes(srcFilePath);
+            var cd = new CoroutineWithData(this, UploadStoreFile(fileBuffer, destFilePath));
+            yield return cd.result;
+        }
+
+        /// <summary>
+        /// Upload a file to the filestore using the user's Google account.
+        /// </summary>
+        /// <param name="fileBuffer">Binary buffer of file.</param>
+        /// <param name="destFilePath">Destination file path, can include dirs.</param>
+        /// <returns></returns>
+        public IEnumerator UploadStoreFile(byte[] fileBuffer, string destFilePath)
+        {
+            // confirm user google account is loaded
+            if (!ConfirmGoogleAuth())
+            {
+                // TODO(mwfarb): Add note when headless auth options are available.
+                Debug.LogError($"Google auth is required. Remove manual .arena_mqtt_token.");
+                yield break;
+            }
+            var safeFilename = Regex.Replace(destFilePath, @"/(\W+)/gi", "-");
+            var storeResPrefix = authState.is_staff ? $"users/{mqttUserName}/" : "";
+            var userFilePath = $"scenes/{sceneName}/{safeFilename}";
+            var storeResPath = $"{storeResPrefix}{userFilePath}";
+            var storeExtPath = $"store/users/{mqttUserName}/{userFilePath}";
+
+            string uploadUrl = $"https://{hostAddress}/storemng/api/resources/{storeResPath}?override=true";
+            var cd = new CoroutineWithData(this, HttpUploadFSRaw(uploadUrl, fileBuffer));
+            yield return cd.coroutine;
+            if (!isCrdSuccess(cd.result))
+            {
+                Debug.LogError($"Filestore file upload failed!");
+                yield break;
+            }
+            var url = $"https://{hostAddress}/{storeExtPath}";
+            Debug.Log($"Filestore file uploaded to {url}");
+            yield return url;
         }
 
         /// <summary>
