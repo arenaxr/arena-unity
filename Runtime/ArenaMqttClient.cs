@@ -469,6 +469,11 @@ namespace ArenaUnity
             yield return namespaceName;
         }
 
+        protected bool ConfirmGoogleAuth()
+        {
+            return (idToken != null);
+        }
+
         protected IEnumerator GetFSLoginForUser()
         {
             WWWForm form = new WWWForm();
