@@ -228,10 +228,10 @@ namespace ArenaUnity
             // show device auth window if headless mode for user auth, do not draw otherwise
             if (showDeviceAuthWindow)
             {
-                int windowWidth = 400;
+                int windowWidth = 500;
                 int windowHeight = 100;
                 int x = (Screen.width - windowWidth) / 2;
-                int y = (Screen.height - windowWidth) / 2;
+                int y = (Screen.height - windowHeight) / 2;
                 var winRect = new Rect(x, y, windowWidth, windowHeight);
 
                 GUIStyle style = GUIStyle.none;
@@ -376,8 +376,10 @@ namespace ArenaUnity
                                 string access_resp = cd.result.ToString();
                                 print(access_resp);
 
+                                JObject access = JObject.Parse(access_resp);
+                                idToken = (string)access["id_token"];
                                 // email = userInfo.Email;
-                                idToken = access_resp;
+                                break;
                             }
                         }
                         else
@@ -639,6 +641,10 @@ namespace ArenaUnity
             else
                 www = UnityWebRequest.Post(url, form);
             yield return www.SendWebRequest();
+            if (www.responseCode == 428)
+            {
+                yield return www.responseCode.ToString();
+            }
 #if UNITY_2020_1_OR_NEWER
             if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
 #else
@@ -651,10 +657,6 @@ namespace ArenaUnity
                     Debug.LogWarning(www.downloadHandler.text);
                 }
                 yield break;
-            }
-            else if (www.result == UnityWebRequest.Result.InProgress)
-            {
-                yield return www.responseCode.ToString();
             }
             else
             {
