@@ -35,6 +35,8 @@ namespace ArenaUnity
         [Header("ARENA MQTT configuration")]
         [Tooltip("Connect as Anonymous, Google authenticated, or Manual (advanced) JWT user (runtime changes ignored).")]
         public Auth authType = Auth.Google;
+        [Tooltip("Build is headless and cannot use browser based auth. Forces limited input auth (runtime changes ignored).")]
+        public bool headless = false;
         [Tooltip("IP address or URL of the host running broker/auth/persist services (runtime changes ignored).")]
         public string hostAddress = "arenaxr.org";
 
@@ -66,6 +68,9 @@ namespace ArenaUnity
         protected string fsToken = null;
         protected ArenaUserStateJson authState;
         private static UserCredential credential;
+        private bool showDeviceAuthWindow = false;
+        private string dev_verification_url = null;
+        private string dev_user_code = null;
 
         // local paths
         const string gAuthFile = ".arena_google_auth";
@@ -201,6 +206,39 @@ namespace ArenaUnity
         protected virtual void OnEnable()
         {
             appFilesPath = Application.isMobilePlatform ? Application.persistentDataPath : "";
+            if (Application.isMobilePlatform)
+            {
+                headless = true;
+            }
+        }
+
+        void ShowDeviceAuthWindow(int windowID)
+        {
+            GUILayout.Label($"1. Go to this page on any device: <b>{dev_verification_url}</b>");
+            GUILayout.Label($"2. Enter this code on that page: <b>{dev_user_code}</b>");
+
+            if (GUILayout.Button($"<a href='{dev_verification_url}'>{dev_verification_url}</a>"))
+            {
+                Application.OpenURL(dev_verification_url);
+            }
+        }
+
+        void OnGUI()
+        {
+            // show device auth window if headless mode for user auth, do not draw otherwise
+            if (showDeviceAuthWindow)
+            {
+                int windowWidth = 500;
+                int windowHeight = 100;
+                int x = (Screen.width - windowWidth) / 2;
+                int y = (Screen.height - windowHeight) / 2;
+                var winRect = new Rect(x, y, windowWidth, windowHeight);
+
+                GUIStyle style = GUIStyle.none;
+                style.alignment = TextAnchor.MiddleCenter;
+                style.richText = true;
+                GUI.ModalWindow(0, winRect, ShowDeviceAuthWindow, "ARENA Device Authorization");
+            }
         }
 
         /// <summary>
@@ -274,37 +312,105 @@ namespace ArenaUnity
                     case Auth.Google:
                         // get oauth app credentials
                         Debug.Log("Using remote-authenticated MQTT token.");
-                        cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/conf/gauth.json"));
+                        if (headless)
+                            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/conf/gauth-device.json"));
+                        else
+                            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/conf/gauth.json"));
                         yield return cd.coroutine;
                         if (!isCrdSuccess(cd.result)) yield break;
-                        string gauthId = cd.result.ToString();
+                        string gAuthId = cd.result.ToString();
+                        print(gAuthId);
 
-                        // request user auth
-                        using (var stream = ToStream(gauthId))
+                        if (headless)
                         {
-                            string applicationName = "ArenaClientCSharp";
-                            IDataStore ds;
-                            if (Application.isMobilePlatform) ds = new NullDataStore();
-                            else ds = new FileDataStore(userGAuthPath, true);
-                            GoogleWebAuthorizationBroker.Folder = userGAuthPath;
-                            // GoogleWebAuthorizationBroker.AuthorizeAsync for "installed" creds only
-                            credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                                    GoogleClientSecrets.FromStream(stream).Secrets,
-                                    Scopes,
-                                    "user",
-                                    CancellationToken.None,
-                                    ds).Result;
+                            // limited input device auth flow for local client
+                            JObject gauth = JObject.Parse(gAuthId);
+                            string client_id = (string)gauth["installed"]["client_id"];
+                            string client_secret = (string)gauth["installed"]["client_secret"];
 
-                            var oauthService = new Oauth2Service(new BaseClientService.Initializer()
+                            // get device code
+                            WWWForm form2 = new WWWForm();
+                            form2.AddField("client_id", client_id);
+                            form2.AddField("scope", "email profile");
+                            cd = new CoroutineWithData(this, HttpRequest("https://oauth2.googleapis.com/device/code", form2));
+                            yield return cd.coroutine;
+                            if (!isCrdSuccess(cd.result)) yield break;
+                            string device_resp = cd.result.ToString();
+                            print(device_resp);
+
+                            // render user code/link and poll for OOB response
+                            JObject device = JObject.Parse(device_resp);
+                            dev_verification_url = (string)device["verification_url"];
+                            dev_user_code = (string)device["user_code"];
+                            string device_code = (string)device["device_code"];
+                            float exp_s = (float)device["expires_in"];
+                            float interval_s = (float)device["interval"];
+                            GUIUtility.systemCopyBuffer = dev_user_code;
+                            showDeviceAuthWindow = true; // render gui device auth instructions
+                            Debug.LogWarning($"Headless ARENA Authorization: 1. Go to this page on any device: {dev_verification_url}. 2. Enter this code on that page: {dev_user_code}");
+                            var exp_ms = DateTimeOffset.Now.ToUnixTimeMilliseconds() + (exp_s * 1000);
+
+                            // begin device poll
+                            while (true)
                             {
-                                HttpClientInitializer = credential,
-                                ApplicationName = applicationName,
-                            });
+                                print("loop start");
+                                yield return new WaitForSecondsRealtime(interval_s);
 
-                            var userInfo = oauthService.Userinfo.Get().Execute();
+                                if (DateTimeOffset.Now.ToUnixTimeMilliseconds() > exp_ms)
+                                {
+                                    Debug.LogError($"Device auth request expired after {exp_s / 60} minutes.");
+                                    yield break;
+                                }
 
-                            email = userInfo.Email;
-                            idToken = credential.Token.IdToken;
+                                // try token request
+                                form2 = new WWWForm();
+                                form2.AddField("client_id", client_id);
+                                form2.AddField("client_secret", client_secret);
+                                form2.AddField("device_code", device_code);
+                                form2.AddField("grant_type", "urn:ietf:params:oauth:grant-type:device_code");
+                                cd = new CoroutineWithData(this, HttpRequest("https://oauth2.googleapis.com/token", form2));
+                                yield return cd.coroutine;
+                                if (cd.result.ToString() == "428") continue;
+                                if (!isCrdSuccess(cd.result)) yield break;
+                                showDeviceAuthWindow = false; // remove gui device auth instructions
+                                string access_resp = cd.result.ToString();
+                                print(access_resp);
+
+                                JObject access = JObject.Parse(access_resp);
+                                idToken = (string)access["id_token"];
+                                // email = userInfo.Email;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            // automated browser flow for local client
+                            using (var stream = ToStream(gAuthId))
+                            {
+                                string applicationName = "ArenaClientCSharp";
+                                IDataStore ds;
+                                if (Application.isMobilePlatform) ds = new NullDataStore();
+                                else ds = new FileDataStore(userGAuthPath, true);
+                                GoogleWebAuthorizationBroker.Folder = userGAuthPath;
+                                // GoogleWebAuthorizationBroker.AuthorizeAsync for "installed" creds only
+                                credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                                        GoogleClientSecrets.FromStream(stream).Secrets,
+                                        Scopes,
+                                        "user",
+                                        CancellationToken.None,
+                                        ds).Result;
+
+                                var oauthService = new Oauth2Service(new BaseClientService.Initializer()
+                                {
+                                    HttpClientInitializer = credential,
+                                    ApplicationName = applicationName,
+                                });
+
+                                var userInfo = oauthService.Userinfo.Get().Execute();
+
+                                email = userInfo.Email;
+                                idToken = credential.Token.IdToken;
+                            }
                         }
                         tokenType = "google-installed";
                         break;
@@ -382,8 +488,8 @@ namespace ArenaUnity
                                 form.AddField("renderfusionid", "true");
                                 requestRemoteRenderRights = true; // for display purposes
                             }
-                    else if (packageListRequest.Status >= StatusCode.Failure)
-                        Debug.LogWarning(packageListRequest.Error.message);
+                            else if (packageListRequest.Status >= StatusCode.Failure)
+                                Debug.LogWarning(packageListRequest.Error.message);
                 }
                 else
                 {
@@ -395,7 +501,7 @@ namespace ArenaUnity
                 yield return cd.coroutine;
                 if (!isCrdSuccess(cd.result)) yield break;
                 mqttToken = cd.result.ToString();
-#if UNITY_EDITOR && !( UNITY_ANDROID || UNITY_IOS )
+#if UNITY_EDITOR && !(UNITY_ANDROID || UNITY_IOS)
                 StreamWriter writer = new StreamWriter(userMqttPath);
                 writer.Write(mqttToken);
                 writer.Close();
@@ -525,6 +631,37 @@ namespace ArenaUnity
             writer.Flush();
             stream.Position = 0;
             return stream;
+        }
+
+        protected IEnumerator HttpRequest(string url, WWWForm form = null)
+        {
+            UnityWebRequest www;
+            if (form == null)
+                www = UnityWebRequest.Get(url);
+            else
+                www = UnityWebRequest.Post(url, form);
+            yield return www.SendWebRequest();
+            if (www.responseCode == 428)
+            {
+                yield return www.responseCode.ToString();
+            }
+#if UNITY_2020_1_OR_NEWER
+            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+#else
+            if (www.isNetworkError || www.isHttpError)
+#endif
+            {
+                Debug.LogWarning($"{www.error}: {www.url}");
+                if (!string.IsNullOrWhiteSpace(www.downloadHandler?.text))
+                {
+                    Debug.LogWarning(www.downloadHandler.text);
+                }
+                yield break;
+            }
+            else
+            {
+                yield return www.downloadHandler.text;
+            }
         }
 
         protected IEnumerator HttpRequestAuth(string url, string csrf = null, WWWForm form = null)
