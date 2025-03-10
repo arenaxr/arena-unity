@@ -63,11 +63,12 @@ namespace ArenaUnity
         public bool requestEnvironmentRights { get; set; }
 
         // internal variables
-        private string idToken = null;
+        private string id_token = null;
+        private string refresh_token = null;
         protected string csrfToken = null;
         protected string fsToken = null;
         protected ArenaUserStateJson authState;
-        private static UserCredential credential;
+        private string creds = null;
         private bool showDeviceAuthWindow = false;
         private string dev_verification_url = null;
         private string dev_user_code = null;
@@ -214,10 +215,12 @@ namespace ArenaUnity
 
         void ShowDeviceAuthWindow(int windowID)
         {
-            GUILayout.Label($"1. Go to this page on any device: <b>{dev_verification_url}</b>");
-            GUILayout.Label($"2. Enter this code on that page: <b>{dev_user_code}</b>");
+            GUIUtility.systemCopyBuffer = dev_user_code;
+            GUILayout.Label($"Enter device code <b>{dev_user_code}</b> at webpage <b>{dev_verification_url}</b>.");
+            GUILayout.Label($"The device code has been copied to your clipboard.");
+            GUILayout.Label($"Click the button below to open webpage.");
 
-            if (GUILayout.Button($"<a href='{dev_verification_url}'>{dev_verification_url}</a>"))
+            if (GUILayout.Button($"Go to <a href='{dev_verification_url}'>{dev_verification_url}</a>"))
             {
                 Application.OpenURL(dev_verification_url);
             }
@@ -228,15 +231,12 @@ namespace ArenaUnity
             // show device auth window if headless mode for user auth, do not draw otherwise
             if (showDeviceAuthWindow)
             {
-                int windowWidth = 500;
-                int windowHeight = 100;
+                int windowWidth = (int)(Screen.width * .5);
+                int windowHeight = (int)(Screen.height * .5);
                 int x = (Screen.width - windowWidth) / 2;
                 int y = (Screen.height - windowHeight) / 2;
                 var winRect = new Rect(x, y, windowWidth, windowHeight);
 
-                GUIStyle style = GUIStyle.none;
-                style.alignment = TextAnchor.MiddleCenter;
-                style.richText = true;
                 GUI.ModalWindow(0, winRect, ShowDeviceAuthWindow, "ARENA Device Authorization");
             }
         }
@@ -261,7 +261,7 @@ namespace ArenaUnity
         {
             networkLatencyTopic = latencyTopic;
             string sceneAuthDir = Path.Combine(GetUnityAuthPath(), hostAddress, "s");
-            string userGAuthPath = sceneAuthDir;
+            string userGAuthPath = Path.Combine(sceneAuthDir, gAuthFile);
             string userMqttPath = Path.Combine(sceneAuthDir, mqttTokenFile);
             string mqttToken = null;
             CoroutineWithData cd;
@@ -300,6 +300,7 @@ namespace ArenaUnity
             }
             else
             {
+                WWWForm form = null;
                 string tokenType = "";
                 switch (authType)
                 {
@@ -319,99 +320,134 @@ namespace ArenaUnity
                         yield return cd.coroutine;
                         if (!isCrdSuccess(cd.result)) yield break;
                         string gAuthId = cd.result.ToString();
-                        print(gAuthId);
+                        JObject gauth = JObject.Parse(gAuthId);
+                        string client_id = (string)gauth["installed"]["client_id"];
+                        string client_secret = (string)gauth["installed"]["client_secret"];
 
-                        if (headless)
+                        // load user credentials
+                        if (File.Exists(userGAuthPath))
                         {
-                            // limited input device auth flow for local client
-                            JObject gauth = JObject.Parse(gAuthId);
-                            string client_id = (string)gauth["installed"]["client_id"];
-                            string client_secret = (string)gauth["installed"]["client_secret"];
-
-                            // get device code
-                            WWWForm form2 = new WWWForm();
-                            form2.AddField("client_id", client_id);
-                            form2.AddField("scope", "email profile");
-                            cd = new CoroutineWithData(this, HttpRequest("https://oauth2.googleapis.com/device/code", form2));
-                            yield return cd.coroutine;
-                            if (!isCrdSuccess(cd.result)) yield break;
-                            string device_resp = cd.result.ToString();
-                            print(device_resp);
-
-                            // render user code/link and poll for OOB response
-                            JObject device = JObject.Parse(device_resp);
-                            dev_verification_url = (string)device["verification_url"];
-                            dev_user_code = (string)device["user_code"];
-                            string device_code = (string)device["device_code"];
-                            float exp_s = (float)device["expires_in"];
-                            float interval_s = (float)device["interval"];
-                            GUIUtility.systemCopyBuffer = dev_user_code;
-                            showDeviceAuthWindow = true; // render gui device auth instructions
-                            Debug.LogWarning($"Headless ARENA Authorization: 1. Go to this page on any device: {dev_verification_url}. 2. Enter this code on that page: {dev_user_code}");
-                            var exp_ms = DateTimeOffset.Now.ToUnixTimeMilliseconds() + (exp_s * 1000);
-
-                            // begin device poll
-                            while (true)
+                            using (var sr = new StreamReader(userGAuthPath))
                             {
-                                print("loop start");
-                                yield return new WaitForSecondsRealtime(interval_s);
-
-                                if (DateTimeOffset.Now.ToUnixTimeMilliseconds() > exp_ms)
-                                {
-                                    Debug.LogError($"Device auth request expired after {exp_s / 60} minutes.");
-                                    yield break;
-                                }
-
-                                // try token request
-                                form2 = new WWWForm();
-                                form2.AddField("client_id", client_id);
-                                form2.AddField("client_secret", client_secret);
-                                form2.AddField("device_code", device_code);
-                                form2.AddField("grant_type", "urn:ietf:params:oauth:grant-type:device_code");
-                                cd = new CoroutineWithData(this, HttpRequest("https://oauth2.googleapis.com/token", form2));
-                                yield return cd.coroutine;
-                                if (cd.result.ToString() == "428") continue;
-                                if (!isCrdSuccess(cd.result)) yield break;
-                                showDeviceAuthWindow = false; // remove gui device auth instructions
-                                string access_resp = cd.result.ToString();
-                                print(access_resp);
-
-                                JObject access = JObject.Parse(access_resp);
-                                idToken = (string)access["id_token"];
-                                // email = userInfo.Email;
-                                break;
+                                creds = sr.ReadToEnd();
                             }
+                        }
+                        if (creds != null)
+                        {
+                            JObject joUserCredsPre = JObject.Parse(creds);
+                            id_token = (string)joUserCredsPre["id_token"];
+                            string refresh_token = (string)joUserCredsPre["refresh_token"];
+                        }
+                        if (id_token != null)
+                        {
+                            string payloadIdPre = Base64UrlDecode(id_token.Split('.')[1]);
+                            JObject joIdTokenPre = JObject.Parse(payloadIdPre);
+                            string aud = (string)joIdTokenPre["aud"];
+                            long exp_s = (long)joIdTokenPre["exp"];
+                            // for reuse, client_id must still match
+                            if (aud != client_id) creds = null;  // switched auth systems
+                            if (exp_s * 1000 <= DateTimeOffset.Now.ToUnixTimeMilliseconds()) creds = null;  // expired token
+                        }
+
+                        if (creds != null)
+                        {
+                            Debug.Log("Using cached Google authentication.");
                         }
                         else
                         {
-                            // automated browser flow for local client
-                            using (var stream = ToStream(gAuthId))
+                            if (refresh_token != null)
                             {
-                                string applicationName = "ArenaClientCSharp";
-                                IDataStore ds;
-                                if (Application.isMobilePlatform) ds = new NullDataStore();
-                                else ds = new FileDataStore(userGAuthPath, true);
-                                GoogleWebAuthorizationBroker.Folder = userGAuthPath;
-                                // GoogleWebAuthorizationBroker.AuthorizeAsync for "installed" creds only
-                                credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                                        GoogleClientSecrets.FromStream(stream).Secrets,
-                                        Scopes,
-                                        "user",
-                                        CancellationToken.None,
-                                        ds).Result;
-
-                                var oauthService = new Oauth2Service(new BaseClientService.Initializer()
+                                Debug.Log("Requesting refreshed Google authentication.");
+                                form = new WWWForm();
+                                form.AddField("client_id", client_id);
+                                form.AddField("client_secret", client_secret);
+                                form.AddField("refresh_token", refresh_token);
+                                form.AddField("grant_type", refresh_token);
+                                cd = new CoroutineWithData(this, HttpRequest("https://oauth2.googleapis.com/token", form));
+                                yield return cd.coroutine;
+                                if (!isCrdSuccess(cd.result)) yield break;
+                                creds = cd.result.ToString();
+                            }
+                            else
+                            {
+                                // if no credentials available, let the user log in.
+                                if (headless)
                                 {
-                                    HttpClientInitializer = credential,
-                                    ApplicationName = applicationName,
-                                });
+                                    // limited input device auth flow for local client
+                                    // get device code
+                                    form = new WWWForm();
+                                    form.AddField("client_id", client_id);
+                                    form.AddField("scope", "email profile");
+                                    cd = new CoroutineWithData(this, HttpRequest("https://oauth2.googleapis.com/device/code", form));
+                                    yield return cd.coroutine;
+                                    if (!isCrdSuccess(cd.result)) yield break;
+                                    string device_resp = cd.result.ToString();
 
-                                var userInfo = oauthService.Userinfo.Get().Execute();
+                                    // render user code/link and poll for OOB response
+                                    JObject device = JObject.Parse(device_resp);
+                                    dev_verification_url = (string)device["verification_url"];
+                                    dev_user_code = (string)device["user_code"];
+                                    string device_code = (string)device["device_code"];
+                                    long exp_s = (long)device["expires_in"];
+                                    long interval_s = (long)device["interval"];
+                                    showDeviceAuthWindow = true; // render gui device auth instructions
+                                    Debug.LogWarning($"ARENA Device Authorization: Enter device code {dev_user_code} at webpage  {dev_verification_url}");
+                                    var exp_ms = DateTimeOffset.Now.ToUnixTimeMilliseconds() + (exp_s * 1000);
 
-                                email = userInfo.Email;
-                                idToken = credential.Token.IdToken;
+                                    // begin device poll
+                                    while (true)
+                                    {
+                                        yield return new WaitForSecondsRealtime(interval_s);
+
+                                        if (DateTimeOffset.Now.ToUnixTimeMilliseconds() > exp_ms)
+                                        {
+                                            Debug.LogError($"Device auth request expired after {exp_s / 60} minutes.");
+                                            yield break;
+                                        }
+
+                                        // try token request
+                                        form = new WWWForm();
+                                        form.AddField("client_id", client_id);
+                                        form.AddField("client_secret", client_secret);
+                                        form.AddField("device_code", device_code);
+                                        form.AddField("grant_type", "urn:ietf:params:oauth:grant-type:device_code");
+                                        cd = new CoroutineWithData(this, HttpRequest("https://oauth2.googleapis.com/token", form));
+                                        yield return cd.coroutine;
+                                        if (cd.result.ToString() == "428") continue;
+                                        if (!isCrdSuccess(cd.result)) yield break;
+                                        creds = cd.result.ToString();
+                                        showDeviceAuthWindow = false; // remove gui device auth instructions
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    // automated browser flow for local client
+                                    using (var stream = ToStream(gAuthId))
+                                    {
+                                        var credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                                                GoogleClientSecrets.FromStream(stream).Secrets,
+                                                Scopes,
+                                                "user",
+                                                CancellationToken.None,
+                                                new NullDataStore()).Result;
+                                        creds = JsonConvert.SerializeObject(credential.Token);
+                                    }
+                                }
                             }
                         }
+                        // save user credentials
+                        using (FileStream fs = File.Create(userGAuthPath))
+                        {
+                            byte[] info = new UTF8Encoding(true).GetBytes(creds);
+                            fs.Write(info, 0, info.Length);
+                        }
+                        // use credentials locally
+                        JObject joUserCredsPost = JObject.Parse(creds);
+                        id_token = (string)joUserCredsPost["id_token"];
+                        string payloadIdPost = Base64UrlDecode(id_token.Split('.')[1]);
+                        JObject joIdTokenPost = JObject.Parse(payloadIdPost);
+                        email = (string)joIdTokenPost.SelectToken("email");
                         tokenType = "google-installed";
                         break;
                     case Auth.Manual:
@@ -425,8 +461,8 @@ namespace ArenaUnity
                 // get arena CSRF token
                 yield return HttpRequestAuth($"https://{hostAddress}/user/v2/login");
 
-                WWWForm form = new WWWForm();
-                if (idToken != null) form.AddField("id_token", idToken);
+                form = new WWWForm();
+                if (id_token != null) form.AddField("id_token", id_token);
 
                 // get arena user account state
                 cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/v2/user_state", csrfToken, form));
@@ -577,13 +613,13 @@ namespace ArenaUnity
 
         protected bool ConfirmGoogleAuth()
         {
-            return (idToken != null);
+            return (id_token != null);
         }
 
         protected IEnumerator GetFSLoginForUser()
         {
             WWWForm form = new WWWForm();
-            if (idToken != null) form.AddField("id_token", idToken);
+            if (id_token != null) form.AddField("id_token", id_token);
 
             CoroutineWithData cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/v2/storelogin", csrfToken, form));
             yield return cd.coroutine;
