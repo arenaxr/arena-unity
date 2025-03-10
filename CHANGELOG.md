@@ -2,6 +2,22 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.2.0](https://github.com/arenaxr/arena-unity/compare/v1.1.0...v1.2.0) (2025-03-10)
+
+
+### Features
+
+* **auth:** add headless device auth mode ([7856230](https://github.com/arenaxr/arena-unity/commit/7856230ea5211da3c4c19d576c7e7fb1659eeba9))
+* **filestore:** add user api filestore upload scene.UploadStoreFile() ([1be9322](https://github.com/arenaxr/arena-unity/commit/1be93222609b80fbcbb30880da05b82d118c0b3a))
+
+
+### Bug Fixes
+
+* **auth:** add uniform google token refresh ([6b08057](https://github.com/arenaxr/arena-unity/commit/6b080575049079106c8aad42e5a30cabfa92dc1b))
+* **auth:** unify auth flow credidtial storage ([625c72d](https://github.com/arenaxr/arena-unity/commit/625c72d8ca4258a7eb66ec1546346aafcb1e7a07))
+* **camera:** correct access control of userids ([7e5992f](https://github.com/arenaxr/arena-unity/commit/7e5992fdb0ebfb7bb0da84e2843d49cde5f13ec3))
+* **mqtt:** correct logging type from control of mqtt messages ([ab2550a](https://github.com/arenaxr/arena-unity/commit/ab2550a62b836377b8c0c0fb89ce644a0fa06d15))
+
 ## [1.1.0](https://github.com/arenaxr/arena-unity/compare/v1.0.3...v1.1.0) (2024-12-02)
 
 
