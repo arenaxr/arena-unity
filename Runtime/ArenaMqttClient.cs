@@ -429,7 +429,8 @@ namespace ArenaUnity
                                                 GoogleClientSecrets.FromStream(stream).Secrets,
                                                 Scopes,
                                                 "user",
-                                                CancellationToken.None).Result;
+                                                CancellationToken.None,
+                                                new NullDataStore()).Result;
                                         creds = JsonConvert.SerializeObject(credential.Token);
                                     }
                                 }
