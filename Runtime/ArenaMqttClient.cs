@@ -320,9 +320,9 @@ namespace ArenaUnity
                         yield return cd.coroutine;
                         if (!isCrdSuccess(cd.result)) yield break;
                         string gAuthId = cd.result.ToString();
-                        JObject gauth = JObject.Parse(gAuthId);
-                        string client_id = (string)gauth["installed"]["client_id"];
-                        string client_secret = (string)gauth["installed"]["client_secret"];
+                        JObject joGAuth = JObject.Parse(gAuthId);
+                        string client_id = (string)joGAuth["installed"]["client_id"];
+                        string client_secret = (string)joGAuth["installed"]["client_secret"];
 
                         // load user credentials
                         if (File.Exists(userGAuthPath))
@@ -384,12 +384,12 @@ namespace ArenaUnity
                                     string device_resp = cd.result.ToString();
 
                                     // render user code/link and poll for OOB response
-                                    JObject device = JObject.Parse(device_resp);
-                                    dev_verification_url = (string)device["verification_url"];
-                                    dev_user_code = (string)device["user_code"];
-                                    string device_code = (string)device["device_code"];
-                                    long exp_s = (long)device["expires_in"];
-                                    long interval_s = (long)device["interval"];
+                                    JObject joDeviceResp = JObject.Parse(device_resp);
+                                    dev_verification_url = (string)joDeviceResp["verification_url"];
+                                    dev_user_code = (string)joDeviceResp["user_code"];
+                                    string device_code = (string)joDeviceResp["device_code"];
+                                    long exp_s = (long)joDeviceResp["expires_in"];
+                                    long interval_s = (long)joDeviceResp["interval"];
                                     showDeviceAuthWindow = true; // render gui device auth instructions
                                     Debug.LogWarning($"ARENA Device Authorization: Enter device code {dev_user_code} at webpage  {dev_verification_url}");
                                     var exp_ms = DateTimeOffset.Now.ToUnixTimeMilliseconds() + (exp_s * 1000);
