@@ -114,6 +114,10 @@ namespace ArenaUnity
             brokerPort = 8883;
             isEncrypted = true;
             sslProtocol = MqttSslProtocols.TLSv1_2;
+            if (hostAddress == "localhost" || hostAddress.EndsWith(".local"))
+            {
+                verifyCertificate = false;
+            }
 #if UNITY_EDITOR
             packageListRequest = Client.List(true); // request offline packages installed
 #endif

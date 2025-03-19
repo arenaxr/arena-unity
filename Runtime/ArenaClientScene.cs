@@ -1120,8 +1120,8 @@ namespace ArenaUnity
             UnityWebRequest www = UnityWebRequest.Get(url);
             www.downloadHandler = new DownloadHandlerBuffer();
             //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
-            if (!verifyCertificate && url.StartsWith("https://localhost"))
-            {   // TODO (mwfarb): should check for arena/not-arena host when debugging on localhost
+            if (!verifyCertificate)
+            {
                 www.certificateHandler = new SelfSignedCertificateHandler();
             }
             www.SendWebRequest();
@@ -1152,8 +1152,8 @@ namespace ArenaUnity
             Uri uri = new Uri(url);
             UnityWebRequest www = new UnityWebRequest(url, "POST");
             //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
-            if (!verifyCertificate && url.StartsWith("https://localhost"))
-            {   // TODO (mwfarb): should check for arena/not-arena host when debugging on localhost
+            if (!verifyCertificate)
+            {
                 www.certificateHandler = new SelfSignedCertificateHandler();
             }
             www.SetRequestHeader("X-Auth", fsToken);
