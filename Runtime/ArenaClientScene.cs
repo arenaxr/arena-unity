@@ -46,11 +46,6 @@ namespace ArenaUnity
 
         public string realm { get; private set; }
 
-        [Tooltip("Namespace (automated with username), but can be overridden (runtime changes ignored).")]
-        public string namespaceName = null;
-        [Tooltip("Name of the scene, without namespace ('example', not 'username/example', runtime changes ignored).")]
-        public string sceneName = "example";
-
         [Header("Presence")]
         [Tooltip("Display other camera avatars in the scene")]
         public bool renderCameras = true;
@@ -58,27 +53,6 @@ namespace ArenaUnity
         public bool renderHands = true;
         [Tooltip("Display VR Controller Rays")]
         public bool drawControllerRays = false;
-
-        [Header("Performance")]
-        [Tooltip("Console log MQTT scene object messages")]
-        public bool logMqttSceneObjects = false;
-        [Tooltip("Console log MQTT user object messages")]
-        public bool logMqttUserObjects = false;
-        [Tooltip("Console log MQTT user presense messages")]
-        public bool logMqttUserPresense = false;
-        [Tooltip("Console log MQTT render fusion messsages")]
-        public bool logMqttRemoteRender = false;
-        [Tooltip("Console log MQTT scene chat messsages")]
-        public bool logMqttChats = false;
-        [Tooltip("Console log MQTT program messages")]
-        public bool logMqttPrograms = false;
-        [Tooltip("Console log MQTT environment messages")]
-        public bool logMqttEnvironment = false;
-        [Tooltip("Console log MQTT debug messages")]
-        public bool logMqttDebug = false;
-        [Tooltip("Global publish frequency to publish detected transform changes (milliseconds)")]
-        [Range(100, 1000)]
-        public int globalUpdateMs = 100;
 
         /// <summary>
         /// Browser URL for the scene.
@@ -97,7 +71,6 @@ namespace ArenaUnity
         internal List<string> parentalQueue = new List<string>();
         internal List<string> localCameraIds = new List<string>();
         internal ArenaDefaultsJson arenaDefaults { get; private set; }
-        internal ArenaMqttTokenClaimsJson perms { get; private set; }
 
         // Define callbacks
         public delegate void DecodeMessageDelegate(string topic, string message);
@@ -112,7 +85,6 @@ namespace ArenaUnity
         static readonly string[] msgUriTags = { "url", "src", "obj", "mtl", "overrideSrc", "detailedUrl", "headModelPath", "texture", "navMesh" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
-        private int msgTypeRenderIdx = (int)ArenaTopicTokens.SCENE_MSGTYPE;
         static readonly string[] requiredShadersStandardRP = {
             "Standard",
             "Unlit/Color",
@@ -252,7 +224,6 @@ namespace ArenaUnity
                 LogAndExit("Permissions not received.");
                 yield break;
             }
-            perms = JsonConvert.DeserializeObject<ArenaMqttTokenClaimsJson>(permissions);
             sceneObjectRights = HasPerms(sceneTopic.PUB_SCENE_OBJECTS);
             // publish arena cameras where requested
             bool foundFirstCam = false;
@@ -290,15 +261,6 @@ namespace ArenaUnity
 
             // get persistence objects
             StartCoroutine(SceneLoadPersist());
-        }
-
-        private bool HasPerms(string topic)
-        {
-            foreach (string pubperm in perms.publ)
-            {
-                if (MqttTopicMatch(pubperm, topic)) return true;
-            }
-            return false;
         }
 
         /// <summary>
@@ -1425,15 +1387,8 @@ namespace ArenaUnity
         /// </summary>
         private void PublishSceneMessage(string topic, ArenaObjectJson msg)
         {
-            // TODO (mwfarb): make warning of publishing without rights more effiecient
-            bool hasPermissions = HasPerms(topic);
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
             Publish(topic, payload); // remote
-            var topicSplit = topic.Split("/");
-            if (topicSplit.Length > msgTypeRenderIdx)
-            {
-                LogMessage("Sending", topicSplit[4], topic, JsonConvert.SerializeObject(msg), hasPermissions);
-            }
         }
 
         private static string GetTimestamp()
@@ -1496,9 +1451,9 @@ namespace ArenaUnity
             // TODO (mwfarb): test that ignore own messages is still viable
             // filter messages based on expected payload format
             var topicSplit = topic.Split("/");
-            if (topicSplit.Length > msgTypeRenderIdx)
+            if (topicSplit.Length > ArenaMqttClient.msgTypeRenderIdx)
             {
-                var sceneMsgType = topicSplit[msgTypeRenderIdx];
+                var sceneMsgType = topicSplit[ArenaMqttClient.msgTypeRenderIdx];
                 LogMessage("Received", sceneMsgType, topic, message);
                 switch (sceneMsgType)
                 {
@@ -1579,47 +1534,6 @@ namespace ArenaUnity
                 // pass event on to click-listener is defined
                 ArenaClickListener acl = gobj.GetComponent<ArenaClickListener>();
                 if (acl != null && acl.OnEventCallback != null) acl.OnEventCallback(msg_type, JsonConvert.SerializeObject(msg));
-            }
-        }
-
-        private void LogMessage(string dir, string sceneMsgType, string topic, string msg, bool hasPermissions = true)
-        {
-            bool log = !hasPermissions; // default log any permision failure
-            // determine logging level for permision success
-            switch (sceneMsgType)
-            {
-                case "x":
-                    if (logMqttUserPresense) log = true;
-                    break;
-                case "o":
-                    if (logMqttSceneObjects) log = true;
-                    break;
-                case "u":
-                    if (logMqttUserObjects) log = true;
-                    break;
-                case "c":
-                    if (logMqttChats) log = true;
-                    break;
-                case "r":
-                    if (logMqttRemoteRender) log = true;
-                    break;
-                case "p":
-                    if (logMqttPrograms) log = true;
-                    break;
-                case "d":
-                    if (logMqttDebug) log = true;
-                    break;
-                case "e":
-                    if (logMqttEnvironment) log = true;
-                    break;
-                default:
-                    break;
-            }
-            if (log) {
-                if (hasPermissions)
-                    Debug.Log($"{dir}: {topic} {msg}");
-                else
-                    Debug.LogWarning($"Permissions FAILED {dir}: {topic} {msg}");
             }
         }
 

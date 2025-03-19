@@ -39,6 +39,31 @@ namespace ArenaUnity
         public bool headless = false;
         [Tooltip("IP address or URL of the host running broker/auth/persist services (runtime changes ignored).")]
         public string hostAddress = "arenaxr.org";
+        [Tooltip("Namespace (automated with username), but can be overridden (runtime changes ignored).")]
+        public string namespaceName = null;
+        [Tooltip("Name of the scene, without namespace ('example', not 'username/example', runtime changes ignored).")]
+        public string sceneName = "example";
+
+        [Header("Performance")]
+        [Tooltip("Console log MQTT scene object messages")]
+        public bool logMqttSceneObjects = false;
+        [Tooltip("Console log MQTT user object messages")]
+        public bool logMqttUserObjects = false;
+        [Tooltip("Console log MQTT user presense messages")]
+        public bool logMqttUserPresense = false;
+        [Tooltip("Console log MQTT render fusion messsages")]
+        public bool logMqttRemoteRender = false;
+        [Tooltip("Console log MQTT scene chat messsages")]
+        public bool logMqttChats = false;
+        [Tooltip("Console log MQTT program messages")]
+        public bool logMqttPrograms = false;
+        [Tooltip("Console log MQTT environment messages")]
+        public bool logMqttEnvironment = false;
+        [Tooltip("Console log MQTT debug messages")]
+        public bool logMqttDebug = false;
+        [Tooltip("Global publish frequency to publish detected transform changes (milliseconds)")]
+        [Range(100, 1000)]
+        public int globalUpdateMs = 100;
 
         /// <summary>
         /// Authenticated user email account.
@@ -88,7 +113,9 @@ namespace ArenaUnity
         public string handleftid { get; private set; }
         public string handrightid { get; private set; }
         public string networkLatencyTopic { get; private set; } // network graph latency update
+        public ArenaMqttTokenClaimsJson perms { get; private set; }
         static readonly int networkLatencyIntervalMs = 10000; // run network latency update every 10s
+        protected const int msgTypeRenderIdx = (int)ArenaTopicTokens.SCENE_MSGTYPE;
 
         static readonly string[] Scopes = {
             Oauth2Service.Scope.UserinfoProfile,
@@ -169,6 +196,12 @@ namespace ArenaUnity
         public void Publish(string topic, byte[] payload)
         {
             if (client != null) client.Publish(topic, payload);
+            var topicSplit = topic.Split("/");
+            if (topicSplit.Length > msgTypeRenderIdx)
+            {
+                bool hasPermissions = HasPerms(topic);
+                LogMessage("Sending", topicSplit[4], topic, System.Text.Encoding.UTF8.GetString(payload), hasPermissions);
+            }
         }
 
         public void Subscribe(string topic)
@@ -183,6 +216,57 @@ namespace ArenaUnity
         public void Unsubscribe(string[] topics)
         {
             if (client != null) { client.Unsubscribe(topics); }
+        }
+
+        protected bool HasPerms(string topic)
+        {
+            foreach (string pubperm in perms.publ)
+            {
+                if (MqttTopicMatch(pubperm, topic)) return true;
+            }
+            return false;
+        }
+
+        protected void LogMessage(string dir, string sceneMsgType, string topic, string msg, bool hasPermissions = true)
+        {
+            bool log = !hasPermissions; // default log any permission failure
+            // determine logging level for permission success
+            switch (sceneMsgType)
+            {
+                case "x":
+                    if (logMqttUserPresense) log = true;
+                    break;
+                case "o":
+                    if (logMqttSceneObjects) log = true;
+                    break;
+                case "u":
+                    if (logMqttUserObjects) log = true;
+                    break;
+                case "c":
+                    if (logMqttChats) log = true;
+                    break;
+                case "r":
+                    if (logMqttRemoteRender) log = true;
+                    break;
+                case "p":
+                    if (logMqttPrograms) log = true;
+                    break;
+                case "d":
+                    if (logMqttDebug) log = true;
+                    break;
+                case "e":
+                    if (logMqttEnvironment) log = true;
+                    break;
+                default:
+                    break;
+            }
+            if (log)
+            {
+                if (hasPermissions)
+                    Debug.Log($"{dir}: {topic} {msg}");
+                else
+                    Debug.LogWarning($"Permissions FAILED {dir}: {topic} {msg}");
+            }
         }
 
         protected void OnDestroy()
@@ -599,6 +683,7 @@ namespace ArenaUnity
             string payloadJson = Base64UrlDecode(auth.token.Split('.')[1]);
             JObject payload = JObject.Parse(payloadJson);
             permissions = JToken.Parse(payloadJson).ToString(Formatting.Indented);
+            perms = JsonConvert.DeserializeObject<ArenaMqttTokenClaimsJson>(permissions);
             if (string.IsNullOrWhiteSpace(namespaceName))
             {
                 namespaceName = (string)payload.SelectToken("sub");
