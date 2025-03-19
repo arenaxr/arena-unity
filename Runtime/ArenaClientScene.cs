@@ -61,14 +61,14 @@ namespace ArenaUnity
 
         [Header("Performance")]
         [Tooltip("Console log MQTT scene object messages")]
-        public bool logMqttObjects = false;
+        public bool logMqttSceneObjects = false;
         [Tooltip("Console log MQTT user object messages")]
-        public bool logMqttUsers = false;
+        public bool logMqttUserObjects = false;
         [Tooltip("Console log MQTT user presense messages")]
-        public bool logMqttPresense = false;
-        [Tooltip("Console log MQTT scene chat messsages")]
-        public bool logMqttRender = false;
+        public bool logMqttUserPresense = false;
         [Tooltip("Console log MQTT render fusion messsages")]
+        public bool logMqttRemoteRender = false;
+        [Tooltip("Console log MQTT scene chat messsages")]
         public bool logMqttChats = false;
         [Tooltip("Console log MQTT program messages")]
         public bool logMqttPrograms = false;
@@ -1589,19 +1589,19 @@ namespace ArenaUnity
             switch (sceneMsgType)
             {
                 case "x":
-                    if (logMqttPresense) log = true;
+                    if (logMqttUserPresense) log = true;
                     break;
                 case "o":
-                    if (logMqttObjects) log = true;
+                    if (logMqttSceneObjects) log = true;
                     break;
                 case "u":
-                    if (logMqttUsers) log = true;
+                    if (logMqttUserObjects) log = true;
                     break;
                 case "c":
                     if (logMqttChats) log = true;
                     break;
                 case "r":
-                    if (logMqttRender) log = true;
+                    if (logMqttRemoteRender) log = true;
                     break;
                 case "p":
                     if (logMqttPrograms) log = true;
