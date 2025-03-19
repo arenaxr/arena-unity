@@ -200,7 +200,11 @@ namespace ArenaUnity
 
         internal static string GetUnityAuthPath()
         {
+#if UNITY_EDITOR && !(UNITY_ANDROID || UNITY_IOS)
             string userHomePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+#else
+            string userHomePath = Application.persistentDataPath;
+#endif
             return Path.Combine(userHomePath, userDirArena, userSubDirUnity);
         }
 
@@ -265,12 +269,10 @@ namespace ArenaUnity
             string userMqttPath = Path.Combine(sceneAuthDir, mqttTokenFile);
             string mqttToken = null;
             CoroutineWithData cd;
-#if UNITY_EDITOR && !( UNITY_ANDROID || UNITY_IOS )
             if (!Directory.Exists(sceneAuthDir))
             {
                 Directory.CreateDirectory(sceneAuthDir);
             }
-#endif
             if (hostAddress == "localhost" || hostAddress.EndsWith(".local"))
             {
                 verifyCertificate = false;
