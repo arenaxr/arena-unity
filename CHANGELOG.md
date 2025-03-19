@@ -2,6 +2,17 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.2.1](https://github.com/arenaxr/arena-unity/compare/v1.2.0...v1.2.1) (2025-03-19)
+
+
+### Bug Fixes
+
+* allow .local host addresses to ignore certificate verification ([79acb50](https://github.com/arenaxr/arena-unity/commit/79acb50dfe7bbf54af2659a20485f8f0d9bde4e9))
+* allow ios/android to save auth data in application storage ([bc8fb67](https://github.com/arenaxr/arena-unity/commit/bc8fb67fea963ffb300878bc9bd4245dddbcf2e3))
+* allow mqtt library users (like render fusion) to log sent mqtt ([80a2572](https://github.com/arenaxr/arena-unity/commit/80a257232b2aea4a6cc9d679054cc8ab0a14e2ce))
+* create consistant test of host address for certificate verification ([09df42b](https://github.com/arenaxr/arena-unity/commit/09df42b9fd299fae1ca4fe52004486943c12871a))
+* improve mqtt log boolean descriptions ([aa4a872](https://github.com/arenaxr/arena-unity/commit/aa4a87292645694538b637839b0bfad2d63365e1))
+
 ## [1.2.0](https://github.com/arenaxr/arena-unity/compare/v1.1.0...v1.2.0) (2025-03-10)
 
 
