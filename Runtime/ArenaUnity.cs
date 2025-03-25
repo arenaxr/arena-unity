@@ -504,6 +504,14 @@ namespace ArenaUnity
             text.apply = true;
         }
 
+        public static void ApplyWireGaussianSplatting(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireGaussianSplatting>(out var gaussiansplatting))
+                gaussiansplatting = gobj.AddComponent<ArenaWireGaussianSplatting>();
+            gaussiansplatting.json = JsonConvert.DeserializeObject<ArenaGaussianSplattingJson>(MergeRawJson(gaussiansplatting.json, indata));
+            gaussiansplatting.apply = true;
+        }
+
         //ARENAUI Objects
         public static void ApplyWireArenauiCard(object indata, GameObject gobj)
         {

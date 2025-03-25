@@ -674,6 +674,7 @@ namespace ArenaUnity
                 // TODO: case "ocean": ArenaUnity.ApplyWireOcean(indata, gobj); break;
                 // TODO: case "pcd-model": ArenaUnity.ApplyWirePcdModel(indata, gobj); break;
                 // TODO: case "threejs-scene": ArenaUnity.ApplyWireThreejsScene(indata, gobj); break;
+                case "gaussian_splatting": ArenaUnity.ApplyWireGaussianSplatting(indata, gobj); break;
                 case "gltf-model":
                     // load main model
                     if (url != null && aobj.gltfUrl == null)

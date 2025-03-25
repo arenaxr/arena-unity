@@ -3,11 +3,12 @@
   "version": "1.2.1",
   "displayName": "ARENA Library for Unity",
   "description": "Enables control of ARENA assets through Unity.",
-  "unity": "2020.3",
+  "unity": "2022.3",
   "documentationUrl": "https://github.com/arenaxr/arena-unity/blob/main/README.md",
   "changelogUrl": "https://github.com/arenaxr/arena-unity/blob/main/CHANGELOG.md",
   "licensesUrl": "https://github.com/arenaxr/arena-unity/blob/main/LICENSE",
   "dependencies": {
+    "org.nesnausk.gaussian-splatting": "1.1.0",
     "com.unity.cloud.gltfast": "6.10.3",
     "com.unity.cloud.draco": "5.1.8",
     "com.unity.cloud.ktx": "3.4.5",
