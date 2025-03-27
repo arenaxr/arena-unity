@@ -47,6 +47,21 @@ namespace ArenaUnity
             if (gaussiansplat == null)
                 gaussiansplat = sobj.AddComponent<GaussianSplatRenderer>();
 
+            // load required shaders
+            gaussiansplat.m_ShaderSplats = Shader.Find("Gaussian Splatting/Render Splats");
+            gaussiansplat.m_ShaderComposite = Shader.Find("Hidden/Gaussian Splatting/Composite");
+            gaussiansplat.m_ShaderDebugPoints = Shader.Find("Gaussian Splatting/Debug/Render Points");
+            gaussiansplat.m_ShaderDebugBoxes = Shader.Find("Gaussian Splatting/Debug/Render Boxes");
+            ComputeShader[] compShaders = Resources.FindObjectsOfTypeAll<ComputeShader>();
+            for (int i = 0; i < compShaders.Length; i++)
+            {
+                if (compShaders[i].name == "SplatUtilities")
+                {
+                    gaussiansplat.m_CSSplatUtilities = compShaders[i];
+                    break;
+                }
+            }
+
             string filetype = null;
             if (Path.HasExtension(json.Src))
             {
