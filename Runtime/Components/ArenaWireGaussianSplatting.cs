@@ -34,6 +34,7 @@ namespace ArenaUnity
 
         public ArenaGaussianSplattingJson json = new ArenaGaussianSplattingJson();
         GaussianSplatRenderer gaussiansplat;
+        GaussianCutout gaussiancutout;
 
         protected override void ApplyRender()
         {
@@ -42,10 +43,17 @@ namespace ArenaUnity
             GameObject sobj = new GameObject("Splat");
             sobj.transform.SetParent(transform, false);
             sobj.transform.rotation *= Quaternion.AngleAxis(180, transform.right);
-
+            // assign splat renderer
             gaussiansplat = sobj.GetComponent<GaussianSplatRenderer>();
             if (gaussiansplat == null)
                 gaussiansplat = sobj.AddComponent<GaussianSplatRenderer>();
+
+            // assign splat cutout
+            if (json.CutoutEntity != null)
+            {
+                string cutout_id = json.CutoutEntity.TrimStart('#');
+                StartCoroutine(SeekCutout(cutout_id));
+            }
 
             // load required shaders
             gaussiansplat.m_ShaderSplats = Shader.Find("Gaussian Splatting/Render Splats");
@@ -79,6 +87,18 @@ namespace ArenaUnity
                     Debug.LogWarning($"GaussianSplatting object '{name}' type {filetype} not supported.");
                     return;
             }
+        }
+
+        private IEnumerator SeekCutout(string cutoutEntity)
+        {
+            yield return new WaitUntil(() => GameObject.Find(cutoutEntity) != null);
+            var cobj = GameObject.Find(cutoutEntity);
+            gaussiancutout = cobj.GetComponent<GaussianCutout>();
+            if (gaussiancutout == null)
+                gaussiancutout = cobj.AddComponent<GaussianCutout>();
+            gaussiancutout.m_Type = GaussianCutout.Type.Box;
+            gaussiansplat.m_Cutouts = new GaussianCutout[] { gaussiancutout };
+            yield return null;
         }
 
         private IEnumerator HandleDotSplatAssetConversion(string msgUrl)
@@ -119,12 +139,12 @@ namespace ArenaUnity
         private IEnumerator HandleDotPlyAssetConversion(string assetName)
         {
 #if UNITY_EDITOR
-            var w = EditorWindow.CreateWindow<GaussianSplatAssetCreator>();
-            w.titleContent = new GUIContent($"Import GaussianSplatting object '{name}'");
+            var w = EditorWindow.GetWindowWithRect<GaussianSplatAssetCreator>(new Rect(50, 50, 360, 340), false, $"Import '{name}' GaussianSplatting", true);
+            w.minSize = new Vector2(320, 320);
+            w.maxSize = new Vector2(1500, 1500);
             w.Show();
             // wait for asset creation...
             var mainAssetPath = $"Assets/GaussianAssets/{assetName}";
-            Debug.Log($"Waiting for {mainAssetPath}");
             yield return new WaitUntil(() => AssetDatabase.LoadAssetAtPath(mainAssetPath, typeof(GaussianSplatAsset)) != null);
             w.Close();
             gaussiansplat.m_Asset = AssetDatabase.LoadAssetAtPath<GaussianSplatAsset>(mainAssetPath);
