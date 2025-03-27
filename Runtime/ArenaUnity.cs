@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;

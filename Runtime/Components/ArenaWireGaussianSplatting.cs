@@ -39,9 +39,13 @@ namespace ArenaUnity
         {
             // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
 
-            gaussiansplat = gameObject.GetComponent<GaussianSplatRenderer>();
+            GameObject sobj = new GameObject("Splat");
+            sobj.transform.SetParent(transform);
+            sobj.transform.rotation *= Quaternion.AngleAxis(180, transform.right);
+
+            gaussiansplat = sobj.GetComponent<GaussianSplatRenderer>();
             if (gaussiansplat == null)
-                gaussiansplat = gameObject.AddComponent<GaussianSplatRenderer>();
+                gaussiansplat = sobj.AddComponent<GaussianSplatRenderer>();
 
             string filetype = null;
             if (Path.HasExtension(json.Src))
@@ -51,11 +55,10 @@ namespace ArenaUnity
             switch (filetype)
             {
                 case ".ply":
-                    StartCoroutine(HandlePlyAssetConversion(Path.GetFileNameWithoutExtension(json.Src)));
+                    StartCoroutine(HandleDotPlyAssetConversion(Path.GetFileNameWithoutExtension(json.Src)));
                     break;
                 case ".splat":
-                    //gaussiansplat.m_Asset = some asset;
-                    Debug.LogWarning($"GaussianSplatting object '{name}' type {filetype} not yet implemented.");
+                    StartCoroutine(HandleDotSplatAssetConversion(json.Src));
                     break;
                 default:
                     Debug.LogWarning($"GaussianSplatting object '{name}' type {filetype} not supported.");
@@ -63,7 +66,42 @@ namespace ArenaUnity
             }
         }
 
-        private IEnumerator HandlePlyAssetConversion(string assetName)
+        private IEnumerator HandleDotSplatAssetConversion(string msgUrl)
+        {
+            var asset = new GaussianSplatAsset();
+            string assetPath = ArenaClientScene.Instance.checkLocalAsset(msgUrl);
+            if (File.Exists(assetPath))
+            {
+                var bytes = File.ReadAllBytes(assetPath);
+            }
+
+            //TextAsset dataChunk = null;
+            //TextAsset dataPos = null;
+            //TextAsset dataOther = null;
+            //TextAsset dataColor = null;
+            //TextAsset dataSh = default;
+            //Hash128 hash = default;
+
+            //int splats;
+            //VectorFormat formatPos = ;
+            //VectorFormat formatScale;
+            //ColorFormat formatColor;
+            //SHFormat formatSh;
+            //Vector3 bMin;
+            //Vector3 bMax;
+            //CameraInfo[] cameraInfos;
+
+            //asset.Initialize();
+            //asset.SetAssetFiles(dataChunk, dataPos, dataOther, dataColor, dataSh);
+            //asset.SetDataHash(hash);
+
+            gaussiansplat.m_Asset = asset;
+
+            //Debug.LogWarning($"GaussianSplatting object '{name}' type .splat not yet implemented.");
+            yield return null;
+        }
+
+        private IEnumerator HandleDotPlyAssetConversion(string assetName)
         {
 #if UNITY_EDITOR
             var w = EditorWindow.CreateWindow<GaussianSplatAssetCreator>();
@@ -72,16 +110,16 @@ namespace ArenaUnity
             // wait for asset creation...
             var mainAssetPath = $"Assets/GaussianAssets/{assetName}";
             Debug.Log($"Waiting for {mainAssetPath}");
-            yield return new WaitUntil(() => AssetDatabase.LoadAssetAtPath(mainAssetPath, typeof(GaussianSplatAsset))!=null);
+            yield return new WaitUntil(() => AssetDatabase.LoadAssetAtPath(mainAssetPath, typeof(GaussianSplatAsset)) != null);
             w.Close();
             gaussiansplat.m_Asset = AssetDatabase.LoadAssetAtPath<GaussianSplatAsset>(mainAssetPath);
             // TODO (mwfarb): this path does not setup shaders well yet....
 #else
-            Debug.LogWarning($"GaussianSplatting object '{name}' type {filetype} is Editor only, not yet implemented in Runtime mode.");
+            Debug.LogWarning($"GaussianSplatting object '{name}' type .pyl is Editor only, not yet implemented in Runtime mode.");
             //m_InputFile = json.Src;
             //gaussiansplat.m_Asset = GaussianSplatAssetCreator.CreateAsset();
-            yield return null;
 #endif
+            yield return null;
         }
 
         public override void UpdateObject()
