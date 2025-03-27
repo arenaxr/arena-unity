@@ -79,7 +79,7 @@ namespace ArenaUnity.Schemas
         private static bool defVisible = true;
         [JsonProperty(PropertyName = "visible")]
         [Tooltip("Whether object is visible. Property is inherited.")]
-        public bool Visible = defVisible;
+        public bool? Visible = defVisible;
         public bool ShouldSerializeVisible()
         {
             // visible
@@ -349,7 +349,7 @@ namespace ArenaUnity.Schemas
         private static bool defBuffer = true;
         [JsonProperty(PropertyName = "buffer")]
         [Tooltip("Transform geometry into a BufferGeometry to reduce memory usage at the cost of being harder to manipulate (geometries only: box, circle, cone, ...).")]
-        public bool Buffer = defBuffer;
+        public bool? Buffer = defBuffer;
         public bool ShouldSerializeBuffer()
         {
             // buffer
@@ -398,7 +398,7 @@ namespace ArenaUnity.Schemas
         private static bool defScreenshareable = true;
         [JsonProperty(PropertyName = "screenshareable")]
         [Tooltip("Whether or not a user can screenshare on an object.")]
-        public bool Screenshareable = defScreenshareable;
+        public bool? Screenshareable = defScreenshareable;
         public bool ShouldSerializeScreenshareable()
         {
             // screenshareable
@@ -408,7 +408,7 @@ namespace ArenaUnity.Schemas
         private static bool defSkipCache = false;
         [JsonProperty(PropertyName = "skipCache")]
         [Tooltip("Disable retrieving the shared geometry object from the cache. (geometries only: box, circle, cone, ...).")]
-        public bool SkipCache = defSkipCache;
+        public bool? SkipCache = defSkipCache;
         public bool ShouldSerializeSkipCache()
         {
             // skipCache
