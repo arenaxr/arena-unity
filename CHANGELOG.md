@@ -2,6 +2,14 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.2.2](https://github.com/arenaxr/arena-unity/compare/v1.2.1...v1.2.2) (2025-03-27)
+
+
+### Bug Fixes
+
+* **unity:** upgrade minimum support to unity 2022.3 ([6c8f3cd](https://github.com/arenaxr/arena-unity/commit/6c8f3cd0bf402408ce7c3fd7b825bac760df6d96))
+* **visible:** prevent falsy assessment of visible property causing visible=false to fail ([a616a0c](https://github.com/arenaxr/arena-unity/commit/a616a0cd84f39fee2fc571ee012ef1ed17bd7440))
+
 ## [1.2.1](https://github.com/arenaxr/arena-unity/compare/v1.2.0...v1.2.1) (2025-03-19)
 
 
