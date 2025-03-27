@@ -40,7 +40,7 @@ namespace ArenaUnity
             // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
 
             GameObject sobj = new GameObject("Splat");
-            sobj.transform.SetParent(transform);
+            sobj.transform.SetParent(transform, false);
             sobj.transform.rotation *= Quaternion.AngleAxis(180, transform.right);
 
             gaussiansplat = sobj.GetComponent<GaussianSplatRenderer>();
