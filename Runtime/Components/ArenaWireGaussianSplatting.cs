@@ -19,7 +19,7 @@ namespace ArenaUnity
 {
     public class ArenaWireGaussianSplatting : ArenaComponent
     {
-        // ARENA gaussiansplatting component unity conversion status:
+        // ARENA gaussian_splatting component unity conversion status:
         // TODO: src
         // TODO: cutoutEntity
         // TODO: pixelRatio
@@ -70,6 +70,7 @@ namespace ArenaUnity
                 }
             }
 
+
             string filetype = null;
             if (Path.HasExtension(json.Src))
             {
@@ -89,10 +90,10 @@ namespace ArenaUnity
             }
         }
 
-        private IEnumerator SeekCutout(string cutoutEntity)
+        private IEnumerator SeekCutout(string cutout_id)
         {
-            yield return new WaitUntil(() => GameObject.Find(cutoutEntity) != null);
-            var cobj = GameObject.Find(cutoutEntity);
+            yield return new WaitUntil(() => GameObject.Find(cutout_id) != null);
+            var cobj = GameObject.Find(cutout_id);
             gaussiancutout = cobj.GetComponent<GaussianCutout>();
             if (gaussiancutout == null)
                 gaussiancutout = cobj.AddComponent<GaussianCutout>();
@@ -144,14 +145,16 @@ namespace ArenaUnity
             w.maxSize = new Vector2(1500, 1500);
             w.Show();
             // wait for asset creation...
-            var mainAssetPath = $"Assets/GaussianAssets/{assetName}";
-            yield return new WaitUntil(() => AssetDatabase.LoadAssetAtPath(mainAssetPath, typeof(GaussianSplatAsset)) != null);
+            var mainAssetPath = $"Assets/GaussianAssets/{assetName}.asset";
+            yield return new WaitUntil(() => AssetDatabase.LoadAssetAtPath<GaussianSplatAsset>(mainAssetPath) != null);
             w.Close();
             gaussiansplat.m_Asset = AssetDatabase.LoadAssetAtPath<GaussianSplatAsset>(mainAssetPath);
             // TODO (mwfarb): this path does not setup shaders well yet....
 #else
             Debug.LogWarning($"GaussianSplatting object '{name}' type .pyl is Editor only, not yet implemented in Runtime mode.");
+            // load .ply file bytes
             //m_InputFile = json.Src;
+            // process .ply into splat asset
             //gaussiansplat.m_Asset = GaussianSplatAssetCreator.CreateAsset();
 #endif
             yield return null;
