@@ -42,7 +42,9 @@ namespace ArenaUnity
 
             GameObject sobj = new GameObject("Splat");
             sobj.transform.SetParent(transform, false);
-            sobj.transform.rotation *= Quaternion.AngleAxis(180, transform.right);
+            // set transforms to match ARENA a-frame gaussian components
+            sobj.transform.localRotation *= Quaternion.AngleAxis(180, transform.right);
+            sobj.transform.localScale *= 2;
             // assign splat renderer
             gaussiansplat = sobj.GetComponent<GaussianSplatRenderer>();
             if (gaussiansplat == null)
