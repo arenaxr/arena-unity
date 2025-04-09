@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
@@ -502,6 +503,14 @@ namespace ArenaUnity
                 text = gobj.AddComponent<ArenaWireText>();
             text.json = JsonConvert.DeserializeObject<ArenaTextJson>(MergeRawJson(text.json, indata));
             text.apply = true;
+        }
+
+        public static void ApplyWireGaussianSplatting(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireGaussianSplatting>(out var gaussiansplatting))
+                gaussiansplatting = gobj.AddComponent<ArenaWireGaussianSplatting>();
+            gaussiansplatting.json = JsonConvert.DeserializeObject<ArenaGaussianSplattingJson>(MergeRawJson(gaussiansplatting.json, indata));
+            gaussiansplatting.apply = true;
         }
 
         //ARENAUI Objects

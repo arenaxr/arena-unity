@@ -6,7 +6,9 @@
         "glTFast",
         "glTFast.Export",
         "glTFast.Material",
-        "Draco"
+        "Draco",
+        "GaussianSplatting",
+        "GaussianSplattingEditor"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
