@@ -196,7 +196,7 @@ namespace ArenaUnity
         public void Publish(string topic, byte[] payload)
         {
             if (client != null) client.Publish(topic, payload);
-            var topicSplit = topic.Split("/");
+            var topicSplit = topic.Split('/');
             if (topicSplit.Length > msgTypeRenderIdx)
             {
                 bool hasPermissions = HasPerms(topic);
@@ -859,7 +859,7 @@ namespace ArenaUnity
             var allowedRegex = allowTopic.Replace(@"/", @"\/").Replace("+", @"[a-zA-Z0-9 _+.-]*").Replace("#", @"[a-zA-Z0-9 \/_#+.-]*");
             var re = new Regex(allowedRegex);
             var matches = re.Matches(attemptTopic);
-            foreach (var match in matches.ToList())
+            foreach (Match match in matches)
             {
                 if (match.Value == attemptTopic)
                 {

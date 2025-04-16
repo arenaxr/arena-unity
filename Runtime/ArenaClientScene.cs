@@ -1450,7 +1450,7 @@ namespace ArenaUnity
 
             // TODO (mwfarb): test that ignore own messages is still viable
             // filter messages based on expected payload format
-            var topicSplit = topic.Split("/");
+            var topicSplit = topic.Split('/');
             if (topicSplit.Length > ArenaMqttClient.msgTypeRenderIdx)
             {
                 var sceneMsgType = topicSplit[ArenaMqttClient.msgTypeRenderIdx];
