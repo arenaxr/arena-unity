@@ -2,6 +2,14 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.2.3](https://github.com/arenaxr/arena-unity/compare/v1.2.2...v1.2.3) (2025-04-18)
+
+
+### Bug Fixes
+
+* **auth:** add check for auth cancellation and suggest user mitigation ([144897b](https://github.com/arenaxr/arena-unity/commit/144897b016c7e6b51e0aa2297cb42916f1c83c4d))
+* **mqtt:** update mqtt parsing for unity 2020 ([e73bcc0](https://github.com/arenaxr/arena-unity/commit/e73bcc0b184eba94181158f1c5867a62a5733069))
+
 ## [1.2.2](https://github.com/arenaxr/arena-unity/compare/v1.2.1...v1.2.2) (2025-03-27)
 
 
