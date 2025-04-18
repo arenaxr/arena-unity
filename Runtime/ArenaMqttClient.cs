@@ -519,6 +519,7 @@ namespace ArenaUnity
                                     if (task.IsCompletedSuccessfully)
                                     {
                                         credential = task.Result;
+                                        creds = JsonConvert.SerializeObject(credential.Token);
                                     }
                                     else if (task.IsCanceled)
                                     {
@@ -531,7 +532,6 @@ namespace ArenaUnity
                                         Debug.LogError($"GoogleWebAuthorizationBroker IsFaulted: {task.Exception}.");
                                         yield break;
                                     }
-                                    creds = JsonConvert.SerializeObject(credential.Token);
                                 }
                             }
                         }
