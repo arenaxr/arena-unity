@@ -7,13 +7,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Oauth2.v2;
-using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using M2MqttUnity;
 using Newtonsoft.Json;
@@ -509,16 +508,30 @@ namespace ArenaUnity
                                 else
                                 {
                                     // automated browser flow for local client
+                                    ClientSecrets secrets;
                                     using (var stream = ToStream(gAuthId))
                                     {
-                                        var credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                                                GoogleClientSecrets.FromStream(stream).Secrets,
-                                                Scopes,
-                                                "user",
-                                                CancellationToken.None,
-                                                new NullDataStore()).Result;
-                                        creds = JsonConvert.SerializeObject(credential.Token);
+                                        secrets = GoogleClientSecrets.FromStream(stream).Secrets;
                                     }
+                                    var task = DoBrowserAuthFlow(secrets);
+                                    yield return new WaitUntil(() => task.IsCompleted);
+                                    UserCredential credential = null;
+                                    if (task.IsCompletedSuccessfully)
+                                    {
+                                        credential = task.Result;
+                                    }
+                                    else if (task.IsCanceled)
+                                    {
+                                        Debug.LogError($"GoogleWebAuthorizationBroker IsCanceled: {task.Exception}. Did you finish Google verification?");
+                                        Debug.LogWarning($"GoogleWebAuthorizationBroker requires localhost communication which some firewalls may block. Headless device auth is available using ArenaClientScene.headless = true.");
+                                        yield break;
+                                    }
+                                    else if (task.IsFaulted)
+                                    {
+                                        Debug.LogError($"GoogleWebAuthorizationBroker IsFaulted: {task.Exception}.");
+                                        yield break;
+                                    }
+                                    creds = JsonConvert.SerializeObject(credential.Token);
                                 }
                             }
                         }
@@ -696,6 +709,18 @@ namespace ArenaUnity
             // background mqtt connect
             Connect();
             yield return namespaceName;
+        }
+
+        private async Task<UserCredential> DoBrowserAuthFlow(ClientSecrets secrets)
+        {
+            // TODO (mwfarb): remove this test and handle timeouts better with catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
+            //CancellationTokenSource cts = new CancellationTokenSource();
+            //cts.CancelAfter(TimeSpan.FromSeconds(3));
+            //CancellationToken ct = cts.Token;
+
+            CancellationToken ct = CancellationToken.None;
+            var credentials = await GoogleWebAuthorizationBroker.AuthorizeAsync(secrets, Scopes, "user", ct, new NullDataStore());
+            return credentials;
         }
 
         protected bool ConfirmGoogleAuth()

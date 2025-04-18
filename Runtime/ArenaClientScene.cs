@@ -15,7 +15,6 @@ using ArenaUnity.Schemas;
 using GLTFast;
 using GLTFast.Export;
 using GLTFast.Logging;
-using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
