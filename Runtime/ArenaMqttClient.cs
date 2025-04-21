@@ -262,9 +262,34 @@ namespace ArenaUnity
             if (log)
             {
                 if (hasPermissions)
+                {
                     Debug.Log($"{dir}: {topic} {msg}");
+                }
                 else
+                {
+                    switch (sceneMsgType)
+                    {
+                        case "x":
+                        case "u":
+                            Debug.LogWarning($"User object changes for topic type '{sceneMsgType}' have been disabled by scene Owner or Editors.");
+                            break;
+                        case "o":
+                            Debug.LogWarning($"Scene object changes for topic type '{sceneMsgType}' only available to Google authenticated scene Owner and Editors.");
+                            break;
+                        case "c":
+                            Debug.LogWarning($"User chats for topic type '{sceneMsgType}' have been disabled by scene Owner or Editors.");
+                            break;
+                        case "r":
+                            Debug.LogWarning($"Scene remote rendering changes for topic type '{sceneMsgType}' only available to Google authenticated scene Owner and Editors by API request.");
+                            break;
+                        case "e":
+                            Debug.LogWarning($"Scene environment scans for topic type '{sceneMsgType}' only available to Google authenticated scene Owner and Editors by API request.");
+                            break;
+                        default:
+                            break;
+                    }
                     Debug.LogWarning($"Permissions FAILED {dir}: {topic} {msg}");
+                }
             }
         }
 
