@@ -39,7 +39,9 @@ namespace ArenaUnity
 
         void OnEnable()
         {
+            // TODO (mwfarb): add an editor check for compute shader at build time.
 #if UNITY_EDITOR
+            // manually load ComputeShader, it is required
             compShader = (ComputeShader)AssetDatabase.LoadAssetAtPath("Packages/org.nesnausk.gaussian-splatting/Shaders/SplatUtilities.compute", typeof(Texture2D));
 #endif
         }
@@ -48,15 +50,18 @@ namespace ArenaUnity
         {
             // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
 
-            GameObject sobj = new GameObject("Splat");
-            sobj.transform.SetParent(transform, false);
-            // set transforms to match ARENA a-frame gaussian components
-            sobj.transform.localRotation *= Quaternion.AngleAxis(180, transform.right);
-            sobj.transform.localScale *= 2;
             // assign splat renderer
-            gaussiansplat = sobj.GetComponent<GaussianSplatRenderer>();
+            gaussiansplat = GetComponentInChildren<GaussianSplatRenderer>();
             if (gaussiansplat == null)
+            {
+                GameObject sobj = new GameObject("Splat");
+                sobj.transform.SetParent(transform, false);
+                // set transforms to match ARENA a-frame gaussian components
+                sobj.transform.localRotation *= Quaternion.AngleAxis(180, transform.right);
+                sobj.transform.localScale *= 2;
+
                 gaussiansplat = sobj.AddComponent<GaussianSplatRenderer>();
+            }
 
             // assign splat cutout
             if (json.CutoutEntity != null)
