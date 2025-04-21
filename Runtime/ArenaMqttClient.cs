@@ -515,10 +515,9 @@ namespace ArenaUnity
                                     }
                                     var task = DoBrowserAuthFlow(secrets);
                                     yield return new WaitUntil(() => task.IsCompleted);
-                                    UserCredential credential = null;
                                     if (task.IsCompletedSuccessfully)
                                     {
-                                        credential = task.Result;
+                                        UserCredential credential = task.Result;
                                         creds = JsonConvert.SerializeObject(credential.Token);
                                     }
                                     else if (task.IsCanceled)
@@ -614,21 +613,21 @@ namespace ArenaUnity
                 }
 #if UNITY_EDITOR
                 // auto-test for render fusion, request permissions if so
-                if (packageListRequest.IsCompleted)
+                yield return new WaitUntil(() => packageListRequest.IsCompleted);
+                if (packageListRequest.Status == StatusCode.Success)
                 {
-                    if (packageListRequest.Status == StatusCode.Success)
-                        foreach (var package in packageListRequest.Result)
-                            if (package.name == packageNameRenderFusion)
-                            {
-                                form.AddField("renderfusionid", "true");
-                                requestRemoteRenderRights = true; // for display purposes
-                            }
-                            else if (packageListRequest.Status >= StatusCode.Failure)
-                                Debug.LogWarning(packageListRequest.Error.message);
+                    foreach (var package in packageListRequest.Result)
+                        if (package.name == packageNameRenderFusion)
+                        {
+                            form.AddField("renderfusionid", "true");
+                            requestRemoteRenderRights = true; // for display purposes
+                        }
+                        else if (packageListRequest.Status >= StatusCode.Failure)
+                            Debug.LogWarning(packageListRequest.Error.message);
                 }
                 else
                 {
-                    Debug.LogWarning("Package Manager unable to query for render-fusion package!");
+                    Debug.LogWarning($"Package Manager unable to query for render-fusion package! {packageListRequest.Error.message}");
                 }
 #endif
                 // request token endpoint
