@@ -35,6 +35,14 @@ namespace ArenaUnity
         public ArenaGaussianSplattingJson json = new ArenaGaussianSplattingJson();
         GaussianSplatRenderer gaussiansplat;
         GaussianCutout gaussiancutout;
+        ComputeShader compShader;
+
+        void OnEnable()
+        {
+#if UNITY_EDITOR
+            compShader = (ComputeShader)AssetDatabase.LoadAssetAtPath("Packages/org.nesnausk.gaussian-splatting/Shaders/SplatUtilities.compute", typeof(Texture2D));
+#endif
+        }
 
         protected override void ApplyRender()
         {
