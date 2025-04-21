@@ -15,7 +15,6 @@ using ArenaUnity.Schemas;
 using GLTFast;
 using GLTFast.Export;
 using GLTFast.Logging;
-using Google.Apis.Auth.OAuth2;
 using MimeMapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -1454,7 +1453,7 @@ namespace ArenaUnity
 
             // TODO (mwfarb): test that ignore own messages is still viable
             // filter messages based on expected payload format
-            var topicSplit = topic.Split("/");
+            var topicSplit = topic.Split('/');
             if (topicSplit.Length > ArenaMqttClient.msgTypeRenderIdx)
             {
                 var sceneMsgType = topicSplit[ArenaMqttClient.msgTypeRenderIdx];

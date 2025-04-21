@@ -522,11 +522,6 @@
                 "preset": "starry",
                 "fog": 0,
                 "groundTexture": "checkerboard"
-            },
-            "scene-options": {
-                "jitsiServer": "mr.andrew.cmu.edu",
-                "clickableOnlyEvents": true,
-                "privateScene": true
             }
         }
     },

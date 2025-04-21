@@ -39,12 +39,6 @@
             "fog": 0,
             "ground": "none"
         },
-        "scene-options": {
-            "jitsiServer": "mr.andrew.cmu.edu",
-            "clickableOnlyEvents": true,
-            "privateScene": true,
-            "maxAVDist": 20
-        },
         "renderer-settings": {
             "outputEncoding": "sRGBEncoding",
             "physicallyCorrectLights": false

@@ -7,13 +7,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Oauth2.v2;
-using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using M2MqttUnity;
 using Newtonsoft.Json;
@@ -196,7 +195,7 @@ namespace ArenaUnity
         public void Publish(string topic, byte[] payload)
         {
             if (client != null) client.Publish(topic, payload);
-            var topicSplit = topic.Split("/");
+            var topicSplit = topic.Split('/');
             if (topicSplit.Length > msgTypeRenderIdx)
             {
                 bool hasPermissions = HasPerms(topic);
@@ -263,9 +262,34 @@ namespace ArenaUnity
             if (log)
             {
                 if (hasPermissions)
+                {
                     Debug.Log($"{dir}: {topic} {msg}");
+                }
                 else
+                {
+                    switch (sceneMsgType)
+                    {
+                        case "x":
+                        case "u":
+                            Debug.LogWarning($"User object changes for topic type '{sceneMsgType}' have been disabled by scene Owner or Editors.");
+                            break;
+                        case "o":
+                            Debug.LogWarning($"Scene object changes for topic type '{sceneMsgType}' only available to Google authenticated scene Owner and Editors.");
+                            break;
+                        case "c":
+                            Debug.LogWarning($"User chats for topic type '{sceneMsgType}' have been disabled by scene Owner or Editors.");
+                            break;
+                        case "r":
+                            Debug.LogWarning($"Scene remote rendering changes for topic type '{sceneMsgType}' only available to Google authenticated scene Owner and Editors by API request.");
+                            break;
+                        case "e":
+                            Debug.LogWarning($"Scene environment scans for topic type '{sceneMsgType}' only available to Google authenticated scene Owner and Editors by API request.");
+                            break;
+                        default:
+                            break;
+                    }
                     Debug.LogWarning($"Permissions FAILED {dir}: {topic} {msg}");
+                }
             }
         }
 
@@ -509,15 +533,28 @@ namespace ArenaUnity
                                 else
                                 {
                                     // automated browser flow for local client
+                                    ClientSecrets secrets;
                                     using (var stream = ToStream(gAuthId))
                                     {
-                                        var credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                                                GoogleClientSecrets.FromStream(stream).Secrets,
-                                                Scopes,
-                                                "user",
-                                                CancellationToken.None,
-                                                new NullDataStore()).Result;
+                                        secrets = GoogleClientSecrets.FromStream(stream).Secrets;
+                                    }
+                                    var task = DoBrowserAuthFlow(secrets);
+                                    yield return new WaitUntil(() => task.IsCompleted);
+                                    if (task.IsCompletedSuccessfully)
+                                    {
+                                        UserCredential credential = task.Result;
                                         creds = JsonConvert.SerializeObject(credential.Token);
+                                    }
+                                    else if (task.IsCanceled)
+                                    {
+                                        Debug.LogError($"GoogleWebAuthorizationBroker IsCanceled: {task.Exception}. Did you finish Google verification?");
+                                        Debug.LogWarning($"GoogleWebAuthorizationBroker requires localhost communication which some firewalls may block. Headless device auth is available using ArenaClientScene.headless = true.");
+                                        yield break;
+                                    }
+                                    else if (task.IsFaulted)
+                                    {
+                                        Debug.LogError($"GoogleWebAuthorizationBroker IsFaulted: {task.Exception}.");
+                                        yield break;
                                     }
                                 }
                             }
@@ -601,21 +638,21 @@ namespace ArenaUnity
                 }
 #if UNITY_EDITOR
                 // auto-test for render fusion, request permissions if so
-                if (packageListRequest.IsCompleted)
+                yield return new WaitUntil(() => packageListRequest.IsCompleted);
+                if (packageListRequest.Status == StatusCode.Success)
                 {
-                    if (packageListRequest.Status == StatusCode.Success)
-                        foreach (var package in packageListRequest.Result)
-                            if (package.name == packageNameRenderFusion)
-                            {
-                                form.AddField("renderfusionid", "true");
-                                requestRemoteRenderRights = true; // for display purposes
-                            }
-                            else if (packageListRequest.Status >= StatusCode.Failure)
-                                Debug.LogWarning(packageListRequest.Error.message);
+                    foreach (var package in packageListRequest.Result)
+                        if (package.name == packageNameRenderFusion)
+                        {
+                            form.AddField("renderfusionid", "true");
+                            requestRemoteRenderRights = true; // for display purposes
+                        }
+                        else if (packageListRequest.Status >= StatusCode.Failure)
+                            Debug.LogWarning(packageListRequest.Error.message);
                 }
                 else
                 {
-                    Debug.LogWarning("Package Manager unable to query for render-fusion package!");
+                    Debug.LogWarning($"Package Manager unable to query for render-fusion package! {packageListRequest.Error.message}");
                 }
 #endif
                 // request token endpoint
@@ -696,6 +733,18 @@ namespace ArenaUnity
             // background mqtt connect
             Connect();
             yield return namespaceName;
+        }
+
+        private async Task<UserCredential> DoBrowserAuthFlow(ClientSecrets secrets)
+        {
+            // TODO (mwfarb): remove this test and handle timeouts better with catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
+            //CancellationTokenSource cts = new CancellationTokenSource();
+            //cts.CancelAfter(TimeSpan.FromSeconds(3));
+            //CancellationToken ct = cts.Token;
+
+            CancellationToken ct = CancellationToken.None;
+            var credentials = await GoogleWebAuthorizationBroker.AuthorizeAsync(secrets, Scopes, "user", ct, new NullDataStore());
+            return credentials;
         }
 
         protected bool ConfirmGoogleAuth()
@@ -859,7 +908,7 @@ namespace ArenaUnity
             var allowedRegex = allowTopic.Replace(@"/", @"\/").Replace("+", @"[a-zA-Z0-9 _+.-]*").Replace("#", @"[a-zA-Z0-9 \/_#+.-]*");
             var re = new Regex(allowedRegex);
             var matches = re.Matches(attemptTopic);
-            foreach (var match in matches.ToList())
+            foreach (Match match in matches)
             {
                 if (match.Value == attemptTopic)
                 {
