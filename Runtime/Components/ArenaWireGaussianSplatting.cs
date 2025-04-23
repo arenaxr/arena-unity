@@ -31,6 +31,7 @@ namespace ArenaUnity
         // https://github.com/akbartus/Gaussian-Splatting-WebViewers
         // https://github.com/antimatter15/splat
         // https://github.com/keijiro/SplatVFX
+        // https://github.com/mkkellogg/GaussianSplats3D
 
         public ArenaGaussianSplattingJson json = new ArenaGaussianSplattingJson();
         GaussianSplatRenderer gaussiansplat;

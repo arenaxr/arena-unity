@@ -8,6 +8,7 @@
   "changelogUrl": "https://github.com/arenaxr/arena-unity/blob/main/CHANGELOG.md",
   "licensesUrl": "https://github.com/arenaxr/arena-unity/blob/main/LICENSE",
   "dependencies": {
+    "com.unity.visualeffectgraph": "14.0.10",
     "org.nesnausk.gaussian-splatting": "1.1.1",
     "com.unity.cloud.gltfast": "6.10.3",
     "com.unity.cloud.draco": "5.1.8",
