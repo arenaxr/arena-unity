@@ -6,15 +6,24 @@
     <members>
         <member name="T:MimeMapping.KnownMimeTypes">
             <summary>
-             MIME type constants. Last updated on 2021-01-13T14:41:41Z. 
-             Generated from the <a href="http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types">apache</a> and <a href="https://raw.githubusercontent.com/h5bp/server-configs-nginx/master/mime.types">nginx</a> sources
+             MIME type constants. Last updated on 2024-12-09T08:23:13Z. 
+             Generated from the <a href="https://raw.githubusercontent.com/jshttp/mime-db/v1.53.0/db.json">mime-db</a> source
             </summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Ez">
             <summary>ez</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Appinstaller">
+            <summary>appinstaller</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Aw">
             <summary>aw</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Appx">
+            <summary>appx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Appxbundle">
+            <summary>appxbundle</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Atom">
             <summary>atom</summary>
@@ -22,11 +31,38 @@
         <member name="F:MimeMapping.KnownMimeTypes.Atomcat">
             <summary>atomcat</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Atomdeleted">
+            <summary>atomdeleted</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Atomsvc">
             <summary>atomsvc</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Dwd">
+            <summary>dwd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Held">
+            <summary>held</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Rsat">
+            <summary>rsat</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Aml">
+            <summary>aml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Amlx">
+            <summary>amlx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Bdoc">
+            <summary>bdoc</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Xcs">
+            <summary>xcs</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Ccxml">
             <summary>ccxml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Cdfx">
+            <summary>cdfx</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Cdmia">
             <summary>cdmia</summary>
@@ -43,8 +79,20 @@
         <member name="F:MimeMapping.KnownMimeTypes.Cdmiq">
             <summary>cdmiq</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Cpl">
+            <summary>cpl</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Cu">
             <summary>cu</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Cwl">
+            <summary>cwl</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Mpd">
+            <summary>mpd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Mpp">
+            <summary>mpp</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Davmount">
             <summary>davmount</summary>
@@ -64,14 +112,29 @@
         <member name="F:MimeMapping.KnownMimeTypes.Emma">
             <summary>emma</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Emotionml">
+            <summary>emotionml</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Epub">
             <summary>epub</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Exi">
             <summary>exi</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Exp">
+            <summary>exp</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Fdf">
+            <summary>fdf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Fdt">
+            <summary>fdt</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Pfr">
             <summary>pfr</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Geojson">
+            <summary>geojson</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Gml">
             <summary>gml</summary>
@@ -81,6 +144,12 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Gxf">
             <summary>gxf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Gz">
+            <summary>gz</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Hjson">
+            <summary>hjson</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Stk">
             <summary>stk</summary>
@@ -94,8 +163,17 @@
         <member name="F:MimeMapping.KnownMimeTypes.Ipfix">
             <summary>ipfix</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Its">
+            <summary>its</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Jar">
             <summary>jar</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.War">
+            <summary>war</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Ear">
+            <summary>ear</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Ser">
             <summary>ser</summary>
@@ -109,8 +187,20 @@
         <member name="F:MimeMapping.KnownMimeTypes.Json">
             <summary>json</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Map">
+            <summary>map</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Json5">
+            <summary>json5</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Jsonml">
             <summary>jsonml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jsonld">
+            <summary>jsonld</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Lgr">
+            <summary>lgr</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Lostxml">
             <summary>lostxml</summary>
@@ -123,6 +213,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mads">
             <summary>mads</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Webmanifest">
+            <summary>webmanifest</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mrc">
             <summary>mrc</summary>
@@ -145,6 +238,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.Mbox">
             <summary>mbox</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Mpf">
+            <summary>mpf</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mscml">
             <summary>mscml</summary>
         </member>
@@ -157,6 +253,12 @@
         <member name="F:MimeMapping.KnownMimeTypes.Mets">
             <summary>mets</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Maei">
+            <summary>maei</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Musd">
+            <summary>musd</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mods">
             <summary>mods</summary>
         </member>
@@ -166,8 +268,23 @@
         <member name="F:MimeMapping.KnownMimeTypes.Mp21">
             <summary>mp21</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Mp4">
+            <summary>mp4</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Mpg4">
+            <summary>mpg4</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mp4s">
             <summary>mp4s</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.M4p">
+            <summary>m4p</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Msix">
+            <summary>msix</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Msixbundle">
+            <summary>msixbundle</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Doc">
             <summary>doc</summary>
@@ -177,6 +294,15 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mxf">
             <summary>mxf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Nq">
+            <summary>nq</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Nt">
+            <summary>nt</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Cjs">
+            <summary>cjs</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Bin">
             <summary>bin</summary>
@@ -214,6 +340,36 @@
         <member name="F:MimeMapping.KnownMimeTypes.Deploy">
             <summary>deploy</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Exe">
+            <summary>exe</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Dll">
+            <summary>dll</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Deb">
+            <summary>deb</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Dmg">
+            <summary>dmg</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Iso">
+            <summary>iso</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Img">
+            <summary>img</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Msi">
+            <summary>msi</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Msp">
+            <summary>msp</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Msm">
+            <summary>msm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Buffer">
+            <summary>buffer</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Oda">
             <summary>oda</summary>
         </member>
@@ -240,6 +396,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Oxps">
             <summary>oxps</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Relo">
+            <summary>relo</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Xer">
             <summary>xer</summary>
@@ -301,14 +460,26 @@
         <member name="F:MimeMapping.KnownMimeTypes.Ps">
             <summary>ps</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Provx">
+            <summary>provx</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Cww">
             <summary>cww</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Xsf">
+            <summary>xsf</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Pskcxml">
             <summary>pskcxml</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Raml">
+            <summary>raml</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Rdf">
             <summary>rdf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Owl">
+            <summary>owl</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Rif">
             <summary>rif</summary>
@@ -324,6 +495,15 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Rs">
             <summary>rs</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Rapd">
+            <summary>rapd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Sls">
+            <summary>sls</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Rusd">
+            <summary>rusd</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Gbr">
             <summary>gbr</summary>
@@ -361,6 +541,12 @@
         <member name="F:MimeMapping.KnownMimeTypes.Sdp">
             <summary>sdp</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Senmlx">
+            <summary>senmlx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Sensmlx">
+            <summary>sensmlx</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Setpay">
             <summary>setpay</summary>
         </member>
@@ -369,6 +555,12 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Shf">
             <summary>shf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Siv">
+            <summary>siv</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Sieve">
+            <summary>sieve</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Smi">
             <summary>smi</summary>
@@ -381,6 +573,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Srx">
             <summary>srx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Sql">
+            <summary>sql</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Gram">
             <summary>gram</summary>
@@ -397,6 +592,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.Ssml">
             <summary>ssml</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Swidtag">
+            <summary>swidtag</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Tei">
             <summary>tei</summary>
         </member>
@@ -408,6 +606,27 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Tsd">
             <summary>tsd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Toml">
+            <summary>toml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Trig">
+            <summary>trig</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Ttml">
+            <summary>ttml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Ubj">
+            <summary>ubj</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Rsheet">
+            <summary>rsheet</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Td">
+            <summary>td</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes._1km">
+            <summary>1km</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Plb">
             <summary>plb</summary>
@@ -457,6 +676,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.Xfdf">
             <summary>xfdf</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Age">
+            <summary>age</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Ahead">
             <summary>ahead</summary>
         </member>
@@ -490,8 +712,20 @@
         <member name="F:MimeMapping.KnownMimeTypes.Mpkg">
             <summary>mpkg</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Key">
+            <summary>key</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.M3u8">
             <summary>m3u8</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Numbers">
+            <summary>numbers</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Pages">
+            <summary>pages</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Pkpass">
+            <summary>pkpass</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Swi">
             <summary>swi</summary>
@@ -501,6 +735,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Aep">
             <summary>aep</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Bmml">
+            <summary>bmml</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mpm">
             <summary>mpm</summary>
@@ -519,6 +756,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Cdy">
             <summary>cdy</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Csl">
+            <summary>csl</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Cla">
             <summary>cla</summary>
@@ -591,6 +831,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Rdz">
             <summary>rdz</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Dbf">
+            <summary>dbf</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Uvf">
             <summary>uvf</summary>
@@ -682,9 +925,6 @@
         <member name="F:MimeMapping.KnownMimeTypes.Ez3">
             <summary>ez3</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Fdf">
-            <summary>fdf</summary>
-        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mseed">
             <summary>mseed</summary>
         </member>
@@ -754,6 +994,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.Ggb">
             <summary>ggb</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Ggs">
+            <summary>ggs</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Ggt">
             <summary>ggt</summary>
         </member>
@@ -775,11 +1018,23 @@
         <member name="F:MimeMapping.KnownMimeTypes.Gmx">
             <summary>gmx</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Gdoc">
+            <summary>gdoc</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Gslides">
+            <summary>gslides</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Gsheet">
+            <summary>gsheet</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Kml">
             <summary>kml</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Kmz">
             <summary>kmz</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Xdcf">
+            <summary>xdcf</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Gqf">
             <summary>gqf</summary>
@@ -1012,6 +1267,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.Portpkg">
             <summary>portpkg</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Mvt">
+            <summary>mvt</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mcd">
             <summary>mcd</summary>
         </member>
@@ -1117,6 +1375,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.Thmx">
             <summary>thmx</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Msg">
+            <summary>msg</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Cat">
             <summary>cat</summary>
         </member>
@@ -1146,9 +1407,6 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Potm">
             <summary>potm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Mpp">
-            <summary>mpp</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mpt">
             <summary>mpt</summary>
@@ -1188,6 +1446,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Taglet">
             <summary>taglet</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Bdo">
+            <summary>bdo</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Nlu">
             <summary>nlu</summary>
@@ -1285,8 +1546,14 @@
         <member name="F:MimeMapping.KnownMimeTypes.Dd2">
             <summary>dd2</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Obgx">
+            <summary>obgx</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Oxt">
             <summary>oxt</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Osm">
+            <summary>osm</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Pptx">
             <summary>pptx</summary>
@@ -1363,6 +1630,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.Ptid">
             <summary>ptid</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Xhtm">
+            <summary>xhtm</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Qxd">
             <summary>qxd</summary>
         </member>
@@ -1380,6 +1650,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Qxb">
             <summary>qxb</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Rar">
+            <summary>rar</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Bed">
             <summary>bed</summary>
@@ -1444,6 +1717,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.Teacher">
             <summary>teacher</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Fo">
+            <summary>fo</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Sdkm">
             <summary>sdkm</summary>
         </member>
@@ -1482,6 +1758,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Sm">
             <summary>sm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Wadl">
+            <summary>wadl</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Sxc">
             <summary>sxc</summary>
@@ -1537,6 +1816,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.Xdm">
             <summary>xdm</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Ddf">
+            <summary>ddf</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Tao">
             <summary>tao</summary>
         </member>
@@ -1578,6 +1860,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Uoml">
             <summary>uoml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Uo">
+            <summary>uo</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Vcx">
             <summary>vcx</summary>
@@ -1666,6 +1951,12 @@
         <member name="F:MimeMapping.KnownMimeTypes.Vxml">
             <summary>vxml</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Wasm">
+            <summary>wasm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Wif">
+            <summary>wif</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Wgt">
             <summary>wgt</summary>
         </member>
@@ -1687,8 +1978,8 @@
         <member name="F:MimeMapping.KnownMimeTypes.Ace">
             <summary>ace</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Dmg">
-            <summary>dmg</summary>
+        <member name="F:MimeMapping.KnownMimeTypes.Arj">
+            <summary>arj</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Aab">
             <summary>aab</summary>
@@ -1756,6 +2047,12 @@
         <member name="F:MimeMapping.KnownMimeTypes.Pgn">
             <summary>pgn</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Crx">
+            <summary>crx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Cco">
+            <summary>cco</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Nsc">
             <summary>nsc</summary>
         </member>
@@ -1764,9 +2061,6 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Csh">
             <summary>csh</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Deb">
-            <summary>deb</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Udeb">
             <summary>udeb</summary>
@@ -1873,23 +2167,35 @@
         <member name="F:MimeMapping.KnownMimeTypes.Hdf">
             <summary>hdf</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Php">
+            <summary>php</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Install">
             <summary>install</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Iso">
-            <summary>iso</summary>
+        <member name="F:MimeMapping.KnownMimeTypes.Jardiff">
+            <summary>jardiff</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Jnlp">
             <summary>jnlp</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Kdbx">
+            <summary>kdbx</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Latex">
             <summary>latex</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Luac">
+            <summary>luac</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Lzh">
             <summary>lzh</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Lha">
             <summary>lha</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Run">
+            <summary>run</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mie">
             <summary>mie</summary>
@@ -1927,20 +2233,11 @@
         <member name="F:MimeMapping.KnownMimeTypes.Clp">
             <summary>clp</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Exe">
-            <summary>exe</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Dll">
-            <summary>dll</summary>
-        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Com">
             <summary>com</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Bat">
             <summary>bat</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Msi">
-            <summary>msi</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mvb">
             <summary>mvb</summary>
@@ -1981,8 +2278,17 @@
         <member name="F:MimeMapping.KnownMimeTypes.Cdf">
             <summary>cdf</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Pac">
+            <summary>pac</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Nzb">
             <summary>nzb</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Pl">
+            <summary>pl</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Pm">
+            <summary>pm</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.P12">
             <summary>p12</summary>
@@ -1999,11 +2305,14 @@
         <member name="F:MimeMapping.KnownMimeTypes.P7r">
             <summary>p7r</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Rar">
-            <summary>rar</summary>
+        <member name="F:MimeMapping.KnownMimeTypes.Rpm">
+            <summary>rpm</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Ris">
             <summary>ris</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Sea">
+            <summary>sea</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Sh">
             <summary>sh</summary>
@@ -2016,9 +2325,6 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Xap">
             <summary>xap</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Sql">
-            <summary>sql</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Sit">
             <summary>sit</summary>
@@ -2047,6 +2353,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.Tcl">
             <summary>tcl</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Tk">
+            <summary>tk</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Tex">
             <summary>tex</summary>
         </member>
@@ -2065,14 +2374,44 @@
         <member name="F:MimeMapping.KnownMimeTypes.Ustar">
             <summary>ustar</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Hdd">
+            <summary>hdd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Ova">
+            <summary>ova</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Ovf">
+            <summary>ovf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Vbox">
+            <summary>vbox</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Vboxextpack">
+            <summary>vbox-extpack</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Vdi">
+            <summary>vdi</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Vhd">
+            <summary>vhd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Vmdk">
+            <summary>vmdk</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Src">
             <summary>src</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Webapp">
+            <summary>webapp</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Der">
             <summary>der</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Crt">
             <summary>crt</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Pem">
+            <summary>pem</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Fig">
             <summary>fig</summary>
@@ -2113,8 +2452,20 @@
         <member name="F:MimeMapping.KnownMimeTypes.Xaml">
             <summary>xaml</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Xav">
+            <summary>xav</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Xca">
+            <summary>xca</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Xdf">
             <summary>xdf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Xel">
+            <summary>xel</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Xns">
+            <summary>xns</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Xenc">
             <summary>xenc</summary>
@@ -2130,6 +2481,12 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Xsl">
             <summary>xsl</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Xsd">
+            <summary>xsd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Rng">
+            <summary>rng</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Dtd">
             <summary>dtd</summary>
@@ -2167,8 +2524,20 @@
         <member name="F:MimeMapping.KnownMimeTypes.Zip">
             <summary>zip</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes._3gpp">
+            <summary>3gpp</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Adts">
+            <summary>adts</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Aac">
+            <summary>aac</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Adp">
             <summary>adp</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Amr">
+            <summary>amr</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Au">
             <summary>au</summary>
@@ -2188,6 +2557,12 @@
         <member name="F:MimeMapping.KnownMimeTypes.Rmi">
             <summary>rmi</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Mxmf">
+            <summary>mxmf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Mp3">
+            <summary>mp3</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.M4a">
             <summary>m4a</summary>
         </member>
@@ -2202,9 +2577,6 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mp2a">
             <summary>mp2a</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Mp3">
-            <summary>mp3</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.M2a">
             <summary>m2a</summary>
@@ -2266,11 +2638,11 @@
         <member name="F:MimeMapping.KnownMimeTypes.Rip">
             <summary>rip</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Wav">
+            <summary>wav</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Weba">
             <summary>weba</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Aac">
-            <summary>aac</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Aif">
             <summary>aif</summary>
@@ -2308,9 +2680,6 @@
         <member name="F:MimeMapping.KnownMimeTypes.Rmp">
             <summary>rmp</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Wav">
-            <summary>wav</summary>
-        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Xm">
             <summary>xm</summary>
         </member>
@@ -2347,11 +2716,38 @@
         <member name="F:MimeMapping.KnownMimeTypes.Woff2">
             <summary>woff2</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Exr">
+            <summary>exr</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Apng">
+            <summary>apng</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Avci">
+            <summary>avci</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Avcs">
+            <summary>avcs</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Avif">
+            <summary>avif</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Bmp">
             <summary>bmp</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Dib">
+            <summary>dib</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Cgm">
             <summary>cgm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Drle">
+            <summary>drle</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Dpx">
+            <summary>dpx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Fits">
+            <summary>fits</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.G3">
             <summary>g3</summary>
@@ -2359,8 +2755,35 @@
         <member name="F:MimeMapping.KnownMimeTypes.Gif">
             <summary>gif</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Heic">
+            <summary>heic</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Heics">
+            <summary>heics</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Heif">
+            <summary>heif</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Heifs">
+            <summary>heifs</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Hej2">
+            <summary>hej2</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Hsj2">
+            <summary>hsj2</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Ief">
             <summary>ief</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jls">
+            <summary>jls</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jp2">
+            <summary>jp2</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jpg2">
+            <summary>jpg2</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Jpeg">
             <summary>jpeg</summary>
@@ -2371,14 +2794,65 @@
         <member name="F:MimeMapping.KnownMimeTypes.Jpe">
             <summary>jpe</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jph">
+            <summary>jph</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jhc">
+            <summary>jhc</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jpm">
+            <summary>jpm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jpgm">
+            <summary>jpgm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jpx">
+            <summary>jpx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jpf">
+            <summary>jpf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jxl">
+            <summary>jxl</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jxr">
+            <summary>jxr</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jxra">
+            <summary>jxra</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jxrs">
+            <summary>jxrs</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jxs">
+            <summary>jxs</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jxsc">
+            <summary>jxsc</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jxsi">
+            <summary>jxsi</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jxss">
+            <summary>jxss</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Ktx">
             <summary>ktx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Ktx2">
+            <summary>ktx2</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Png">
             <summary>png</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Btif">
             <summary>btif</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Btf">
+            <summary>btf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Pti">
+            <summary>pti</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Sgi">
             <summary>sgi</summary>
@@ -2389,14 +2863,23 @@
         <member name="F:MimeMapping.KnownMimeTypes.Svgz">
             <summary>svgz</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Tiff">
-            <summary>tiff</summary>
+        <member name="F:MimeMapping.KnownMimeTypes.T38">
+            <summary>t38</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Tif">
             <summary>tif</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Tiff">
+            <summary>tiff</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Tfx">
+            <summary>tfx</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Psd">
             <summary>psd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Azv">
+            <summary>azv</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Uvi">
             <summary>uvi</summary>
@@ -2440,6 +2923,12 @@
         <member name="F:MimeMapping.KnownMimeTypes.Rlc">
             <summary>rlc</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Ico">
+            <summary>ico</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Dds">
+            <summary>dds</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mdi">
             <summary>mdi</summary>
         </member>
@@ -2449,11 +2938,23 @@
         <member name="F:MimeMapping.KnownMimeTypes.Npx">
             <summary>npx</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.B16">
+            <summary>b16</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Tap">
+            <summary>tap</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Vtf">
+            <summary>vtf</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Wbmp">
             <summary>wbmp</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Xif">
             <summary>xif</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Pcx">
+            <summary>pcx</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Webp">
             <summary>webp</summary>
@@ -2482,14 +2983,11 @@
         <member name="F:MimeMapping.KnownMimeTypes.Fh7">
             <summary>fh7</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Ico">
-            <summary>ico</summary>
+        <member name="F:MimeMapping.KnownMimeTypes.Jng">
+            <summary>jng</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Sid">
             <summary>sid</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Pcx">
-            <summary>pcx</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Pic">
             <summary>pic</summary>
@@ -2524,17 +3022,47 @@
         <member name="F:MimeMapping.KnownMimeTypes.Xwd">
             <summary>xwd</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Dispositionnotification">
+            <summary>disposition-notification</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.U8msg">
+            <summary>u8msg</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.U8dsn">
+            <summary>u8dsn</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.U8mdn">
+            <summary>u8mdn</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.U8hdr">
+            <summary>u8hdr</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Eml">
             <summary>eml</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mime">
             <summary>mime</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Wsc">
+            <summary>wsc</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes._3mf">
+            <summary>3mf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Gltf">
+            <summary>gltf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Glb">
+            <summary>glb</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Igs">
             <summary>igs</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Iges">
             <summary>iges</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jt">
+            <summary>jt</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Msh">
             <summary>msh</summary>
@@ -2544,6 +3072,27 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Silo">
             <summary>silo</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Mtl">
+            <summary>mtl</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Stpx">
+            <summary>stpx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Stpz">
+            <summary>stpz</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Stpxz">
+            <summary>stpxz</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.U3d">
+            <summary>u3d</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Bary">
+            <summary>bary</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Cld">
+            <summary>cld</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Dae">
             <summary>dae</summary>
@@ -2559,6 +3108,33 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mts">
             <summary>mts</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Ogex">
+            <summary>ogex</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Xb">
+            <summary>x_b</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Xt">
+            <summary>x_t</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Pyo">
+            <summary>pyo</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Pyox">
+            <summary>pyox</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Vds">
+            <summary>vds</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Usda">
+            <summary>usda</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Usdz">
+            <summary>usdz</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Bsp">
+            <summary>bsp</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Vtu">
             <summary>vtu</summary>
@@ -2590,11 +3166,20 @@
         <member name="F:MimeMapping.KnownMimeTypes.Appcache">
             <summary>appcache</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Manifest">
+            <summary>manifest</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Ics">
             <summary>ics</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Ifb">
             <summary>ifb</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Coffee">
+            <summary>coffee</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Litcoffee">
+            <summary>litcoffee</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Css">
             <summary>css</summary>
@@ -2607,6 +3192,33 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Htm">
             <summary>htm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Shtml">
+            <summary>shtml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jade">
+            <summary>jade</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Mjs">
+            <summary>mjs</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Jsx">
+            <summary>jsx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Less">
+            <summary>less</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Md">
+            <summary>md</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Markdown">
+            <summary>markdown</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Mml">
+            <summary>mml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Mdx">
+            <summary>mdx</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.N3">
             <summary>n3</summary>
@@ -2632,6 +3244,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.In">
             <summary>in</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Ini">
+            <summary>ini</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Dsc">
             <summary>dsc</summary>
         </member>
@@ -2643,6 +3258,24 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Sgm">
             <summary>sgm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Shex">
+            <summary>shex</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Slim">
+            <summary>slim</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Slm">
+            <summary>slm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Spdx">
+            <summary>spdx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Stylus">
+            <summary>stylus</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Styl">
+            <summary>styl</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Tsv">
             <summary>tsv</summary>
@@ -2692,6 +3325,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.Scurl">
             <summary>scurl</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Ged">
+            <summary>ged</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Fly">
             <summary>fly</summary>
         </member>
@@ -2715,6 +3351,12 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Wmls">
             <summary>wmls</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Vtt">
+            <summary>vtt</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Wgsl">
+            <summary>wgsl</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.S">
             <summary>s</summary>
@@ -2743,6 +3385,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.Dic">
             <summary>dic</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Htc">
+            <summary>htc</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.F">
             <summary>f</summary>
         </member>
@@ -2755,8 +3400,17 @@
         <member name="F:MimeMapping.KnownMimeTypes.F90">
             <summary>f90</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Hbs">
+            <summary>hbs</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Java">
             <summary>java</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Lua">
+            <summary>lua</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Mkd">
+            <summary>mkd</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Nfo">
             <summary>nfo</summary>
@@ -2770,11 +3424,23 @@
         <member name="F:MimeMapping.KnownMimeTypes.Pas">
             <summary>pas</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Pde">
+            <summary>pde</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Sass">
+            <summary>sass</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Scss">
+            <summary>scss</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Etx">
             <summary>etx</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Sfv">
             <summary>sfv</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Ymp">
+            <summary>ymp</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Uu">
             <summary>uu</summary>
@@ -2784,6 +3450,12 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Vcf">
             <summary>vcf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Yaml">
+            <summary>yaml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.Yml">
+            <summary>yml</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes._3gp">
             <summary>3gp</summary>
@@ -2800,14 +3472,11 @@
         <member name="F:MimeMapping.KnownMimeTypes.H264">
             <summary>h264</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.M4s">
+            <summary>m4s</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.Jpgv">
             <summary>jpgv</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Jpm">
-            <summary>jpm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Jpgm">
-            <summary>jpgm</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mj2">
             <summary>mj2</summary>
@@ -2815,14 +3484,17 @@
         <member name="F:MimeMapping.KnownMimeTypes.Mjp2">
             <summary>mjp2</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Mp4">
-            <summary>mp4</summary>
+        <member name="F:MimeMapping.KnownMimeTypes.Ts">
+            <summary>ts</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.M2t">
+            <summary>m2t</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.M2ts">
+            <summary>m2ts</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mp4v">
             <summary>mp4v</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Mpg4">
-            <summary>mpg4</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.Mpeg">
             <summary>mpeg</summary>
@@ -2962,338 +3634,23 @@
         <member name="F:MimeMapping.KnownMimeTypes.Ice">
             <summary>ice</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Map">
-            <summary>map</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Topojson">
-            <summary>topojson</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Jsonld">
-            <summary>jsonld</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Geojson">
-            <summary>geojson</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Mjs">
-            <summary>mjs</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Wasm">
-            <summary>wasm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Webmanifest">
-            <summary>webmanifest</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Webapp">
-            <summary>webapp</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.F4a">
-            <summary>f4a</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.F4b">
-            <summary>f4b</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Apng">
-            <summary>apng</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Avif">
-            <summary>avif</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Avifs">
-            <summary>avifs</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Jxr">
-            <summary>jxr</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Hdp">
-            <summary>hdp</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Jng">
-            <summary>jng</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes._3gpp">
-            <summary>3gpp</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.F4p">
-            <summary>f4p</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Cur">
-            <summary>cur</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Ear">
-            <summary>ear</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.War">
-            <summary>war</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Img">
-            <summary>img</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Msm">
-            <summary>msm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Msp">
-            <summary>msp</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Safariextz">
-            <summary>safariextz</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Bbaw">
-            <summary>bbaw</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Crx">
-            <summary>crx</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Cco">
-            <summary>cco</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Jardiff">
-            <summary>jardiff</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Run">
-            <summary>run</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Oex">
-            <summary>oex</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Pl">
-            <summary>pl</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Pm">
-            <summary>pm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Rpm">
-            <summary>rpm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Sea">
-            <summary>sea</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Tk">
-            <summary>tk</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Pem">
-            <summary>pem</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Shtml">
-            <summary>shtml</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Md">
-            <summary>md</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Markdown">
-            <summary>markdown</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Mml">
-            <summary>mml</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Xloc">
-            <summary>xloc</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Vtt">
-            <summary>vtt</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Htc">
-            <summary>htc</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Bdoc">
-            <summary>bdoc</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Es">
-            <summary>es</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Hjson">
-            <summary>hjson</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Json5">
-            <summary>json5</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.M4p">
-            <summary>m4p</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Cjs">
-            <summary>cjs</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Buffer">
-            <summary>buffer</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Raml">
-            <summary>raml</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Owl">
-            <summary>owl</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Siv">
-            <summary>siv</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Sieve">
-            <summary>sieve</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Toml">
-            <summary>toml</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Ubj">
-            <summary>ubj</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Pkpass">
-            <summary>pkpass</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Gdoc">
-            <summary>gdoc</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Gslides">
-            <summary>gslides</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Gsheet">
-            <summary>gsheet</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Msg">
-            <summary>msg</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Arj">
-            <summary>arj</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Php">
-            <summary>php</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Kdbx">
-            <summary>kdbx</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Luac">
-            <summary>luac</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Pac">
-            <summary>pac</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Hdd">
-            <summary>hdd</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Ova">
-            <summary>ova</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Ovf">
-            <summary>ovf</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Vbox">
-            <summary>vbox</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Vboxextpack">
-            <summary>vbox-extpack</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Vdi">
-            <summary>vdi</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Vhd">
-            <summary>vhd</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Vmdk">
-            <summary>vmdk</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Xsd">
-            <summary>xsd</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Rng">
-            <summary>rng</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Heic">
-            <summary>heic</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Heics">
-            <summary>heics</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Heif">
-            <summary>heif</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Heifs">
-            <summary>heifs</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Jp2">
-            <summary>jp2</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Jpg2">
-            <summary>jpg2</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Jpx">
-            <summary>jpx</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Jpf">
-            <summary>jpf</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Dds">
-            <summary>dds</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Manifest">
-            <summary>manifest</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Coffee">
-            <summary>coffee</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Litcoffee">
-            <summary>litcoffee</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Jade">
-            <summary>jade</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Jsx">
-            <summary>jsx</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Less">
-            <summary>less</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Mdx">
-            <summary>mdx</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Ini">
-            <summary>ini</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Shex">
-            <summary>shex</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Slim">
-            <summary>slim</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Slm">
-            <summary>slm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Stylus">
-            <summary>stylus</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Styl">
-            <summary>styl</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Hbs">
-            <summary>hbs</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Lua">
-            <summary>lua</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Mkd">
-            <summary>mkd</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Pde">
-            <summary>pde</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Sass">
-            <summary>sass</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Scss">
-            <summary>scss</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Ymp">
-            <summary>ymp</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Yaml">
-            <summary>yaml</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.Yml">
-            <summary>yml</summary>
-        </member>
         <member name="T:MimeMapping.KnownMimeTypes.FileExtensions">
             <summary>File extensions</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ez">
             <summary>ez</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Appinstaller">
+            <summary>appinstaller</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Aw">
             <summary>aw</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Appx">
+            <summary>appx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Appxbundle">
+            <summary>appxbundle</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Atom">
             <summary>atom</summary>
@@ -3301,11 +3658,38 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Atomcat">
             <summary>atomcat</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Atomdeleted">
+            <summary>atomdeleted</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Atomsvc">
             <summary>atomsvc</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dwd">
+            <summary>dwd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Held">
+            <summary>held</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rsat">
+            <summary>rsat</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Aml">
+            <summary>aml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Amlx">
+            <summary>amlx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Bdoc">
+            <summary>bdoc</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xcs">
+            <summary>xcs</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ccxml">
             <summary>ccxml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cdfx">
+            <summary>cdfx</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cdmia">
             <summary>cdmia</summary>
@@ -3322,8 +3706,20 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cdmiq">
             <summary>cdmiq</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cpl">
+            <summary>cpl</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cu">
             <summary>cu</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cwl">
+            <summary>cwl</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mpd">
+            <summary>mpd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mpp">
+            <summary>mpp</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Davmount">
             <summary>davmount</summary>
@@ -3343,14 +3739,29 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Emma">
             <summary>emma</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Emotionml">
+            <summary>emotionml</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Epub">
             <summary>epub</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Exi">
             <summary>exi</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Exp">
+            <summary>exp</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Fdf">
+            <summary>fdf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Fdt">
+            <summary>fdt</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pfr">
             <summary>pfr</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Geojson">
+            <summary>geojson</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gml">
             <summary>gml</summary>
@@ -3360,6 +3771,12 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gxf">
             <summary>gxf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gz">
+            <summary>gz</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Hjson">
+            <summary>hjson</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Stk">
             <summary>stk</summary>
@@ -3373,8 +3790,17 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ipfix">
             <summary>ipfix</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Its">
+            <summary>its</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jar">
             <summary>jar</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.War">
+            <summary>war</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ear">
+            <summary>ear</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ser">
             <summary>ser</summary>
@@ -3388,8 +3814,20 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Json">
             <summary>json</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Map">
+            <summary>map</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Json5">
+            <summary>json5</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jsonml">
             <summary>jsonml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jsonld">
+            <summary>jsonld</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Lgr">
+            <summary>lgr</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Lostxml">
             <summary>lostxml</summary>
@@ -3402,6 +3840,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mads">
             <summary>mads</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Webmanifest">
+            <summary>webmanifest</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mrc">
             <summary>mrc</summary>
@@ -3424,6 +3865,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mbox">
             <summary>mbox</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mpf">
+            <summary>mpf</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mscml">
             <summary>mscml</summary>
         </member>
@@ -3436,6 +3880,12 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mets">
             <summary>mets</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Maei">
+            <summary>maei</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Musd">
+            <summary>musd</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mods">
             <summary>mods</summary>
         </member>
@@ -3445,8 +3895,23 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mp21">
             <summary>mp21</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mp4">
+            <summary>mp4</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mpg4">
+            <summary>mpg4</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mp4s">
             <summary>mp4s</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.M4p">
+            <summary>m4p</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Msix">
+            <summary>msix</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Msixbundle">
+            <summary>msixbundle</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Doc">
             <summary>doc</summary>
@@ -3456,6 +3921,15 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mxf">
             <summary>mxf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Nq">
+            <summary>nq</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Nt">
+            <summary>nt</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cjs">
+            <summary>cjs</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Bin">
             <summary>bin</summary>
@@ -3493,6 +3967,36 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Deploy">
             <summary>deploy</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Exe">
+            <summary>exe</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dll">
+            <summary>dll</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Deb">
+            <summary>deb</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dmg">
+            <summary>dmg</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Iso">
+            <summary>iso</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Img">
+            <summary>img</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Msi">
+            <summary>msi</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Msp">
+            <summary>msp</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Msm">
+            <summary>msm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Buffer">
+            <summary>buffer</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Oda">
             <summary>oda</summary>
         </member>
@@ -3519,6 +4023,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Oxps">
             <summary>oxps</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Relo">
+            <summary>relo</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xer">
             <summary>xer</summary>
@@ -3580,14 +4087,26 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ps">
             <summary>ps</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Provx">
+            <summary>provx</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cww">
             <summary>cww</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xsf">
+            <summary>xsf</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pskcxml">
             <summary>pskcxml</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Raml">
+            <summary>raml</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rdf">
             <summary>rdf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Owl">
+            <summary>owl</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rif">
             <summary>rif</summary>
@@ -3603,6 +4122,15 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rs">
             <summary>rs</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rapd">
+            <summary>rapd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sls">
+            <summary>sls</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rusd">
+            <summary>rusd</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gbr">
             <summary>gbr</summary>
@@ -3640,6 +4168,12 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sdp">
             <summary>sdp</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Senmlx">
+            <summary>senmlx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sensmlx">
+            <summary>sensmlx</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Setpay">
             <summary>setpay</summary>
         </member>
@@ -3648,6 +4182,12 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Shf">
             <summary>shf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Siv">
+            <summary>siv</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sieve">
+            <summary>sieve</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Smi">
             <summary>smi</summary>
@@ -3660,6 +4200,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Srx">
             <summary>srx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sql">
+            <summary>sql</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gram">
             <summary>gram</summary>
@@ -3676,6 +4219,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ssml">
             <summary>ssml</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Swidtag">
+            <summary>swidtag</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Tei">
             <summary>tei</summary>
         </member>
@@ -3687,6 +4233,27 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Tsd">
             <summary>tsd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Toml">
+            <summary>toml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Trig">
+            <summary>trig</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ttml">
+            <summary>ttml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ubj">
+            <summary>ubj</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rsheet">
+            <summary>rsheet</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Td">
+            <summary>td</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions._1km">
+            <summary>1km</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Plb">
             <summary>plb</summary>
@@ -3736,6 +4303,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xfdf">
             <summary>xfdf</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Age">
+            <summary>age</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ahead">
             <summary>ahead</summary>
         </member>
@@ -3769,8 +4339,20 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mpkg">
             <summary>mpkg</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Key">
+            <summary>key</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.M3u8">
             <summary>m3u8</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Numbers">
+            <summary>numbers</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pages">
+            <summary>pages</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pkpass">
+            <summary>pkpass</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Swi">
             <summary>swi</summary>
@@ -3780,6 +4362,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Aep">
             <summary>aep</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Bmml">
+            <summary>bmml</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mpm">
             <summary>mpm</summary>
@@ -3798,6 +4383,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cdy">
             <summary>cdy</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Csl">
+            <summary>csl</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cla">
             <summary>cla</summary>
@@ -3870,6 +4458,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rdz">
             <summary>rdz</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dbf">
+            <summary>dbf</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Uvf">
             <summary>uvf</summary>
@@ -3961,9 +4552,6 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ez3">
             <summary>ez3</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Fdf">
-            <summary>fdf</summary>
-        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mseed">
             <summary>mseed</summary>
         </member>
@@ -4033,6 +4621,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ggb">
             <summary>ggb</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ggs">
+            <summary>ggs</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ggt">
             <summary>ggt</summary>
         </member>
@@ -4054,11 +4645,23 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gmx">
             <summary>gmx</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gdoc">
+            <summary>gdoc</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gslides">
+            <summary>gslides</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gsheet">
+            <summary>gsheet</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Kml">
             <summary>kml</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Kmz">
             <summary>kmz</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xdcf">
+            <summary>xdcf</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gqf">
             <summary>gqf</summary>
@@ -4291,6 +4894,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Portpkg">
             <summary>portpkg</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mvt">
+            <summary>mvt</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mcd">
             <summary>mcd</summary>
         </member>
@@ -4396,6 +5002,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Thmx">
             <summary>thmx</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Msg">
+            <summary>msg</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cat">
             <summary>cat</summary>
         </member>
@@ -4425,9 +5034,6 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Potm">
             <summary>potm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mpp">
-            <summary>mpp</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mpt">
             <summary>mpt</summary>
@@ -4467,6 +5073,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Taglet">
             <summary>taglet</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Bdo">
+            <summary>bdo</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Nlu">
             <summary>nlu</summary>
@@ -4564,8 +5173,14 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dd2">
             <summary>dd2</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Obgx">
+            <summary>obgx</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Oxt">
             <summary>oxt</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Osm">
+            <summary>osm</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pptx">
             <summary>pptx</summary>
@@ -4642,6 +5257,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ptid">
             <summary>ptid</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xhtm">
+            <summary>xhtm</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Qxd">
             <summary>qxd</summary>
         </member>
@@ -4659,6 +5277,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Qxb">
             <summary>qxb</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rar">
+            <summary>rar</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Bed">
             <summary>bed</summary>
@@ -4723,6 +5344,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Teacher">
             <summary>teacher</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Fo">
+            <summary>fo</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sdkm">
             <summary>sdkm</summary>
         </member>
@@ -4761,6 +5385,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sm">
             <summary>sm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Wadl">
+            <summary>wadl</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sxc">
             <summary>sxc</summary>
@@ -4816,6 +5443,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xdm">
             <summary>xdm</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ddf">
+            <summary>ddf</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Tao">
             <summary>tao</summary>
         </member>
@@ -4857,6 +5487,9 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Uoml">
             <summary>uoml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Uo">
+            <summary>uo</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vcx">
             <summary>vcx</summary>
@@ -4945,6 +5578,12 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vxml">
             <summary>vxml</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Wasm">
+            <summary>wasm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Wif">
+            <summary>wif</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Wgt">
             <summary>wgt</summary>
         </member>
@@ -4966,8 +5605,8 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ace">
             <summary>ace</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dmg">
-            <summary>dmg</summary>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Arj">
+            <summary>arj</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Aab">
             <summary>aab</summary>
@@ -5035,6 +5674,12 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pgn">
             <summary>pgn</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Crx">
+            <summary>crx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cco">
+            <summary>cco</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Nsc">
             <summary>nsc</summary>
         </member>
@@ -5043,9 +5688,6 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Csh">
             <summary>csh</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Deb">
-            <summary>deb</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Udeb">
             <summary>udeb</summary>
@@ -5152,23 +5794,35 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Hdf">
             <summary>hdf</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Php">
+            <summary>php</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Install">
             <summary>install</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Iso">
-            <summary>iso</summary>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jardiff">
+            <summary>jardiff</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jnlp">
             <summary>jnlp</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Kdbx">
+            <summary>kdbx</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Latex">
             <summary>latex</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Luac">
+            <summary>luac</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Lzh">
             <summary>lzh</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Lha">
             <summary>lha</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Run">
+            <summary>run</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mie">
             <summary>mie</summary>
@@ -5206,20 +5860,11 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Clp">
             <summary>clp</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Exe">
-            <summary>exe</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dll">
-            <summary>dll</summary>
-        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Com">
             <summary>com</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Bat">
             <summary>bat</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Msi">
-            <summary>msi</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mvb">
             <summary>mvb</summary>
@@ -5260,8 +5905,17 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cdf">
             <summary>cdf</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pac">
+            <summary>pac</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Nzb">
             <summary>nzb</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pl">
+            <summary>pl</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pm">
+            <summary>pm</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.P12">
             <summary>p12</summary>
@@ -5278,11 +5932,14 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.P7r">
             <summary>p7r</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rar">
-            <summary>rar</summary>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rpm">
+            <summary>rpm</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ris">
             <summary>ris</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sea">
+            <summary>sea</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sh">
             <summary>sh</summary>
@@ -5295,9 +5952,6 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xap">
             <summary>xap</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sql">
-            <summary>sql</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sit">
             <summary>sit</summary>
@@ -5326,6 +5980,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Tcl">
             <summary>tcl</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Tk">
+            <summary>tk</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Tex">
             <summary>tex</summary>
         </member>
@@ -5344,14 +6001,44 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ustar">
             <summary>ustar</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Hdd">
+            <summary>hdd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ova">
+            <summary>ova</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ovf">
+            <summary>ovf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vbox">
+            <summary>vbox</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vbox_extpack">
+            <summary>vbox-extpack</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vdi">
+            <summary>vdi</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vhd">
+            <summary>vhd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vmdk">
+            <summary>vmdk</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Src">
             <summary>src</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Webapp">
+            <summary>webapp</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Der">
             <summary>der</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Crt">
             <summary>crt</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pem">
+            <summary>pem</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Fig">
             <summary>fig</summary>
@@ -5392,8 +6079,20 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xaml">
             <summary>xaml</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xav">
+            <summary>xav</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xca">
+            <summary>xca</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xdf">
             <summary>xdf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xel">
+            <summary>xel</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xns">
+            <summary>xns</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xenc">
             <summary>xenc</summary>
@@ -5409,6 +6108,12 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xsl">
             <summary>xsl</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xsd">
+            <summary>xsd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rng">
+            <summary>rng</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dtd">
             <summary>dtd</summary>
@@ -5446,8 +6151,20 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Zip">
             <summary>zip</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions._3gpp">
+            <summary>3gpp</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Adts">
+            <summary>adts</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Aac">
+            <summary>aac</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Adp">
             <summary>adp</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Amr">
+            <summary>amr</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Au">
             <summary>au</summary>
@@ -5467,6 +6184,12 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rmi">
             <summary>rmi</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mxmf">
+            <summary>mxmf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mp3">
+            <summary>mp3</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.M4a">
             <summary>m4a</summary>
         </member>
@@ -5481,9 +6204,6 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mp2a">
             <summary>mp2a</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mp3">
-            <summary>mp3</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.M2a">
             <summary>m2a</summary>
@@ -5545,11 +6265,11 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rip">
             <summary>rip</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Wav">
+            <summary>wav</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Weba">
             <summary>weba</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Aac">
-            <summary>aac</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Aif">
             <summary>aif</summary>
@@ -5587,9 +6307,6 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rmp">
             <summary>rmp</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Wav">
-            <summary>wav</summary>
-        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xm">
             <summary>xm</summary>
         </member>
@@ -5626,11 +6343,38 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Woff2">
             <summary>woff2</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Exr">
+            <summary>exr</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Apng">
+            <summary>apng</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Avci">
+            <summary>avci</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Avcs">
+            <summary>avcs</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Avif">
+            <summary>avif</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Bmp">
             <summary>bmp</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dib">
+            <summary>dib</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cgm">
             <summary>cgm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Drle">
+            <summary>drle</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dpx">
+            <summary>dpx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Fits">
+            <summary>fits</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.G3">
             <summary>g3</summary>
@@ -5638,8 +6382,35 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gif">
             <summary>gif</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Heic">
+            <summary>heic</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Heics">
+            <summary>heics</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Heif">
+            <summary>heif</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Heifs">
+            <summary>heifs</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Hej2">
+            <summary>hej2</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Hsj2">
+            <summary>hsj2</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ief">
             <summary>ief</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jls">
+            <summary>jls</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jp2">
+            <summary>jp2</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jpg2">
+            <summary>jpg2</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jpeg">
             <summary>jpeg</summary>
@@ -5650,14 +6421,65 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jpe">
             <summary>jpe</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jph">
+            <summary>jph</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jhc">
+            <summary>jhc</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jpm">
+            <summary>jpm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jpgm">
+            <summary>jpgm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jpx">
+            <summary>jpx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jpf">
+            <summary>jpf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jxl">
+            <summary>jxl</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jxr">
+            <summary>jxr</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jxra">
+            <summary>jxra</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jxrs">
+            <summary>jxrs</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jxs">
+            <summary>jxs</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jxsc">
+            <summary>jxsc</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jxsi">
+            <summary>jxsi</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jxss">
+            <summary>jxss</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ktx">
             <summary>ktx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ktx2">
+            <summary>ktx2</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Png">
             <summary>png</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Btif">
             <summary>btif</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Btf">
+            <summary>btf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pti">
+            <summary>pti</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sgi">
             <summary>sgi</summary>
@@ -5668,14 +6490,23 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Svgz">
             <summary>svgz</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Tiff">
-            <summary>tiff</summary>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.T38">
+            <summary>t38</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Tif">
             <summary>tif</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Tiff">
+            <summary>tiff</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Tfx">
+            <summary>tfx</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Psd">
             <summary>psd</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Azv">
+            <summary>azv</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Uvi">
             <summary>uvi</summary>
@@ -5719,6 +6550,12 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rlc">
             <summary>rlc</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ico">
+            <summary>ico</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dds">
+            <summary>dds</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mdi">
             <summary>mdi</summary>
         </member>
@@ -5728,11 +6565,23 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Npx">
             <summary>npx</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.B16">
+            <summary>b16</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Tap">
+            <summary>tap</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vtf">
+            <summary>vtf</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Wbmp">
             <summary>wbmp</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xif">
             <summary>xif</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pcx">
+            <summary>pcx</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Webp">
             <summary>webp</summary>
@@ -5761,14 +6610,11 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Fh7">
             <summary>fh7</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ico">
-            <summary>ico</summary>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jng">
+            <summary>jng</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sid">
             <summary>sid</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pcx">
-            <summary>pcx</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pic">
             <summary>pic</summary>
@@ -5803,17 +6649,47 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xwd">
             <summary>xwd</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Disposition_notification">
+            <summary>disposition-notification</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.U8msg">
+            <summary>u8msg</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.U8dsn">
+            <summary>u8dsn</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.U8mdn">
+            <summary>u8mdn</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.U8hdr">
+            <summary>u8hdr</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Eml">
             <summary>eml</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mime">
             <summary>mime</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Wsc">
+            <summary>wsc</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions._3mf">
+            <summary>3mf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gltf">
+            <summary>gltf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Glb">
+            <summary>glb</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Igs">
             <summary>igs</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Iges">
             <summary>iges</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jt">
+            <summary>jt</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Msh">
             <summary>msh</summary>
@@ -5823,6 +6699,27 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Silo">
             <summary>silo</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mtl">
+            <summary>mtl</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Stpx">
+            <summary>stpx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Stpz">
+            <summary>stpz</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Stpxz">
+            <summary>stpxz</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.U3d">
+            <summary>u3d</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Bary">
+            <summary>bary</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cld">
+            <summary>cld</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dae">
             <summary>dae</summary>
@@ -5838,6 +6735,33 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mts">
             <summary>mts</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ogex">
+            <summary>ogex</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.X_b">
+            <summary>x_b</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.X_t">
+            <summary>x_t</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pyo">
+            <summary>pyo</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pyox">
+            <summary>pyox</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vds">
+            <summary>vds</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Usda">
+            <summary>usda</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Usdz">
+            <summary>usdz</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Bsp">
+            <summary>bsp</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vtu">
             <summary>vtu</summary>
@@ -5869,11 +6793,20 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Appcache">
             <summary>appcache</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Manifest">
+            <summary>manifest</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ics">
             <summary>ics</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ifb">
             <summary>ifb</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Coffee">
+            <summary>coffee</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Litcoffee">
+            <summary>litcoffee</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Css">
             <summary>css</summary>
@@ -5886,6 +6819,33 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Htm">
             <summary>htm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Shtml">
+            <summary>shtml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jade">
+            <summary>jade</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mjs">
+            <summary>mjs</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jsx">
+            <summary>jsx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Less">
+            <summary>less</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Md">
+            <summary>md</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Markdown">
+            <summary>markdown</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mml">
+            <summary>mml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mdx">
+            <summary>mdx</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.N3">
             <summary>n3</summary>
@@ -5911,6 +6871,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.In">
             <summary>in</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ini">
+            <summary>ini</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dsc">
             <summary>dsc</summary>
         </member>
@@ -5922,6 +6885,24 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sgm">
             <summary>sgm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Shex">
+            <summary>shex</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Slim">
+            <summary>slim</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Slm">
+            <summary>slm</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Spdx">
+            <summary>spdx</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Stylus">
+            <summary>stylus</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Styl">
+            <summary>styl</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Tsv">
             <summary>tsv</summary>
@@ -5971,6 +6952,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Scurl">
             <summary>scurl</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ged">
+            <summary>ged</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Fly">
             <summary>fly</summary>
         </member>
@@ -5994,6 +6978,12 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Wmls">
             <summary>wmls</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vtt">
+            <summary>vtt</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Wgsl">
+            <summary>wgsl</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.S">
             <summary>s</summary>
@@ -6022,6 +7012,9 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dic">
             <summary>dic</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Htc">
+            <summary>htc</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.F">
             <summary>f</summary>
         </member>
@@ -6034,8 +7027,17 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.F90">
             <summary>f90</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Hbs">
+            <summary>hbs</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Java">
             <summary>java</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Lua">
+            <summary>lua</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mkd">
+            <summary>mkd</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Nfo">
             <summary>nfo</summary>
@@ -6049,11 +7051,23 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pas">
             <summary>pas</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pde">
+            <summary>pde</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sass">
+            <summary>sass</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Scss">
+            <summary>scss</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Etx">
             <summary>etx</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sfv">
             <summary>sfv</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ymp">
+            <summary>ymp</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Uu">
             <summary>uu</summary>
@@ -6063,6 +7077,12 @@
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vcf">
             <summary>vcf</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Yaml">
+            <summary>yaml</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Yml">
+            <summary>yml</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions._3gp">
             <summary>3gp</summary>
@@ -6079,14 +7099,11 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.H264">
             <summary>h264</summary>
         </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.M4s">
+            <summary>m4s</summary>
+        </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jpgv">
             <summary>jpgv</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jpm">
-            <summary>jpm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jpgm">
-            <summary>jpgm</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mj2">
             <summary>mj2</summary>
@@ -6094,14 +7111,17 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mjp2">
             <summary>mjp2</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mp4">
-            <summary>mp4</summary>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ts">
+            <summary>ts</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.M2t">
+            <summary>m2t</summary>
+        </member>
+        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.M2ts">
+            <summary>m2ts</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mp4v">
             <summary>mp4v</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mpg4">
-            <summary>mpg4</summary>
         </member>
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mpeg">
             <summary>mpeg</summary>
@@ -6241,330 +7261,6 @@
         <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ice">
             <summary>ice</summary>
         </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Map">
-            <summary>map</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Topojson">
-            <summary>topojson</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jsonld">
-            <summary>jsonld</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Geojson">
-            <summary>geojson</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mjs">
-            <summary>mjs</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Wasm">
-            <summary>wasm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Webmanifest">
-            <summary>webmanifest</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Webapp">
-            <summary>webapp</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.F4a">
-            <summary>f4a</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.F4b">
-            <summary>f4b</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Apng">
-            <summary>apng</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Avif">
-            <summary>avif</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Avifs">
-            <summary>avifs</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jxr">
-            <summary>jxr</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Hdp">
-            <summary>hdp</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jng">
-            <summary>jng</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions._3gpp">
-            <summary>3gpp</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.F4p">
-            <summary>f4p</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cur">
-            <summary>cur</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ear">
-            <summary>ear</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.War">
-            <summary>war</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Img">
-            <summary>img</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Msm">
-            <summary>msm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Msp">
-            <summary>msp</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Safariextz">
-            <summary>safariextz</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Bbaw">
-            <summary>bbaw</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Crx">
-            <summary>crx</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cco">
-            <summary>cco</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jardiff">
-            <summary>jardiff</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Run">
-            <summary>run</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Oex">
-            <summary>oex</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pl">
-            <summary>pl</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pm">
-            <summary>pm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rpm">
-            <summary>rpm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sea">
-            <summary>sea</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Tk">
-            <summary>tk</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pem">
-            <summary>pem</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Shtml">
-            <summary>shtml</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Md">
-            <summary>md</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Markdown">
-            <summary>markdown</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mml">
-            <summary>mml</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xloc">
-            <summary>xloc</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vtt">
-            <summary>vtt</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Htc">
-            <summary>htc</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Bdoc">
-            <summary>bdoc</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Es">
-            <summary>es</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Hjson">
-            <summary>hjson</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Json5">
-            <summary>json5</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.M4p">
-            <summary>m4p</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Cjs">
-            <summary>cjs</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Buffer">
-            <summary>buffer</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Raml">
-            <summary>raml</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Owl">
-            <summary>owl</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Siv">
-            <summary>siv</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sieve">
-            <summary>sieve</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Toml">
-            <summary>toml</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ubj">
-            <summary>ubj</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pkpass">
-            <summary>pkpass</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gdoc">
-            <summary>gdoc</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gslides">
-            <summary>gslides</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Gsheet">
-            <summary>gsheet</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Msg">
-            <summary>msg</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Arj">
-            <summary>arj</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Php">
-            <summary>php</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Kdbx">
-            <summary>kdbx</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Luac">
-            <summary>luac</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pac">
-            <summary>pac</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Hdd">
-            <summary>hdd</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ova">
-            <summary>ova</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ovf">
-            <summary>ovf</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vbox">
-            <summary>vbox</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vbox_extpack">
-            <summary>vbox-extpack</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vdi">
-            <summary>vdi</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vhd">
-            <summary>vhd</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Vmdk">
-            <summary>vmdk</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Xsd">
-            <summary>xsd</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Rng">
-            <summary>rng</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Heic">
-            <summary>heic</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Heics">
-            <summary>heics</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Heif">
-            <summary>heif</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Heifs">
-            <summary>heifs</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jp2">
-            <summary>jp2</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jpg2">
-            <summary>jpg2</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jpx">
-            <summary>jpx</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jpf">
-            <summary>jpf</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Dds">
-            <summary>dds</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Manifest">
-            <summary>manifest</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Coffee">
-            <summary>coffee</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Litcoffee">
-            <summary>litcoffee</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jade">
-            <summary>jade</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Jsx">
-            <summary>jsx</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Less">
-            <summary>less</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mdx">
-            <summary>mdx</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ini">
-            <summary>ini</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Shex">
-            <summary>shex</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Slim">
-            <summary>slim</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Slm">
-            <summary>slm</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Stylus">
-            <summary>stylus</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Styl">
-            <summary>styl</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Hbs">
-            <summary>hbs</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Lua">
-            <summary>lua</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Mkd">
-            <summary>mkd</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Pde">
-            <summary>pde</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Sass">
-            <summary>sass</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Scss">
-            <summary>scss</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Ymp">
-            <summary>ymp</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Yaml">
-            <summary>yaml</summary>
-        </member>
-        <member name="F:MimeMapping.KnownMimeTypes.FileExtensions.Yml">
-            <summary>yml</summary>
-        </member>
         <member name="T:MimeMapping.MimeUtility">
             <summary>
             MIME type utility to lookup by file extension
@@ -6578,7 +7274,12 @@
         </member>
         <member name="P:MimeMapping.MimeUtility.TypeMap">
             <summary>
-            Dictionary of all available types (lazy loaded on first call)
+            Dictionary of all available types by extension (lazy loaded on first call)
+            </summary>
+        </member>
+        <member name="P:MimeMapping.MimeUtility.TypeToExtensionsMap">
+            <summary>
+            Dictionary of all available types by mimetype (lazy loaded on first call)
             </summary>
         </member>
         <member name="M:MimeMapping.MimeUtility.GetMimeMapping(System.String)">
