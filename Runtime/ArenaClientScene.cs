@@ -141,7 +141,7 @@ namespace ArenaUnity
 
             var requiredShaders = requiredShadersStandardRP;
             // check if URP or HDR; different shaders are required
-            if (GraphicsSettings.renderPipelineAsset)
+            if (ArenaUnity.DefaultRenderPipeline)
                 requiredShaders = requiredShadersURPHDRP;
 
             // ensure shaders are in project
