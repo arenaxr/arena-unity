@@ -22,7 +22,6 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Rendering;
 using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace ArenaUnity

@@ -19,11 +19,7 @@ namespace ArenaUnity
     /// </summary>
     public static class ArenaUnity
     {
-#if UNITY_6000_0_OR_NEWER
         public static RenderPipelineAsset DefaultRenderPipeline = GraphicsSettings.defaultRenderPipeline;
-#else
-        public static RenderPipelineAsset DefaultRenderPipeline = GraphicsSettings.renderPipelineAsset;
-#endif
         public static string ColorPropertyName = (!DefaultRenderPipeline ? "_Color" : "_BaseColor");
         public const float LineSinglePixelInMeters = 0.005f;
         public static float ArenaFloat(float n) { return (float)Math.Round(n, 3); }
