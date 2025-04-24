@@ -2,6 +2,15 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.2.4](https://github.com/arenaxr/arena-unity/compare/v1.2.3...v1.2.4) (2025-04-23)
+
+
+### Bug Fixes
+
+* **auth:** bump google auth to 1.69 ([c05bb8a](https://github.com/arenaxr/arena-unity/commit/c05bb8a7e6878b5164a2f50c41f6817457c74f66))
+* **auth:** use latest google auth 1.65 last supporting unity ([57e2942](https://github.com/arenaxr/arena-unity/commit/57e294235e331b34051c74492c7f61f597e0a5a9))
+* **hdrp:** update DefaultRenderPipeline for unity 6 ([0a6697c](https://github.com/arenaxr/arena-unity/commit/0a6697cc33854cfd66bb2cdcb84e997d4e06251e))
+
 ## [1.2.3](https://github.com/arenaxr/arena-unity/compare/v1.2.2...v1.2.3) (2025-04-21)
 
 

@@ -69,9 +69,9 @@ namespace ArenaUnity.Components
 
                 // object material
                 var material = renderer.material;
-                if (GraphicsSettings.renderPipelineAsset)
+                if (ArenaUnity.DefaultRenderPipeline)
                 {
-                    if (GraphicsSettings.renderPipelineAsset.GetType().ToString().Contains("HDRenderPipelineAsset"))
+                    if (ArenaUnity.DefaultRenderPipeline.GetType().ToString().Contains("HDRenderPipelineAsset"))
                         material.shader = Shader.Find("HDRP/Lit");
                     else
                         material.shader = Shader.Find("Universal Render Pipeline/Lit");

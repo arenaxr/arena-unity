@@ -22,7 +22,6 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Rendering;
 using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace ArenaUnity
@@ -141,7 +140,7 @@ namespace ArenaUnity
 
             var requiredShaders = requiredShadersStandardRP;
             // check if URP or HDR; different shaders are required
-            if (GraphicsSettings.renderPipelineAsset)
+            if (ArenaUnity.DefaultRenderPipeline)
                 requiredShaders = requiredShadersURPHDRP;
 
             // ensure shaders are in project
