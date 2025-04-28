@@ -110,10 +110,13 @@ namespace ArenaUnity
         {
             yield return new WaitUntil(() => GameObject.Find(cutout_id) != null);
             var cobj = GameObject.Find(cutout_id);
+            var aobj = cobj.GetComponent<ArenaObject>();
+            if (aobj == null) yield return null;
             gaussiancutout = cobj.GetComponent<GaussianCutout>();
             if (gaussiancutout == null)
                 gaussiancutout = cobj.AddComponent<GaussianCutout>();
-            gaussiancutout.m_Type = GaussianCutout.Type.Box;
+            gaussiancutout.m_Type = (aobj.object_type == "box" || aobj.object_type == "roundedbox") ? GaussianCutout.Type.Box : GaussianCutout.Type.Ellipsoid;
+            gaussiancutout.m_Invert = false; // aframe-gaussian-splatting does not support inverted cutouts yet
             gaussiansplat.m_Cutouts = new GaussianCutout[] { gaussiancutout };
             yield return null;
         }
