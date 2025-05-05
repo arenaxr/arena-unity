@@ -31,8 +31,8 @@ namespace ArenaUnity
     public class ArenaWireGaussianSplatting : ArenaComponent
     {
         // ARENA gaussian_splatting component unity conversion status:
-        // TODO: src
-        // TODO: cutoutEntity
+        // DONE: src
+        // DONE: cutoutEntity
         // TODO: pixelRatio
         // TODO: xrPixelRatio
 
@@ -61,8 +61,6 @@ namespace ArenaUnity
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
-
             // assign splat renderer
             gaussiansplat = GetComponentInChildren<GaussianSplatRenderer>();
             if (gaussiansplat == null)
@@ -106,6 +104,7 @@ namespace ArenaUnity
             }
             switch (filetype)
             {
+                case ".spz":
                 case ".ply":
                     StartCoroutine(HandleDotPlyAssetConversion(Path.GetFileNameWithoutExtension(json.Src)));
                     break;

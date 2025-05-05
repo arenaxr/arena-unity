@@ -59,6 +59,14 @@ namespace ArenaUnity
             return spanString;
         }
 
+        // Coordinate Systems
+        /////////////////////
+        // We have to translate between multiple coordinate systems:
+        // RUB - OpenGL and three.js
+        // RDF - PLY
+        // LUF - GLTF/GLB
+        // RUF - Unity
+
         // position
         public static string ToArenaPositionString(Vector3 position)
         {
