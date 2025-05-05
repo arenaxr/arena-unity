@@ -67,10 +67,6 @@ namespace ArenaUnity
             {
                 GameObject sobj = new GameObject("Splat");
                 sobj.transform.SetParent(transform, false);
-                // set transforms to match ARENA a-frame gaussian components
-                sobj.transform.localRotation *= Quaternion.AngleAxis(180, transform.right);
-                sobj.transform.localScale *= 2;
-
                 gaussiansplat = sobj.AddComponent<GaussianSplatRenderer>();
             }
 
@@ -123,10 +119,15 @@ namespace ArenaUnity
             var cobj = GameObject.Find(cutout_id);
             var aobj = cobj.GetComponent<ArenaObject>();
             if (aobj == null) yield return null;
-            gaussiancutout = cobj.GetComponent<GaussianCutout>();
+            gaussiancutout = cobj.GetComponentInChildren<GaussianCutout>();
             if (gaussiancutout == null)
-                gaussiancutout = cobj.AddComponent<GaussianCutout>();
+            {
+                GameObject sobj = new GameObject("Splat Cutout");
+                sobj.transform.SetParent(cobj.transform, false);
+                gaussiancutout = sobj.AddComponent<GaussianCutout>();
+            }
             gaussiancutout.m_Type = (aobj.object_type == "box" || aobj.object_type == "roundedbox") ? GaussianCutout.Type.Box : GaussianCutout.Type.Ellipsoid;
+            gaussiancutout.transform.localScale = gaussiancutout.transform.localScale / 2; // match ARENA a-frame gaussian components
             gaussiancutout.m_Invert = false; // aframe-gaussian-splatting does not support inverted cutouts yet
             gaussiansplat.m_Cutouts = new GaussianCutout[] { gaussiancutout };
             yield return null;
@@ -796,6 +797,8 @@ namespace ArenaUnity
 
         static unsafe void EmitEncodedVector(float3 v, byte* outputPtr, GaussianSplatAsset.VectorFormat format)
         {
+            v.y = -v.y; // (mwfarb): translate coordinates PLY (RDF) to Unity (RUF)
+
             switch (format)
             {
                 case GaussianSplatAsset.VectorFormat.Float32:

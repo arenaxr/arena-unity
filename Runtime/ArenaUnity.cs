@@ -62,10 +62,10 @@ namespace ArenaUnity
         // Coordinate Systems
         /////////////////////
         // We have to translate between multiple coordinate systems:
-        // RUB - OpenGL and three.js
-        // RDF - PLY
-        // LUF - GLTF/GLB
+        // RUB - OpenGL, three.js, SPZ
+        // LUF - GLTF, GLB
         // RUF - Unity
+        // RDF - PLY
 
         // position
         public static string ToArenaPositionString(Vector3 position)
