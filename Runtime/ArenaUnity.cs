@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
@@ -57,6 +58,14 @@ namespace ArenaUnity
             if (string.IsNullOrEmpty(spanString)) spanString = "0 seconds";
             return spanString;
         }
+
+        // Coordinate Systems
+        /////////////////////
+        // We have to translate between multiple coordinate systems:
+        // RUB - OpenGL, three.js, SPZ
+        // LUF - GLTF, GLB
+        // RUF - Unity
+        // RDF - PLY
 
         // position
         public static string ToArenaPositionString(Vector3 position)
@@ -503,6 +512,14 @@ namespace ArenaUnity
                 text = gobj.AddComponent<ArenaWireText>();
             text.json = JsonConvert.DeserializeObject<ArenaTextJson>(MergeRawJson(text.json, indata));
             text.apply = true;
+        }
+
+        public static void ApplyWireGaussianSplatting(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireGaussianSplatting>(out var gaussiansplatting))
+                gaussiansplatting = gobj.AddComponent<ArenaWireGaussianSplatting>();
+            gaussiansplatting.json = JsonConvert.DeserializeObject<ArenaGaussianSplattingJson>(MergeRawJson(gaussiansplatting.json, indata));
+            gaussiansplatting.apply = true;
         }
 
         //ARENAUI Objects
