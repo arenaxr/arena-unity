@@ -12,6 +12,7 @@ arena-unity uses some third-party libraries in its package. Some have been modif
 - https://github.com/mrdoob/three.js
 - https://github.com/atteneder/glTFast
 - https://github.com/atteneder/DracoUnity
+- https://github.com/aras-p/UnityGaussianSplatting
 
 ## NuGet
 - https://www.nuget.org/packages/Google.Apis

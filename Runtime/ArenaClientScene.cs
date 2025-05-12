@@ -350,6 +350,16 @@ namespace ArenaUnity
             return uris;
         }
 
+
+        internal string checkLocalAsset(string msgUrl)
+        {
+            Uri uri = ConstructRemoteUrl(msgUrl);
+            if (uri == null) return null;
+            string assetPath = ConstructLocalPath(uri);
+            if (!File.Exists(assetPath)) return null;
+            return assetPath;
+        }
+
         internal Uri ConstructRemoteUrl(string srcUrl)
         {
             if (string.IsNullOrWhiteSpace(srcUrl))
@@ -672,6 +682,9 @@ namespace ArenaUnity
                 // TODO: case "ocean": ArenaUnity.ApplyWireOcean(indata, gobj); break;
                 // TODO: case "pcd-model": ArenaUnity.ApplyWirePcdModel(indata, gobj); break;
                 // TODO: case "threejs-scene": ArenaUnity.ApplyWireThreejsScene(indata, gobj); break;
+                case "gaussian_splatting":
+                    ArenaUnity.ApplyWireGaussianSplatting(indata, gobj);
+                    break;
                 case "gltf-model":
                     // load main model
                     if (url != null && aobj.gltfUrl == null)
@@ -779,7 +792,7 @@ namespace ArenaUnity
             }
 
             // apply rendering visibility attributes, before other on-wire object attributes
-            if (data.Visible != null) // visible, if set is highest priority to enable/disable renderer            {
+            if (data.Visible != null) // visible, if set is highest priority to enable/disable renderer
             {
                 ArenaUnity.ApplyVisible(gobj, data);
             }
@@ -943,15 +956,6 @@ namespace ArenaUnity
                     }
                 }
             }
-        }
-
-        internal string checkLocalAsset(string msgUrl)
-        {
-            Uri uri = ConstructRemoteUrl(msgUrl);
-            if (uri == null) return null;
-            string assetPath = ConstructLocalPath(uri);
-            if (!File.Exists(assetPath)) return null;
-            return assetPath;
         }
 
         // TODO (mwfarb): move AttachMaterialTexture to material component

@@ -14,6 +14,7 @@ using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEditor.Build;
 
 namespace ArenaUnity.Editor
 {
@@ -51,6 +52,28 @@ namespace ArenaUnity.Editor
             obj.AddComponent<TextMeshPro>();
             UnityEngine.Object.DestroyImmediate(obj);
             // TODO (mwfarb) find a better way to ask users to Import TMP Essentials
+
+            // Remind user to recognise SSL define symbol for MQTT library
+            NamedBuildTarget buildTarget = CurrentNamedBuildTarget;
+            PlayerSettings.GetScriptingDefineSymbols(buildTarget, out string[] defines);
+            Debug.Log($"Build target: {string.Join(", ", defines)}");
+
+            //PlayerSettings.allowUnsafeCode;
+        }
+
+        public static NamedBuildTarget CurrentNamedBuildTarget
+        {
+            get
+            {
+#if UNITY_SERVER
+                return NamedBuildTarget.Server;
+#else
+                BuildTarget buildTarget = EditorUserBuildSettings.activeBuildTarget;
+                BuildTargetGroup targetGroup = BuildPipeline.GetBuildTargetGroup(buildTarget);
+                NamedBuildTarget namedBuildTarget = NamedBuildTarget.FromBuildTargetGroup(targetGroup);
+                return namedBuildTarget;
+#endif
+            }
         }
 
         private static void HandleListRequestCompletion()
