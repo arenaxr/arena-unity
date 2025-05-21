@@ -5,16 +5,17 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using TMPro;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEditor.Build;
 
 namespace ArenaUnity.Editor
 {
@@ -30,6 +31,7 @@ namespace ArenaUnity.Editor
         private static string gitLatestUrl = $"https://api.github.com/repos/{githubOrg}/{githubName}/releases/latest";
         private static ListRequest _listRequest;
         private static bool checkGithub = false;
+        static AddRequest packageRequest;
 
         // first version to avoid hitting Github's rate-limit
         private const string GH_RATE_LIMIT_VERSION = "0.0.4";
@@ -44,6 +46,68 @@ namespace ArenaUnity.Editor
             _listRequest = Client.List();
             EditorApplication.update += OnUpdate;
 
+            UpdateMissingPackages();
+            UpdateMissingPlayerSettings();
+            UpdateMissingAssets();
+        }
+
+        private static void UpdateMissingPackages()
+        {
+            // update project manifest with required scoped registries if needed
+            string projManifestPath = Path.Combine("Packages", "manifest.json");
+            string jsonScopedRegReq = @"{'scopedRegistries': [
+                {
+                    'name': 'package.openupm.com',
+                    'url': 'https://package.openupm.com',
+                    'scopes': [
+                        'org.nesnausk.gaussian-splatting'
+                    ]
+                }
+            ]}";
+
+            JObject joProjManifestIn = JObject.Parse(File.ReadAllText(projManifestPath));
+            Debug.Log($"old joProjManifest: {joProjManifestIn}"); // TODO remove
+
+            JObject joProjManifestOut = JObject.Parse(jsonScopedRegReq);
+
+            bool foundOpenUpm = false;
+            JArray jaScopedRegistries = (JArray)joProjManifestIn["scopedRegistries"];
+            if (jaScopedRegistries != null)
+            {
+                foreach (var reg in jaScopedRegistries)
+                {
+                    Debug.Log($"jaScopedRegistry: {reg}"); // TODO remove
+                    if ((string)reg["name"] == "package.openupm.com") foundOpenUpm = true;
+                }
+            }
+
+            joProjManifestIn.Merge(joProjManifestOut, new JsonMergeSettings
+            {
+                //MergeArrayHandling = MergeArrayHandling.Union
+                MergeArrayHandling = MergeArrayHandling.Replace  // TODO remove
+            });
+
+            Debug.Log($"new joProjManifest: {joProjManifestIn}"); // TODO remove
+            File.WriteAllText(projManifestPath, joProjManifestIn.ToString());
+
+            // TODO wait for scoped registry to load
+
+            // add required packages from scoped registries
+            AddPackage("org.nesnausk.gaussian-splatting");
+        }
+
+        private static void UpdateMissingPlayerSettings()
+        {
+            // TODO Remind user to recognize SSL define symbol for MQTT library
+            NamedBuildTarget buildTarget = CurrentNamedBuildTarget;
+            PlayerSettings.GetScriptingDefineSymbols(buildTarget, out string[] defines);
+            Debug.Log($"Build target: {string.Join(", ", defines)}"); // TODO remove
+
+            // TODO PlayerSettings.allowUnsafeCode;
+        }
+
+        private static void UpdateMissingAssets()
+        {
             // Remind user that they need to Import TMP Essentials to use ARENA.
             // Since this cannot be done at Runtime, preempt loading TMP in the Editor,
             // otherwise the first ARENA Text object loaded will open the Import TMP Essentials
@@ -51,14 +115,7 @@ namespace ArenaUnity.Editor
             var obj = new GameObject();
             obj.AddComponent<TextMeshPro>();
             UnityEngine.Object.DestroyImmediate(obj);
-            // TODO (mwfarb) find a better way to ask users to Import TMP Essentials
-
-            // Remind user to recognise SSL define symbol for MQTT library
-            NamedBuildTarget buildTarget = CurrentNamedBuildTarget;
-            PlayerSettings.GetScriptingDefineSymbols(buildTarget, out string[] defines);
-            Debug.Log($"Build target: {string.Join(", ", defines)}");
-
-            //PlayerSettings.allowUnsafeCode;
+            // TODO find a better way to ask users to Import TMP Essentials
         }
 
         public static NamedBuildTarget CurrentNamedBuildTarget
@@ -73,6 +130,26 @@ namespace ArenaUnity.Editor
                 NamedBuildTarget namedBuildTarget = NamedBuildTarget.FromBuildTargetGroup(targetGroup);
                 return namedBuildTarget;
 #endif
+            }
+        }
+
+        static void AddPackage(string pkg)
+        {
+            // TODO Only add a package to the project if it's missing
+            packageRequest = Client.Add(pkg);
+            EditorApplication.update += Progress;
+        }
+
+        static void Progress()
+        {
+            if (packageRequest.IsCompleted)
+            {
+                if (packageRequest.Status == StatusCode.Success)
+                    Debug.Log("Installed: " + packageRequest.Result.packageId);
+                else if (packageRequest.Status >= StatusCode.Failure)
+                    Debug.Log(packageRequest.Error.message);
+
+                EditorApplication.update -= Progress;
             }
         }
 

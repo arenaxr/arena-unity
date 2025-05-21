@@ -10,7 +10,7 @@ using ArenaUnity.Schemas;
 using GaussianSplatting.Runtime;
 using Newtonsoft.Json;
 using UnityEngine;
-using SplatVfx;
+//using SplatVfx;
 using System;
 using System.Collections.Generic;
 using Unity.Burst;
@@ -143,7 +143,7 @@ namespace ArenaUnity
             GaussianSplatAsset asset = ScriptableObject.CreateInstance<GaussianSplatAsset>();
 #if UNITY_EDITOR
             // manually load ComputeShader, it is required
-            var splatData = (SplatData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(SplatData));
+            //var splatData = (SplatData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(SplatData));
             //TextAsset dataChunk = new TextAsset(splatData.AxisArray.ToString());
             //TextAsset dataPos = new TextAsset(splatData.PositionArray.ToString());
             //TextAsset dataOther = null;
