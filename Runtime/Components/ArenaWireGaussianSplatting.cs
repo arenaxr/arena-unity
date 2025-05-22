@@ -7,7 +7,6 @@ using System.Collections;
 using System.IO;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
-using GaussianSplatting.Runtime;
 using Newtonsoft.Json;
 using UnityEngine;
 //using SplatVfx;
@@ -20,8 +19,14 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine.Experimental.Rendering;
 #if UNITY_EDITOR
-using GaussianSplatting.Editor.Utils;
 using UnityEditor;
+#endif
+
+#if LIB_GAUSSIAN_SPLATTING
+using GaussianSplatting.Runtime;
+#if UNITY_EDITOR
+using GaussianSplatting.Editor.Utils;
+#endif
 #endif
 
 // Portions of this code are used from: https://github.com/aras-p/UnityGaussianSplatting
@@ -45,6 +50,8 @@ namespace ArenaUnity
         // https://github.com/mkkellogg/GaussianSplats3D
 
         public ArenaGaussianSplattingJson json = new ArenaGaussianSplattingJson();
+
+#if LIB_GAUSSIAN_SPLATTING
         GaussianSplatRenderer gaussiansplat;
         GaussianCutout gaussiancutout;
         ComputeShader compShader;
@@ -195,23 +202,8 @@ namespace ArenaUnity
             yield return null;
         }
 
-        public override void UpdateObject()
-        {
-            var newJson = JsonConvert.SerializeObject(json);
-            if (updatedJson != newJson)
-            {
-                var aobj = GetComponent<ArenaObject>();
-                if (aobj != null)
-                {
-                    aobj.PublishUpdate($"{newJson}");
-                    apply = true;
-                }
-            }
-            updatedJson = newJson;
-        }
-
         ///////////////////////////////////////////////////////
-        // Edit/Import from https://raw.githubusercontent.com/aras-p/UnityGaussianSplatting/refs/heads/main/package/Editor/GaussianSplatAssetCreator.cs
+        // Below edit from https://raw.githubusercontent.com/aras-p/UnityGaussianSplatting/refs/heads/main/package/Editor/GaussianSplatAssetCreator.cs
         ///////////////////////////////////////////////////////
 
         const string kProgressTitle = "Creating Gaussian Splat Asset";
@@ -1203,5 +1195,29 @@ namespace ArenaUnity
             public float fy;
         }
 
+        ///////////////////////////////////////////////////////
+        // Above edit from https://raw.githubusercontent.com/aras-p/UnityGaussianSplatting/refs/heads/main/package/Editor/GaussianSplatAssetCreator.cs
+        ///////////////////////////////////////////////////////
+#else
+        protected override void ApplyRender()
+        {
+            // placeholder before LIB_GAUSSIAN_SPLATTING load
+        }
+#endif
+
+        public override void UpdateObject()
+        {
+            var newJson = JsonConvert.SerializeObject(json);
+            if (updatedJson != newJson)
+            {
+                var aobj = GetComponent<ArenaObject>();
+                if (aobj != null)
+                {
+                    aobj.PublishUpdate($"{newJson}");
+                    apply = true;
+                }
+            }
+            updatedJson = newJson;
+        }
     }
 }

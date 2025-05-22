@@ -93,17 +93,16 @@ namespace ArenaUnity.Editor
             // TODO wait for scoped registry to load
 
             // add required packages from scoped registries
-            AddPackage("org.nesnausk.gaussian-splatting");
+            AddPackage("org.nesnausk.gaussian-splatting@1.1.1");
         }
 
         private static void UpdateMissingPlayerSettings()
         {
-            // TODO Remind user to recognize SSL define symbol for MQTT library
+            // add scripting define symbols required
+            string[] definesReq = { "SSL", "LIB_GAUSSIAN_SPLATTING"};
             NamedBuildTarget buildTarget = CurrentNamedBuildTarget;
             PlayerSettings.GetScriptingDefineSymbols(buildTarget, out string[] defines);
-            Debug.Log($"Build target: {string.Join(", ", defines)}"); // TODO remove
-
-            // TODO PlayerSettings.allowUnsafeCode;
+            PlayerSettings.SetScriptingDefineSymbols(buildTarget, defines.Union(definesReq).ToArray());
         }
 
         private static void UpdateMissingAssets()
