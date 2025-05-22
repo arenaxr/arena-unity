@@ -1,20 +1,15 @@
 {
     "name": "conix.arena.unity",
     "references": [
-        "PrettyHierarchy",
-        "Unity.TextMeshPro",
-        "glTFast",
-        "glTFast.Export",
-        "glTFast.Material",
-        "Draco",
         "GaussianSplatting",
         "GaussianSplattingEditor",
-        "SplatVfx.Runtime",
-        "SplatVfx.Editor",
-        "Unity.Mathematics",
+        "glTFast",
+        "glTFast.Export",
+        "PrettyHierarchy",
         "Unity.Burst",
         "Unity.Collections",
-        "Unity.Jobs"
+        "Unity.Mathematics",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
