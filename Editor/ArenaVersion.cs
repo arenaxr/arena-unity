@@ -108,8 +108,8 @@ namespace ArenaUnity.Editor
         private static void UpdateMissingAssets()
         {
             // Check if "TextMesh Pro" folder is present in project
-            string folderPath = AssetDatabase.GUIDToAssetPath("f54d1bd14bd3ca042bd867b519fee8cc");
-            if (string.IsNullOrEmpty(folderPath))
+            string tmpAssetsPath = Path.Combine("Assets", "TextMesh Pro");
+            if (!Directory.Exists(tmpAssetsPath))
             {
                 // Import TMP Essentials at minimum to prevent popup when text objects arrive on the wire
                 TMP_PackageResourceImporter.ImportResources(true, false, false);
