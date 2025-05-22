@@ -107,14 +107,13 @@ namespace ArenaUnity.Editor
 
         private static void UpdateMissingAssets()
         {
-            // Remind user that they need to Import TMP Essentials to use ARENA.
-            // Since this cannot be done at Runtime, preempt loading TMP in the Editor,
-            // otherwise the first ARENA Text object loaded will open the Import TMP Essentials
-            // dialog at Runtime and the TMPro library does not allow this.
-            var obj = new GameObject();
-            obj.AddComponent<TextMeshPro>();
-            UnityEngine.Object.DestroyImmediate(obj);
-            // TODO find a better way to ask users to Import TMP Essentials
+            // Check if "TextMesh Pro" folder is present in project
+            string folderPath = AssetDatabase.GUIDToAssetPath("f54d1bd14bd3ca042bd867b519fee8cc");
+            if (string.IsNullOrEmpty(folderPath))
+            {
+                // Import TMP Essentials at minimum to prevent popup when text objects arrive on the wire
+                TMP_PackageResourceImporter.ImportResources(true, false, false);
+            }
         }
 
         public static NamedBuildTarget CurrentNamedBuildTarget
