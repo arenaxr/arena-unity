@@ -142,9 +142,7 @@ namespace ArenaUnity.Editor
         {
             if (packageRequest.IsCompleted)
             {
-                if (packageRequest.Status == StatusCode.Success)
-                    Debug.Log("Installed: " + packageRequest.Result.packageId);
-                else if (packageRequest.Status >= StatusCode.Failure)
+                if (packageRequest.Status >= StatusCode.Failure)
                     Debug.Log(packageRequest.Error.message);
 
                 EditorApplication.update -= Progress;
