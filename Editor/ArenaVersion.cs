@@ -55,6 +55,15 @@ namespace ArenaUnity.Editor
         {
             // update project manifest with required scoped registries if needed
             string projManifestPath = Path.Combine("Packages", "manifest.json");
+            JObject joProjManifestIn = JObject.Parse(File.ReadAllText(projManifestPath));
+
+            //{
+            //    'name': 'Unity NuGet',
+            //    'url': 'https://unitynuget-registry.openupm.com',
+            //    'scopes': [
+            //        'org.nuget'
+            //  ]
+            //},
             string jsonScopedRegReq = @"{'scopedRegistries': [
                 {
                     'name': 'package.openupm.com',
@@ -64,30 +73,36 @@ namespace ArenaUnity.Editor
                     ]
                 }
             ]}";
+            JObject joProjManifestReq = JObject.Parse(jsonScopedRegReq);
 
-            JObject joProjManifestIn = JObject.Parse(File.ReadAllText(projManifestPath));
-            Debug.Log($"old joProjManifest: {joProjManifestIn}"); // TODO remove
+            JArray jaRegOld = (JArray)joProjManifestIn["scopedRegistries"];
+            if (jaRegOld == null) jaRegOld = new JArray();
 
-            JObject joProjManifestOut = JObject.Parse(jsonScopedRegReq);
+            JArray jaRegNew = (JArray)joProjManifestReq["scopedRegistries"];
 
-            bool foundOpenUpm = false;
-            JArray jaScopedRegistries = (JArray)joProjManifestIn["scopedRegistries"];
-            if (jaScopedRegistries != null)
+            JArray jaRegMerge = new JArray();
+            foreach (JToken regOld in jaRegOld)
             {
-                foreach (var reg in jaScopedRegistries)
+                jaRegMerge.Add(regOld);
+            }
+            foreach (JToken regNew in jaRegNew)
+            {
+                string urlNew = (string)regNew["url"];
+                JToken regOld = jaRegMerge.SelectToken($"$.[?(@.url == '{urlNew}')]");
+                if (regOld != null)
                 {
-                    Debug.Log($"jaScopedRegistry: {reg}"); // TODO remove
-                    if ((string)reg["name"] == "package.openupm.com") foundOpenUpm = true;
+                    ((JArray)regOld["scopes"]).Merge((JArray)regNew["scopes"], new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    });
+                }
+                else
+                {
+                    jaRegMerge.Add(regNew);
                 }
             }
+            joProjManifestIn["scopedRegistries"] = jaRegMerge;
 
-            joProjManifestIn.Merge(joProjManifestOut, new JsonMergeSettings
-            {
-                //MergeArrayHandling = MergeArrayHandling.Union
-                MergeArrayHandling = MergeArrayHandling.Replace  // TODO remove
-            });
-
-            Debug.Log($"new joProjManifest: {joProjManifestIn}"); // TODO remove
             File.WriteAllText(projManifestPath, joProjManifestIn.ToString());
 
             // TODO wait for scoped registry to load
@@ -99,7 +114,7 @@ namespace ArenaUnity.Editor
         private static void UpdateMissingPlayerSettings()
         {
             // add scripting define symbols required
-            string[] definesReq = { "SSL", "LIB_GAUSSIAN_SPLATTING"};
+            string[] definesReq = { "SSL", "LIB_GAUSSIAN_SPLATTING" };
             NamedBuildTarget buildTarget = CurrentNamedBuildTarget;
             PlayerSettings.GetScriptingDefineSymbols(buildTarget, out string[] defines);
             PlayerSettings.SetScriptingDefineSymbols(buildTarget, defines.Union(definesReq).ToArray());
