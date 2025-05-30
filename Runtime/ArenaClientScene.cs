@@ -1097,6 +1097,7 @@ namespace ArenaUnity
             if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
             {
                 Debug.LogWarning($"{www.error}: {www.url}");
+                ClearProgressBar();
                 yield break;
             }
             else
@@ -1128,6 +1129,7 @@ namespace ArenaUnity
             if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
             {
                 Debug.LogWarning($"{www.error}: {www.url}");
+                ClearProgressBar();
                 yield break;
             }
             else
