@@ -19,7 +19,6 @@ namespace PrettyHierarchy
 
         public bool HasPermissions { get { return hasPermissions; } set { hasPermissions = value; } }
 
-#if UNITY_EDITOR
         private Color32 UpdateTextColor()
         {
             Color32 color;
@@ -67,6 +66,5 @@ namespace PrettyHierarchy
         {
             EditorApplication.RepaintHierarchyWindow();
         }
-#endif
     }
 }

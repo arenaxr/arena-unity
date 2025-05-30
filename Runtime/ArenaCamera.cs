@@ -35,14 +35,6 @@ namespace ArenaUnity
         [HideInInspector]
         protected bool created = false;
 
-        public void OnEnable()
-        {
-#if UNITY_EDITOR
-            // sort arena component to the top, below Transform
-            while (UnityEditorInternal.ComponentUtility.MoveComponentUp(this)) { }
-#endif
-        }
-
         void Start()
         {
             displayColor = ArenaUnity.ColorRandom();

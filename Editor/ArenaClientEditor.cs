@@ -7,11 +7,10 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace ArenaUnity
+namespace ArenaUnity.Editor
 {
-#if UNITY_EDITOR
     [CustomEditor(typeof(ArenaClientScene))]
-    public class ArenaClientEditor : Editor
+    public class ArenaClientEditor : UnityEditor.Editor
     {
         Vector2 scrollPos = Vector2.zero;
 
@@ -86,5 +85,4 @@ namespace ArenaUnity
             script.requestEnvironmentRights = EditorGUILayout.Toggle("Request Environment Host Rights", script.requestEnvironmentRights);
         }
     }
-#endif
 }

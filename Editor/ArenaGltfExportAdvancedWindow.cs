@@ -8,11 +8,9 @@ using GLTFast;
 using GLTFast.Export;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.XR;
 
-namespace ArenaUnity
+namespace ArenaUnity.Editor
 {
-#if UNITY_EDITOR
     public class ArenaGltfExportAdvancedWindow : EditorWindow
     {
         private string objectName;
@@ -147,5 +145,4 @@ namespace ArenaUnity
             EditorGUILayout.EndHorizontal();
         }
     }
-#endif
 }

@@ -6,15 +6,17 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace ArenaUnity
+namespace ArenaUnity.Editor.Components
 {
-#if UNITY_EDITOR
     [CustomEditor(typeof(ArenaObject))]
-    public class ArenaObjectEditor : Editor
+    public class ArenaObjectEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
             ArenaObject aobj = (ArenaObject)target;
+
+            // sort arena component to the top, below Transform
+            while (UnityEditorInternal.ComponentUtility.MoveComponentUp(aobj)) { }
 
             // add button to publish unity changes
             GUI.enabled = aobj.HasPermissions && aobj.messageType == "object";
@@ -52,5 +54,4 @@ namespace ArenaUnity
 
         }
     }
-#endif
 }

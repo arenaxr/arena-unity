@@ -31,7 +31,7 @@ namespace ArenaUnity.Editor
         private static string gitLatestUrl = $"https://api.github.com/repos/{githubOrg}/{githubName}/releases/latest";
         private static ListRequest _listRequest;
         private static bool checkGithub = false;
-        static AddRequest packageRequest;
+        static AddAndRemoveRequest packagesRequest;
 
         // first version to avoid hitting Github's rate-limit
         private const string GH_RATE_LIMIT_VERSION = "0.0.4";
@@ -108,7 +108,9 @@ namespace ArenaUnity.Editor
             // TODO wait for scoped registry to load
 
             // add required packages from scoped registries
-            AddPackage("org.nesnausk.gaussian-splatting@1.1.1");
+            AddPackages(new string[]{
+                "org.nesnausk.gaussian-splatting@1.1.1"
+            });
         }
 
         private static void UpdateMissingPlayerSettings()
@@ -146,19 +148,19 @@ namespace ArenaUnity.Editor
             }
         }
 
-        static void AddPackage(string pkg)
+        static void AddPackages(string[] packagesToAdd)
         {
             // TODO Only add a package to the project if it's missing
-            packageRequest = Client.Add(pkg);
+            packagesRequest = Client.AddAndRemove(packagesToAdd);
             EditorApplication.update += Progress;
         }
 
         static void Progress()
         {
-            if (packageRequest.IsCompleted)
+            if (packagesRequest.IsCompleted)
             {
-                if (packageRequest.Status >= StatusCode.Failure)
-                    Debug.Log(packageRequest.Error.message);
+                if (packagesRequest.Status >= StatusCode.Failure)
+                    Debug.LogWarning(packagesRequest.Error.message);
 
                 EditorApplication.update -= Progress;
             }

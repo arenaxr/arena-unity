@@ -9,7 +9,8 @@
         "Unity.Burst",
         "Unity.Collections",
         "Unity.Mathematics",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "GUID:d04eb9c554ad44ceab303cecf0c0cf82"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

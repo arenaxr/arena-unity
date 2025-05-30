@@ -11,7 +11,7 @@ namespace ArenaUnity.Components
     [RequireComponent(typeof(ArenaObject))]
     public abstract class ArenaComponent : MonoBehaviour
 	{
-        internal bool apply = false;
+        public bool apply = false;
         internal bool scriptLoaded = false;
         internal string updatedJson = null;
 

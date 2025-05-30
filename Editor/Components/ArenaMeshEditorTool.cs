@@ -3,16 +3,12 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
-using ArenaUnity.Schemas;
 using UnityEditor;
-#if UNITY_EDITOR
 using UnityEditor.EditorTools;
-#endif
 using UnityEngine;
 
-namespace ArenaUnity
+namespace ArenaUnity.Editor.Components
 {
-#if UNITY_EDITOR
     // Tagging a class with the EditorTool attribute and no target type registers a global tool. Global tools are valid for any selection, and are accessible through the top left toolbar in the editor.
     [EditorTool("ARENA Mesh Tool")]
     class ArenaMeshEditorTool : EditorTool
@@ -575,5 +571,4 @@ namespace ArenaUnity
         }
 
     }
-#endif
 }

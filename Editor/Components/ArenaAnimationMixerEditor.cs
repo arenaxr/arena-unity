@@ -5,12 +5,12 @@
 
 using UnityEditor;
 using UnityEngine;
+using ArenaUnity.Components;
 
-namespace ArenaUnity.Components
+namespace ArenaUnity.Editor.Components
 {
-#if UNITY_EDITOR
     [CustomEditor(typeof(ArenaAnimationMixer))]
-    public class ArenaAnimationMixerEditor : Editor
+    public class ArenaAnimationMixerEditor : UnityEditor.Editor
     {
 
         public override void OnInspectorGUI()
@@ -53,5 +53,4 @@ namespace ArenaUnity.Components
             GUI.enabled = true;
         }
     }
-#endif
 }

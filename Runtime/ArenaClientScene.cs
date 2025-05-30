@@ -57,7 +57,7 @@ namespace ArenaUnity
         /// </summary>
         public string sceneUrl { get; private set; }
 
-        internal bool sceneObjectRights { get; private set; } = false;
+        public bool sceneObjectRights { get; private set; } = false;
 
         public bool persistLoaded { get; private set; } = false;
 

@@ -1,9 +1,7 @@
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 using GLTFast.Export;
+using UnityEditor;
 
-namespace ArenaUnity
+namespace ArenaUnity.Editor
 {
     public class ArenaGltfExportAdvanced
     {
@@ -16,18 +14,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetInt("ComponentMask", (int)defES.ComponentMask);
-#else
-                return (int)defES.ComponentMask;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetInt("ComponentMask", value);
-#endif
             }
         }
 
@@ -35,18 +27,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetInt("Compression", (int)defES.Compression);
-#else
-                return (int)defES.Compression;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetInt("Compression", value);
-#endif
             }
         }
 
@@ -54,18 +40,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetBool("Deterministic", defES.Deterministic);
-#else
-                return defES.Deterministic;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetBool("Deterministic", value);
-#endif
             }
         }
 
@@ -73,18 +53,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetFloat("LightIntensityFactor", defES.LightIntensityFactor);
-#else
-                return defES.LightIntensityFactor;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetFloat("LightIntensityFactor", value);
-#endif
             }
         }
 
@@ -92,18 +66,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetBool("DracoSettings", defES.DracoSettings != null);
-#else
-                return defES.DracoSettings != null;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetBool("DracoSettings", value);
-#endif
             }
         }
 
@@ -111,18 +79,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetInt("DracoColorQuantization", defDES.colorQuantization);
-#else
-                return defDES.colorQuantization;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetInt("DracoColorQuantization", value);
-#endif
             }
         }
 
@@ -130,18 +92,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetInt("DracoDecodingSpeed", defDES.decodingSpeed);
-#else
-                return defDES.decodingSpeed;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetInt("DracoDecodingSpeed", value);
-#endif
             }
         }
 
@@ -149,18 +105,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetInt("DracoEncodingSpeed", defDES.encodingSpeed);
-#else
-                return defDES.encodingSpeed;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetInt("DracoEncodingSpeed", value);
-#endif
             }
         }
 
@@ -168,18 +118,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetInt("DracoNormalQuantization", defDES.normalQuantization);
-#else
-                return defDES.normalQuantization;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetInt("DracoNormalQuantization", value);
-#endif
             }
         }
 
@@ -187,18 +131,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetInt("DracoPositionQuantization", defDES.positionQuantization);
-#else
-                return defDES.positionQuantization;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetInt("DracoPositionQuantization", value);
-#endif
             }
         }
 
@@ -206,18 +144,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetInt("DracoTexCoordQuantization", defDES.texCoordQuantization);
-#else
-                return defDES.texCoordQuantization;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetInt("DracoTexCoordQuantization", value);
-#endif
             }
         }
 
@@ -225,18 +157,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetBool("DisabledComponents", defGOES.DisabledComponents);
-#else
-                return defGOES.DisabledComponents;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetBool("DisabledComponents", value);
-#endif
             }
         }
 
@@ -245,18 +171,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetBool("OnlyActiveInHierarchy", defGOES.OnlyActiveInHierarchy);
-#else
-                return defGOES.OnlyActiveInHierarchy;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetBool("OnlyActiveInHierarchy", value);
-#endif
             }
         }
 
@@ -264,18 +184,12 @@ namespace ArenaUnity
         {
             get
             {
-#if UNITY_EDITOR
                 return EditorPrefs.GetInt("LayerMask", (int)defGOES.LayerMask);
-#else
-                return (int)defGOES.LayerMask;
-#endif
             }
 
             set
             {
-#if UNITY_EDITOR
                 EditorPrefs.SetInt("LayerMask", value);
-#endif
             }
         }
 

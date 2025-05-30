@@ -5,18 +5,19 @@
 
 using System.Globalization;
 using System.Linq;
+using ArenaUnity.Editor.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace ArenaUnity
+namespace ArenaUnity.Editor
 {
     public static class ArenaMenu
     {
         private const string MatColor = "#7f7f7f";
-#if UNITY_EDITOR
+
         // Add a menu item to create custom GameObjects.
         // Priority 1 ensures it is grouped with the other menu items of the same kind
         // and propagated to the hierarchy dropdown and hierarchy context menus.
@@ -303,6 +304,5 @@ namespace ArenaUnity
             return false;
         }
 
-#endif
     }
 }

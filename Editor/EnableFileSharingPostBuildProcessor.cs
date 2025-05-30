@@ -6,25 +6,28 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
 
-public class EnableFileSharingPostBuildProcessor
+namespace ArenaUnity.Editor
 {
-    [PostProcessBuild]
-    public static void ChangeXcodePlist(BuildTarget buildTarget, string pathToBuiltProject)
+    public class EnableFileSharingPostBuildProcessor
     {
-        if (buildTarget == BuildTarget.iOS)
+        [PostProcessBuild]
+        public static void ChangeXcodePlist(BuildTarget buildTarget, string pathToBuiltProject)
         {
-            // Get plist
-            string plistPath = pathToBuiltProject + "/Info.plist";
-            PlistDocument plist = new PlistDocument();
-            plist.ReadFromString(File.ReadAllText(plistPath));
+            if (buildTarget == BuildTarget.iOS)
+            {
+                // Get plist
+                string plistPath = pathToBuiltProject + "/Info.plist";
+                PlistDocument plist = new PlistDocument();
+                plist.ReadFromString(File.ReadAllText(plistPath));
 
-            // Get root
-            PlistElementDict rootDict = plist.root;
+                // Get root
+                PlistElementDict rootDict = plist.root;
 
-            rootDict.SetBoolean("UIFileSharingEnabled", true);
+                rootDict.SetBoolean("UIFileSharingEnabled", true);
 
-            // Write to file
-            File.WriteAllText(plistPath, plist.WriteToString());
+                // Write to file
+                File.WriteAllText(plistPath, plist.WriteToString());
+            }
         }
     }
 }

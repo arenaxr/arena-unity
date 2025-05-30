@@ -47,19 +47,11 @@ namespace ArenaUnity
         private bool created = false;
         private string oldName; // test for rename
         internal bool externalDelete = false;
-        internal bool isJsonValidated = false;
+        public bool isJsonValidated { get; private set; } = false;
         internal string gltfUrl = null;
-        internal List<string> animations = null; // TODO (mwfarb): ideal location: ArenaGltfModel component
+        public List<string> animations { get; internal set; } = null; // TODO (mwfarb): ideal location: ArenaGltfModel component
 
         internal List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
-
-        public void OnEnable()
-        {
-#if UNITY_EDITOR
-            // sort arena component to the top, below Transform
-            while (UnityEditorInternal.ComponentUtility.MoveComponentUp(this)) { }
-#endif
-        }
 
         void Start()
         {
@@ -217,7 +209,7 @@ namespace ArenaUnity
             return true;
         }
 
-        internal void PublishUpdate(string objData, bool all = false, bool overwrite = false)
+        public void PublishUpdate(string objData, bool all = false, bool overwrite = false)
         {
             ArenaObjectJson msg = new ArenaObjectJson
             {

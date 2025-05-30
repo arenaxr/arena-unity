@@ -9,9 +9,8 @@ using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 
-namespace ArenaUnity
+namespace ArenaUnity.Editor.Components
 {
-#if UNITY_EDITOR
     public class ArenaObjectAddUrlWindow : EditorWindow
     {
         private MenuCommand menuCommand;
@@ -72,5 +71,4 @@ namespace ArenaUnity
                 Close();
         }
     }
-#endif
 }

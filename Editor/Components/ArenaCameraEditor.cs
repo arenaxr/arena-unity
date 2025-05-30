@@ -6,15 +6,17 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace ArenaUnity
+namespace ArenaUnity.Editor.Components
 {
-#if UNITY_EDITOR
     [CustomEditor(typeof(ArenaCamera))]
-    public class ArenaCameraEditor : Editor
+    public class ArenaCameraEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
             ArenaCamera acobj = (ArenaCamera)target;
+
+            // sort arena component to the top, below Transform
+            while (UnityEditorInternal.ComponentUtility.MoveComponentUp(acobj)) { }
 
             // edit authorization
             GUILayout.BeginHorizontal("Box");
@@ -35,5 +37,4 @@ namespace ArenaUnity
             DrawDefaultInspector();
         }
     }
-#endif
 }
