@@ -2,6 +2,24 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.3.0](https://github.com/arenaxr/arena-unity/compare/v1.2.4...v1.3.0) (2025-05-30)
+
+
+### Features
+
+* add import of scoped registries on editor load ([00b4cd4](https://github.com/arenaxr/arena-unity/commit/00b4cd4801dad8735e53b78026cfab86b81c82c0))
+
+
+### Bug Fixes
+
+* compile gaussian splat code once library is loaded ([1444ce9](https://github.com/arenaxr/arena-unity/commit/1444ce9d7e5162954bf0aedeb270913633b7aad8))
+* refactor all editor functions to editor build ([c4f067e](https://github.com/arenaxr/arena-unity/commit/c4f067ed187a8b62dc94117f61fa84a8c05e6016))
+* remove progress bar when web request fails like 404 ([baaa56e](https://github.com/arenaxr/arena-unity/commit/baaa56ebfdbafa910fd820311f6be316d6e7f023))
+* removed special handling unity&lt;2020, since 2022 is minimum ([1ec867d](https://github.com/arenaxr/arena-unity/commit/1ec867d17d11dc7e248fd0f62d3aecae01ed5c39))
+* safely merge scoped registries in project manifest ([8be0b8a](https://github.com/arenaxr/arena-unity/commit/8be0b8a397bd2f4523670fbddf67862e8f1bcc7a))
+* **splat:** start splat quality at highest ([a3a3a3a](https://github.com/arenaxr/arena-unity/commit/a3a3a3a9a74a21e31611ce46277785b2f5db709e))
+* **text:** prevent TextMeshPro popup by auto importing essentials ([a6255b1](https://github.com/arenaxr/arena-unity/commit/a6255b1feb2387d1f50230605b081a562514675d))
+
 ## [1.2.4](https://github.com/arenaxr/arena-unity/compare/v1.2.3...v1.2.4) (2025-04-23)
 
 
