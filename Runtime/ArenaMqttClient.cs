@@ -817,11 +817,7 @@ namespace ArenaUnity
             {
                 yield return www.responseCode.ToString();
             }
-#if UNITY_2020_1_OR_NEWER
             if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-#else
-            if (www.isNetworkError || www.isHttpError)
-#endif
             {
                 Debug.LogWarning($"{www.error}: {www.url}");
                 if (!string.IsNullOrWhiteSpace(www.downloadHandler?.text))
@@ -853,11 +849,7 @@ namespace ArenaUnity
             if (!verifyCertificate)
                 www.certificateHandler = new SelfSignedCertificateHandler();
             yield return www.SendWebRequest();
-#if UNITY_2020_1_OR_NEWER
             if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-#else
-            if (www.isNetworkError || www.isHttpError)
-#endif
             {
                 Debug.LogWarning($"{www.error}: {www.url}");
                 if (!string.IsNullOrWhiteSpace(www.downloadHandler?.text))

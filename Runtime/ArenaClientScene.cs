@@ -1094,11 +1094,7 @@ namespace ArenaUnity
                 DisplayCancelableProgressBar("ARENA", $"Downloading {uri.Segments[uri.Segments.Length - 1]}...", www.downloadProgress);
                 yield return null;
             }
-#if UNITY_2020_1_OR_NEWER
             if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-#else
-            if (www.isNetworkError || www.isHttpError)
-#endif
             {
                 Debug.LogWarning($"{www.error}: {www.url}");
                 yield break;
@@ -1129,11 +1125,7 @@ namespace ArenaUnity
                 DisplayCancelableProgressBar("ARENA", $"Uploading {uri.Segments[uri.Segments.Length - 1]}...", www.uploadProgress);
                 yield return null;
             }
-#if UNITY_2020_1_OR_NEWER
             if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-#else
-            if (www.isNetworkError || www.isHttpError)
-#endif
             {
                 Debug.LogWarning($"{www.error}: {www.url}");
                 yield break;
