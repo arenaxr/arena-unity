@@ -71,6 +71,11 @@ namespace ArenaUnity.Editor
                     'scopes': [
                         'org.nesnausk.gaussian-splatting'
                     ]
+                },
+                {
+                  'name': 'registry.npmjs.com',
+                  'url': 'https://registry.npmjs.com',
+                  'scopes': [ 'jp.keijiro' ]
                 }
             ]}";
             JObject joProjManifestReq = JObject.Parse(jsonScopedRegReq);
@@ -109,7 +114,8 @@ namespace ArenaUnity.Editor
 
             // add required packages from scoped registries
             AddPackages(new string[]{
-                "org.nesnausk.gaussian-splatting@1.1.1"
+                "org.nesnausk.gaussian-splatting@1.1.1",
+                "jp.keijiro.pcx@1.0.1",
             });
         }
 
@@ -209,11 +215,7 @@ namespace ArenaUnity.Editor
             UnityWebRequest www = UnityWebRequest.Get(gitLatestUrl);
             yield return www.SendWebRequest();
 
-#if UNITY_2020_1_OR_NEWER
             if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-#else
-            if (www.isNetworkError || www.isHttpError)
-#endif
             {
                 Debug.LogError($"{www.error}: {www.url}");
             }

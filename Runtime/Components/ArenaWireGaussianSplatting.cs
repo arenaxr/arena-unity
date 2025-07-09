@@ -9,7 +9,6 @@ using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using UnityEngine;
-//using SplatVfx;
 using System;
 using System.Collections.Generic;
 using Unity.Burst;
@@ -150,12 +149,14 @@ namespace ArenaUnity
             GaussianSplatAsset asset = ScriptableObject.CreateInstance<GaussianSplatAsset>();
 #if UNITY_EDITOR
             // manually load ComputeShader, it is required
-            //var splatData = (SplatData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(SplatData));
-            //TextAsset dataChunk = new TextAsset(splatData.AxisArray.ToString());
-            //TextAsset dataPos = new TextAsset(splatData.PositionArray.ToString());
-            //TextAsset dataOther = null;
-            //TextAsset dataColor = new TextAsset(splatData.ColorArray.ToString());
-            //TextAsset dataSh = null;
+            var splatData = (SplatData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(SplatData));
+            //NativeArray arr;
+            //splatData.AxisBuffer.GetData(arr);
+            TextAsset dataChunk = new TextAsset(splatData.AxisArray.ToString());
+            TextAsset dataPos = new TextAsset(splatData.PositionArray.ToString());
+            TextAsset dataOther = null;
+            TextAsset dataColor = new TextAsset(splatData.ColorArray.ToString());
+            TextAsset dataSh = null;
 
             //float3 boundsMin = float.PositiveInfinity;
             //float3 boundsMax = float.NegativeInfinity;
@@ -166,12 +167,12 @@ namespace ArenaUnity
 
             //var dataHash = new Hash128((uint)asset.splatCount, (uint)asset.formatVersion, 0, 0);
 
-            //asset.SetAssetFiles(dataChunk, dataPos, dataOther, dataColor, dataSh);
+            asset.SetAssetFiles(dataChunk, dataPos, dataOther, dataColor, dataSh);
             //asset.SetDataHash(dataHash);
 
-            //gaussiansplat.m_Asset = asset;
+            gaussiansplat.m_Asset = asset;
 
-            Debug.LogWarning($"GaussianSplatting object '{name}' type .splat not yet implemented.");
+            //Debug.LogWarning($"GaussianSplatting object '{name}' type .splat not yet implemented.");
             yield return null;
 #else
             Debug.LogWarning($"GaussianSplatting object '{name}' type .splat is Editor only, not yet implemented in Runtime mode.");
