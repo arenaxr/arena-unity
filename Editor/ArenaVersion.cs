@@ -107,19 +107,28 @@ namespace ArenaUnity.Editor
 
             // TODO wait for scoped registry to load
 
+#if LIB_URP && !UNITY_6000_0_OR_NEWER
+            // depending on project migration, users may need to manually remove:
+            // - Package Manager: org.nesnausk.gaussian-splatting
+            // - Project Settings - Player: Scripted Define Symbol: LIB_GAUSSIAN_SPLATTING
+            Debug.LogWarning("Gaussian Splatting in URP requires Unity 6+. Package not included: org.nesnausk.gaussian-splatting");
+#else
             // add required packages from scoped registries
-            AddPackages(new string[]{
+            UpdatePackages(new string[]{
                 "org.nesnausk.gaussian-splatting@1.1.1"
-            });
+            }, new string[] { });
+#endif
         }
 
         private static void UpdateMissingPlayerSettings()
         {
             // add scripting define symbols required
-            string[] definesReq = { "SSL", "LIB_GAUSSIAN_SPLATTING" };
+            string[] definesAdd = { "SSL" };
+            string[] definesRm = { "LIB_GAUSSIAN_SPLATTING" }; // some defines moved to asmdef
             NamedBuildTarget buildTarget = CurrentNamedBuildTarget;
             PlayerSettings.GetScriptingDefineSymbols(buildTarget, out string[] defines);
-            PlayerSettings.SetScriptingDefineSymbols(buildTarget, defines.Union(definesReq).ToArray());
+            string[] definesUpdate = defines.Where(s => !definesRm.Contains(s)).ToArray();
+            PlayerSettings.SetScriptingDefineSymbols(buildTarget, definesUpdate.Union(definesAdd).ToArray());
         }
 
         private static void UpdateMissingAssets()
@@ -148,10 +157,10 @@ namespace ArenaUnity.Editor
             }
         }
 
-        static void AddPackages(string[] packagesToAdd)
+        static void UpdatePackages(string[] packagesToAdd, string[] packagesToRm)
         {
             // TODO Only add a package to the project if it's missing
-            packagesRequest = Client.AddAndRemove(packagesToAdd);
+            packagesRequest = Client.AddAndRemove(packagesToAdd, packagesToRm);
             EditorApplication.update += Progress;
         }
 

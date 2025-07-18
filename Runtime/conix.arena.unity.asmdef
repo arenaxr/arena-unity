@@ -19,6 +19,22 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.render-pipelines.universal",
+            "expression": "",
+            "define": "LIB_URP"
+        },
+        {
+            "name": "com.unity.render-pipelines.high-definition",
+            "expression": "",
+            "define": "LIB_HDRP"
+        },
+        {
+            "name": "org.nesnausk.gaussian-splatting",
+            "expression": "",
+            "define": "LIB_GAUSSIAN_SPLATTING"
+        }
+    ],
     "noEngineReferences": false
 }
