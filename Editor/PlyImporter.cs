@@ -1,212 +1,59 @@
-﻿/**
- * Open source software under the terms in /LICENSE
- * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
- */
 
-using System.Collections;
+using Unity.Burst;
+using Unity.Mathematics;
+using UnityEngine;
+using UnityEngine.VFX;
+using UnityEngine.VFX.Utility;
+using UnityEditor;
+using UnityEditor.AssetImporters;
+using UnityEditor.Experimental;
+using System;
 using System.IO;
+using System.Runtime.InteropServices;
+using GaussianSplatting.Runtime;
+using System.Collections;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
-using UnityEngine;
-using System;
 using System.Collections.Generic;
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
-using Unity.Mathematics;
 using UnityEngine.Experimental.Rendering;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
-#if LIB_GAUSSIAN_SPLATTING
-using GaussianSplatting.Runtime;
-#if UNITY_EDITOR
 using GaussianSplatting.Editor.Utils;
-#endif
-#endif
 
-// Portions of this code are used from: https://github.com/aras-p/UnityGaussianSplatting
-namespace ArenaUnity
+namespace ArenaUnity.Editor
 {
-    [BurstCompile]
-    public class ArenaWireGaussianSplatting : ArenaComponent
+
+    [ScriptedImporter(1, new[] { "ply", "spz" }), BurstCompile]
+    public sealed class PlyImporter : ScriptedImporter
     {
-        // ARENA gaussian_splatting component unity conversion status:
-        // DONE: src
-        // DONE: cutoutEntity
-        // TODO: pixelRatio
-        // TODO: xrPixelRatio
+        //#region ScriptedImporter implementation
 
-        // References
-        // https://github.com/aras-p/UnityGaussianSplatting
-        // https://github.com/quadjr/aframe-gaussian-splatting
-        // https://github.com/akbartus/Gaussian-Splatting-WebViewers
-        // https://github.com/antimatter15/splat
-        // https://github.com/keijiro/SplatVFX
-        // https://github.com/mkkellogg/GaussianSplats3D
-
-        public ArenaGaussianSplattingJson json = new ArenaGaussianSplattingJson();
-
-#if LIB_GAUSSIAN_SPLATTING
-        GaussianSplatRenderer gaussiansplat;
-        GaussianCutout gaussiancutout;
-        ComputeShader compShader;
-
-        void OnEnable()
+        public override void OnImportAsset(AssetImportContext context)
         {
-            // TODO (mwfarb): add an editor check for compute shader at build time.
-#if UNITY_EDITOR
-            // manually load ComputeShader, it is required
-            compShader = (ComputeShader)AssetDatabase.LoadAssetAtPath("Packages/org.nesnausk.gaussian-splatting/Shaders/SplatUtilities.compute", typeof(ComputeShader));
-#endif
-            ApplyQualityLevel();
+            var data = ImportAsPlyData(context.assetPath);
+            if (!string.IsNullOrWhiteSpace(m_ErrorMessage))
+            {
+                Debug.LogError(m_ErrorMessage);
+            }
+
+            // var prefab = CreatePrefab(data);
+            // context.AddObjectToAsset("prefab", prefab);
+            context.AddObjectToAsset("data", data);
+            // context.SetMainObject(prefab);
         }
 
-        protected override void ApplyRender()
+        GaussianSplatAsset ImportAsPlyData(string path)
         {
-            // assign splat renderer
-            gaussiansplat = GetComponentInChildren<GaussianSplatRenderer>();
-            if (gaussiansplat == null)
-            {
-                GameObject sobj = new GameObject("Splat");
-                sobj.transform.SetParent(transform, false);
-                gaussiansplat = sobj.AddComponent<GaussianSplatRenderer>();
-            }
+            var data = ScriptableObject.CreateInstance<GaussianSplatAsset>();
+            data.name = Path.GetFileNameWithoutExtension(path);
 
-            // assign splat cutout
-            if (json.CutoutEntity != null)
-            {
-                string cutout_id = json.CutoutEntity.TrimStart('#');
-                StartCoroutine(SeekCutout(cutout_id));
-            }
-
-            // load required shaders
-            gaussiansplat.m_ShaderSplats = Shader.Find("Gaussian Splatting/Render Splats");
-            gaussiansplat.m_ShaderComposite = Shader.Find("Hidden/Gaussian Splatting/Composite");
-            gaussiansplat.m_ShaderDebugPoints = Shader.Find("Gaussian Splatting/Debug/Render Points");
-            gaussiansplat.m_ShaderDebugBoxes = Shader.Find("Gaussian Splatting/Debug/Render Boxes");
-            ComputeShader[] compShaders = Resources.FindObjectsOfTypeAll<ComputeShader>();
-            for (int i = 0; i < compShaders.Length; i++)
-            {
-                if (compShaders[i].name == "SplatUtilities")
-                {
-                    gaussiansplat.m_CSSplatUtilities = compShaders[i];
-                    break;
-                }
-            }
-
-
-            string filetype = null;
-            if (Path.HasExtension(json.Src))
-            {
-                filetype = Path.GetExtension(json.Src);
-            }
-            switch (filetype)
-            {
-                case ".spz":
-                case ".ply":
-                    StartCoroutine(HandleDotPlyAssetConversion(Path.GetFileNameWithoutExtension(json.Src)));
-                    break;
-                case ".splat":
-                    StartCoroutine(HandleDotSplatAssetConversion(json.Src));
-                    break;
-                default:
-                    Debug.LogWarning($"GaussianSplatting object '{name}' type {filetype} not supported.");
-                    return;
-            }
+            m_InputFile = path;
+            return CreateAsset();
         }
 
-        private IEnumerator SeekCutout(string cutout_id)
-        {
-            yield return new WaitUntil(() => GameObject.Find(cutout_id) != null);
-            var cobj = GameObject.Find(cutout_id);
-            var aobj = cobj.GetComponent<ArenaObject>();
-            if (aobj == null) yield return null;
-            gaussiancutout = cobj.GetComponentInChildren<GaussianCutout>();
-            if (gaussiancutout == null)
-            {
-                GameObject sobj = new GameObject("Splat Cutout");
-                sobj.transform.SetParent(cobj.transform, false);
-                gaussiancutout = sobj.AddComponent<GaussianCutout>();
-            }
-            gaussiancutout.m_Type = (aobj.object_type == "box" || aobj.object_type == "roundedbox") ? GaussianCutout.Type.Box : GaussianCutout.Type.Ellipsoid;
-            gaussiancutout.transform.localScale = gaussiancutout.transform.localScale / 2; // match ARENA a-frame gaussian components
-            gaussiancutout.m_Invert = false; // aframe-gaussian-splatting does not support inverted cutouts yet
-            gaussiansplat.m_Cutouts = new GaussianCutout[] { gaussiancutout };
-            yield return null;
-        }
-
-        private IEnumerator HandleDotSplatAssetConversion(string msgUrl)
-        {
-            string assetPath = ArenaClientScene.Instance.checkLocalAsset(msgUrl);
-            if (File.Exists(assetPath))
-            {
-                var bytes = File.ReadAllBytes(assetPath);
-            }
-            GaussianSplatAsset asset = ScriptableObject.CreateInstance<GaussianSplatAsset>();
-#if UNITY_EDITOR
-            // manually load ComputeShader, it is required
-            var splatData = (SplatData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(SplatData));
-
-            byte[] bPos = new byte[splatData.PositionBuffer.count * sizeof(float) * 3];
-            splatData.PositionBuffer.GetData(bPos);
-
-            TextAsset dataPos = new TextAsset(System.Text.Encoding.UTF8.GetString(bPos));
-            TextAsset dataOther = null;
-            TextAsset dataColor = null;
-            TextAsset dataSh = null;
-            TextAsset dataChunk = null;
-
-            float3 boundsMin = float.PositiveInfinity;
-            float3 boundsMax = float.NegativeInfinity;
-            GaussianSplatAsset.CameraInfo[] cameras = null;// LoadJsonCamerasFile(m_InputFile, m_ImportCameras);
-
-            asset.Initialize(splatData.SplatCount, m_FormatPos, m_FormatScale, m_FormatColor, m_FormatSH, boundsMin, boundsMax, cameras);
-
-            var dataHash = new Hash128((uint)asset.splatCount, (uint)asset.formatVersion, 0, 0);
-
-            asset.SetAssetFiles(dataChunk, dataPos, dataOther, dataColor, dataSh);
-            asset.SetDataHash(dataHash);
-
-            gaussiansplat.m_Asset = asset;
-
-            Debug.LogWarning($"GaussianSplatting object '{name}' type .splat not yet implemented.");
-            yield return null;
-#else
-            Debug.LogWarning($"GaussianSplatting object '{name}' type .splat is Editor only, not yet implemented in Runtime mode.");
-#endif
-            yield return null;
-        }
-
-        private IEnumerator HandleDotPlyAssetConversion(string assetName)
-        {
-#if UNITY_EDITOR
-            string assetPath = ArenaClientScene.Instance.checkLocalAsset(json.Src);
-            if (File.Exists(assetPath))
-            {
-                m_InputFile = assetPath;
-                CreateAsset();
-                if (!string.IsNullOrWhiteSpace(m_ErrorMessage))
-                {
-                    Debug.LogError(m_ErrorMessage);
-                }
-            }
-            // wait for asset creation...
-            var mainAssetPath = $"{m_OutputFolder}/{assetName}.asset";
-            yield return new WaitUntil(() => AssetDatabase.LoadAssetAtPath<GaussianSplatAsset>(mainAssetPath) != null);
-            gaussiansplat.m_Asset = AssetDatabase.LoadAssetAtPath<GaussianSplatAsset>(mainAssetPath);
-#else
-            Debug.LogWarning($"GaussianSplatting object '{name}' type .pyl is Editor only, not yet implemented in Runtime mode.");
-#endif
-            yield return null;
-        }
-
-        ///////////////////////////////////////////////////////
         // Below edit from https://raw.githubusercontent.com/aras-p/UnityGaussianSplatting/refs/heads/main/package/Editor/GaussianSplatAssetCreator.cs
-        ///////////////////////////////////////////////////////
 
         const string kProgressTitle = "Creating Gaussian Splat Asset";
         const string kCamerasJson = "cameras.json";
@@ -223,12 +70,12 @@ namespace ArenaUnity
             Custom,
         }
 
-        readonly FilePickerControl m_FilePicker = new();
+        //readonly FilePickerControl m_FilePicker = new();
 
         [SerializeField] string m_InputFile;
         [SerializeField] bool m_ImportCameras = true;
 
-        [SerializeField] string m_OutputFolder = "Assets/GaussianAssets";
+        //[SerializeField] string m_OutputFolder = "Assets/GaussianAssets";
         [SerializeField] DataQuality m_Quality = DataQuality.VeryHigh;
         [SerializeField] GaussianSplatAsset.VectorFormat m_FormatPos;
         [SerializeField] GaussianSplatAsset.VectorFormat m_FormatScale;
@@ -247,7 +94,7 @@ namespace ArenaUnity
         void Awake()
         {
             m_Quality = (DataQuality)EditorPrefs.GetInt(kPrefQuality, (int)DataQuality.VeryHigh);
-            m_OutputFolder = EditorPrefs.GetString(kPrefOutputFolder, "Assets/GaussianAssets");
+            //m_OutputFolder = EditorPrefs.GetString(kPrefOutputFolder, "Assets/GaussianAssets");
         }
 
         void ApplyQualityLevel()
@@ -292,37 +139,37 @@ namespace ArenaUnity
         }
 
 
-        static T CreateOrReplaceAsset<T>(T asset, string path) where T : UnityEngine.Object
-        {
-            T result = AssetDatabase.LoadAssetAtPath<T>(path);
-            if (result == null)
-            {
-                AssetDatabase.CreateAsset(asset, path);
-                result = asset;
-            }
-            else
-            {
-                if (typeof(Mesh).IsAssignableFrom(typeof(T))) { (result as Mesh)?.Clear(); }
-                EditorUtility.CopySerialized(asset, result);
-            }
-            return result;
-        }
+        //static T CreateOrReplaceAsset<T>(T asset, string path) where T : UnityEngine.Object
+        //{
+        //  T result = AssetDatabase.LoadAssetAtPath<T>(path);
+        //  if (result == null)
+        //  {
+        //      AssetDatabase.CreateAsset(asset, path);
+        //      result = asset;
+        //  }
+        //  else
+        //  {
+        //      if (typeof(Mesh).IsAssignableFrom(typeof(T))) { (result as Mesh)?.Clear(); }
+        //      EditorUtility.CopySerialized(asset, result);
+        //  }
+        //  return result;
+        //}
 
-        unsafe void CreateAsset()
+        unsafe GaussianSplatAsset CreateAsset()
         {
             m_ErrorMessage = null;
             if (string.IsNullOrWhiteSpace(m_InputFile))
             {
                 m_ErrorMessage = $"Select input PLY/SPZ file";
-                return;
+                return null;
             }
 
-            if (string.IsNullOrWhiteSpace(m_OutputFolder) || !m_OutputFolder.StartsWith("Assets/"))
-            {
-                m_ErrorMessage = $"Output folder must be within project, was '{m_OutputFolder}'";
-                return;
-            }
-            Directory.CreateDirectory(m_OutputFolder);
+            //if (string.IsNullOrWhiteSpace(m_OutputFolder) || !m_OutputFolder.StartsWith("Assets/"))
+            //{
+            //  m_ErrorMessage = $"Output folder must be within project, was '{m_OutputFolder}'";
+            //  return null;
+            //}
+            //Directory.CreateDirectory(m_OutputFolder);
 
             EditorUtility.DisplayProgressBar(kProgressTitle, "Reading data files", 0.0f);
             GaussianSplatAsset.CameraInfo[] cameras = LoadJsonCamerasFile(m_InputFile, m_ImportCameras);
@@ -330,7 +177,7 @@ namespace ArenaUnity
             if (inputSplats.Length == 0)
             {
                 EditorUtility.ClearProgressBar();
-                return;
+                return null;
             }
 
             float3 boundsMin, boundsMax;
@@ -362,45 +209,42 @@ namespace ArenaUnity
             asset.name = baseName;
 
             var dataHash = new Hash128((uint)asset.splatCount, (uint)asset.formatVersion, 0, 0);
-            string pathChunk = $"{m_OutputFolder}/{baseName}_chk.bytes";
-            string pathPos = $"{m_OutputFolder}/{baseName}_pos.bytes";
-            string pathOther = $"{m_OutputFolder}/{baseName}_oth.bytes";
-            string pathCol = $"{m_OutputFolder}/{baseName}_col.bytes";
-            string pathSh = $"{m_OutputFolder}/{baseName}_shs.bytes";
+            //string pathChunk = $"{m_OutputFolder}/{baseName}_chk.bytes";
+            //string pathPos = $"{m_OutputFolder}/{baseName}_pos.bytes";
+            //string pathOther = $"{m_OutputFolder}/{baseName}_oth.bytes";
+            //string pathCol = $"{m_OutputFolder}/{baseName}_col.bytes";
+            //string pathSh = $"{m_OutputFolder}/{baseName}_shs.bytes";
 
             // if we are using full lossless (FP32) data, then do not use any chunking, and keep data as-is
             bool useChunks = isUsingChunks;
+            TextAsset dataChunk = null;
             if (useChunks)
-                CreateChunkData(inputSplats, pathChunk, ref dataHash);
-            CreatePositionsData(inputSplats, pathPos, ref dataHash);
-            CreateOtherData(inputSplats, pathOther, ref dataHash, splatSHIndices);
-            CreateColorData(inputSplats, pathCol, ref dataHash);
-            CreateSHData(inputSplats, pathSh, ref dataHash, clusteredSHs);
+                CreateChunkData(inputSplats, out dataChunk, ref dataHash);
+            CreatePositionsData(inputSplats, out TextAsset dataPos, ref dataHash);
+            CreateOtherData(inputSplats, out TextAsset dataOther, ref dataHash, splatSHIndices);
+            CreateColorData(inputSplats, out TextAsset dataCol, ref dataHash);
+            CreateSHData(inputSplats, out TextAsset dataSh, ref dataHash, clusteredSHs);
             asset.SetDataHash(dataHash);
 
             splatSHIndices.Dispose();
             clusteredSHs.Dispose();
 
             // files are created, import them so we can get to the imported objects, ugh
-            EditorUtility.DisplayProgressBar(kProgressTitle, "Initial texture import", 0.85f);
-            AssetDatabase.Refresh(ImportAssetOptions.ForceUncompressedImport);
+            //EditorUtility.DisplayProgressBar(kProgressTitle, "Initial texture import", 0.85f);
+            // AssetDatabase.Refresh(ImportAssetOptions.ForceUncompressedImport);
 
             EditorUtility.DisplayProgressBar(kProgressTitle, "Setup data onto asset", 0.95f);
-            asset.SetAssetFiles(
-                useChunks ? AssetDatabase.LoadAssetAtPath<TextAsset>(pathChunk) : null,
-                AssetDatabase.LoadAssetAtPath<TextAsset>(pathPos),
-                AssetDatabase.LoadAssetAtPath<TextAsset>(pathOther),
-                AssetDatabase.LoadAssetAtPath<TextAsset>(pathCol),
-                AssetDatabase.LoadAssetAtPath<TextAsset>(pathSh));
+            asset.SetAssetFiles(useChunks ? dataChunk : null, dataPos, dataOther, dataCol, null);
 
-            var assetPath = $"{m_OutputFolder}/{baseName}.asset";
-            var savedAsset = CreateOrReplaceAsset(asset, assetPath);
+            //var assetPath = $"{m_OutputFolder}/{baseName}.asset";
+            //var savedAsset = CreateOrReplaceAsset(asset, assetPath);
 
-            EditorUtility.DisplayProgressBar(kProgressTitle, "Saving assets", 0.99f);
-            AssetDatabase.SaveAssets();
+            // EditorUtility.DisplayProgressBar(kProgressTitle, "Saving assets", 0.99f);
+            // AssetDatabase.SaveAssets();
             EditorUtility.ClearProgressBar();
 
-            Selection.activeObject = savedAsset;
+            //Selection.activeObject = savedAsset;
+            return asset;
         }
 
         NativeArray<InputSplatData> LoadInputSplatFile(string filePath)
@@ -703,7 +547,7 @@ namespace ArenaUnity
             }
         }
 
-        static void CreateChunkData(NativeArray<InputSplatData> splatData, string filePath, ref Hash128 dataHash)
+        static void CreateChunkData(NativeArray<InputSplatData> splatData, out TextAsset ta, ref Hash128 dataHash)
         {
             int chunkCount = (splatData.Length + GaussianSplatAsset.kChunkSize - 1) / GaussianSplatAsset.kChunkSize;
             CalcChunkDataJob job = new CalcChunkDataJob
@@ -716,8 +560,7 @@ namespace ArenaUnity
 
             dataHash.Append(ref job.chunks);
 
-            using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-            fs.Write(job.chunks.Reinterpret<byte>(UnsafeUtility.SizeOf<GaussianSplatAsset.ChunkInfo>()));
+            ta = new TextAsset(System.Text.Encoding.UTF8.GetString(job.chunks.Reinterpret<byte>(UnsafeUtility.SizeOf<GaussianSplatAsset.ChunkInfo>())));
 
             job.chunks.Dispose();
         }
@@ -876,7 +719,7 @@ namespace ArenaUnity
             return (size + multipleOf - 1) / multipleOf * multipleOf;
         }
 
-        void CreatePositionsData(NativeArray<InputSplatData> inputSplats, string filePath, ref Hash128 dataHash)
+        void CreatePositionsData(NativeArray<InputSplatData> inputSplats, out TextAsset ta, ref Hash128 dataHash)
         {
             int dataLen = inputSplats.Length * GaussianSplatAsset.GetVectorSize(m_FormatPos);
             dataLen = NextMultipleOf(dataLen, 8); // serialized as ulong
@@ -893,13 +736,12 @@ namespace ArenaUnity
 
             dataHash.Append(data);
 
-            using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-            fs.Write(data);
+            ta = new TextAsset(System.Text.Encoding.UTF8.GetString(data));
 
             data.Dispose();
         }
 
-        void CreateOtherData(NativeArray<InputSplatData> inputSplats, string filePath, ref Hash128 dataHash, NativeArray<int> splatSHIndices)
+        void CreateOtherData(NativeArray<InputSplatData> inputSplats, out TextAsset ta, ref Hash128 dataHash, NativeArray<int> splatSHIndices)
         {
             int formatSize = GaussianSplatAsset.GetOtherSizeNoSHIndex(m_FormatScale);
             if (splatSHIndices.IsCreated)
@@ -921,8 +763,7 @@ namespace ArenaUnity
 
             dataHash.Append(data);
 
-            using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-            fs.Write(data);
+            ta = new TextAsset(System.Text.Encoding.UTF8.GetString(data));
 
             data.Dispose();
         }
@@ -951,7 +792,7 @@ namespace ArenaUnity
             }
         }
 
-        void CreateColorData(NativeArray<InputSplatData> inputSplats, string filePath, ref Hash128 dataHash)
+        void CreateColorData(NativeArray<InputSplatData> inputSplats, out TextAsset ta, ref Hash128 dataHash)
         {
             var (width, height) = GaussianSplatAsset.CalcTextureSize(inputSplats.Length);
             NativeArray<float4> data = new(width * height, Allocator.TempJob);
@@ -973,8 +814,8 @@ namespace ArenaUnity
                 tex.SetPixelData(data, 0);
                 EditorUtility.CompressTexture(tex, GraphicsFormatUtility.GetTextureFormat(gfxFormat), 100);
                 NativeArray<byte> cmpData = tex.GetPixelData<byte>(0);
-                using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-                fs.Write(cmpData);
+
+                ta = new TextAsset(System.Text.Encoding.UTF8.GetString(cmpData));
 
                 DestroyImmediate(tex);
             }
@@ -990,8 +831,9 @@ namespace ArenaUnity
                     formatBytesPerPixel = dstSize / width / height
                 };
                 jobConvert.Schedule(height, 1).Complete();
-                using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-                fs.Write(jobConvert.outputData);
+
+                ta = new TextAsset(System.Text.Encoding.UTF8.GetString(jobConvert.outputData));
+
                 jobConvert.outputData.Dispose();
             }
 
@@ -1103,18 +945,18 @@ namespace ArenaUnity
             }
         }
 
-        static void EmitSimpleDataFile<T>(NativeArray<T> data, string filePath, ref Hash128 dataHash) where T : unmanaged
+        static void EmitSimpleDataFile<T>(NativeArray<T> data, out TextAsset ta, ref Hash128 dataHash) where T : unmanaged
         {
             dataHash.Append(data);
-            using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-            fs.Write(data.Reinterpret<byte>(UnsafeUtility.SizeOf<T>()));
+
+            ta = new TextAsset(System.Text.Encoding.UTF8.GetString(data.Reinterpret<byte>(UnsafeUtility.SizeOf<T>())));
         }
 
-        void CreateSHData(NativeArray<InputSplatData> inputSplats, string filePath, ref Hash128 dataHash, NativeArray<GaussianSplatAsset.SHTableItemFloat16> clusteredSHs)
+        void CreateSHData(NativeArray<InputSplatData> inputSplats, out TextAsset ta, ref Hash128 dataHash, NativeArray<GaussianSplatAsset.SHTableItemFloat16> clusteredSHs)
         {
             if (clusteredSHs.IsCreated)
             {
-                EmitSimpleDataFile(clusteredSHs, filePath, ref dataHash);
+                EmitSimpleDataFile(clusteredSHs, out ta, ref dataHash);
             }
             else
             {
@@ -1127,7 +969,7 @@ namespace ArenaUnity
                     m_Output = data
                 };
                 job.Schedule(inputSplats.Length, 8192).Complete();
-                EmitSimpleDataFile(data, filePath, ref dataHash);
+                EmitSimpleDataFile(data, out ta, ref dataHash);
                 data.Dispose();
             }
         }
@@ -1197,29 +1039,7 @@ namespace ArenaUnity
             public float fy;
         }
 
-        ///////////////////////////////////////////////////////
-        // Above edit from https://raw.githubusercontent.com/aras-p/UnityGaussianSplatting/refs/heads/main/package/Editor/GaussianSplatAssetCreator.cs
-        ///////////////////////////////////////////////////////
-#else
-        protected override void ApplyRender()
-        {
-            // placeholder before LIB_GAUSSIAN_SPLATTING load
-        }
-#endif
 
-        public override void UpdateObject()
-        {
-            var newJson = JsonConvert.SerializeObject(json);
-            if (updatedJson != newJson)
-            {
-                var aobj = GetComponent<ArenaObject>();
-                if (aobj != null)
-                {
-                    aobj.PublishUpdate($"{newJson}");
-                    apply = true;
-                }
-            }
-            updatedJson = newJson;
-        }
     }
+
 }
