@@ -195,7 +195,8 @@ namespace ArenaUnity
                 }
             }
             // wait for asset creation...
-            var mainAssetPath = $"{m_OutputFolder}/{assetName}.asset";
+            //var mainAssetPath = $"{m_OutputFolder}/{assetName}.asset";
+            var mainAssetPath = assetName;
             yield return new WaitUntil(() => AssetDatabase.LoadAssetAtPath<GaussianSplatAsset>(mainAssetPath) != null);
             gaussiansplat.m_Asset = AssetDatabase.LoadAssetAtPath<GaussianSplatAsset>(mainAssetPath);
 #else

@@ -10,7 +10,6 @@ using UnityEditor.Experimental;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using GaussianSplatting.Runtime;
 using System.Collections;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas;
@@ -20,11 +19,15 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using UnityEngine.Experimental.Rendering;
+
+#if LIB_GAUSSIAN_SPLATTING
+using GaussianSplatting.Runtime;
 using GaussianSplatting.Editor.Utils;
+#endif
 
 namespace ArenaUnity.Editor
 {
-
+#if LIB_GAUSSIAN_SPLATTING
     [ScriptedImporter(1, new[] { "ply", "spz" }), BurstCompile]
     public sealed class PlyImporter : ScriptedImporter
     {
@@ -1041,5 +1044,5 @@ namespace ArenaUnity.Editor
 
 
     }
-
+#endif
 }
