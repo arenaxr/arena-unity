@@ -58,7 +58,7 @@ namespace ArenaUnity.Editor
 
         // Below edit from https://raw.githubusercontent.com/aras-p/UnityGaussianSplatting/refs/heads/main/package/Editor/GaussianSplatAssetCreator.cs
 
-        const string kProgressTitle = "Creating Gaussian Splat Asset";
+        const string kProgressTitle = ".(ply|spz) Importer";
         const string kCamerasJson = "cameras.json";
         const string kPrefQuality = "nesnausk.GaussianSplatting.CreatorQuality";
         const string kPrefOutputFolder = "nesnausk.GaussianSplatting.CreatorOutputFolder";
@@ -206,7 +206,7 @@ namespace ArenaUnity.Editor
 
             string baseName = Path.GetFileNameWithoutExtension(FilePickerControl.PathToDisplayString(m_InputFile));
 
-            EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data objects", 0.7f);
+            //EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data objects", 0.7f);
             GaussianSplatAsset asset = ScriptableObject.CreateInstance<GaussianSplatAsset>();
             asset.Initialize(inputSplats.Length, m_FormatPos, m_FormatScale, m_FormatColor, m_FormatSH, boundsMin, boundsMax, cameras);
             asset.name = baseName;
@@ -221,11 +221,16 @@ namespace ArenaUnity.Editor
             // if we are using full lossless (FP32) data, then do not use any chunking, and keep data as-is
             bool useChunks = isUsingChunks;
             TextAsset dataChunk = null;
+            EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data chunks", 0.25f);
             if (useChunks)
                 CreateChunkData(inputSplats, out dataChunk, ref dataHash);
+            EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data positions", 0.3f);
             CreatePositionsData(inputSplats, out TextAsset dataPos, ref dataHash);
+            EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data others", 0.4f);
             CreateOtherData(inputSplats, out TextAsset dataOther, ref dataHash, splatSHIndices);
+            EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data colors", 0.5f);
             CreateColorData(inputSplats, out TextAsset dataCol, ref dataHash);
+            EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data SHs", 0.6f);
             CreateSHData(inputSplats, out TextAsset dataSh, ref dataHash, clusteredSHs);
             asset.SetDataHash(dataHash);
 

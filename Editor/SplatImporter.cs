@@ -18,11 +18,15 @@ namespace ArenaUnity.Editor
     [ScriptedImporter(1, "splat"), BurstCompile]
     public sealed class SplatImporter : ScriptedImporter
     {
+        const string kProgressTitle = ".(splat) Importer";
+
         #region ScriptedImporter implementation
 
         public override void OnImportAsset(AssetImportContext context)
         {
+            EditorUtility.DisplayProgressBar(kProgressTitle, "Importing splat data", 0.2f);
             var data = ImportAsSplatData(context.assetPath);
+            EditorUtility.DisplayProgressBar(kProgressTitle, "Creating prefab", 0.5f);
             var prefab = CreatePrefab(data);
             context.AddObjectToAsset("prefab", prefab);
             context.AddObjectToAsset("data", data);
