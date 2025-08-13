@@ -5,7 +5,6 @@ using UnityEditor;
 
 namespace ArenaUnity.Editor
 {
-
     [CustomEditor(typeof(SplatData))]
     public sealed class SplatDataInspector : UnityEditor.Editor
     {

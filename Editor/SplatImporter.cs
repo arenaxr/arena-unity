@@ -14,7 +14,6 @@ using System.Runtime.InteropServices;
 
 namespace ArenaUnity.Editor
 {
-
     [ScriptedImporter(1, "splat"), BurstCompile]
     public sealed class SplatImporter : ScriptedImporter
     {
