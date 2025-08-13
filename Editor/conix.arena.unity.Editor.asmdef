@@ -4,16 +4,23 @@
     "references": [
         "conix.arena.unity",
         "PrettyHierarchy",
+        "GaussianSplatting",
+        "GaussianSplattingEditor",
         "glTFast",
         "glTFast.Export",
         "Unity.EditorCoroutines.Editor",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Unity.VisualEffectGraph.Runtime",
+        "Unity.Burst",
+        "Unity.Collections",
+        "Unity.Mathematics"
+
     ],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
@@ -28,6 +35,11 @@
             "name": "com.unity.render-pipelines.high-definition",
             "expression": "",
             "define": "LIB_HDRP"
+        },
+        {
+            "name": "org.nesnausk.gaussian-splatting",
+            "expression": "",
+            "define": "LIB_GAUSSIAN_SPLATTING"
         }
     ],
     "noEngineReferences": false
