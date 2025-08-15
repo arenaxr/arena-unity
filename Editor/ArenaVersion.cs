@@ -64,11 +64,6 @@ namespace ArenaUnity.Editor
             //        'org.nuget'
             //  ]
             //},
-            // {
-            //   'name': 'registry.npmjs.com',
-            //   'url': 'https://registry.npmjs.com',
-            //   'scopes': [ 'jp.keijiro' ]
-            // }
             string jsonScopedRegReq = @"{'scopedRegistries': [
                 {
                     'name': 'package.openupm.com',

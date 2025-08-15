@@ -10,7 +10,6 @@
         "glTFast.Export",
         "Unity.EditorCoroutines.Editor",
         "Unity.TextMeshPro",
-        "Unity.VisualEffectGraph.Runtime",
         "Unity.Burst",
         "Unity.Collections",
         "Unity.Mathematics"

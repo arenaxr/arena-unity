@@ -1,8 +1,6 @@
-﻿using System;
-using System.Globalization;
-using GaussianSplatting.Runtime;
+﻿using System.Globalization;
+using System.IO;
 using UnityEditor;
-using UnityEngine;
 
 namespace ArenaUnity.Editor
 {
@@ -13,18 +11,16 @@ namespace ArenaUnity.Editor
             // Check if specific assets were imported
             foreach (string asset in importedAssets)
             {
-                if (asset.EndsWith(".ply", true, CultureInfo.InvariantCulture))
+                switch (Path.GetExtension(asset)?.ToLower())
                 {
-                    var ply = new PlyProcessor();
-                    var gsa = ply.ImportAsPlyData(asset);
-                    AssetDatabase.SaveAssets();
-                }
-                else if (asset.EndsWith(".spz", true, CultureInfo.InvariantCulture))
-                {
-                    var ply = new PlyProcessor();
-                    var gsa = ply.ImportAsPlyData(asset);
-                    AssetDatabase.SaveAssets();
-                }
+                    case ".ply":
+                    case ".spz":
+                    case ".splat":
+                        var splat = new SplatAssetCreator();
+                        var gsa = splat.ImportSplatData(asset);
+                        AssetDatabase.SaveAssets();
+                        break;
+                };
             }
         }
     }

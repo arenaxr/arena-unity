@@ -20,26 +20,34 @@ using GaussianSplatting.Editor.Utils;
 namespace ArenaUnity.Editor
 {
 #if LIB_GAUSSIAN_SPLATTING
-    public class PlyProcessor
+    public class SplatAssetCreator
     {
-       public GaussianSplatAsset ImportAsPlyData(string path)
+        public GaussianSplatAsset ImportSplatData(string path)
         {
             var data = ScriptableObject.CreateInstance<GaussianSplatAsset>();
             data.name = Path.GetFileNameWithoutExtension(path);
-
+            switch (Path.GetExtension(path))
+            {
+                case ".ply":
+                case ".spz":
+                    m_InputFormat = InputFormat.PlySpz;
+                    break;
+                case ".splat":
+                    m_InputFormat = InputFormat.Splat;
+                    break;
+            }
             m_InputFile = path;
+
             var asset = CreateAsset();
             if (!string.IsNullOrWhiteSpace(m_ErrorMessage))
             {
-                Debug.LogError(m_ErrorMessage);
+                Debug.LogError($"{m_ErrorMessage}, file={m_InputFile}");
             }
             return asset;
         }
 
-        const string kProgressTitle = ".(ply|spz) Importer";
+        const string kProgressTitle = "Gaussian Splat Importer";
         const string kCamerasJson = "cameras.json";
-        const string kPrefQuality = "nesnausk.GaussianSplatting.CreatorQuality";
-        //const string kPrefOutputFolder = "nesnausk.GaussianSplatting.CreatorOutputFolder";
 
         enum DataQuality
         {
@@ -51,12 +59,17 @@ namespace ArenaUnity.Editor
             Custom,
         }
 
-        //readonly FilePickerControl m_FilePicker = new();
+        enum InputFormat
+        {
+            Invalid,
+            PlySpz,
+            Splat,
+        }
 
+        [SerializeField] InputFormat m_InputFormat;
         [SerializeField] string m_InputFile;
         [SerializeField] bool m_ImportCameras = true;
 
-        //[SerializeField] string m_OutputFolder = "Assets/GaussianAssets";
         [SerializeField] DataQuality m_Quality = DataQuality.VeryHigh;
         [SerializeField] GaussianSplatAsset.VectorFormat m_FormatPos;
         [SerializeField] GaussianSplatAsset.VectorFormat m_FormatScale;
@@ -74,8 +87,7 @@ namespace ArenaUnity.Editor
 
         void Awake()
         {
-            m_Quality = (DataQuality)EditorPrefs.GetInt(kPrefQuality, (int)DataQuality.VeryHigh);
-            //m_OutputFolder = EditorPrefs.GetString(kPrefOutputFolder, "Assets/GaussianAssets");
+            m_Quality = DataQuality.VeryHigh;
         }
 
         void ApplyQualityLevel()
@@ -140,16 +152,9 @@ namespace ArenaUnity.Editor
             m_ErrorMessage = null;
             if (string.IsNullOrWhiteSpace(m_InputFile))
             {
-                m_ErrorMessage = $"Select input PLY/SPZ file";
+                m_ErrorMessage = $"Invalid splat input file: '{m_InputFile}'";
                 return null;
             }
-
-            //if (string.IsNullOrWhiteSpace(m_OutputFolder) || !m_OutputFolder.StartsWith("Assets/"))
-            //{
-            //  m_ErrorMessage = $"Output folder must be within project, was '{m_OutputFolder}'";
-            //  return null;
-            //}
-            //Directory.CreateDirectory(m_OutputFolder);
 
             EditorUtility.DisplayProgressBar(kProgressTitle, "Reading data files", 0.0f);
             GaussianSplatAsset.CameraInfo[] cameras = LoadJsonCamerasFile(m_InputFile, m_ImportCameras);
@@ -234,8 +239,7 @@ namespace ArenaUnity.Editor
             AssetDatabase.SaveAssets();
             EditorUtility.ClearProgressBar();
 
-            //Selection.activeObject = savedAsset;
-            return asset;
+            return savedAsset;
         }
 
         NativeArray<InputSplatData> LoadInputSplatFile(string filePath)
@@ -248,7 +252,10 @@ namespace ArenaUnity.Editor
             }
             try
             {
-                GaussianFileReader.ReadFile(filePath, out data);
+                if (m_InputFormat == InputFormat.PlySpz)
+                    GaussianFileReader.ReadFile(filePath, out data);
+                else if (m_InputFormat == InputFormat.Splat)
+                    SPLATFileReader.ReadFile(filePath, out data);
             }
             catch (Exception ex)
             {
