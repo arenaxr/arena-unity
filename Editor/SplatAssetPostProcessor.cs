@@ -13,16 +13,22 @@ namespace ArenaUnity.Editor
             // Check if specific assets were imported
             foreach (string asset in importedAssets)
             {
-                if (asset.EndsWith(".ply", true, CultureInfo.InvariantCulture))
+                if (asset.EndsWith(".splat", true, CultureInfo.InvariantCulture))
                 {
                     var ply = new PlyProcessor();
-                    var gsa = ply.ImportAsPlyData(asset);
+                    var gsa = ply.ImportSplatData(asset);
+                    AssetDatabase.SaveAssets();
+                }
+                else if (asset.EndsWith(".ply", true, CultureInfo.InvariantCulture))
+                {
+                    var ply = new PlyProcessor();
+                    var gsa = ply.ImportSplatData(asset);
                     AssetDatabase.SaveAssets();
                 }
                 else if (asset.EndsWith(".spz", true, CultureInfo.InvariantCulture))
                 {
                     var ply = new PlyProcessor();
-                    var gsa = ply.ImportAsPlyData(asset);
+                    var gsa = ply.ImportSplatData(asset);
                     AssetDatabase.SaveAssets();
                 }
             }

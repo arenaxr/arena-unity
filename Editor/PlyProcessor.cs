@@ -22,12 +22,22 @@ namespace ArenaUnity.Editor
 #if LIB_GAUSSIAN_SPLATTING
     public class PlyProcessor
     {
-       public GaussianSplatAsset ImportAsPlyData(string path)
+        public GaussianSplatAsset ImportSplatData(string path)
         {
             var data = ScriptableObject.CreateInstance<GaussianSplatAsset>();
             data.name = Path.GetFileNameWithoutExtension(path);
-
+            switch (Path.GetExtension(path))
+            {
+                case ".ply":
+                case ".spz":
+                    m_InputFormat = InputFormat.PlySpz;
+                    break;
+                case ".splat":
+                    m_InputFormat = InputFormat.Splat;
+                    break;
+            }
             m_InputFile = path;
+
             var asset = CreateAsset();
             if (!string.IsNullOrWhiteSpace(m_ErrorMessage))
             {
@@ -51,8 +61,16 @@ namespace ArenaUnity.Editor
             Custom,
         }
 
+        enum InputFormat
+        {
+            Invalid,
+            PlySpz,
+            Splat,
+        }
+
         //readonly FilePickerControl m_FilePicker = new();
 
+        [SerializeField] InputFormat m_InputFormat;
         [SerializeField] string m_InputFile;
         [SerializeField] bool m_ImportCameras = true;
 
@@ -140,16 +158,9 @@ namespace ArenaUnity.Editor
             m_ErrorMessage = null;
             if (string.IsNullOrWhiteSpace(m_InputFile))
             {
-                m_ErrorMessage = $"Select input PLY/SPZ file";
+                m_ErrorMessage = $"Invalid splat input file: '{m_InputFile}'";
                 return null;
             }
-
-            //if (string.IsNullOrWhiteSpace(m_OutputFolder) || !m_OutputFolder.StartsWith("Assets/"))
-            //{
-            //  m_ErrorMessage = $"Output folder must be within project, was '{m_OutputFolder}'";
-            //  return null;
-            //}
-            //Directory.CreateDirectory(m_OutputFolder);
 
             EditorUtility.DisplayProgressBar(kProgressTitle, "Reading data files", 0.0f);
             GaussianSplatAsset.CameraInfo[] cameras = LoadJsonCamerasFile(m_InputFile, m_ImportCameras);
@@ -248,7 +259,10 @@ namespace ArenaUnity.Editor
             }
             try
             {
-                GaussianFileReader.ReadFile(filePath, out data);
+                if (m_InputFormat == InputFormat.PlySpz)
+                    GaussianFileReader.ReadFile(filePath, out data);
+                else if (m_InputFormat == InputFormat.Splat)
+                    SPLATFileReader.ReadFile(filePath, out data);
             }
             catch (Exception ex)
             {

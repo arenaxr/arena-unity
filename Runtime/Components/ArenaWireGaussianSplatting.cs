@@ -93,19 +93,7 @@ namespace ArenaUnity
             {
                 filetype = Path.GetExtension(json.Src);
             }
-            switch (filetype)
-            {
-                case ".spz":
-                case ".ply":
-                    StartCoroutine(HandleDotPlyAssetConversion(Path.GetFileNameWithoutExtension(json.Src)));
-                    break;
-                case ".splat":
-                    StartCoroutine(HandleDotSplatAssetConversion(json.Src));
-                    break;
-                default:
-                    Debug.LogWarning($"GaussianSplatting object '{name}' type {filetype} not supported.");
-                    return;
-            }
+            StartCoroutine(HandleSplatAssetConversion(json.Src));
         }
 
         private IEnumerator SeekCutout(string cutout_id)
@@ -128,62 +116,16 @@ namespace ArenaUnity
             yield return null;
         }
 
-        private IEnumerator HandleDotSplatAssetConversion(string msgUrl)
+        private IEnumerator HandleSplatAssetConversion(string msgUrl)
         {
             string assetPath = ArenaClientScene.Instance.checkLocalAsset(msgUrl);
-            if (File.Exists(assetPath))
-            {
-                var bytes = File.ReadAllBytes(assetPath);
-            }
-            GaussianSplatAsset asset = ScriptableObject.CreateInstance<GaussianSplatAsset>();
 #if UNITY_EDITOR
-            // manually load ComputeShader, it is required
-            var splatData = (SplatData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(SplatData));
-
-            //byte[] bPos = new byte[splatData.PositionBuffer.count * sizeof(float) * 3];
-            //splatData.PositionBuffer.GetData(bPos);
-
-            //TextAsset dataPos = new TextAsset(System.Text.Encoding.UTF8.GetString(bPos));
-            //TextAsset dataOther = null;
-            //TextAsset dataColor = null;
-            //TextAsset dataSh = null;
-            //TextAsset dataChunk = null;
-
-            //float3 boundsMin = float.PositiveInfinity;
-            //float3 boundsMax = float.NegativeInfinity;
-            //GaussianSplatAsset.CameraInfo[] cameras = null;// LoadJsonCamerasFile(m_InputFile, m_ImportCameras);
-
-            //asset.Initialize(splatData.SplatCount, m_FormatPos, m_FormatScale, m_FormatColor, m_FormatSH, boundsMin, boundsMax, cameras);
-
-            //var dataHash = new Hash128((uint)asset.splatCount, (uint)asset.formatVersion, 0, 0);
-
-            //asset.SetAssetFiles(dataChunk, dataPos, dataOther, dataColor, dataSh);
-            //asset.SetDataHash(dataHash);
-
-            //gaussiansplat.m_Asset = asset;
-
-            Debug.LogWarning($"GaussianSplatting object '{name}' type .splat not yet implemented.");
-            yield return null;
-#else
-            Debug.LogWarning($"GaussianSplatting object '{name}' type .splat is Editor only, not yet implemented in Runtime mode.");
-#endif
-            yield return null;
-        }
-
-        private IEnumerator HandleDotPlyAssetConversion(string assetName)
-        {
-#if UNITY_EDITOR
-            string assetPath = ArenaClientScene.Instance.checkLocalAsset(json.Src);
-            // wait for asset creation...
-            // var ply = new PlyProcessor();
-            // var asset = ply.ImportAsPlyData(assetPath);
+            // wait for asset creation from import post processing...
             var mainAssetPath = $"{assetPath}.asset";
-            //var mainAssetPath = assetName;
-            //AssetDatabase.AddObjectToAsset(asset, assetPath);
             yield return new WaitUntil(() => AssetDatabase.LoadAssetAtPath<GaussianSplatAsset>(mainAssetPath) != null);
             gaussiansplat.m_Asset = AssetDatabase.LoadAssetAtPath<GaussianSplatAsset>(mainAssetPath);
 #else
-            Debug.LogWarning($"GaussianSplatting object '{name}' type .ply is Editor only, not yet implemented in Runtime mode.");
+            Debug.LogWarning($"GaussianSplatting object '{assetPath}' is Editor only, not yet implemented in Runtime mode.");
 #endif
             yield return null;
         }

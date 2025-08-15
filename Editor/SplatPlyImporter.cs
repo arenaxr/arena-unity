@@ -4,7 +4,7 @@ using UnityEditor.AssetImporters;
 namespace ArenaUnity.Editor
 {
     [ScriptedImporter(1, new[] { "ply", "spz" })]
-    public sealed class PlyImporter : ScriptedImporter
+    public sealed class SplatPlyImporter : ScriptedImporter
     {
         public override void OnImportAsset(AssetImportContext context)
         {
