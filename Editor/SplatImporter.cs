@@ -3,8 +3,8 @@ using UnityEditor.AssetImporters;
 
 namespace ArenaUnity.Editor
 {
-    [ScriptedImporter(1, new[] { "ply", "spz" })]
-    public sealed class SplatPlyImporter : ScriptedImporter
+    [ScriptedImporter(1, new[] { "ply", "spz", "splat" })]
+    public sealed class SplatImporter : ScriptedImporter
     {
         public override void OnImportAsset(AssetImportContext context)
         {

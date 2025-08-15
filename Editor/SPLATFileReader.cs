@@ -1,5 +1,5 @@
-﻿// edit from: https://raw.githubusercontent.com/aras-p/UnityGaussianSplatting/refs/heads/main/package/Editor/Utils/SPZFileReader.cs
-// edit from: https://github.com/keijiro/SplatVFX/tree/main/jp.keijiro.splat-vfx
+﻿// edit from: https://github.com/aras-p/UnityGaussianSplatting/blob/main/package/Editor/Utils/SPZFileReader.cs
+// edit from: https://github.com/keijiro/SplatVFX/blob/main/jp.keijiro.splat-vfx/Editor/SplatImporter.cs
 
 using System.IO;
 using Unity.Collections;
@@ -69,7 +69,7 @@ namespace ArenaUnity.Editor
             };
         }
 
-        public static void ReadFile(string filePath, out NativeArray<InputSplatData> splats)
+        public static void ReadFileSPZ(string filePath, out NativeArray<InputSplatData> splats)
         {
             using var fs = File.OpenRead(filePath);
             using var gz = new GZipStream(fs, CompressionMode.Decompress);
@@ -271,6 +271,50 @@ namespace ArenaUnity.Editor
 
         #endregion
 
+        public static void ReadFile(string filePath, out NativeArray<InputSplatData> splats)
+        {
+            var bytes = (Span<byte>)File.ReadAllBytes(filePath);
+            var count = bytes.Length / 32;
+            splats = new NativeArray<InputSplatData>(count, Allocator.Persistent);
+
+            var source = MemoryMarshal.Cast<byte, ReadData>(bytes);
+
+            for (var i = 0; i < count; i++)
+            {
+                var src = source[i];
+
+                //var rv = (math.float4(src.rx, src.ry, src.rz, src.rw) - 128) / 128;
+                //var q = math.quaternion(-rv.x, -rv.y, rv.z, rv.w);
+                //position = math.float3(src.px, src.py, -src.pz);
+                //axis1 = math.mul(q, math.float3(src.sx, 0, 0));
+                //axis2 = math.mul(q, math.float3(0, src.sy, 0));
+                //axis3 = math.mul(q, math.float3(0, 0, src.sz));
+                //color = (Vector4)math.float4(src.r, src.g, src.b, src.a) / 255;
+
+                var splat = new InputSplatData();
+
+                splat.pos = new Vector3(src.px, src.py, src.pz); ;
+
+                //splat.scale = new Vector3(src.sx, src.sy, src.sz) / 16.0f - new Vector3(10.0f, 10.0f, 10.0f);
+                //splat.scale = GaussianUtils.LinearScale(splat.scale);
+                splat.scale = new Vector3(src.sx, src.sy, src.sz);
+
+                var q = new float4(src.rx, src.ry, src.rz, src.rw);
+                var qq = math.normalize(q);
+                qq = GaussianUtils.PackSmallest3Rotation(qq);
+                splat.rot = new Quaternion(qq.x, qq.y, qq.z, qq.w);
+
+                splat.opacity = src.a / 255.0f;
+
+                Vector3 col = new Vector3(src.r, src.g, src.b);
+                col = col / 255.0f - new Vector3(0.5f, 0.5f, 0.5f);
+                col /= 0.15f;
+                splat.dc0 = GaussianUtils.SH0ToColor(col);
+
+                splats[i] = splat;
+            }
+
+        }
     }
 #endif 
 }

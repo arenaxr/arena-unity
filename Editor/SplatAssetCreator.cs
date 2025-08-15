@@ -20,7 +20,7 @@ using GaussianSplatting.Editor.Utils;
 namespace ArenaUnity.Editor
 {
 #if LIB_GAUSSIAN_SPLATTING
-    public class PlyProcessor
+    public class SplatAssetCreator
     {
         public GaussianSplatAsset ImportSplatData(string path)
         {
@@ -41,15 +41,13 @@ namespace ArenaUnity.Editor
             var asset = CreateAsset();
             if (!string.IsNullOrWhiteSpace(m_ErrorMessage))
             {
-                Debug.LogError(m_ErrorMessage);
+                Debug.LogError($"{m_ErrorMessage}, file={m_InputFile}");
             }
             return asset;
         }
 
-        const string kProgressTitle = ".(ply|spz) Importer";
+        const string kProgressTitle = "Gaussian Splat Importer";
         const string kCamerasJson = "cameras.json";
-        const string kPrefQuality = "nesnausk.GaussianSplatting.CreatorQuality";
-        //const string kPrefOutputFolder = "nesnausk.GaussianSplatting.CreatorOutputFolder";
 
         enum DataQuality
         {
@@ -68,13 +66,10 @@ namespace ArenaUnity.Editor
             Splat,
         }
 
-        //readonly FilePickerControl m_FilePicker = new();
-
         [SerializeField] InputFormat m_InputFormat;
         [SerializeField] string m_InputFile;
         [SerializeField] bool m_ImportCameras = true;
 
-        //[SerializeField] string m_OutputFolder = "Assets/GaussianAssets";
         [SerializeField] DataQuality m_Quality = DataQuality.VeryHigh;
         [SerializeField] GaussianSplatAsset.VectorFormat m_FormatPos;
         [SerializeField] GaussianSplatAsset.VectorFormat m_FormatScale;
@@ -92,8 +87,7 @@ namespace ArenaUnity.Editor
 
         void Awake()
         {
-            m_Quality = (DataQuality)EditorPrefs.GetInt(kPrefQuality, (int)DataQuality.VeryHigh);
-            //m_OutputFolder = EditorPrefs.GetString(kPrefOutputFolder, "Assets/GaussianAssets");
+            m_Quality = DataQuality.VeryHigh;
         }
 
         void ApplyQualityLevel()
@@ -245,8 +239,7 @@ namespace ArenaUnity.Editor
             AssetDatabase.SaveAssets();
             EditorUtility.ClearProgressBar();
 
-            //Selection.activeObject = savedAsset;
-            return asset;
+            return savedAsset;
         }
 
         NativeArray<InputSplatData> LoadInputSplatFile(string filePath)
