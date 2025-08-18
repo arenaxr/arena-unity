@@ -79,7 +79,7 @@ namespace ArenaUnity.Schemas
         private static bool defVisible = true;
         [JsonProperty(PropertyName = "visible")]
         [Tooltip("Whether object is visible. Property is inherited.")]
-        public bool Visible = defVisible;
+        public bool? Visible = defVisible;
         public bool ShouldSerializeVisible()
         {
             // visible
@@ -227,7 +227,7 @@ namespace ArenaUnity.Schemas
         private static bool defPhysxGrabbable = true;
         [JsonProperty(PropertyName = "physx-grabbable")]
         [Tooltip("Makes a physx-body object grabbable by the user's hands. Requires `scene-options: physics`.")]
-        public bool PhysxGrabbable = defPhysxGrabbable;
+        public bool? PhysxGrabbable = defPhysxGrabbable;
         public bool ShouldSerializePhysxGrabbable()
         {
             // physx-grabbable
@@ -436,7 +436,7 @@ namespace ArenaUnity.Schemas
         private static bool defBuffer = true;
         [JsonProperty(PropertyName = "buffer")]
         [Tooltip("Transform geometry into a BufferGeometry to reduce memory usage at the cost of being harder to manipulate (geometries only: box, circle, cone, ...).")]
-        public bool Buffer = defBuffer;
+        public bool? Buffer = defBuffer;
         public bool ShouldSerializeBuffer()
         {
             // buffer
