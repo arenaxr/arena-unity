@@ -18,7 +18,7 @@ using UnityEngine;
 namespace ArenaUnity.Schemas
 {
     /// <summary>
-    /// A fixed-position or animated object. Other objects may collide with static bodies, but static bodies themselves are unaffected by gravity and collisions. More properties at <a href='https://github.com/c-frame/aframe-physics-system/blob/master/CannonDriver.md'>A-Frame Physics System</a>.
+    /// DEPRECATED: data.static-body is deprecated, use data.physx-body instead.
     /// </summary>
     [Serializable]
     public class ArenaStaticBodyJson
@@ -27,80 +27,6 @@ namespace ArenaUnity.Schemas
         public readonly string componentName = "static-body";
 
         // static-body member-fields
-
-        public enum ShapeType
-        {
-            [EnumMember(Value = "auto")]
-            Auto,
-            [EnumMember(Value = "box")]
-            Box,
-            [EnumMember(Value = "cylinder")]
-            Cylinder,
-            [EnumMember(Value = "sphere")]
-            Sphere,
-            [EnumMember(Value = "hull")]
-            Hull,
-            [EnumMember(Value = "none")]
-            None,
-        }
-        private static ShapeType defShape = ShapeType.Auto;
-        [JsonConverter(typeof(StringEnumConverter))]
-        [JsonProperty(PropertyName = "shape")]
-        [Tooltip("Body components will attempt to find an appropriate CANNON.js shape to fit your model. When defining an object you may choose a shape or leave the default, auto. Select a shape carefully, as there are performance implications with different choices.")]
-        public ShapeType Shape = defShape;
-        public bool ShouldSerializeShape()
-        {
-            // shape
-            return (Shape != defShape);
-        }
-
-        public enum CylinderAxisType
-        {
-            [EnumMember(Value = "x")]
-            X,
-            [EnumMember(Value = "y")]
-            Y,
-            [EnumMember(Value = "z")]
-            Z,
-        }
-        private static CylinderAxisType defCylinderAxis = CylinderAxisType.Y;
-        [JsonConverter(typeof(StringEnumConverter))]
-        [JsonProperty(PropertyName = "cylinderAxis")]
-        [Tooltip("Override default axis of bounding cylinder. Requires shape:cylinder.")]
-        public CylinderAxisType CylinderAxis = defCylinderAxis;
-        public bool ShouldSerializeCylinderAxis()
-        {
-            // cylinderAxis
-            return (CylinderAxis != defCylinderAxis);
-        }
-
-        private static float? defSphereRadius = null;
-        [JsonProperty(PropertyName = "sphereRadius")]
-        [Tooltip("Override default radius of bounding sphere. Requires shape:sphere. NaN by default.")]
-        public float? SphereRadius = defSphereRadius;
-        public bool ShouldSerializeSphereRadius()
-        {
-            // sphereRadius
-            return (SphereRadius != defSphereRadius);
-        }
-
-        public enum TypeType
-        {
-            [EnumMember(Value = "dynamic")]
-            Dynamic,
-            [EnumMember(Value = "static")]
-            Static,
-        }
-        private static TypeType defType = TypeType.Static;
-        [JsonConverter(typeof(StringEnumConverter))]
-        [JsonProperty(PropertyName = "type")]
-        [Tooltip("Define the result of collisions. Dynamic can be moved, Static cannot be moved.")]
-        public TypeType Type = defType;
-        public bool ShouldSerializeType()
-        {
-            // type
-            return (Type != defType);
-        }
 
         // General json object management
         [OnError]

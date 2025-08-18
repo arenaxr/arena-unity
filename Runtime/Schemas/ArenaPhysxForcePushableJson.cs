@@ -18,30 +18,39 @@ using UnityEngine;
 namespace ArenaUnity.Schemas
 {
     /// <summary>
-    /// Allows you to target and control a gltf model's morphTargets created in Blender. Requires `object_type: gltf-model`. More properties at <a href='https://github.com/elbobo/aframe-gltf-morph-component'>A-Frame GLTF Morph</a> component.
+    /// Makes a physx-body object pushable by the user. Requires `click-listener` attribute. Requires `scene-options: physics`.
     /// </summary>
     [Serializable]
-    public class ArenaGltfMorphJson
+    public class ArenaPhysxForcePushableJson
     {
         [JsonIgnore]
-        public readonly string componentName = "gltf-morph";
+        public readonly string componentName = "physx-force-pushable";
 
-        // gltf-morph member-fields
+        // physx-force-pushable member-fields
 
-        private static string defMorphtarget = "";
-        [JsonProperty(PropertyName = "morphtarget")]
-        [Tooltip("Name of morphTarget, can be found as part of the GLTF model.")]
-        public string Morphtarget = defMorphtarget;
-        public bool ShouldSerializeMorphtarget()
+        public enum OnType
         {
-            return true; // required in json schema
+            [EnumMember(Value = "mousedown")]
+            Mousedown,
+            [EnumMember(Value = "mouseup")]
+            Mouseup,
+        }
+        private static OnType defOn = OnType.Mousedown;
+        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty(PropertyName = "on")]
+        [Tooltip("Event to listen 'on'.")]
+        public OnType On = defOn;
+        public bool ShouldSerializeOn()
+        {
+            // on
+            return (On != defOn);
         }
 
-        private static float defValue = 0f;
-        [JsonProperty(PropertyName = "value")]
-        [Tooltip("Value that you want to set that morphTarget to (0 - 1).")]
-        public float Value = defValue;
-        public bool ShouldSerializeValue()
+        private static float defForce = 10f;
+        [JsonProperty(PropertyName = "force")]
+        [Tooltip("Force to apply to the object.")]
+        public float Force = defForce;
+        public bool ShouldSerializeForce()
         {
             return true; // required in json schema
         }

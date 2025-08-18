@@ -29,7 +29,7 @@ namespace ArenaUnity.Schemas
 
         private static string defSrc = null;
         [JsonProperty(PropertyName = "src")]
-        [Tooltip("Use File Store paths under 'store/users/username', see CDN and other storage options in the description above.")]
+        [Tooltip("Url of the .ply or .splat file. Use File Store paths under 'store/users/username', see CDN and other storage options in the description above.")]
         public string Src = defSrc;
         public bool ShouldSerializeSrc()
         {

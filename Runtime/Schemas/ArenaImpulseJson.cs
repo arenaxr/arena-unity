@@ -18,7 +18,7 @@ using UnityEngine;
 namespace ArenaUnity.Schemas
 {
     /// <summary>
-    /// Apply an impulse to an object to set it in motion. This happens in conjunction with an event. Requires click-listener and physics.
+    /// DEPRECATED: data.impulse is deprecated, use data.physx-force-pushable instead.
     /// </summary>
     [Serializable]
     public class ArenaImpulseJson
@@ -27,44 +27,6 @@ namespace ArenaUnity.Schemas
         public readonly string componentName = "impulse";
 
         // impulse member-fields
-
-        private static ArenaVector3Json defForce = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}");
-        [JsonProperty(PropertyName = "force")]
-        [Tooltip("Impulse vector.")]
-        public ArenaVector3Json Force = defForce;
-        public bool ShouldSerializeForce()
-        {
-            // force
-            return (Force != defForce);
-        }
-
-        public enum OnType
-        {
-            [EnumMember(Value = "mousedown")]
-            Mousedown,
-            [EnumMember(Value = "mouseup")]
-            Mouseup,
-        }
-        private static OnType defOn = OnType.Mousedown;
-        [JsonConverter(typeof(StringEnumConverter))]
-        [JsonProperty(PropertyName = "on")]
-        [Tooltip("Event to listen 'on'.")]
-        public OnType On = defOn;
-        public bool ShouldSerializeOn()
-        {
-            // on
-            return (On != defOn);
-        }
-
-        private static ArenaVector3Json defPosition = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}");
-        [JsonProperty(PropertyName = "position")]
-        [Tooltip("World position.")]
-        public ArenaVector3Json Position = defPosition;
-        public bool ShouldSerializePosition()
-        {
-            // position
-            return (Position != defPosition);
-        }
 
         // General json object management
         [OnError]

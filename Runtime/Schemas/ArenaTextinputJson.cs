@@ -18,7 +18,7 @@ using UnityEngine;
 namespace ArenaUnity.Schemas
 {
     /// <summary>
-    /// Opens an HTML prompt when clicked. Sends text input as an event on MQTT. Requires click-listener.
+    /// Opens an HTML prompt when clicked. Sends text input as an event on MQTT. Requires `click-listener` attribute.
     /// </summary>
     [Serializable]
     public class ArenaTextinputJson
@@ -69,31 +69,99 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
-        private static string defTitle = "Text Input";
+        private static string defTitle = "";
         [JsonProperty(PropertyName = "title")]
-        [Tooltip("The prompt title.")]
+        [Tooltip("The prompt title (optional).")]
         public string Title = defTitle;
         public bool ShouldSerializeTitle()
         {
             return true; // required in json schema
         }
 
-        private static string defLabel = "Input text below (max is 140 characters).";
+        private static string defLabel = "";
         [JsonProperty(PropertyName = "label")]
-        [Tooltip("Text prompt label")]
+        [Tooltip("Label for input (max 140 characters, optional).")]
         public string Label = defLabel;
         public bool ShouldSerializeLabel()
         {
-            return true; // required in json schema
+            // label
+            return (Label != defLabel);
         }
 
-        private static string defPlaceholder = "Type here";
+        private static string defPlaceholder = "";
         [JsonProperty(PropertyName = "placeholder")]
-        [Tooltip("Text input place holder.")]
+        [Tooltip("Text input placeholder (optional).")]
         public string Placeholder = defPlaceholder;
         public bool ShouldSerializePlaceholder()
         {
-            return true; // required in json schema
+            // placeholder
+            return (Placeholder != defPlaceholder);
+        }
+
+        public enum InputTypeType
+        {
+            [EnumMember(Value = "text")]
+            Text,
+            [EnumMember(Value = "email")]
+            Email,
+            [EnumMember(Value = "password")]
+            Password,
+            [EnumMember(Value = "number")]
+            Number,
+            [EnumMember(Value = "tel")]
+            Tel,
+            [EnumMember(Value = "range")]
+            Range,
+            [EnumMember(Value = "textarea")]
+            Textarea,
+            [EnumMember(Value = "url")]
+            Url,
+            [EnumMember(Value = "select")]
+            Select,
+            [EnumMember(Value = "radio")]
+            Radio,
+            [EnumMember(Value = "checkbox")]
+            Checkbox,
+            [EnumMember(Value = "date")]
+            Date,
+            [EnumMember(Value = "datetime-local")]
+            DatetimeLocal,
+            [EnumMember(Value = "time")]
+            Time,
+            [EnumMember(Value = "week")]
+            Week,
+            [EnumMember(Value = "month")]
+            Month,
+        }
+        private static InputTypeType defInputType = InputTypeType.Text;
+        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonProperty(PropertyName = "inputType")]
+        [Tooltip("Type of HTML form input")]
+        public InputTypeType InputType = defInputType;
+        public bool ShouldSerializeInputType()
+        {
+            // inputType
+            return (InputType != defInputType);
+        }
+
+        private static string defInputValue = "";
+        [JsonProperty(PropertyName = "inputValue")]
+        [Tooltip("Input field initial value. Select type will be selected value, for checkbox will be checked state")]
+        public string InputValue = defInputValue;
+        public bool ShouldSerializeInputValue()
+        {
+            // inputValue
+            return (InputValue != defInputValue);
+        }
+
+        private static string[] defInputOptions = {  };
+        [JsonProperty(PropertyName = "inputOptions")]
+        [Tooltip("Array of options for select or radio input types")]
+        public string[] InputOptions = defInputOptions;
+        public bool ShouldSerializeInputOptions()
+        {
+            // inputOptions
+            return (InputOptions != defInputOptions);
         }
 
         // General json object management

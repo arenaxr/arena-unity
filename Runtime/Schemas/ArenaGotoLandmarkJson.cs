@@ -18,7 +18,7 @@ using UnityEngine;
 namespace ArenaUnity.Schemas
 {
     /// <summary>
-    /// Teleports user to the landmark with the given name. Requires click-listener.
+    /// Teleports user to the landmark with the given name. Requires `click-listener` attribute.
     /// </summary>
     [Serializable]
     public class ArenaGotoLandmarkJson

@@ -18,7 +18,7 @@ using UnityEngine;
 namespace ArenaUnity.Schemas
 {
     /// <summary>
-    /// Define multiple visual sources applied to an object.
+    /// Define multiple visual sources applied to an object. Requires `material` attribute.
     /// </summary>
     [Serializable]
     public class ArenaMultisrcJson

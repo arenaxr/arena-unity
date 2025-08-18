@@ -94,7 +94,7 @@ namespace ArenaUnity.Schemas
         private static CombineType defCombine = CombineType.Mix;
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(PropertyName = "combine")]
-        [Tooltip("How the environment map mixes with the material. Requires shader: phong.")]
+        [Tooltip("How the environment map mixes with the material. Requires `shader: phong`.")]
         public CombineType Combine = defCombine;
         public bool ShouldSerializeCombine()
         {
@@ -134,7 +134,7 @@ namespace ArenaUnity.Schemas
 
         private static string defEmissive = "#000000";
         [JsonProperty(PropertyName = "emissive")]
-        [Tooltip("The color of the emissive lighting component. Used to make objects produce light even without other lighting in the scene. Requires shader: standard or phong")]
+        [Tooltip("The color of the emissive lighting component. Used to make objects produce light even without other lighting in the scene. Requires `shader: standard` or `phong`.")]
         public string Emissive = defEmissive;
         public bool ShouldSerializeEmissive()
         {
@@ -144,7 +144,7 @@ namespace ArenaUnity.Schemas
 
         private static float defEmissiveIntensity = 1f;
         [JsonProperty(PropertyName = "emissiveIntensity")]
-        [Tooltip("Intensity of the emissive lighting component. Requires shader: standard or phong")]
+        [Tooltip("Intensity of the emissive lighting component. Requires `shader: standard` or `phong`.")]
         public float EmissiveIntensity = defEmissiveIntensity;
         public bool ShouldSerializeEmissiveIntensity()
         {
@@ -174,7 +174,7 @@ namespace ArenaUnity.Schemas
 
         private static int defHeight = 256;
         [JsonProperty(PropertyName = "height")]
-        [Tooltip("Height of video (in pixels), if defining a video texture. Requires shader: standard or flat.")]
+        [Tooltip("Height of video (in pixels), if defining a video texture. Requires `shader: standard` or `flat`.")]
         public int Height = defHeight;
         public bool ShouldSerializeHeight()
         {
@@ -184,7 +184,7 @@ namespace ArenaUnity.Schemas
 
         private static float defMetalness = 0f;
         [JsonProperty(PropertyName = "metalness")]
-        [Tooltip("How metallic the material is from 0 to 1. Requires shader: standard.")]
+        [Tooltip("How metallic the material is from 0 to 1. Requires `shader: standard`.")]
         public float Metalness = defMetalness;
         public bool ShouldSerializeMetalness()
         {
@@ -202,10 +202,10 @@ namespace ArenaUnity.Schemas
             return (Npot != defNpot);
         }
 
-        private static object defOffset = JsonConvert.DeserializeObject("{'x': 0, 'y': 0}");
+        private static ArenaVector2Json defOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
         [JsonProperty(PropertyName = "offset")]
         [Tooltip("Texture offset to be used.")]
-        public object Offset = defOffset;
+        public ArenaVector2Json Offset = defOffset;
         public bool ShouldSerializeOffset()
         {
             // offset
@@ -224,7 +224,7 @@ namespace ArenaUnity.Schemas
 
         private static float defReflectivity = 0.9f;
         [JsonProperty(PropertyName = "reflectivity")]
-        [Tooltip("How much the environment map affects the surface. Requires shader: phong.")]
+        [Tooltip("How much the environment map affects the surface. Requires `shader: phong`.")]
         public float Reflectivity = defReflectivity;
         public bool ShouldSerializeReflectivity()
         {
@@ -234,7 +234,7 @@ namespace ArenaUnity.Schemas
 
         private static bool defRefract = false;
         [JsonProperty(PropertyName = "refract")]
-        [Tooltip("Whether the defined envMap should refract. Requires shader: phong.")]
+        [Tooltip("Whether the defined envMap should refract. Requires `shader: phong`.")]
         public bool Refract = defRefract;
         public bool ShouldSerializeRefract()
         {
@@ -244,7 +244,7 @@ namespace ArenaUnity.Schemas
 
         private static float defRefractionRatio = 0.98f;
         [JsonProperty(PropertyName = "refractionRatio")]
-        [Tooltip("1/refractive index of the material. Requires shader: phong.")]
+        [Tooltip("refractionRatio")]
         public float RefractionRatio = defRefractionRatio;
         public bool ShouldSerializeRefractionRatio()
         {
@@ -252,10 +252,10 @@ namespace ArenaUnity.Schemas
             return (RefractionRatio != defRefractionRatio);
         }
 
-        private static object defRepeat = JsonConvert.DeserializeObject("{'x': 1, 'y': 1}");
+        private static ArenaVector2Json defRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         [JsonProperty(PropertyName = "repeat")]
         [Tooltip("How many times a texture (defined by src) repeats in the X and Y direction.")]
-        public object Repeat = defRepeat;
+        public ArenaVector2Json Repeat = defRepeat;
         public bool ShouldSerializeRepeat()
         {
             // repeat
@@ -264,7 +264,7 @@ namespace ArenaUnity.Schemas
 
         private static float defRoughness = 0f;
         [JsonProperty(PropertyName = "roughness")]
-        [Tooltip("How rough the material is from 0 to 1. A rougher material will scatter reflected light in more directions than a smooth material. Requires shader: standard.")]
+        [Tooltip("How rough the material is from 0 to 1. A rougher material will scatter reflected light in more directions than a smooth material. Requires `shader: standard`.")]
         public float Roughness = defRoughness;
         public bool ShouldSerializeRoughness()
         {
@@ -294,7 +294,7 @@ namespace ArenaUnity.Schemas
 
         private static float defShininess = 30f;
         [JsonProperty(PropertyName = "shininess")]
-        [Tooltip("How shiny the specular highlight is; a higher value gives a sharper highlight. Requires shader: phong.")]
+        [Tooltip("How shiny the specular highlight is; a higher value gives a sharper highlight. Requires `shader: phong`.")]
         public float Shininess = defShininess;
         public bool ShouldSerializeShininess()
         {
@@ -324,7 +324,7 @@ namespace ArenaUnity.Schemas
 
         private static string defSpecular = "#111111";
         [JsonProperty(PropertyName = "specular")]
-        [Tooltip("This defines how shiny the material is and the color of its shine. Requires shader: phong.")]
+        [Tooltip("This defines how shiny the material is and the color of its shine. Requires `shader: phong`.")]
         public string Specular = defSpecular;
         public bool ShouldSerializeSpecular()
         {
@@ -344,7 +344,7 @@ namespace ArenaUnity.Schemas
 
         private static bool defToneMapped = true;
         [JsonProperty(PropertyName = "toneMapped")]
-        [Tooltip("Whether to ignore toneMapping, set to false you are using renderer.toneMapping and an element should appear to emit light. Requires shader: flat.")]
+        [Tooltip("Whether to ignore toneMapping, set to false you are using renderer.toneMapping and an element should appear to emit light. Requires `shader: flat`.")]
         public bool ToneMapped = defToneMapped;
         public bool ShouldSerializeToneMapped()
         {
@@ -384,7 +384,7 @@ namespace ArenaUnity.Schemas
 
         private static int defWidth = 512;
         [JsonProperty(PropertyName = "width")]
-        [Tooltip("Width of video (in pixels), if defining a video texture. Requires shader: standard or flat.")]
+        [Tooltip("Width of video (in pixels), if defining a video texture. Requires `shader: standard` or `flat`.")]
         public int Width = defWidth;
         public bool ShouldSerializeWidth()
         {

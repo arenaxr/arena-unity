@@ -18,7 +18,7 @@ using UnityEngine;
 namespace ArenaUnity.Schemas
 {
     /// <summary>
-    /// Load new URL when object is clicked. Requires click-listener.
+    /// Load new URL when object is clicked. Requires `click-listener` attribute.
     /// </summary>
     [Serializable]
     public class ArenaGotoUrlJson

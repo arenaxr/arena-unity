@@ -28,6 +28,15 @@ namespace ArenaUnity.Schemas
 
         // scene-options member-fields
 
+        private static bool defOriginMarker = true;
+        [JsonProperty(PropertyName = "originMarker")]
+        [Tooltip("Include a default 15cm x 15cm AprilTag marker 0 at the origin of the scene.")]
+        public bool OriginMarker = defOriginMarker;
+        public bool ShouldSerializeOriginMarker()
+        {
+            return true; // required in json schema
+        }
+
         private static bool defClickableOnlyEvents = true;
         [JsonProperty(PropertyName = "clickableOnlyEvents")]
         [Tooltip("True = publish only mouse events for objects with click-listeners; False = all objects publish mouse events.")]
@@ -186,10 +195,10 @@ namespace ArenaUnity.Schemas
             return (Volume != defVolume);
         }
 
-        private static bool defPhysics = false;
+        private static object defPhysics = null;
         [JsonProperty(PropertyName = "physics")]
-        [Tooltip("If true, will load the aframe-physics-system. Required for the following: `dynamic-body`, `impulse`, `collision-listener`.")]
-        public bool Physics = defPhysics;
+        [Tooltip("Clientside PhysX-based physics system. Required for all physx-* components")]
+        public object Physics = defPhysics;
         public bool ShouldSerializePhysics()
         {
             return true; // required in json schema
@@ -203,6 +212,16 @@ namespace ArenaUnity.Schemas
         {
             // ar-hit-test
             return (ArHitTest != defArHitTest);
+        }
+
+        private static object defOpenvps = null;
+        [JsonProperty(PropertyName = "openvps")]
+        [Tooltip("Set an OpenVPS server to localize by camera image on mobile devices")]
+        public object Openvps = defOpenvps;
+        public bool ShouldSerializeOpenvps()
+        {
+            // openvps
+            return (Openvps != defOpenvps);
         }
 
         // General json object management

@@ -18,7 +18,7 @@ using UnityEngine;
 namespace ArenaUnity.Schemas
 {
     /// <summary>
-    /// Simple switch between the default gltf-model and a detailed one when a user camera is within specified distance
+    /// Simple switch between the default gltf-model and a detailed one when a user camera is within specified distance. Requires `object_type: gltf-model`.
     /// </summary>
     [Serializable]
     public class ArenaGltfModelLodJson

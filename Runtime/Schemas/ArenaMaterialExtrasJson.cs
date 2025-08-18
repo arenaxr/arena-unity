@@ -18,7 +18,7 @@ using UnityEngine;
 namespace ArenaUnity.Schemas
 {
     /// <summary>
-    /// Define extra material properties, namely texture encoding, whether to render the material's color and render order. The properties set here access directly Three.js material component.  More properties at <a href='https://threejs.org/docs/#api/en/materials/Material'>THREE.js Material</a>.
+    /// Define extra material properties, namely texture encoding, whether to render the material's color and render order. Requires `material` attribute. More properties at <a href='https://threejs.org/docs/#api/en/materials/Material'>THREE.js Material</a>.
     /// </summary>
     [Serializable]
     public class ArenaMaterialExtrasJson

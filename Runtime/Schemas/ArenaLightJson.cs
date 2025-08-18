@@ -29,7 +29,7 @@ namespace ArenaUnity.Schemas
 
         private static float defAngle = 60f;
         [JsonProperty(PropertyName = "angle")]
-        [Tooltip("Maximum extent of spot light from its direction (in degrees). Requires type:spot.")]
+        [Tooltip("Maximum extent of spot light from its direction (in degrees). Requires `type: spot`.")]
         public float Angle = defAngle;
         public bool ShouldSerializeAngle()
         {
@@ -58,7 +58,7 @@ namespace ArenaUnity.Schemas
 
         private static float defDecay = 1f;
         [JsonProperty(PropertyName = "decay")]
-        [Tooltip("Amount the light dims along the distance of the light. Requires type:point or type:spot.")]
+        [Tooltip("Amount the light dims along the distance of the light. Requires `type: point` or `spot`.")]
         public float Decay = defDecay;
         public bool ShouldSerializeDecay()
         {
@@ -68,7 +68,7 @@ namespace ArenaUnity.Schemas
 
         private static float defDistance = 0f;
         [JsonProperty(PropertyName = "distance")]
-        [Tooltip("Distance where intensity becomes 0. If distance is 0, then the point light does not decay with distance. Requires type:point or type:spot.")]
+        [Tooltip("Distance where intensity becomes 0. If distance is 0, then the point light does not decay with distance. Requires `type: point` or `spot`.")]
         public float Distance = defDistance;
         public bool ShouldSerializeDistance()
         {
@@ -88,7 +88,7 @@ namespace ArenaUnity.Schemas
 
         private static string defGroundColor = "#ffffff";
         [JsonProperty(PropertyName = "groundColor")]
-        [Tooltip("Light color from below. Requires type:hemisphere.")]
+        [Tooltip("Light color from below. Requires `type: hemisphere`.")]
         public string GroundColor = defGroundColor;
         public bool ShouldSerializeGroundColor()
         {
@@ -116,7 +116,7 @@ namespace ArenaUnity.Schemas
 
         private static float defPenumbra = 0f;
         [JsonProperty(PropertyName = "penumbra")]
-        [Tooltip("Percent of the spotlight cone that is attenuated due to penumbra. Requires type:spot.")]
+        [Tooltip("Percent of the spotlight cone that is attenuated due to penumbra. Requires `type: spot`.")]
         public float Penumbra = defPenumbra;
         public bool ShouldSerializePenumbra()
         {
@@ -136,7 +136,7 @@ namespace ArenaUnity.Schemas
 
         private static float defShadowCameraBottom = -5f;
         [JsonProperty(PropertyName = "shadowCameraBottom")]
-        [Tooltip("Bottom plane of shadow camera frustum. Requires type:directional.")]
+        [Tooltip("Bottom plane of shadow camera frustum. Requires `type: directional`.")]
         public float ShadowCameraBottom = defShadowCameraBottom;
         public bool ShouldSerializeShadowCameraBottom()
         {
@@ -156,7 +156,7 @@ namespace ArenaUnity.Schemas
 
         private static float defShadowCameraFov = 50f;
         [JsonProperty(PropertyName = "shadowCameraFov")]
-        [Tooltip("Shadow camera's FOV. Requires type:point or spot.")]
+        [Tooltip("Shadow camera's FOV. Requires `type: point` or `spot`.")]
         public float ShadowCameraFov = defShadowCameraFov;
         public bool ShouldSerializeShadowCameraFov()
         {
@@ -166,7 +166,7 @@ namespace ArenaUnity.Schemas
 
         private static float defShadowCameraLeft = -5f;
         [JsonProperty(PropertyName = "shadowCameraLeft")]
-        [Tooltip("Left plane of shadow camera frustum. Requires type:directional.")]
+        [Tooltip("Left plane of shadow camera frustum. Requires `type: directional`.")]
         public float ShadowCameraLeft = defShadowCameraLeft;
         public bool ShouldSerializeShadowCameraLeft()
         {
@@ -186,7 +186,7 @@ namespace ArenaUnity.Schemas
 
         private static float defShadowCameraRight = 5f;
         [JsonProperty(PropertyName = "shadowCameraRight")]
-        [Tooltip("Right plane of shadow camera frustum. Requires type:directional.")]
+        [Tooltip("Right plane of shadow camera frustum. Requires `type: directional`.")]
         public float ShadowCameraRight = defShadowCameraRight;
         public bool ShouldSerializeShadowCameraRight()
         {
@@ -196,7 +196,7 @@ namespace ArenaUnity.Schemas
 
         private static float defShadowCameraTop = 5f;
         [JsonProperty(PropertyName = "shadowCameraTop")]
-        [Tooltip("Top plane of shadow camera frustum. Requires type:directional.")]
+        [Tooltip("Top plane of shadow camera frustum. Requires `type: directional`.")]
         public float ShadowCameraTop = defShadowCameraTop;
         public bool ShouldSerializeShadowCameraTop()
         {
@@ -246,7 +246,7 @@ namespace ArenaUnity.Schemas
 
         private static string defTarget = null;
         [JsonProperty(PropertyName = "target")]
-        [Tooltip("Id of element the spot should point to. Set to null to transform spotlight by orientation, pointing to it's -Z axis. Requires type:spot.")]
+        [Tooltip("Id of element the spot should point to. Set to null to transform spotlight by orientation, pointing to it's -Z axis. Requires `type: spot`.")]
         public string Target = defTarget;
         public bool ShouldSerializeTarget()
         {

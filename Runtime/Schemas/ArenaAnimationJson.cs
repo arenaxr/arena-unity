@@ -169,7 +169,6 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defFrom = "";
-        [JsonConverter(typeof(string))] // TODO (mwfarb): remove explicit conversion to avoid walking errors
         [JsonProperty(PropertyName = "from")]
         [Tooltip("Initial value at start of animation. If not specified, the current property value of the entity will be used (will be sampled on each animation start). It is best to specify a from value when possible for stability.")]
         public string From = defFrom;
@@ -250,7 +249,6 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defTo = "";
-        [JsonConverter(typeof(string))] // TODO (mwfarb): remove explicit conversion to avoid walking errors
         [JsonProperty(PropertyName = "to")]
         [Tooltip("Target value at end of animation.")]
         public string To = defTo;

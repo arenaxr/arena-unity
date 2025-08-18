@@ -79,7 +79,7 @@ namespace ArenaUnity.Schemas
         private static bool defVisible = true;
         [JsonProperty(PropertyName = "visible")]
         [Tooltip("Whether object is visible. Property is inherited.")]
-        public bool? Visible = defVisible;
+        public bool Visible = defVisible;
         public bool ShouldSerializeVisible()
         {
             // visible
@@ -128,7 +128,7 @@ namespace ArenaUnity.Schemas
 
         private static string defCollisionListener = null;
         [JsonProperty(PropertyName = "collision-listener")]
-        [Tooltip("Name of the collision-listener, default can be empty string. Collisions trigger click events.")]
+        [Tooltip("Name of the collision-listener, default can be empty string. Collisions trigger click events. Requires `scene-options: physics`.")]
         public string CollisionListener = defCollisionListener;
         public bool ShouldSerializeCollisionListener()
         {
@@ -146,29 +146,97 @@ namespace ArenaUnity.Schemas
             return (Blip != defBlip);
         }
 
-        private static ArenaStaticBodyJson defStaticBody = null;
-        [JsonProperty(PropertyName = "static-body")]
-        [Tooltip("A fixed-position or animated object. Other objects may collide with static bodies, but static bodies themselves are unaffected by gravity and collisions. More properties at <a href='https://github.com/c-frame/aframe-physics-system/blob/master/CannonDriver.md'>A-Frame Physics System</a>.")]
-        public ArenaStaticBodyJson StaticBody = defStaticBody;
-        public bool ShouldSerializeStaticBody()
-        {
-            // static-body
-            return (StaticBody != defStaticBody);
-        }
-
         private static ArenaDynamicBodyJson defDynamicBody = null;
         [JsonProperty(PropertyName = "dynamic-body")]
-        [Tooltip("A freely-moving object. Dynamic bodies have mass, collide with other objects, bounce or slow during collisions, and fall if gravity is enabled. More properties at <a href='https://github.com/c-frame/aframe-physics-system/blob/master/CannonDriver.md'>A-Frame Physics System</a>.")]
-        public ArenaDynamicBodyJson DynamicBody = defDynamicBody;
+        [Obsolete("DEPRECATED: data.dynamic-body is deprecated, use data.physx-body instead.")]
+        public ArenaDynamicBodyJson DynamicBody { get; protected set; } = defDynamicBody;
         public bool ShouldSerializeDynamicBody()
         {
-            // dynamic-body
-            return (DynamicBody != defDynamicBody);
+            return false; // deprecated in json schema
+        }
+
+        private static ArenaStaticBodyJson defStaticBody = null;
+        [JsonProperty(PropertyName = "static-body")]
+        [Obsolete("DEPRECATED: data.static-body is deprecated, use data.physx-body instead.")]
+        public ArenaStaticBodyJson StaticBody { get; protected set; } = defStaticBody;
+        public bool ShouldSerializeStaticBody()
+        {
+            return false; // deprecated in json schema
+        }
+
+        private static ArenaPhysxBodyJson defPhysxBody = null;
+        [JsonProperty(PropertyName = "physx-body")]
+        [Tooltip("Turns an entity into a PhysX rigid body. This is the main component for creating physics objects. There are 3 types of rigid bodies: dynamic objects that have physics simulated on them, static objects that cannot move, and kinematic objects that can be moved programmatically but not by simulation. Requires `scene-options: physics`.")]
+        public ArenaPhysxBodyJson PhysxBody = defPhysxBody;
+        public bool ShouldSerializePhysxBody()
+        {
+            // physx-body
+            return (PhysxBody != defPhysxBody);
+        }
+
+        private static ArenaPhysxMaterialJson defPhysxMaterial = null;
+        [JsonProperty(PropertyName = "physx-material")]
+        [Tooltip("Controls physics properties for individual shapes or rigid bodies. Can be set on an entity with physx-body or on shapes contained within it. Requires `scene-options: physics`.")]
+        public ArenaPhysxMaterialJson PhysxMaterial = defPhysxMaterial;
+        public bool ShouldSerializePhysxMaterial()
+        {
+            // physx-material
+            return (PhysxMaterial != defPhysxMaterial);
+        }
+
+        private static ArenaPhysxJointJson defPhysxJoint = null;
+        [JsonProperty(PropertyName = "physx-joint")]
+        [Tooltip("Creates a PhysX joint between an ancestor rigid body and a target rigid body. Position and rotation of the entity will be used to create the corresponding joint. Requires `scene-options: physics`.")]
+        public ArenaPhysxJointJson PhysxJoint = defPhysxJoint;
+        public bool ShouldSerializePhysxJoint()
+        {
+            // physx-joint
+            return (PhysxJoint != defPhysxJoint);
+        }
+
+        private static ArenaPhysxJointConstraintJson defPhysxJointConstraint = null;
+        [JsonProperty(PropertyName = "physx-joint-constraint")]
+        [Tooltip("Adds a constraint to a physx-joint. Supported joints are D6, Revolute and Prismatic. Can only be used on an entity with the physx-joint component. Requires `scene-options: physics`.")]
+        public ArenaPhysxJointConstraintJson PhysxJointConstraint = defPhysxJointConstraint;
+        public bool ShouldSerializePhysxJointConstraint()
+        {
+            // physx-joint-constraint
+            return (PhysxJointConstraint != defPhysxJointConstraint);
+        }
+
+        private static ArenaPhysxJointDriverJson defPhysxJointDriver = null;
+        [JsonProperty(PropertyName = "physx-joint-driver")]
+        [Tooltip("Creates a driver which exerts force to return the joint to the initial position with the given velocity characteristics. Can only be used on an entity with a physx-joint component. Currently only supports D6 joint type. Requires `scene-options: physics`.")]
+        public ArenaPhysxJointDriverJson PhysxJointDriver = defPhysxJointDriver;
+        public bool ShouldSerializePhysxJointDriver()
+        {
+            // physx-joint-driver
+            return (PhysxJointDriver != defPhysxJointDriver);
+        }
+
+        private static ArenaPhysxForcePushableJson defPhysxForcePushable = null;
+        [JsonProperty(PropertyName = "physx-force-pushable")]
+        [Tooltip("Makes a physx-body object pushable by the user. Requires `click-listener` attribute. Requires `scene-options: physics`.")]
+        public ArenaPhysxForcePushableJson PhysxForcePushable = defPhysxForcePushable;
+        public bool ShouldSerializePhysxForcePushable()
+        {
+            // physx-force-pushable
+            return (PhysxForcePushable != defPhysxForcePushable);
+        }
+
+        private static bool defPhysxGrabbable = true;
+        [JsonProperty(PropertyName = "physx-grabbable")]
+        [Tooltip("Makes a physx-body object grabbable by the user's hands. Requires `scene-options: physics`.")]
+        public bool PhysxGrabbable = defPhysxGrabbable;
+        public bool ShouldSerializePhysxGrabbable()
+        {
+            // physx-grabbable
+            return (PhysxGrabbable != defPhysxGrabbable);
         }
 
         private static ArenaGotoLandmarkJson defGotoLandmark = null;
         [JsonProperty(PropertyName = "goto-landmark")]
-        [Tooltip("Teleports user to the landmark with the given name. Requires click-listener.")]
+        [Tooltip("Teleports user to the landmark with the given name. Requires `click-listener` attribute.")]
         public ArenaGotoLandmarkJson GotoLandmark = defGotoLandmark;
         public bool ShouldSerializeGotoLandmark()
         {
@@ -178,7 +246,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaGotoUrlJson defGotoUrl = null;
         [JsonProperty(PropertyName = "goto-url")]
-        [Tooltip("Load new URL when object is clicked. Requires click-listener.")]
+        [Tooltip("Load new URL when object is clicked. Requires `click-listener` attribute.")]
         public ArenaGotoUrlJson GotoUrl = defGotoUrl;
         public bool ShouldSerializeGotoUrl()
         {
@@ -228,12 +296,11 @@ namespace ArenaUnity.Schemas
 
         private static ArenaImpulseJson defImpulse = null;
         [JsonProperty(PropertyName = "impulse")]
-        [Tooltip("Apply an impulse to an object to set it in motion. This happens in conjunction with an event. Requires click-listener and physics.")]
-        public ArenaImpulseJson Impulse = defImpulse;
+        [Obsolete("DEPRECATED: data.impulse is deprecated, use data.physx-force-pushable instead.")]
+        public ArenaImpulseJson Impulse { get; protected set; } = defImpulse;
         public bool ShouldSerializeImpulse()
         {
-            // impulse
-            return (Impulse != defImpulse);
+            return false; // deprecated in json schema
         }
 
         private static ArenaLandmarkJson defLandmark = null;
@@ -248,12 +315,22 @@ namespace ArenaUnity.Schemas
 
         private static ArenaMaterialExtrasJson defMaterialExtras = null;
         [JsonProperty(PropertyName = "material-extras")]
-        [Tooltip("Define extra material properties, namely texture encoding, whether to render the material's color and render order. The properties set here access directly Three.js material component.  More properties at <a href='https://threejs.org/docs/#api/en/materials/Material'>THREE.js Material</a>.")]
+        [Tooltip("Define extra material properties, namely texture encoding, whether to render the material's color and render order. Requires `material` attribute. More properties at <a href='https://threejs.org/docs/#api/en/materials/Material'>THREE.js Material</a>.")]
         public ArenaMaterialExtrasJson MaterialExtras = defMaterialExtras;
         public bool ShouldSerializeMaterialExtras()
         {
             // material-extras
             return (MaterialExtras != defMaterialExtras);
+        }
+
+        private static ArenaModelContainerJson defModelContainer = null;
+        [JsonProperty(PropertyName = "model-container")]
+        [Tooltip("Overrides absolute size for a 3D model. The model can be a glTF, glb, obj, or any other supported format. The model will be rescaled to fit to the sizes specified for each axes.")]
+        public ArenaModelContainerJson ModelContainer = defModelContainer;
+        public bool ShouldSerializeModelContainer()
+        {
+            // model-container
+            return (ModelContainer != defModelContainer);
         }
 
         private static ArenaShadowJson defShadow = null;
@@ -276,9 +353,19 @@ namespace ArenaUnity.Schemas
             return (Sound != defSound);
         }
 
+        private static string defSubmodelParent = "";
+        [JsonProperty(PropertyName = "submodel-parent")]
+        [Tooltip("When this object is parented to a hierarchical model, it attaches to a named sub-component of that model instead of the root position. Requires `parent` attribute.")]
+        public string SubmodelParent = defSubmodelParent;
+        public bool ShouldSerializeSubmodelParent()
+        {
+            // submodel-parent
+            return (SubmodelParent != defSubmodelParent);
+        }
+
         private static ArenaTextinputJson defTextinput = null;
         [JsonProperty(PropertyName = "textinput")]
-        [Tooltip("Opens an HTML prompt when clicked. Sends text input as an event on MQTT. Requires click-listener.")]
+        [Tooltip("Opens an HTML prompt when clicked. Sends text input as an event on MQTT. Requires `click-listener` attribute.")]
         public ArenaTextinputJson Textinput = defTextinput;
         public bool ShouldSerializeTextinput()
         {
@@ -349,7 +436,7 @@ namespace ArenaUnity.Schemas
         private static bool defBuffer = true;
         [JsonProperty(PropertyName = "buffer")]
         [Tooltip("Transform geometry into a BufferGeometry to reduce memory usage at the cost of being harder to manipulate (geometries only: box, circle, cone, ...).")]
-        public bool? Buffer = defBuffer;
+        public bool Buffer = defBuffer;
         public bool ShouldSerializeBuffer()
         {
             // buffer
@@ -387,7 +474,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaMultisrcJson defMultisrc = null;
         [JsonProperty(PropertyName = "multisrc")]
-        [Tooltip("Define multiple visual sources applied to an object.")]
+        [Tooltip("Define multiple visual sources applied to an object. Requires `material` attribute.")]
         public ArenaMultisrcJson Multisrc = defMultisrc;
         public bool ShouldSerializeMultisrc()
         {
@@ -398,7 +485,7 @@ namespace ArenaUnity.Schemas
         private static bool defScreenshareable = true;
         [JsonProperty(PropertyName = "screenshareable")]
         [Tooltip("Whether or not a user can screenshare on an object.")]
-        public bool? Screenshareable = defScreenshareable;
+        public bool Screenshareable = defScreenshareable;
         public bool ShouldSerializeScreenshareable()
         {
             // screenshareable
@@ -408,7 +495,7 @@ namespace ArenaUnity.Schemas
         private static bool defSkipCache = false;
         [JsonProperty(PropertyName = "skipCache")]
         [Tooltip("Disable retrieving the shared geometry object from the cache. (geometries only: box, circle, cone, ...).")]
-        public bool? SkipCache = defSkipCache;
+        public bool SkipCache = defSkipCache;
         public bool ShouldSerializeSkipCache()
         {
             // skipCache
@@ -417,7 +504,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaAnimationMixerJson defAnimationMixer = null;
         [JsonProperty(PropertyName = "animation-mixer")]
-        [Tooltip("A list of available animations can usually be found by inspecting the model file or its documentation. All animations will play by default. To play only a specific set of animations, use wildcards: animation-mixer='clip: run_*'. More properties at <a href='https://github.com/n5ro/aframe-extras/tree/master/src/loaders#animation'>A-Frame Extras Animation</a>.")]
+        [Tooltip("A list of available animations can usually be found by inspecting the model file or its documentation. All animations will play by default. To play only a specific set of animations, use wildcards: animation-mixer='clip: run_*'. Requires `object_type: gltf-model`. More properties at <a href='https://github.com/n5ro/aframe-extras/tree/master/src/loaders#animation'>A-Frame Extras Animation</a>.")]
         public ArenaAnimationMixerJson AnimationMixer = defAnimationMixer;
         public bool ShouldSerializeAnimationMixer()
         {
@@ -427,7 +514,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaGltfMorphJson defGltfMorph = null;
         [JsonProperty(PropertyName = "gltf-morph")]
-        [Tooltip("Allows you to target and control a gltf model's morphTargets created in Blender. More properties at <a href='https://github.com/elbobo/aframe-gltf-morph-component'>A-Frame GLTF Morph</a> component.")]
+        [Tooltip("Allows you to target and control a gltf model's morphTargets created in Blender. Requires `object_type: gltf-model`. More properties at <a href='https://github.com/elbobo/aframe-gltf-morph-component'>A-Frame GLTF Morph</a> component.")]
         public ArenaGltfMorphJson GltfMorph = defGltfMorph;
         public bool ShouldSerializeGltfMorph()
         {
@@ -437,7 +524,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaGltfModelLodJson defGltfModelLod = null;
         [JsonProperty(PropertyName = "gltf-model-lod")]
-        [Tooltip("Simple switch between the default gltf-model and a detailed one when a user camera is within specified distance")]
+        [Tooltip("Simple switch between the default gltf-model and a detailed one when a user camera is within specified distance. Requires `object_type: gltf-model`.")]
         public ArenaGltfModelLodJson GltfModelLod = defGltfModelLod;
         public bool ShouldSerializeGltfModelLod()
         {
@@ -447,7 +534,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaModelUpdateJson defModelUpdate = null;
         [JsonProperty(PropertyName = "modelUpdate")]
-        [Tooltip("The GLTF-specific `modelUpdate` attribute is an object with child component names as keys. The top-level keys are the names of the child components to be updated. The values of each are nested `position` and `rotation` attributes to set as new values, respectively. Either `position` or `rotation` can be omitted if unchanged.")]
+        [Tooltip("The GLTF-specific `modelUpdate` attribute is an object with child component names as keys. The top-level keys are the names of the child components to be updated. The values of each are nested `position` and `rotation` attributes to set as new values, respectively. Either `position` or `rotation` can be omitted if unchanged. Requires `object_type: gltf-model`.")]
         public ArenaModelUpdateJson ModelUpdate = defModelUpdate;
         public bool ShouldSerializeModelUpdate()
         {
