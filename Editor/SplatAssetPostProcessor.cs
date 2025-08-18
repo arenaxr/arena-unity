@@ -1,9 +1,9 @@
-﻿using System.Globalization;
-using System.IO;
+﻿using System.IO;
 using UnityEditor;
 
 namespace ArenaUnity.Editor
 {
+#if LIB_GAUSSIAN_SPLATTING
     public class SplatAssetPostProcessor : AssetPostprocessor
     {
         static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
@@ -24,4 +24,5 @@ namespace ArenaUnity.Editor
             }
         }
     }
+#endif
 }
