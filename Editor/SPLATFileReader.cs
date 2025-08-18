@@ -1,4 +1,4 @@
-﻿// edit from: https://github.com/aras-p/UnityGaussianSplatting/blob/main/package/Editor/Utils/PLYFileReader.cs
+﻿// edit from: https://github.com/aras-p/UnityGaussianSplatting/blob/main/package/Editor/Utils/SPZFileReader.cs
 // edit from: https://github.com/keijiro/SplatVFX/blob/main/jp.keijiro.splat-vfx/Editor/SplatImporter.cs
 
 using System.IO;
@@ -19,6 +19,8 @@ namespace ArenaUnity.Editor
 #if LIB_GAUSSIAN_SPLATTING
     public static class SPLATFileReader
     {
+        // Replicate https://github.com/antimatter15/splat/blob/main/convert.py
+        const float SH_C0 = 0.28209479177387814f;
 
 #pragma warning disable CS0649
 
@@ -45,28 +47,29 @@ namespace ArenaUnity.Editor
                 var src = source[i];
                 var splat = new InputSplatData();
 
+                // position
                 splat.pos = new Vector3(src.px, src.py, src.pz);
 
-                //splat.scale = new Vector3(src.sx, src.sy, src.sz) / 16.0f - new Vector3(10.0f, 10.0f, 10.0f);
-                //splat.scale = GaussianUtils.LinearScale(splat.scale);
+                // scale
                 splat.scale = new Vector3(src.sx, src.sy, src.sz);
 
+                // rotation
                 var q = new float4(src.rx, src.ry, src.rz, src.rw);
                 var qq = math.normalize(q);
                 qq = GaussianUtils.PackSmallest3Rotation(qq);
                 splat.rot = new Quaternion(qq.x, qq.y, qq.z, qq.w);
 
-                splat.opacity = src.a / 255.0f;
-
+                // color
                 Vector3 col = new Vector3(src.r, src.g, src.b);
                 col = col / 255.0f - new Vector3(0.5f, 0.5f, 0.5f);
-                col /= 0.15f;
+                col /= SH_C0;
                 splat.dc0 = GaussianUtils.SH0ToColor(col);
+                splat.opacity = src.a / 255.0f;
 
                 splats[i] = splat;
             }
 
         }
     }
-#endif 
+#endif
 }
