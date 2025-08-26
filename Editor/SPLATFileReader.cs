@@ -54,8 +54,7 @@ namespace ArenaUnity.Editor
                 splat.scale = new Vector3(src.sx, src.sy, src.sz);
 
                 // rotation
-                var q = new float4(src.rx, src.ry, src.rz, src.rw);
-                var qq = math.normalize(q);
+                var qq = (new float4(src.rx, src.ry, src.rz, src.rw) - 128.0f) / 128.0f;
                 qq = GaussianUtils.PackSmallest3Rotation(qq);
                 splat.rot = new Quaternion(qq.x, qq.y, qq.z, qq.w);
 
