@@ -24,6 +24,11 @@ namespace ArenaUnity.Editor
 
 #pragma warning disable CS0649
 
+        // Splat file format
+        // XYZ - Position (Float32)
+        // XYZ - Scale (Float32)
+        // RGBA - Color (uint8)
+        // IJKL - Quaternion rotation (uint8)
         struct ReadData
         {
             public float px, py, pz;
