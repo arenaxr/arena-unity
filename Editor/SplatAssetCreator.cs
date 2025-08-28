@@ -1,20 +1,20 @@
 // Below edit from https://raw.githubusercontent.com/aras-p/UnityGaussianSplatting/refs/heads/main/package/Editor/GaussianSplatAssetCreator.cs
 
-using Unity.Burst;
-using Unity.Mathematics;
-using UnityEngine;
-using UnityEditor;
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
+using Unity.Mathematics;
+using UnityEditor;
+using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 
 #if LIB_GAUSSIAN_SPLATTING
-using GaussianSplatting.Runtime;
 using GaussianSplatting.Editor.Utils;
+using GaussianSplatting.Runtime;
 #endif
 
 namespace ArenaUnity.Editor
@@ -156,6 +156,13 @@ namespace ArenaUnity.Editor
                 return null;
             }
 
+            // if (string.IsNullOrWhiteSpace(m_OutputFolder) || !m_OutputFolder.StartsWith("Assets/"))
+            // {
+            //     m_ErrorMessage = $"Output folder must be within project, was '{m_OutputFolder}'";
+            //     return;
+            // }
+            // Directory.CreateDirectory(m_OutputFolder);
+
             EditorUtility.DisplayProgressBar(kProgressTitle, "Reading data files", 0.0f);
             GaussianSplatAsset.CameraInfo[] cameras = LoadJsonCamerasFile(m_InputFile, m_ImportCameras);
             using NativeArray<InputSplatData> inputSplats = LoadInputSplatFile(m_InputFile);
@@ -186,14 +193,17 @@ namespace ArenaUnity.Editor
                 ClusterSHs(inputSplats, m_FormatSH, out clusteredSHs, out splatSHIndices);
             }
 
+            // mwfarb: use imported local pathname
             string baseName = Path.GetFileName(m_InputFile);
+            // string baseName = Path.GetFileNameWithoutExtension(FilePickerControl.PathToDisplayString(m_InputFile));
 
-            //EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data objects", 0.7f);
+            EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data objects", 0.7f);
             GaussianSplatAsset asset = ScriptableObject.CreateInstance<GaussianSplatAsset>();
             asset.Initialize(inputSplats.Length, m_FormatPos, m_FormatScale, m_FormatColor, m_FormatSH, boundsMin, boundsMax, cameras);
             asset.name = baseName;
 
             var dataHash = new Hash128((uint)asset.splatCount, (uint)asset.formatVersion, 0, 0);
+            // mwfarb: use imported local pathname
             string pathChunk = $"{m_InputFile}_chk.bytes";
             string pathPos = $"{m_InputFile}_pos.bytes";
             string pathOther = $"{m_InputFile}_oth.bytes";
@@ -202,16 +212,11 @@ namespace ArenaUnity.Editor
 
             // if we are using full lossless (FP32) data, then do not use any chunking, and keep data as-is
             bool useChunks = isUsingChunks;
-            EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data chunks", 0.25f);
             if (useChunks)
                 CreateChunkData(inputSplats, pathChunk, ref dataHash);
-            EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data positions", 0.3f);
             CreatePositionsData(inputSplats, pathPos, ref dataHash);
-            EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data others", 0.4f);
             CreateOtherData(inputSplats, pathOther, ref dataHash, splatSHIndices);
-            EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data colors", 0.5f);
             CreateColorData(inputSplats, pathCol, ref dataHash);
-            EditorUtility.DisplayProgressBar(kProgressTitle, "Creating data SHs", 0.6f);
             CreateSHData(inputSplats, pathSh, ref dataHash, clusteredSHs);
             asset.SetDataHash(dataHash);
 
@@ -230,14 +235,15 @@ namespace ArenaUnity.Editor
                 AssetDatabase.LoadAssetAtPath<TextAsset>(pathCol),
                 AssetDatabase.LoadAssetAtPath<TextAsset>(pathSh));
 
-
-            EditorUtility.DisplayProgressBar(kProgressTitle, "Saving assets", 0.99f);
+            // mwfarb: use imported local pathname
             var assetPath = $"{m_InputFile}.asset";
             var savedAsset = CreateOrReplaceAsset(asset, assetPath);
 
             EditorUtility.DisplayProgressBar(kProgressTitle, "Saving assets", 0.99f);
             AssetDatabase.SaveAssets();
             EditorUtility.ClearProgressBar();
+
+            // Selection.activeObject = savedAsset;
 
             return savedAsset;
         }
@@ -252,6 +258,7 @@ namespace ArenaUnity.Editor
             }
             try
             {
+                // (mwfarb): add local SPLATFileReader file reader
                 if (m_InputFormat == InputFormat.PlySpz)
                     GaussianFileReader.ReadFile(filePath, out data);
                 else if (m_InputFormat == InputFormat.Splat)
