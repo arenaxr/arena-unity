@@ -36,23 +36,14 @@ namespace ArenaUnity
                     sobj.transform.SetParent(transform, false);
                     sobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(sobj.transform.localRotation);
                     var mtlpath = ArenaClientScene.Instance.checkLocalAsset(json.Mtl);
-                    if (mtlpath != null)
-                    {
-                        Material mtl = (Material)AssetDatabase.LoadAssetAtPath(mtlpath, typeof(Material));
-                        Renderer renderer = GetComponent<Renderer>();
-                        if (renderer != null && mtl != null)
-                        {
-                            renderer.material = mtl;
-                        }
-                        else
-                        {
-                            Debug.LogError($"Unable to load '{objpath}'");
-                        }
-                    }
-                    else
+                    if (mtlpath == null)
                     {
                         Debug.LogError($"Unable to load '{mtlpath}'");
                     }
+                }
+                else
+                {
+                    Debug.LogError($"Unable to load '{objpath}'");
                 }
             }
 
