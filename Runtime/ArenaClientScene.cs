@@ -682,9 +682,8 @@ namespace ArenaUnity
                 // TODO: case "ocean": ArenaUnity.ApplyWireOcean(indata, gobj); break;
                 // TODO: case "pcd-model": ArenaUnity.ApplyWirePcdModel(indata, gobj); break;
                 // TODO: case "threejs-scene": ArenaUnity.ApplyWireThreejsScene(indata, gobj); break;
-                case "gaussian_splatting":
-                    ArenaUnity.ApplyWireGaussianSplatting(indata, gobj);
-                    break;
+                case "gaussian_splatting": ArenaUnity.ApplyWireGaussianSplatting(indata, gobj); break;
+                case "obj-model": ArenaUnity.ApplyWireObjModel(indata, gobj); break;
                 case "gltf-model":
                     // load main model
                     if (url != null && aobj.gltfUrl == null)
@@ -1250,7 +1249,7 @@ namespace ArenaUnity
         /// <param name="srcFilePath">Local path to the file to upload.</param>
         /// <param name="destFilePath">Destination file path, can include dirs. Defaults to filename from srcFilePath.</param>
         /// <returns></returns>
-        public IEnumerator UploadStoreFile(string srcFilePath, string destFilePath=null)
+        public IEnumerator UploadStoreFile(string srcFilePath, string destFilePath = null)
         {
             if (destFilePath == null)
                 destFilePath = Path.GetFileName(srcFilePath);

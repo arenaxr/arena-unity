@@ -522,6 +522,14 @@ namespace ArenaUnity
             gaussiansplatting.apply = true;
         }
 
+        public static void ApplyWireObjModel(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireObjModel>(out var objmodel))
+                objmodel = gobj.AddComponent<ArenaWireObjModel>();
+            objmodel.json = JsonConvert.DeserializeObject<ArenaObjModelJson>(MergeRawJson(objmodel.json, indata));
+            objmodel.apply = true;
+        }
+
         //ARENAUI Objects
         public static void ApplyWireArenauiCard(object indata, GameObject gobj)
         {
