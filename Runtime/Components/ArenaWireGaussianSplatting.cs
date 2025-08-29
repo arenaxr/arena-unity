@@ -74,7 +74,7 @@ namespace ArenaUnity
 
             // load required shaders
             gaussiansplat.m_ShaderSplats = Shader.Find("Gaussian Splatting/Render Splats");
-            gaussiansplat.m_ShaderComposite = Shader.Find("Hidden/Gaussian Splatting/Composite");
+            gaussiansplat.m_ShaderComposite = Shader.Find("Hidden/Gaussian Splatting/CompositeArena");
             gaussiansplat.m_ShaderDebugPoints = Shader.Find("Gaussian Splatting/Debug/Render Points");
             gaussiansplat.m_ShaderDebugBoxes = Shader.Find("Gaussian Splatting/Debug/Render Boxes");
             ComputeShader[] compShaders = Resources.FindObjectsOfTypeAll<ComputeShader>();
