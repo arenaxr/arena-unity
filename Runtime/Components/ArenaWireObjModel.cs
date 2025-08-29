@@ -35,10 +35,13 @@ namespace ArenaUnity
                     GameObject sobj = Instantiate(objpre);
                     sobj.transform.SetParent(transform, false);
                     sobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(sobj.transform.localRotation);
-                    var mtlpath = ArenaClientScene.Instance.checkLocalAsset(json.Mtl);
-                    if (mtlpath == null)
+                    if (!string.IsNullOrEmpty(json.Mtl))
                     {
-                        Debug.LogError($"Unable to load '{mtlpath}'");
+                        var mtlpath = ArenaClientScene.Instance.checkLocalAsset(json.Mtl);
+                        if (mtlpath == null)
+                        {
+                            Debug.LogError($"Unable to load '{mtlpath}'");
+                        }
                     }
                 }
                 else
