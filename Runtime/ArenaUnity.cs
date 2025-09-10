@@ -521,6 +521,13 @@ namespace ArenaUnity
             gaussiansplatting.json = JsonConvert.DeserializeObject<ArenaGaussianSplattingJson>(MergeRawJson(gaussiansplatting.json, indata));
             gaussiansplatting.apply = true;
         }
+        public static void ApplyWirePcdModel(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWirePcdModel>(out var pcdmodel))
+                pcdmodel = gobj.AddComponent<ArenaWirePcdModel>();
+            pcdmodel.json = JsonConvert.DeserializeObject<ArenaPcdModelJson>(MergeRawJson(pcdmodel.json, indata));
+            pcdmodel.apply = true;
+        }
 
         public static void ApplyWireObjModel(object indata, GameObject gobj)
         {

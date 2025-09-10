@@ -29,6 +29,7 @@ namespace ArenaUnity.Editor
                     case ".ply":
                     case ".spz":
                     case ".splat":
+                    case ".pcd":
                         var splat = new SplatAssetCreator();
                         var gsa = splat.ImportSplatData(asset);
                         AssetDatabase.SaveAssets();

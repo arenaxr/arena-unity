@@ -35,6 +35,9 @@ namespace ArenaUnity.Editor
                 case ".splat":
                     m_InputFormat = InputFormat.Splat;
                     break;
+                case ".pcd":
+                    m_InputFormat = InputFormat.Pcd ;
+                    break;
             }
             m_InputFile = path;
 
@@ -64,6 +67,7 @@ namespace ArenaUnity.Editor
             Invalid,
             PlySpz,
             Splat,
+            Pcd,
         }
 
         [SerializeField] InputFormat m_InputFormat;
@@ -263,6 +267,8 @@ namespace ArenaUnity.Editor
                     GaussianFileReader.ReadFile(filePath, out data);
                 else if (m_InputFormat == InputFormat.Splat)
                     SPLATFileReader.ReadFile(filePath, out data);
+                else if (m_InputFormat == InputFormat.Pcd)
+                    PCDFileReader.ReadFile(filePath, out data);
             }
             catch (Exception ex)
             {

@@ -64,6 +64,7 @@ namespace ArenaUnity
                 sobj.transform.SetParent(transform, false);
                 gaussiansplat = sobj.AddComponent<GaussianSplatRenderer>();
             }
+            gaussiansplat.m_RenderMode = GaussianSplatRenderer.RenderMode.Splats;
 
             // assign splat cutout
             if (json.CutoutEntity != null)

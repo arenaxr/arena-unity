@@ -683,6 +683,7 @@ namespace ArenaUnity
                 // TODO: case "pcd-model": ArenaUnity.ApplyWirePcdModel(indata, gobj); break;
                 // TODO: case "threejs-scene": ArenaUnity.ApplyWireThreejsScene(indata, gobj); break;
                 case "gaussian_splatting": ArenaUnity.ApplyWireGaussianSplatting(indata, gobj); break;
+                case "pcd-model": ArenaUnity.ApplyWirePcdModel(indata, gobj); break;
                 case "obj-model": ArenaUnity.ApplyWireObjModel(indata, gobj); break;
                 case "gltf-model":
                     // load main model
