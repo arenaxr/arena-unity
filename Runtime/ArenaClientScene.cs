@@ -1455,7 +1455,7 @@ namespace ArenaUnity
                     case "x":
                     case "u":
                     case "o":
-                        // handle scene objects, user objects, user presense
+                        // handle scene objects, user objects, user presence
                         ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
                         StartCoroutine(ProcessArenaMessage(msg));
                         break;

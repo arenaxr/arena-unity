@@ -48,8 +48,8 @@ namespace ArenaUnity
         public bool logMqttSceneObjects = false;
         [Tooltip("Console log MQTT user object messages")]
         public bool logMqttUserObjects = false;
-        [Tooltip("Console log MQTT user presense messages")]
-        public bool logMqttUserPresense = false;
+        [Tooltip("Console log MQTT user presence messages")]
+        public bool logMqttUserPresence = false;
         [Tooltip("Console log MQTT render fusion messsages")]
         public bool logMqttRemoteRender = false;
         [Tooltip("Console log MQTT scene chat messsages")]
@@ -233,7 +233,7 @@ namespace ArenaUnity
             switch (sceneMsgType)
             {
                 case "x":
-                    if (logMqttUserPresense) log = true;
+                    if (logMqttUserPresence) log = true;
                     break;
                 case "o":
                     if (logMqttSceneObjects) log = true;
