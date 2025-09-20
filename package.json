@@ -9,8 +9,8 @@
   "licensesUrl": "https://github.com/arenaxr/arena-unity/blob/main/LICENSE",
   "dependencies": {
     "com.unity.burst": "1.8.8",
-    "com.unity.cloud.draco": "5.1.8",
-    "com.unity.cloud.gltfast": "6.13.0",
+    "com.unity.cloud.draco": "5.2.0",
+    "com.unity.cloud.gltfast": "6.13.1",
     "com.unity.cloud.ktx": "3.4.5",
     "com.unity.collab-proxy": "1.2.16",
     "com.unity.collections": "2.1.4",
