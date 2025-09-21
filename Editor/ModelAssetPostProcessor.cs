@@ -1,10 +1,18 @@
 ﻿using System.IO;
 using UnityEditor;
+using UnityEngine;
 
 namespace ArenaUnity.Editor
 {
     public class ModelAssetPostProcessor : AssetPostprocessor
     {
+        public Material OnAssignMaterialModel(Material material, Renderer renderer)
+        {
+            ModelImporter importer = (ModelImporter)assetImporter;
+            importer.AddRemap(new AssetImporter.SourceAssetIdentifier(material), (Material)AssetDatabase.LoadAssetAtPath("Assets/ProfilingData/Materials/material.2.mat", typeof(Material)));
+            return null;
+        }
+
         void OnPreprocessModel()
         {
             // TODO (mwfarb): might only be needed for .mtl import of .obj models
@@ -14,8 +22,12 @@ namespace ArenaUnity.Editor
 
             var modelImporter = assetImporter as ModelImporter;
             modelImporter.materialImportMode = ModelImporterMaterialImportMode.ImportStandard;
-            modelImporter.materialLocation = ModelImporterMaterialLocation.External;
-            modelImporter.materialSearch = ModelImporterMaterialSearch.RecursiveUp;
+            modelImporter.useSRGBMaterialColor = true;
+            modelImporter.materialLocation = ModelImporterMaterialLocation.InPrefab;
+            modelImporter.SearchAndRemapMaterials(
+                ModelImporterMaterialName.BasedOnMaterialName,
+                ModelImporterMaterialSearch.Local);
+            modelImporter.SaveAndReimport();
         }
 
         static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)

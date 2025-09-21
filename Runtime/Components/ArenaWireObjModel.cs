@@ -42,6 +42,10 @@ namespace ArenaUnity
                         {
                             Debug.LogError($"Unable to load '{mtlpath}'");
                         }
+                        //else
+                        //{
+                        //    sobj.
+                        //}
                     }
                 }
                 else
