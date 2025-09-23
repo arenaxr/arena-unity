@@ -44,13 +44,17 @@ namespace ArenaUnity
 
         public string realm { get; private set; }
 
-        [Header("Presence")]
+        [Header("Rendering")]
+        [Tooltip("Display objects in ARENA Persist storage")]
+        public bool loadPersistedObjects = true;
+        [Tooltip("Display objects updated live from ARENA MQTT")]
+        public bool loadLiveObjects = true;
         [Tooltip("Display other camera avatars in the scene")]
         public bool renderCameras = true;
         [Tooltip("Display other avatars' hand controllers in the scene")]
         public bool renderHands = true;
         [Tooltip("Display VR Controller Rays")]
-        public bool drawControllerRays = false;
+        public bool renderHandRays = false;
 
         /// <summary>
         /// Browser URL for the scene.
@@ -258,7 +262,10 @@ namespace ArenaUnity
             }
 
             // get persistence objects
-            StartCoroutine(SceneLoadPersist());
+            if (loadPersistedObjects)
+            {
+                StartCoroutine(SceneLoadPersist());
+            }
         }
 
         /// <summary>
@@ -948,7 +955,7 @@ namespace ArenaUnity
                         // makes the child keep its local orientation rather than its global orientation
                         hmobj.transform.SetParent(gobj.transform, worldPositionStays);
 
-                        if (drawControllerRays)
+                        if (renderHandRays)
                         {
                             gobj.AddComponent<ArenaHand>();
                         }
@@ -1457,7 +1464,10 @@ namespace ArenaUnity
                     case "o":
                         // handle scene objects, user objects, user presence
                         ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
-                        StartCoroutine(ProcessArenaMessage(msg));
+                        if (loadLiveObjects)
+                        {
+                            StartCoroutine(ProcessArenaMessage(msg));
+                        }
                         break;
                     case "r": // remote render handled by arena-renderfusion package currently
                     case "c": // chat not implemented in unity currently
