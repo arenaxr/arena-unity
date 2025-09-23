@@ -2,6 +2,22 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.4.0](https://github.com/arenaxr/arena-unity/compare/v1.3.0...v1.4.0) (2025-09-23)
+
+
+### Features
+
+* **obj-model:** add support for .obj model file rendering ([a745815](https://github.com/arenaxr/arena-unity/commit/a7458156a5a5bd4bc9e15ea06fce385aff5a4f7a))
+
+
+### Bug Fixes
+
+* **obj-model:** add .mtl file load ([8a7edb2](https://github.com/arenaxr/arena-unity/commit/8a7edb24e77eef93df8672f2e2584f4e13b33261))
+* **obj-model:** add .mtl file load ([387f7bc](https://github.com/arenaxr/arena-unity/commit/387f7bc0ad4c8c98d510dffbfecc180ab1aa6949))
+* **scene:** add ability to disable loading of persist/live objects ([480c74a](https://github.com/arenaxr/arena-unity/commit/480c74a6ff102737cb2d1828843a45a0990d72b7))
+* **splat:** improve .splat rotation bytes unpacking ([3a09dba](https://github.com/arenaxr/arena-unity/commit/3a09dbab92bd13a8d0af322c48fff8909df02fdb))
+* **splat:** merge upstream splat background shading ([52a73b0](https://github.com/arenaxr/arena-unity/commit/52a73b0fffc4ce364de4cc7272bdf243e2f897b2))
+
 ## [1.3.0](https://github.com/arenaxr/arena-unity/compare/v1.2.4...v1.3.0) (2025-08-19)
 
 
