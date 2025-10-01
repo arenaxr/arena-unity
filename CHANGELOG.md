@@ -2,6 +2,13 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.4.1](https://github.com/arenaxr/arena-unity/compare/v1.4.0...v1.4.1) (2025-10-01)
+
+
+### Bug Fixes
+
+* **editor:** remove editor links from inherited pretty_object ([4a06ceb](https://github.com/arenaxr/arena-unity/commit/4a06cebc41301e2466b2cac9802b47d5de95a352))
+
 ## [1.4.0](https://github.com/arenaxr/arena-unity/compare/v1.3.0...v1.4.0) (2025-09-23)
 
 
