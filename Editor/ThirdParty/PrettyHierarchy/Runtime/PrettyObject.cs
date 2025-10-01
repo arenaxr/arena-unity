@@ -1,23 +1,26 @@
 ﻿// Modified from: https://github.com/NCEEGEE/PrettyHierarchy
 
 using System;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace PrettyHierarchy
 {
+    // TODO (mwfarb): refactor this dependency out of runtime-only builds
     [DisallowMultipleComponent]
     public class PrettyObject : MonoBehaviour
     {
+        private bool hasPermissions;
+        public bool HasPermissions { get { return hasPermissions; } set { hasPermissions = value; } }
+
+#if UNITY_EDITOR
         public static Color32 ColorDarkAllow = new Color32(0, 255, 0, 255); // green
         public static Color32 ColorLightAllow = new Color32(0, 128, 0, 255); // dark green
 
         public static Color32 ColorDarkDisallow = new Color32(255, 165, 0, 255); //orange
         public static Color32 ColorLightDisallow = new Color32(204, 85, 0, 255); // dark orange
-
-        private bool hasPermissions;
-
-        public bool HasPermissions { get { return hasPermissions; } set { hasPermissions = value; } }
 
         private Color32 UpdateTextColor()
         {
@@ -66,5 +69,6 @@ namespace PrettyHierarchy
         {
             EditorApplication.RepaintHierarchyWindow();
         }
+#endif
     }
 }
