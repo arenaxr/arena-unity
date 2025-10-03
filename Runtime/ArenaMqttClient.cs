@@ -328,9 +328,9 @@ namespace ArenaUnity
         void ShowDeviceAuthWindow(int windowID)
         {
             GUIUtility.systemCopyBuffer = dev_user_code;
-            GUILayout.Label($"Enter device code <b>{dev_user_code}</b> at webpage <b>{dev_verification_url}</b>.");
+            GUILayout.Label($"\nEnter device code <b>{dev_user_code}</b> at webpage <b>{dev_verification_url}</b>.");
             GUILayout.Label($"The device code has been copied to your clipboard.");
-            GUILayout.Label($"Click the button below to open webpage.");
+            GUILayout.Label($"Click the button below to open webpage.\n");
 
             if (GUILayout.Button($"Go to <a href='{dev_verification_url}'>{dev_verification_url}</a>"))
             {
@@ -343,11 +343,17 @@ namespace ArenaUnity
             // show device auth window if headless mode for user auth, do not draw otherwise
             if (showDeviceAuthWindow)
             {
-                int windowWidth = (int)(Screen.width * .5);
-                int windowHeight = (int)(Screen.height * .5);
-                int x = (Screen.width - windowWidth) / 2;
-                int y = (Screen.height - windowHeight) / 2;
+                var screenPct = 0.75f;
+                int windowWidth = (int)(Screen.width * screenPct);
+                int windowHeight = (int)(Screen.height * screenPct);
+                int x = (int)((Screen.width - windowWidth) * (1 - screenPct) * 2);
+                int y = (int)((Screen.height - windowHeight) * (1 - screenPct) * 2);
                 var winRect = new Rect(x, y, windowWidth, windowHeight);
+                var fontFactor = windowWidth / 400;
+                GUI.skin.window.wordWrap = true;
+                GUI.skin.window.fontSize = 16 * fontFactor;
+                GUI.skin.button.fontSize = 12 * fontFactor;
+                GUI.skin.label.fontSize = 12 * fontFactor;
 
                 GUI.ModalWindow(0, winRect, ShowDeviceAuthWindow, "ARENA Device Authorization");
             }
