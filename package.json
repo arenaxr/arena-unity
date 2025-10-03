@@ -10,8 +10,8 @@
   "dependencies": {
     "com.unity.burst": "1.8.8",
     "com.unity.cloud.draco": "5.2.0",
-    "com.unity.cloud.gltfast": "6.13.1",
-    "com.unity.cloud.ktx": "3.4.5",
+    "com.unity.cloud.gltfast": "6.14.1",
+    "com.unity.cloud.ktx": "3.5.0",
     "com.unity.collab-proxy": "1.2.16",
     "com.unity.collections": "2.1.4",
     "com.unity.editorcoroutines": "1.0.0",
