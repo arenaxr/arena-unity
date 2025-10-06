@@ -2,6 +2,14 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.4.2](https://github.com/arenaxr/arena-unity/compare/v1.4.1...v1.4.2) (2025-10-03)
+
+
+### Bug Fixes
+
+* **auth:** make headless dialog text scalable, fixes [#145](https://github.com/arenaxr/arena-unity/issues/145) ([b25df3d](https://github.com/arenaxr/arena-unity/commit/b25df3df9782bca665c5ada0f1e85a12e34e0530))
+* **package:** reduce dependancy management to non-auto-included deps ([8d1a734](https://github.com/arenaxr/arena-unity/commit/8d1a73431775cc912d0ef988716615a584c2f7aa))
+
 ## [1.4.1](https://github.com/arenaxr/arena-unity/compare/v1.4.0...v1.4.1) (2025-10-01)
 
 
