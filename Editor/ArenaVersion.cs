@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
@@ -57,19 +58,19 @@ namespace ArenaUnity.Editor
             string projManifestPath = Path.Combine("Packages", "manifest.json");
             JObject joProjManifestIn = JObject.Parse(File.ReadAllText(projManifestPath));
 
-            //{
-            //    'name': 'Unity NuGet',
-            //    'url': 'https://unitynuget-registry.openupm.com',
-            //    'scopes': [
-            //        'org.nuget'
-            //  ]
-            //},
             string jsonScopedRegReq = @"{'scopedRegistries': [
                 {
                     'name': 'package.openupm.com',
                     'url': 'https://package.openupm.com',
                     'scopes': [
                         'org.nesnausk.gaussian-splatting'
+                    ]
+                },
+                {
+                    'name': 'registry.npmjs.com',
+                    'url': 'https://registry.npmjs.com',
+                    'scopes': [
+                        'jp.keijiro'
                     ]
                 }
             ]}";
@@ -107,17 +108,19 @@ namespace ArenaUnity.Editor
 
             // TODO wait for scoped registry to load
 
+            // add required packages from scoped registries
+            List<string> add_packages = new List<string>();
+            List<string> rm_packages = new List<string>();
 #if LIB_URP && !UNITY_6000_0_OR_NEWER
             // depending on project migration, users may need to manually remove:
             // - Package Manager: org.nesnausk.gaussian-splatting
             // - Project Settings - Player: Scripted Define Symbol: LIB_GAUSSIAN_SPLATTING
             Debug.LogWarning("Gaussian Splatting in URP requires Unity 6+. Package not included: org.nesnausk.gaussian-splatting");
 #else
-            // add required packages from scoped registries
-            UpdatePackages(new string[]{
-                "org.nesnausk.gaussian-splatting@1.1.1"
-            }, new string[] { });
+            add_packages.Add("org.nesnausk.gaussian-splatting@1.1.1");
 #endif
+            add_packages.Add("jp.keijiro.apriltag@1.0.2");
+            UpdatePackages(add_packages.ToArray(), rm_packages.ToArray());
         }
 
         private static void UpdateMissingPlayerSettings()

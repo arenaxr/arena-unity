@@ -39,6 +39,11 @@
             "name": "org.nesnausk.gaussian-splatting",
             "expression": "",
             "define": "LIB_GAUSSIAN_SPLATTING"
+        },
+        {
+            "name": "jp.keijiro.apriltag",
+            "expression": "",
+            "define": "LIB_APRILTAG"
         }
     ],
     "noEngineReferences": false
