@@ -3,11 +3,11 @@ Copyright (c) 2013, 2014 Paolo Patierno
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
-and Eclipse Distribution License v1.0 which accompany this distribution.
+and Eclipse Distribution License v1.0 which accompany this distribution. 
 
-The Eclipse Public License is available at
+The Eclipse Public License is available at 
    http://www.eclipse.org/legal/epl-v10.html
-and the Eclipse Distribution License is available at
+and the Eclipse Distribution License is available at 
    http://www.eclipse.org/org/documents/edl-v10.php.
 
 Contributors:
@@ -30,8 +30,6 @@ using System.Net.Sockets;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System;
-using System.Net.Security;
-using System.Security.Authentication;
 
 namespace uPLibrary.Networking.M2Mqtt
 {
@@ -125,7 +123,7 @@ namespace uPLibrary.Networking.M2Mqtt
         {
 
         }
-
+        
         /// <summary>
         /// Constructor
         /// </summary>
@@ -265,7 +263,7 @@ namespace uPLibrary.Networking.M2Mqtt
                     clientCertificates,
                     MqttSslUtility.ToSslPlatformEnum(this.sslProtocol),
                     false);
-
+                
 #endif
             }
 #endif
@@ -424,7 +422,7 @@ namespace uPLibrary.Networking.M2Mqtt
 #if (!MF_FRAMEWORK_VERSION_V4_2 && !MF_FRAMEWORK_VERSION_V4_3)
             return ipAddress.AddressFamily;
 #else
-            return (ipAddress.ToString().IndexOf(':') != -1) ?
+            return (ipAddress.ToString().IndexOf(':') != -1) ? 
                 AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork;
 #endif
         }
@@ -435,7 +433,25 @@ namespace uPLibrary.Networking.M2Mqtt
     /// </summary>
     public static class MqttSslUtility
     {
-#if (!MF_FRAMEWORK_VERSION_V4_2 && !MF_FRAMEWORK_VERSION_V4_3 && !COMPACT_FRAMEWORK)
+#if (UNITY_EDITOR || !NET_4_6)
+        public static SslProtocols ToSslPlatformEnum(MqttSslProtocols mqttSslProtocol)
+        {
+            switch (mqttSslProtocol)
+            {
+                case MqttSslProtocols.None:
+                    return SslProtocols.None;
+                case MqttSslProtocols.TLSv1_0:
+                    return SslProtocols.Tls;
+                case MqttSslProtocols.TLSv1_1:
+                    return SslProtocols.Tls11;
+                case MqttSslProtocols.TLSv1_2:
+                    return SslProtocols.Tls12;
+                case MqttSslProtocols.SSLv3:
+                default:
+                    throw new ArgumentException("SSL/TLS protocol version not supported");
+            }
+        }
+#elif (!MF_FRAMEWORK_VERSION_V4_2 && !MF_FRAMEWORK_VERSION_V4_3 && !COMPACT_FRAMEWORK)
         public static SslProtocols ToSslPlatformEnum(MqttSslProtocols mqttSslProtocol)
         {
             switch (mqttSslProtocol)

@@ -56,7 +56,7 @@ namespace uPLibrary.Networking.M2Mqtt.Messages
         string[] topics;
         // QOS levels related to topics
         byte[] qosLevels;
-        
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -64,7 +64,7 @@ namespace uPLibrary.Networking.M2Mqtt.Messages
         {
             this.type = MQTT_MSG_SUBSCRIBE_TYPE;
         }
-        
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -100,7 +100,9 @@ namespace uPLibrary.Networking.M2Mqtt.Messages
             {
                 // [v3.1.1] check flag bits
                 if ((fixedHeaderFirstByte & MSG_FLAG_BITS_MASK) != MQTT_MSG_SUBSCRIBE_FLAG_BITS)
+                {
                     throw new MqttClientException(MqttClientErrorCode.InvalidFlagBits);
+                }
             }
 
             // get remaining length and allocate buffer
@@ -129,7 +131,7 @@ namespace uPLibrary.Networking.M2Mqtt.Messages
             // payload contains topics and QoS levels
             // NOTE : before, I don't know how many topics will be in the payload (so use List)
 
-// if .Net Micro Framework
+            // if .Net Micro Framework
 #if (MF_FRAMEWORK_VERSION_V4_2 || MF_FRAMEWORK_VERSION_V4_3)
             IList tmpTopics = new ArrayList();
             IList tmpQosLevels = new ArrayList();
@@ -176,16 +178,19 @@ namespace uPLibrary.Networking.M2Mqtt.Messages
 
             // topics list empty
             if ((this.topics == null) || (this.topics.Length == 0))
+            {
                 throw new MqttClientException(MqttClientErrorCode.TopicsEmpty);
-
+            }
             // qos levels list empty
             if ((this.qosLevels == null) || (this.qosLevels.Length == 0))
+            {
                 throw new MqttClientException(MqttClientErrorCode.QosLevelsEmpty);
-
+            }
             // topics and qos levels lists length don't match
             if (this.topics.Length != this.qosLevels.Length)
+            {
                 throw new MqttClientException(MqttClientErrorCode.TopicsQosLevelsNotMatch);
-
+            }
             // message identifier
             varHeaderSize += MESSAGE_ID_SIZE;
 
@@ -196,7 +201,9 @@ namespace uPLibrary.Networking.M2Mqtt.Messages
             {
                 // check topic length
                 if ((this.topics[topicIdx].Length < MIN_TOPIC_LENGTH) || (this.topics[topicIdx].Length > MAX_TOPIC_LENGTH))
+                {
                     throw new MqttClientException(MqttClientErrorCode.TopicLength);
+                }
 
                 topicsUtf8[topicIdx] = Encoding.UTF8.GetBytes(this.topics[topicIdx]);
                 payloadSize += 2; // topic size (MSB, LSB)
@@ -223,7 +230,9 @@ namespace uPLibrary.Networking.M2Mqtt.Messages
 
             // first fixed header byte
             if (protocolVersion == MqttMsgConnect.PROTOCOL_VERSION_V3_1_1)
+            {
                 buffer[index++] = (MQTT_MSG_SUBSCRIBE_TYPE << MSG_TYPE_OFFSET) | MQTT_MSG_SUBSCRIBE_FLAG_BITS; // [v.3.1.1]
+            }
             else
             {
                 buffer[index] = (byte)((MQTT_MSG_SUBSCRIBE_TYPE << MSG_TYPE_OFFSET) |
@@ -231,13 +240,15 @@ namespace uPLibrary.Networking.M2Mqtt.Messages
                 buffer[index] |= this.dupFlag ? (byte)(1 << DUP_FLAG_OFFSET) : (byte)0x00;
                 index++;
             }
-            
+
             // encode remaining length
             index = this.encodeRemainingLength(remainingLength, buffer, index);
 
             // check message identifier assigned (SUBSCRIBE uses QoS Level 1, so message id is mandatory)
             if (this.messageId == 0)
+            {
                 throw new MqttClientException(MqttClientErrorCode.WrongMessageId);
+            }
             buffer[index++] = (byte)((messageId >> 8) & 0x00FF); // MSB
             buffer[index++] = (byte)(messageId & 0x00FF); // LSB 
 
@@ -253,7 +264,7 @@ namespace uPLibrary.Networking.M2Mqtt.Messages
                 // requested QoS
                 buffer[index++] = this.qosLevels[topicIdx];
             }
-            
+
             return buffer;
         }
 
