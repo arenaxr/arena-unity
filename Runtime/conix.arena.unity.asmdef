@@ -30,6 +30,11 @@
             "define": "LIB_HDRP"
         },
         {
+            "name": "io.conix.arena.unity",
+            "expression": "",
+            "define": "SSL"
+        },
+        {
             "name": "org.nesnausk.gaussian-splatting",
             "expression": "",
             "define": "LIB_GAUSSIAN_SPLATTING"

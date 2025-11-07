@@ -123,8 +123,8 @@ namespace ArenaUnity.Editor
         private static void UpdateMissingPlayerSettings()
         {
             // add scripting define symbols required
-            string[] definesAdd = { "SSL" };
-            string[] definesRm = { "LIB_GAUSSIAN_SPLATTING" }; // some defines moved to asmdef
+            string[] definesAdd = { };
+            string[] definesRm = { "SSL", "LIB_GAUSSIAN_SPLATTING" }; // some defines moved to asmdef
             NamedBuildTarget buildTarget = CurrentNamedBuildTarget;
             PlayerSettings.GetScriptingDefineSymbols(buildTarget, out string[] defines);
             string[] definesUpdate = defines.Where(s => !definesRm.Contains(s)).ToArray();
