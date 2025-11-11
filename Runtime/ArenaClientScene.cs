@@ -798,13 +798,13 @@ namespace ArenaUnity
             }
 
             // apply rendering visibility attributes, before other on-wire object attributes
-            if (data.Visible != null && (bool)data.Visible) // visible, if set is highest priority to enable/disable renderer
+            if (data.Visible != null && !(bool)data.Visible) // visible, if set is highest priority to enable/disable renderer
             {
                 ArenaUnity.ApplyVisible(gobj, data);
-                if (data.RemoteRender != null) // remote-render, if set is lowest priority to enable/disable renderer
-                {
-                    ArenaUnity.ApplyRemoteRender(gobj, data);
-                }
+            }
+            else if (data.RemoteRender != null) // remote-render, if set is lowest priority to enable/disable renderer
+            {
+                ArenaUnity.ApplyRemoteRender(gobj, data);
             }
 
             // handle non-wire object attributes, as they occur in json
