@@ -2,6 +2,15 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.4.3](https://github.com/arenaxr/arena-unity/compare/v1.4.2...v1.4.3) (2025-11-11)
+
+
+### Bug Fixes
+
+* **mqtt:** migrate m2mqtt SSL define to assembly ([96aa291](https://github.com/arenaxr/arena-unity/commit/96aa2912543bc7fbe40952e241e97d786ccfa58c))
+* **remote-render:** corrected visible property fall though that ignored remote-remder ([338199a](https://github.com/arenaxr/arena-unity/commit/338199a2a5468eea9d29c75835c7c64c442018ce))
+* **visible:** 1st prio !visible 2nd remote-render !enabled ([85e6afe](https://github.com/arenaxr/arena-unity/commit/85e6afe5da69d4622126df976ca762a42f7f1ae4))
+
 ## [1.4.2](https://github.com/arenaxr/arena-unity/compare/v1.4.1...v1.4.2) (2025-10-03)
 
 
