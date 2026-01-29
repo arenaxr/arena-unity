@@ -60,6 +60,10 @@ namespace ArenaUnity.Editor
 
                 // rotation
                 var qq = (new float4(src.rx, src.ry, src.rz, src.rw) - 128.0f) / 128.0f;
+                // attempt to replicate negation of quaternion while unpacking like a-frame gaussian-splatting
+                // https://github.com/quadjr/aframe-gaussian-splatting/blob/main/index.js#L344
+                qq = new float4(-qq.x, qq.y, -qq.z, qq.w);
+                qq = math.normalize(qq);
                 qq = GaussianUtils.PackSmallest3Rotation(qq);
                 splat.rot = new Quaternion(qq.x, qq.y, qq.z, qq.w);
 
