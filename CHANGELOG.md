@@ -2,6 +2,13 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.4.4](https://github.com/arenaxr/arena-unity/compare/v1.4.3...v1.4.4) (2026-01-29)
+
+
+### Bug Fixes
+
+* **splat:** replicate negation of quaternion while unpacking like a-frame gaussian-splatting ([5d905ee](https://github.com/arenaxr/arena-unity/commit/5d905ee11deb61c33287063ebe59317a22a274e6))
+
 ## [1.4.3](https://github.com/arenaxr/arena-unity/compare/v1.4.2...v1.4.3) (2025-11-11)
 
 
