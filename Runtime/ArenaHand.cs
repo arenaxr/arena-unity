@@ -10,7 +10,7 @@ namespace ArenaUnity
     /// <summary>
     /// Temporary manager of drawing remote rays from hand controllers
     /// TODO (mwfarb): resolve oculus-touch controls publishing +43 x-axis rotation orientationOffset from arena-web
-    /// TODO (mwfarb): set a proper arena-hand manager when we integrate with unity vr helmets
+    /// TODO (mwfarb): set a proper arena-hand manager when we integrate with unity vr headsets
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(ArenaObject))]
