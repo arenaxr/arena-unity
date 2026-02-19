@@ -36,12 +36,28 @@ namespace ArenaUnity.Editor
         // first version to avoid hitting Github's rate-limit
         private const string GH_RATE_LIMIT_VERSION = "0.0.4";
 
+        internal static string InstalledVersion = "0.0.0";
+        internal static string LatestVersion = GH_RATE_LIMIT_VERSION;
+        internal static bool IsNewVersionAvailable = false;
+
+        // Use project-specific keys to ensure settings are isolated per project
+        private static string GetKey(string suffix) => $"ArenaUnity_{Application.productName}_{suffix}";
+        private static string KeyCheckTime => GetKey("GitVersionCheckTime");
+        private static string KeyLatestVersion => GetKey("GitVersionLatest");
+
         static ArenaVersion()
         {
-            long time = (long)PlayerPrefs.GetFloat("GitVersionCheckTime", 0);
+            // Get local version immediately
+            InstalledVersion = LocalVersion();
+
+            long time = (long)PlayerPrefs.GetFloat(KeyCheckTime, 0);
             TimeSpan t = DateTime.UtcNow - new DateTime(time);
             // only check github every 24 hours to avoid hitting api rate limit
             if (t.TotalDays > 1f) checkGithub = true;
+
+            // Load last known latest version
+            LatestVersion = PlayerPrefs.GetString(KeyLatestVersion, GH_RATE_LIMIT_VERSION).Trim('v');
+            CheckVersionStatus();
 
             _listRequest = Client.List();
             EditorApplication.update += OnUpdate;
@@ -49,6 +65,14 @@ namespace ArenaUnity.Editor
             UpdateMissingPackages();
             UpdateMissingPlayerSettings();
             UpdateMissingAssets();
+        }
+
+        private static void CheckVersionStatus()
+        {
+            if (Version.TryParse(InstalledVersion, out var local) && Version.TryParse(LatestVersion, out var latest))
+            {
+                IsNewVersionAvailable = local < latest;
+            }
         }
 
         private static void UpdateMissingPackages()
@@ -180,34 +204,45 @@ namespace ArenaUnity.Editor
             if (_listRequest.Status == StatusCode.Success)
             {
                 var package = _listRequest.Result.FirstOrDefault(p => p.name == unityPackageName);
-                if (package != null && Version.TryParse(package.version.Trim('v'), out var local))
+                if (package != null)
                 {
-                    // Check unity package manager/github automated version manager
-                    if (Version.TryParse(package.versions.latest.Trim('v'), out var latest))
+                    InstalledVersion = package.version.Trim('v');
+
+                    if (Version.TryParse(InstalledVersion, out var local))
                     {
-                        if (local < latest)
+                        // Check unity package manager/github automated version manager
+                        if (Version.TryParse(package.versions.latest.Trim('v'), out var latest))
                         {
-                            Debug.LogWarning(UpgradeMessage(local, latest));
-                        }
-                    }
-                    else
-                    {
-                        // Minimal, check last saved version check
-                        string latest_sav = PlayerPrefs.GetString("GitVersionLatest", GH_RATE_LIMIT_VERSION).Trim('v');
-                        if (Version.TryParse(latest_sav, out latest))
-                        {
+                            LatestVersion = package.versions.latest.Trim('v');
                             if (local < latest)
                             {
                                 Debug.LogWarning(UpgradeMessage(local, latest));
                             }
                         }
+                        else
+                        {
+                            // Minimal, check last saved version check
+                            LatestVersion = PlayerPrefs.GetString(KeyLatestVersion, GH_RATE_LIMIT_VERSION).Trim('v');
+                            if (Version.TryParse(LatestVersion, out latest))
+                            {
+                                if (local < latest)
+                                {
+                                    Debug.LogWarning(UpgradeMessage(local, latest));
+                                }
+                            }
+                        }
+                        // Check github directly next
+                        if (checkGithub)
+                        {
+                            EditorCoroutineUtility.StartCoroutineOwnerless(CheckGithubVersion(local));
+                        }
+                        else
+                        {
+                            // If not checking github, still re-evaluate status with loaded prefs
+                            CheckVersionStatus();
+                        }
+                        Debug.Log(CurrentMessage(local));
                     }
-                    // Check github directly next
-                    if (checkGithub)
-                    {
-                        EditorCoroutineUtility.StartCoroutineOwnerless(CheckGithubVersion(local));
-                    }
-                    Debug.Log(CurrentMessage(local));
                 }
                 _listRequest = null;
             }
@@ -224,14 +259,16 @@ namespace ArenaUnity.Editor
             }
             else
             {
-
-                //GitReleasesLatestJson git = JsonConvert.DeserializeObject<GitReleasesLatestJson>(www.downloadHandler.text);
                 var git = JObject.Parse(www.downloadHandler.text);
                 if (git != null)
                 {
                     if (Version.TryParse(git["tag_name"].ToString().Trim('v'), out var latest))
                     {
-                        PlayerPrefs.SetString("GitVersionLatest", latest.ToString());
+                        LatestVersion = latest.ToString();
+                        PlayerPrefs.SetString(KeyLatestVersion, LatestVersion);
+
+                        CheckVersionStatus(); // Update status flag
+
                         if (local < latest)
                         {
                             Debug.LogWarning(UpgradeMessage(local, latest));
@@ -239,7 +276,7 @@ namespace ArenaUnity.Editor
                     }
                 }
             }
-            PlayerPrefs.SetFloat("GitVersionCheckTime", DateTimeOffset.Now.Ticks);
+            PlayerPrefs.SetFloat(KeyCheckTime, DateTimeOffset.Now.Ticks);
             PlayerPrefs.Save();
         }
 
@@ -264,7 +301,8 @@ namespace ArenaUnity.Editor
         internal static string LocalVersion()
         {
             var package = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(ArenaVersion).Assembly);
-            return package.version;
+            if (package != null) return package.version;
+            return "0.0.0";
         }
 
         static bool WantsToQuit()

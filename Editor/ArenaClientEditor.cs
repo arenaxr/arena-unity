@@ -18,6 +18,17 @@ namespace ArenaUnity.Editor
         {
             ArenaClientScene script = (ArenaClientScene)target;
 
+            // version check
+            if (ArenaVersion.IsNewVersionAvailable)
+            {
+                EditorGUILayout.HelpBox($"Update Available: v{ArenaVersion.LatestVersion} (Installed: v{ArenaVersion.InstalledVersion})", MessageType.Warning);
+                if (GUILayout.Button("Go to Latest Release"))
+                {
+                    Application.OpenURL("https://github.com/arenaxr/arena-unity/releases/latest");
+                }
+                GUILayout.Space(5f);
+            }
+
             // signout button
             if (GUILayout.Button("Signout"))
             {
