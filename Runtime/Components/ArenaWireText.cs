@@ -15,7 +15,7 @@ namespace ArenaUnity
     public class ArenaWireText : ArenaComponent
     {
         // ARENA text component unity conversion status:
-        // TODO: align
+        // DONE: align
         // TODO: alphaTest
         // DONE: anchor
         // DONE: baseline
@@ -23,16 +23,16 @@ namespace ArenaUnity
         // TODO: font
         // TODO: fontImage
         // DONE: height
-        // TODO: letterSpacing
-        // TODO: lineHeight
-        // TODO: opacity
+        // DONE: letterSpacing
+        // DONE: lineHeight
+        // DONE: opacity
         // TODO: shader
         // TODO: side
         // TODO: tabSize
         // DONE: text
         // TODO: transparent
         // DONE: value
-        // TODO: whiteSpace
+        // DONE: whiteSpace
         // DONE: width
         // TODO: wrapCount
         // TODO: wrapPixels
@@ -56,6 +56,11 @@ namespace ArenaUnity
                 tm.text = json.Value;
             if (json.Color != null)
                 tm.color = ArenaUnity.ToUnityColor(json.Color);
+            tm.alpha = json.Opacity;
+            tm.characterSpacing = json.LetterSpacing;
+            if (json.LineHeight.HasValue)
+                tm.lineSpacing = json.LineHeight.Value;
+            tm.enableWordWrapping = (json.WhiteSpace != ArenaTextJson.WhiteSpaceType.Nowrap);
 
             RectTransform rt = gameObject.GetComponent<RectTransform>();
             rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, json.Width);
@@ -103,6 +108,19 @@ namespace ArenaUnity
                     tm.alignment = TextAlignmentOptions.BottomGeoAligned;
                     break;
             }
+
+            switch (json.Align)
+            {
+                case ArenaTextJson.AlignType.Left:
+                    tm.horizontalAlignment = HorizontalAlignmentOptions.Left;
+                    break;
+                case ArenaTextJson.AlignType.Center:
+                    tm.horizontalAlignment = HorizontalAlignmentOptions.Center;
+                    break;
+                case ArenaTextJson.AlignType.Right:
+                    tm.horizontalAlignment = HorizontalAlignmentOptions.Right;
+                    break;
+            }
         }
 
         // text
@@ -113,8 +131,24 @@ namespace ArenaUnity
             //tm.fontSize;
             data.Value = tm.text;
             data.Color = ArenaUnity.ToArenaColor(tm.color);
+            data.Opacity = tm.alpha;
+            data.LetterSpacing = tm.characterSpacing;
+            data.LineHeight = tm.lineSpacing;
+            data.WhiteSpace = tm.enableWordWrapping ? ArenaTextJson.WhiteSpaceType.Normal : ArenaTextJson.WhiteSpaceType.Nowrap;
             data.Width = tm.rectTransform.rect.width;
             data.Height = tm.rectTransform.rect.height;
+            switch (tm.horizontalAlignment)
+            {
+                case HorizontalAlignmentOptions.Left:
+                    data.Align = ArenaTextJson.AlignType.Left;
+                    break;
+                case HorizontalAlignmentOptions.Center:
+                    data.Align = ArenaTextJson.AlignType.Center;
+                    break;
+                case HorizontalAlignmentOptions.Right:
+                    data.Align = ArenaTextJson.AlignType.Right;
+                    break;
+            }
             switch (tm.alignment)
             {
                 case TextAlignmentOptions.TopLeft:
