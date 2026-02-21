@@ -16,7 +16,7 @@ namespace ArenaUnity.Components
     public class ArenaMaterial : ArenaComponent
     {
         // ARENA material component unity conversion status:
-        // TODO: alphaTest
+        // DONE: alphaTest
         // TODO: anisotropy
         // TODO: blending
         // DONE: color
@@ -24,20 +24,20 @@ namespace ArenaUnity.Components
         // TODO: depthTest
         // TODO: depthWrite
         // TODO: dithering
-        // TODO: emissive
-        // TODO: emissiveIntensity
+        // DONE: emissive
+        // DONE: emissiveIntensity
         // TODO: flatShading
         // TODO: fog
         // TODO: height
-        // TODO: metalness
+        // DONE: metalness
         // TODO: npot
-        // TODO: offset
+        // DONE: offset
         // DONE: opacity
         // TODO: reflectivity
         // TODO: refract
         // TODO: refractionRatio
-        // TODO: repeat
-        // TODO: roughness
+        // DONE: repeat
+        // DONE: roughness
         // DONE: shader, TODO: add phong
         // TODO: shininess
         // TODO: side
@@ -46,7 +46,7 @@ namespace ArenaUnity.Components
         // TODO: toneMapped
         // DONE: transparent
         // TODO: vertexColorsEnabled
-        // TODO: visible
+        // DONE: visible
         // TODO: width
         // TODO: wireframe
         // TODO: wireframeLinewidth
@@ -68,29 +68,55 @@ namespace ArenaUnity.Components
             {
                 // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
 
-                // object material
-                var material = renderer.material;
+                string litShader = "Standard";
                 if (ArenaUnity.DefaultRenderPipeline)
                 {
                     if (ArenaUnity.DefaultRenderPipeline.GetType().ToString().Contains("HDRenderPipelineAsset"))
-                        material.shader = Shader.Find("HDRP/Lit");
+                        litShader = "HDRP/Lit";
                     else
-                        material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                        litShader = "Universal Render Pipeline/Lit";
                 }
+
                 if (json != null)
                 {
+                    renderer.enabled = json.Visible;
+
                     bool transparent = Convert.ToBoolean(json.Transparent);
                     if (json.Color != null)
                         material.SetColor(ArenaUnity.ColorPropertyName, ArenaUnity.ToUnityColor(json.Color, json.Opacity));
 
                     Color c = material.GetColor(ArenaUnity.ColorPropertyName);
                     material.SetColor(ArenaUnity.ColorPropertyName, new Color(c.r, c.g, c.b, json.Opacity));
-                    material.shader.name = json.Shader == ArenaMaterialJson.ShaderType.Flat ? "Unlit/Color" : "Standard";
+                    material.shader = Shader.Find(json.Shader == ArenaMaterialJson.ShaderType.Flat ? "Unlit/Color" : litShader);
+
+                    if (material.HasProperty("_Cutoff"))
+                        material.SetFloat("_Cutoff", json.AlphaTest);
+                    if (material.HasProperty("_Metallic"))
+                        material.SetFloat("_Metallic", json.Metalness);
+                    if (material.HasProperty("_Glossiness"))
+                        material.SetFloat("_Glossiness", 1f - json.Roughness);
+
+                    if (json.Emissive != null && json.Emissive != "#000000" && material.HasProperty("_EmissionColor"))
+                    {
+                        material.EnableKeyword("_EMISSION");
+                        material.SetColor("_EmissionColor", ArenaUnity.ToUnityColor(json.Emissive) * json.EmissiveIntensity);
+                    }
+                    else
+                    {
+                        material.DisableKeyword("_EMISSION");
+                        if (material.HasProperty("_EmissionColor"))
+                            material.SetColor("_EmissionColor", Color.black);
+                    }
+
+                    if (json.Repeat != null)
+                        material.mainTextureScale = new Vector2(json.Repeat.X, json.Repeat.Y);
+                    if (json.Offset != null)
+                        material.mainTextureOffset = new Vector2(json.Offset.X, json.Offset.Y);
 
                     // For runtime set/change transparency mode, follow GUI params
                     // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/StandardShaderGUI.cs#L344
-                    if (json.Opacity >= 1f)
-                    {   // op == 1
+                    if (!transparent || json.Opacity >= 1f)
+                    {   // op == 1 or not transparent
                         material.SetFloat("_Mode", (float)MatRendMode.Opaque);
                         material.SetInt("_SrcBlend", (int)BlendMode.One);
                         material.SetInt("_DstBlend", (int)BlendMode.Zero);
@@ -149,15 +175,23 @@ namespace ArenaUnity.Components
             //data.url = ToArenaTexture(mat);
             if (mat.HasProperty(ArenaUnity.ColorPropertyName))
                 data.Color = ArenaUnity.ToArenaColor(mat.color);
-            //data.metalness = ArenaFloat(mat.GetFloat("_Metallic"));
-            //data.roughness = ArenaFloat(1f - mat.GetFloat("_Glossiness"));
-            //data.repeat = ArenaFloat(mat.mainTextureScale.x);
+            if (mat.HasProperty("_Metallic"))
+                data.Metalness = ArenaUnity.ArenaFloat(mat.GetFloat("_Metallic"));
+            if (mat.HasProperty("_Glossiness"))
+                data.Roughness = ArenaUnity.ArenaFloat(1f - mat.GetFloat("_Glossiness"));
+            if (mat.HasProperty("_Cutoff"))
+                data.AlphaTest = ArenaUnity.ArenaFloat(mat.GetFloat("_Cutoff"));
+            if (mat.HasProperty("_EmissionColor"))
+                data.Emissive = ArenaUnity.ToArenaColor(mat.GetColor("_EmissionColor"));
+            data.Repeat = new ArenaVector2Json { X = ArenaUnity.ArenaFloat(mat.mainTextureScale.x), Y = ArenaUnity.ArenaFloat(mat.mainTextureScale.y) };
+            data.Offset = new ArenaVector2Json { X = ArenaUnity.ArenaFloat(mat.mainTextureOffset.x), Y = ArenaUnity.ArenaFloat(mat.mainTextureOffset.y) };
+            data.Visible = renderer.enabled;
             //data.side = "double";
             switch ((MatRendMode)mat.GetFloat("_Mode"))
             {
                 case MatRendMode.Opaque:
-                case MatRendMode.Fade:
                     data.Transparent = false; break;
+                case MatRendMode.Fade:
                 case MatRendMode.Transparent:
                 case MatRendMode.Cutout:
                     data.Transparent = true; break;

@@ -142,10 +142,16 @@ namespace ArenaUnity
 
             importPath = Path.Combine(appFilesPath, "Assets", "ArenaUnity", "import");
 
-            var requiredShaders = requiredShadersStandardRP;
+            var requiredShaders = new List<string>(requiredShadersStandardRP);
             // check if URP or HDR; different shaders are required
             if (ArenaUnity.DefaultRenderPipeline)
-                requiredShaders = requiredShadersURPHDRP;
+            {
+                requiredShaders = new List<string>(requiredShadersURPHDRP);
+                if (ArenaUnity.DefaultRenderPipeline.GetType().ToString().Contains("HDRenderPipelineAsset"))
+                    requiredShaders.Add("HDRP/Lit");
+                else
+                    requiredShaders.Add("Universal Render Pipeline/Lit");
+            }
 
             // ensure shaders are in project
             foreach (string shader in requiredShaders)
