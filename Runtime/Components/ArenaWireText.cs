@@ -34,8 +34,8 @@ namespace ArenaUnity
         // DONE: value
         // DONE: whiteSpace
         // DONE: width
-        // TODO: wrapCount
-        // TODO: wrapPixels
+        // DONE: wrapCount
+        // DONE: wrapPixels
         // TODO: xOffset
         // TODO: zOffset
 
@@ -48,7 +48,12 @@ namespace ArenaUnity
             TextMeshPro tm = gameObject.GetComponent<TextMeshPro>();
             if (tm == null)
                 tm = gameObject.AddComponent<TextMeshPro>();
-            tm.fontSize = 2;
+
+            tm.enableAutoSizing = false;
+            float wrapCount = json.WrapCount > 0 ? json.WrapCount : 40f;
+            // Scale multiplier to match A-Frame's text sizing within unity's unit scale.
+            tm.fontSize = (json.Width / wrapCount) * 20f;
+            tm.overflowMode = TextOverflowModes.Overflow;
 
             if (json.Text != null)
                 tm.text = json.Text; // data.text is deprecated, users get a console warning at json ingest
@@ -66,6 +71,8 @@ namespace ArenaUnity
             rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, json.Width);
             if (json.Height != null)
                 rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (float)json.Height);
+            else
+                rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 100f); // Default large bound to support wrapped height
             rt.ForceUpdateRectTransforms();
             string anchor = json.Anchor.ToString();
             string baseline = json.Baseline.ToString();
@@ -128,7 +135,7 @@ namespace ArenaUnity
         {
             var data = new ArenaTextJson();
             TextMeshPro tm = gobj.GetComponent<TextMeshPro>();
-            //tm.fontSize;
+
             data.Value = tm.text;
             data.Color = ArenaUnity.ToArenaColor(tm.color);
             data.Opacity = tm.alpha;
