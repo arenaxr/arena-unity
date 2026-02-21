@@ -51,8 +51,8 @@ namespace ArenaUnity
 
             tm.enableAutoSizing = false;
             float wrapCount = json.WrapCount > 0 ? json.WrapCount : 40f;
-            // Scale multiplier to match A-Frame's text sizing within unity's unit scale.
-            tm.fontSize = (json.Width / wrapCount) * 20f;
+            // Balance scale multiplier to compensate for TextMeshPro default 3D unit scale mappings
+            tm.fontSize = (json.Width / wrapCount) * 10f;
             tm.overflowMode = TextOverflowModes.Overflow;
 
             if (json.Text != null)
@@ -68,9 +68,12 @@ namespace ArenaUnity
             tm.enableWordWrapping = (json.WhiteSpace != ArenaTextJson.WhiteSpaceType.Nowrap);
 
             RectTransform rt = gameObject.GetComponent<RectTransform>();
-            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, json.Width);
+            // Scale the RectTransform itself to allow the font to be visible in 3D space
+            rt.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+
+            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, json.Width * 10f);
             if (json.Height != null)
-                rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (float)json.Height);
+                rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (float)json.Height * 10f);
             else
                 rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 100f); // Default large bound to support wrapped height
             rt.ForceUpdateRectTransforms();
