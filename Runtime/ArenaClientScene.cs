@@ -620,7 +620,7 @@ namespace ArenaUnity
                             if (assetPath != null)
                             {
                                 aobj.gltfUrl = url;
-                                AttachGltf(assetPath, gobj, aobj);
+                                ArenaWireGltfModel.AttachGltf(assetPath, gobj, aobj);
                             }
                         }
                         ArenaUnity.ApplySceneOptions(gobj, data); break;
@@ -678,61 +678,28 @@ namespace ArenaUnity
                 case "thickline": ArenaUnity.ApplyWireThickline(indata, gobj); break;
 
                 // ARENAUI objects
-                // TODO:
                 case "arenaui-card": ArenaUnity.ApplyWireArenauiCard(indata, gobj); break;
-                // TODO:
                 case "arenaui-button-panel": ArenaUnity.ApplyWireArenauiButtonPanel(indata, gobj); break;
-                // TODO:
                 case "arenaui-prompt": ArenaUnity.ApplyWireArenauiPrompt(indata, gobj); break;
 
-
-                // TODO: case "ocean": ArenaUnity.ApplyWireOcean(indata, gobj); break;
-                // TODO: case "pcd-model": ArenaUnity.ApplyWirePcdModel(indata, gobj); break;
-                // TODO: case "threejs-scene": ArenaUnity.ApplyWireThreejsScene(indata, gobj); break;
+                // other wire objects
+                case "ocean": ArenaUnity.ApplyWireOcean(indata, gobj); break;
+                case "pcd-model": ArenaUnity.ApplyWirePcdModel(indata, gobj); break;
+                case "threejs-scene": ArenaUnity.ApplyWireThreejsScene(indata, gobj); break;
                 case "gaussian_splatting": ArenaUnity.ApplyWireGaussianSplatting(indata, gobj); break;
                 case "obj-model": ArenaUnity.ApplyWireObjModel(indata, gobj); break;
-                case "gltf-model":
-                    // load main model
-                    if (url != null && aobj.gltfUrl == null)
-                    {
-                        // keep url, to add/remove and check exiting imported urls
-                        string assetPath = checkLocalAsset(url);
-                        if (assetPath != null)
-                        {
-                            aobj.gltfUrl = url;
-                            AttachGltf(assetPath, gobj, aobj);
-                        }
-                    }
-                    break;
-                case "image":
-                    // load image file
-                    if (url != null)
-                        AttachImage(checkLocalAsset(url), gobj);
-                    break;
+                case "gltf-model": ArenaUnity.ApplyWireGltfModel(indata, gobj); break;
+                case "image": ArenaUnity.ApplyWireImage(indata, gobj); break;
 
                 // user avatar objects
                 case "camera":
                     if (renderCameras)
-                    {
-                        if (!gobj.TryGetComponent<Camera>(out var cam))
-                            cam = gobj.AddComponent<Camera>();
-                        //cam = gobj.transform.gameObject.AddComponent<Camera>();
-                        // TODO: cam.nearClipPlane = 0.005f; // match arena
-                        cam.nearClipPlane = 0.1f; // move near clip out since local cam hard to see in model
-                        cam.farClipPlane = 10000f; // match arena
-                        cam.fieldOfView = 80f; // match arena
-                        cam.targetDisplay = 8; // render on least-used display
-                        var json = new ArenaCameraJson();
-                        json = JsonConvert.DeserializeObject<ArenaCameraJson>(ArenaUnity.MergeRawJson(json, data));
-                        AttachAvatar(msg.object_id, json.ArenaUser, gobj);
-                    }
+                        ArenaUnity.ApplyCameraAvatar(msg.object_id, indata, gobj);
                     break;
                 case "handLeft":
                 case "handRight":
                     if (renderHands)
-                    {
-                        AttachHand(msg.object_id, url, gobj);
-                    }
+                        ArenaUnity.ApplyHandAvatar(msg.object_id, url, gobj);
                     break;
             }
 
@@ -873,190 +840,10 @@ namespace ArenaUnity
                     case "material":
                         ArenaUnity.ApplyMaterial(gobj, data);
                         if (!string.IsNullOrEmpty(data.Material.Src))
-                            AttachMaterialTexture(checkLocalAsset((string)data.Material.Src), gobj);
+                            ArenaMaterial.AttachMaterialTexture(checkLocalAsset((string)data.Material.Src), gobj);
                         break;
                 }
             }
-        }
-
-        // TODO (mwfarb): move AttachAvatar to arena-camera component
-        internal void AttachAvatar(string object_id, ArenaArenaUserJson json, GameObject gobj)
-        {
-            json.headModelPath ??= arenaDefaults.headModelPath;
-            json.displayName ??= arenaDefaults.userName;
-
-            bool worldPositionStays = false;
-            if (json.headModelPath != null)
-            {
-                string localpath = checkLocalAsset(json.headModelPath);
-                if (localpath != null)
-                {
-                    string headModelId = $"head-model-{object_id}";
-                    Transform foundHeadModel = gobj.transform.Find(headModelId);
-                    if (!foundHeadModel)
-                    {
-                        // add model child to camera
-                        GameObject hmobj = new GameObject(headModelId);
-                        AttachGltf(localpath, hmobj);
-                        hmobj.transform.localPosition = Vector3.zero;
-                        hmobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
-                        hmobj.transform.localScale = Vector3.one;
-                        // makes the child keep its local orientation rather than its global orientation
-                        hmobj.transform.SetParent(gobj.transform, worldPositionStays);
-                    }
-
-                    string headTextId = $"headtext-{object_id}";
-                    Transform foundHeadText = gobj.transform.Find(headTextId);
-                    if (foundHeadText)
-                    {
-                        // update text
-                        TextMeshPro tm = foundHeadText.GetComponent<TextMeshPro>();
-                        tm.text = json.displayName;
-                    }
-                    else
-                    {
-                        // add text child to camera
-                        GameObject htobj = new GameObject(headTextId);
-                        TextMeshPro tm = htobj.transform.gameObject.AddComponent<TextMeshPro>();
-                        tm.alignment = TextAlignmentOptions.Center;
-                        tm.color = ArenaUnity.ToUnityColor(json.color);
-                        tm.fontSize = 5;
-                        tm.text = json.displayName;
-
-                        htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
-                        htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
-                        htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                        // makes the child keep its local orientation rather than its global orientation
-                        htobj.transform.SetParent(gobj.transform, worldPositionStays);
-                    }
-                }
-            }
-        }
-
-        // TODO (mwfarb): move AttachHand to arena-hand component
-        internal void AttachHand(string object_id, string url, GameObject gobj)
-        {
-            bool worldPositionStays = false;
-            if (url != null)
-            {
-                string localpath = checkLocalAsset(url);
-                if (localpath != null)
-                {
-                    string handModelId = $"hand-model-{object_id}";
-                    Transform foundHandModel = gobj.transform.Find(handModelId);
-                    if (!foundHandModel)
-                    {
-                        // add model child to hand
-                        GameObject hmobj = new GameObject(handModelId);
-                        AttachGltf(localpath, hmobj);
-                        hmobj.transform.localPosition = Vector3.zero;
-                        hmobj.transform.localRotation = Quaternion.identity;
-                        hmobj.transform.localScale = Vector3.one;
-                        // makes the child keep its local orientation rather than its global orientation
-                        hmobj.transform.SetParent(gobj.transform, worldPositionStays);
-
-                        if (renderHandRays)
-                        {
-                            gobj.AddComponent<ArenaHand>();
-                        }
-                    }
-                }
-            }
-        }
-
-        // TODO (mwfarb): move AttachMaterialTexture to material component
-        private void AttachMaterialTexture(string assetPath, GameObject gobj)
-        {
-            if (assetPath == null) return;
-            if (File.Exists(assetPath))
-            {
-                var bytes = File.ReadAllBytes(assetPath);
-                var tex = new Texture2D(1, 1);
-                tex.LoadImage(bytes);
-                var renderer = gobj.GetComponent<Renderer>();
-                if (renderer != null)
-                    renderer.material.mainTexture = tex;
-            }
-        }
-
-        // TODO (mwfarb): move AttachGltf to gltf-model component
-        private async void AttachGltf(string assetPath, GameObject gobj, ArenaObject aobj = null)
-        {
-            if (assetPath == null) return;
-            AnimationClip[] clips = null;
-            GameObject mobj = null;
-            var imSet = new ImportSettings
-            {
-                AnimationMethod = AnimationMethod.Legacy
-            };
-            var gltf = new GltfImport();
-            Uri uri = new Uri(Path.GetFullPath(assetPath));
-            if (await gltf.LoadFile(assetPath, uri, imSet))
-            {
-                clips = gltf.GetAnimationClips();
-                if (clips != null && aobj != null)
-                {   // save animation names for easy animation-mixer reference at runtime
-                    aobj.animations = new List<string>();
-                    foreach (AnimationClip clip in clips)
-                    {
-                        aobj.animations.Add(clip.name);
-                    }
-                }
-                var inSet = new InstantiationSettings
-                {
-                    SceneObjectCreation = SceneObjectCreation.Always
-                };
-                var instantiator = new GameObjectInstantiator(gltf, gobj.transform, logger: new ConsoleLogger(), inSet);
-                if (await gltf.InstantiateSceneAsync(instantiator))
-                {
-                    mobj = gobj.transform.GetChild(0).gameObject; // TODO (mwfarb): find better child method
-
-                    // TODO (mwfarb): find a better way to chain commponent dependancies than this
-                    var am = gobj.GetComponent<ArenaAnimationMixer>();
-                    if (am != null)
-                    {
-                        am.apply = true;
-                    }
-                }
-            }
-            else
-            {
-                Debug.LogWarning($"Unable to load GTLF at {assetPath}.");
-            }
-            if (mobj != null)
-            {
-                mobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(mobj.transform.localRotation);
-                foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
-                {   // prevent inadvertent editing of gltf elements
-                    child.gameObject.isStatic = true;
-                }
-            }
-        }
-
-        // TODO (mwfarb): move AttachImage to image component
-        private void AttachImage(string assetPath, GameObject gobj)
-        {
-            if (assetPath == null) return;
-            Sprite sprite = LoadSpriteFromFile(assetPath);
-            if (sprite != null)
-            {
-                SpriteRenderer spriteRenderer = gobj.AddComponent<SpriteRenderer>();
-                spriteRenderer.GetComponent<SpriteRenderer>().sprite = sprite;
-                spriteRenderer.drawMode = SpriteDrawMode.Sliced;
-                spriteRenderer.size = Vector2.one;
-            }
-        }
-
-        // TODO (mwfarb): move AssignImage to image component
-        private static Sprite LoadSpriteFromFile(string assetPath)
-        {
-            if (assetPath == null) return null;
-            Texture2D tex = new Texture2D(2, 2, TextureFormat.RGB24, false);
-            tex.filterMode = FilterMode.Trilinear;
-            var imgdata = File.ReadAllBytes(assetPath);
-            tex.LoadImage(imgdata);
-            Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f, 1, SpriteMeshType.FullRect);
-            return sprite;
         }
 
         private void RemoveObject(string object_id)

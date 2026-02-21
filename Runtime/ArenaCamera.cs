@@ -9,6 +9,7 @@ using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PrettyHierarchy;
+using TMPro;
 using UnityEngine;
 
 namespace ArenaUnity
@@ -114,6 +115,59 @@ namespace ArenaUnity
                 created = true;
 
             return true;
+        }
+
+        internal static void AttachAvatar(string object_id, ArenaArenaUserJson json, GameObject gobj)
+        {
+            json.headModelPath ??= ArenaClientScene.Instance.arenaDefaults.headModelPath;
+            json.displayName ??= ArenaClientScene.Instance.arenaDefaults.userName;
+
+            bool worldPositionStays = false;
+            if (json.headModelPath != null)
+            {
+                string localpath = ArenaClientScene.Instance.checkLocalAsset(json.headModelPath);
+                if (localpath != null)
+                {
+                    string headModelId = $"head-model-{object_id}";
+                    Transform foundHeadModel = gobj.transform.Find(headModelId);
+                    if (!foundHeadModel)
+                    {
+                        // add model child to camera
+                        GameObject hmobj = new GameObject(headModelId);
+                        ArenaWireGltfModel.AttachGltf(localpath, hmobj);
+                        hmobj.transform.localPosition = Vector3.zero;
+                        hmobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
+                        hmobj.transform.localScale = Vector3.one;
+                        // makes the child keep its local orientation rather than its global orientation
+                        hmobj.transform.SetParent(gobj.transform, worldPositionStays);
+                    }
+
+                    string headTextId = $"headtext-{object_id}";
+                    Transform foundHeadText = gobj.transform.Find(headTextId);
+                    if (foundHeadText)
+                    {
+                        // update text
+                        TextMeshPro tm = foundHeadText.GetComponent<TextMeshPro>();
+                        tm.text = json.displayName;
+                    }
+                    else
+                    {
+                        // add text child to camera
+                        GameObject htobj = new GameObject(headTextId);
+                        TextMeshPro tm = htobj.transform.gameObject.AddComponent<TextMeshPro>();
+                        tm.alignment = TextAlignmentOptions.Center;
+                        tm.color = ArenaUnity.ToUnityColor(json.color);
+                        tm.fontSize = 5;
+                        tm.text = json.displayName;
+
+                        htobj.transform.localPosition = new Vector3(0f, 0.45f, -0.05f);
+                        htobj.transform.localRotation = Quaternion.Euler(0, 180f, 0);
+                        htobj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                        // makes the child keep its local orientation rather than its global orientation
+                        htobj.transform.SetParent(gobj.transform, worldPositionStays);
+                    }
+                }
+            }
         }
 
     }

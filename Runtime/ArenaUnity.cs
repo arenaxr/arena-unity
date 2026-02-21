@@ -522,6 +522,46 @@ namespace ArenaUnity
             gaussiansplatting.apply = true;
         }
 
+        public static void ApplyWireGltfModel(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireGltfModel>(out var gltfmodel))
+                gltfmodel = gobj.AddComponent<ArenaWireGltfModel>();
+            gltfmodel.json = JsonConvert.DeserializeObject<ArenaGltfModelJson>(MergeRawJson(gltfmodel.json, indata));
+            gltfmodel.apply = true;
+        }
+
+        public static void ApplyWireImage(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireImage>(out var image))
+                image = gobj.AddComponent<ArenaWireImage>();
+            image.json = JsonConvert.DeserializeObject<ArenaImageJson>(MergeRawJson(image.json, indata));
+            image.apply = true;
+        }
+
+        public static void ApplyWireOcean(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireOcean>(out var ocean))
+                ocean = gobj.AddComponent<ArenaWireOcean>();
+            ocean.json = JsonConvert.DeserializeObject<ArenaOceanJson>(MergeRawJson(ocean.json, indata));
+            ocean.apply = true;
+        }
+
+        public static void ApplyWirePcdModel(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWirePcdModel>(out var pcdmodel))
+                pcdmodel = gobj.AddComponent<ArenaWirePcdModel>();
+            pcdmodel.json = JsonConvert.DeserializeObject<ArenaPcdModelJson>(MergeRawJson(pcdmodel.json, indata));
+            pcdmodel.apply = true;
+        }
+
+        public static void ApplyWireThreejsScene(object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<ArenaWireThreeJsScene>(out var threejsscene))
+                threejsscene = gobj.AddComponent<ArenaWireThreeJsScene>();
+            threejsscene.json = JsonConvert.DeserializeObject<ArenaThreejsSceneJson>(MergeRawJson(threejsscene.json, indata));
+            threejsscene.apply = true;
+        }
+
         public static void ApplyWireObjModel(object indata, GameObject gobj)
         {
             if (!gobj.TryGetComponent<ArenaWireObjModel>(out var objmodel))
@@ -586,6 +626,26 @@ namespace ArenaUnity
                 c = gobj.AddComponent<ArenaScenePostProcessing>();
             c.json = JsonConvert.DeserializeObject<ArenaPostProcessingJson>(MergeRawJson(c.json, data.PostProcessing));
             c.apply = true;
+        }
+
+        public static void ApplyCameraAvatar(string object_id, object indata, GameObject gobj)
+        {
+            if (!gobj.TryGetComponent<Camera>(out var cam))
+                cam = gobj.AddComponent<Camera>();
+            cam.nearClipPlane = 0.1f; // move near clip out since local cam hard to see in model
+            cam.farClipPlane = 10000f; // match arena
+            cam.fieldOfView = 80f; // match arena
+            cam.targetDisplay = 8; // render on least-used display
+            var json = new ArenaCameraJson();
+            json = JsonConvert.DeserializeObject<ArenaCameraJson>(MergeRawJson(json, indata));
+            if (ArenaClientScene.Instance != null)
+                ArenaCamera.AttachAvatar(object_id, json.ArenaUser, gobj);
+        }
+
+        public static void ApplyHandAvatar(string object_id, string url, GameObject gobj)
+        {
+            if (ArenaClientScene.Instance != null)
+                ArenaHand.AttachHand(object_id, url, gobj);
         }
 
     }

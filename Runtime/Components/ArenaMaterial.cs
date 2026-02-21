@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.IO;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -179,6 +180,20 @@ namespace ArenaUnity.Components
                 }
             }
             updatedJson = newJson;
+        }
+
+        internal static void AttachMaterialTexture(string assetPath, GameObject gobj)
+        {
+            if (assetPath == null) return;
+            if (File.Exists(assetPath))
+            {
+                var bytes = File.ReadAllBytes(assetPath);
+                var tex = new Texture2D(1, 1);
+                tex.LoadImage(bytes);
+                var renderer = gobj.GetComponent<Renderer>();
+                if (renderer != null)
+                    renderer.material.mainTexture = tex;
+            }
         }
     }
 }

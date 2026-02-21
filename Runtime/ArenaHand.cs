@@ -46,5 +46,35 @@ namespace ArenaUnity
             //UnityEngine.Debug.DrawLine(transform.position, transform.forward * 100f, color);
         }
 
+        internal static void AttachHand(string object_id, string url, GameObject gobj)
+        {
+            bool worldPositionStays = false;
+            if (url != null)
+            {
+                string localpath = ArenaClientScene.Instance.checkLocalAsset(url);
+                if (localpath != null)
+                {
+                    string handModelId = $"hand-model-{object_id}";
+                    Transform foundHandModel = gobj.transform.Find(handModelId);
+                    if (!foundHandModel)
+                    {
+                        // add model child to hand
+                        GameObject hmobj = new GameObject(handModelId);
+                        ArenaWireGltfModel.AttachGltf(localpath, hmobj);
+                        hmobj.transform.localPosition = Vector3.zero;
+                        hmobj.transform.localRotation = Quaternion.identity;
+                        hmobj.transform.localScale = Vector3.one;
+                        // makes the child keep its local orientation rather than its global orientation
+                        hmobj.transform.SetParent(gobj.transform, worldPositionStays);
+
+                        if (ArenaClientScene.Instance.renderHandRays)
+                        {
+                            gobj.AddComponent<ArenaHand>();
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
