@@ -66,8 +66,8 @@ namespace ArenaUnity.Components
             var renderer = gameObject.GetComponent<Renderer>();
             if (renderer != null)
             {
-                // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
-
+                // object material
+                var material = renderer.material;
                 string litShader = "Standard";
                 if (ArenaUnity.DefaultRenderPipeline)
                 {
