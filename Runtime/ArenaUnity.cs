@@ -642,6 +642,19 @@ namespace ArenaUnity
                 ArenaCamera.AttachAvatar(object_id, json.ArenaUser, gobj);
         }
 
+        public static Shader GetUnlitShader()
+        {
+            string unlitShader = "Unlit/Color";
+            if (DefaultRenderPipeline)
+            {
+                if (DefaultRenderPipeline.GetType().ToString().Contains("HDRenderPipelineAsset"))
+                    unlitShader = "HDRP/Unlit";
+                else
+                    unlitShader = "Universal Render Pipeline/Unlit";
+            }
+            return Shader.Find(unlitShader);
+        }
+
         public static void ApplyHandAvatar(string object_id, string url, GameObject gobj)
         {
             if (ArenaClientScene.Instance != null)

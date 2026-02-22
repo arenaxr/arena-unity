@@ -16,7 +16,7 @@ namespace ArenaUnity
     public class ArenaWireThickline : ArenaComponent
     {
         // ARENA thickline component unity conversion status:
-        // DONE: color, TODO (mwfarb): find "Default-Line" material
+        // DONE: color
         // DONE: lineWidth
         // DONE: lineWidthStyler
         // DONE: path
@@ -25,8 +25,6 @@ namespace ArenaUnity
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
-
             LineRenderer line = gameObject.GetComponent<LineRenderer>();
             if (line == null)
                 line = gameObject.AddComponent<LineRenderer>();
@@ -44,10 +42,14 @@ namespace ArenaUnity
                 }
             }
             pixelWidth = json.LineWidth;
-            if (line.material == null) // TODO (mwfarb): find "Default-Line" material
-                line.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
+            if (line.sharedMaterial == null || line.sharedMaterial.name.Contains("Default-"))
+                line.material = new Material(ArenaUnity.GetUnlitShader());
             if (json.Color != null)
-                line.startColor = line.endColor = ArenaUnity.ToUnityColor(json.Color);
+            {
+                Color color = ArenaUnity.ToUnityColor(json.Color);
+                line.startColor = line.endColor = color;
+                line.material.SetColor(ArenaUnity.ColorPropertyName, color);
+            }
 
             // convert arena thickline pixels vs unity meters
             float numkeys = 2;
@@ -112,7 +114,7 @@ namespace ArenaUnity
                 }
             }
             data.Path = string.Join(",", positions);
-            data.LineWidth = (int)(line.startWidth / ArenaUnity.LineSinglePixelInMeters); // TODO: support endWidth
+            data.LineWidth = line.startWidth / ArenaUnity.LineSinglePixelInMeters; // TODO: support endWidth
             data.Color = ArenaUnity.ToArenaColor(line.startColor); // TODO: support endColor
 
             return data != null ? JObject.FromObject(data) : null;

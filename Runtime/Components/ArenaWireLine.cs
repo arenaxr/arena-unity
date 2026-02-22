@@ -13,18 +13,16 @@ namespace ArenaUnity
     public class ArenaWireLine : ArenaComponent
     {
         // ARENA line component unity conversion status:
-        // DONE: color, TODO (mwfarb): find "Default-Line" material
+        // DONE: color
         // DONE: end
-        // TODO: opacity
+        // DONE: opacity
         // DONE: start
-        // TODO: visible
+        // DONE: visible
 
         public ArenaLineJson json = new ArenaLineJson();
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
-
             LineRenderer line = gameObject.GetComponent<LineRenderer>();
             if (line == null)
                 line = gameObject.AddComponent<LineRenderer>();
@@ -39,11 +37,18 @@ namespace ArenaUnity
                         };
                 line.SetPositions(nodes);
             }
-            if (line.material == null) // TODO (mwfarb): find "Default-Line" material
-                line.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
+            if (line.sharedMaterial == null || line.sharedMaterial.name.Contains("Default-"))
+                line.material = new Material(ArenaUnity.GetUnlitShader());
             if (json.Color != null)
-                line.startColor = line.endColor = ArenaUnity.ToUnityColor(json.Color);
+            {
+                Color color = ArenaUnity.ToUnityColor(json.Color);
+                color.a = json.Opacity;
+                line.startColor = line.endColor = color;
+                line.material.SetColor(ArenaUnity.ColorPropertyName, color);
+            }
             line.widthMultiplier = pixelWidth * ArenaUnity.LineSinglePixelInMeters;
+
+            line.enabled = json.Visible;
         }
 
         // ToArenaLine not needed since all LineRenderer in Unity are essentially thickline, not line.

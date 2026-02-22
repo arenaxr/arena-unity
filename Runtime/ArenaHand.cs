@@ -32,8 +32,11 @@ namespace ArenaUnity
             Vector3[] nodes = { start, end };
             line.SetPositions(nodes);
             line.startColor = line.endColor = color;
-            if (line.material == null) // TODO (mwfarb): find "Default-Line" material
-                line.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended Premultiply"));
+            if (line.sharedMaterial == null || line.sharedMaterial.name.Contains("Default-"))
+            {
+                line.material = new Material(ArenaUnity.GetUnlitShader());
+                line.material.SetColor(ArenaUnity.ColorPropertyName, color);
+            }
             line.widthMultiplier = 1f * ArenaUnity.LineSinglePixelInMeters;
             // makes the child keep its local orientation rather than its global orientation
             rayObj.transform.SetParent(transform, false);
