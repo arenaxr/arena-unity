@@ -52,7 +52,7 @@ namespace ArenaUnity
             tm.enableAutoSizing = false;
             float wrapCount = json.WrapCount > 0 ? json.WrapCount : 40f;
             // Balance scale multiplier to compensate for TextMeshPro default 3D unit scale mappings
-            tm.fontSize = (json.Width / wrapCount) * 10f;
+            tm.fontSize = (json.Width / wrapCount) * 20f;
             tm.overflowMode = TextOverflowModes.Overflow;
 
             if (json.Text != null)
@@ -68,18 +68,22 @@ namespace ArenaUnity
             tm.enableWordWrapping = (json.WhiteSpace != ArenaTextJson.WhiteSpaceType.Nowrap);
 
             RectTransform rt = gameObject.GetComponent<RectTransform>();
-            // Scale the RectTransform itself to allow the font to be visible in 3D space
-            rt.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 
-            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, json.Width * 10f);
-            if (json.Height != null)
-                rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (float)json.Height * 10f);
-            else
-                rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 100f); // Default large bound to support wrapped height
+            // Calculate exact visual height needed natively
+            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, json.Width);
+            rt.ForceUpdateRectTransforms(); // Process wrap lines
+
+            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, tm.preferredHeight);
             rt.ForceUpdateRectTransforms();
+
+            // Adjust margins to prevent clipping while keeping bounds accurate
+            tm.margin = Vector4.zero;
+            string align = json.Align.ToString();
             string anchor = json.Anchor.ToString();
             string baseline = json.Baseline.ToString();
-            switch ($"{baseline} {anchor}")
+
+            // TextMeshPro alignments map to AFrame's text justification (align) and vertical positioning (baseline)
+            switch ($"{baseline.ToLower()} {align.ToLower()}")
             {
                 case "top left":
                     tm.alignment = TextAlignmentOptions.TopLeft;
@@ -90,20 +94,14 @@ namespace ArenaUnity
                 case "top right":
                     tm.alignment = TextAlignmentOptions.TopRight;
                     break;
-                case "top align":
-                    tm.alignment = TextAlignmentOptions.TopGeoAligned;
-                    break;
                 case "center left":
-                    tm.alignment = TextAlignmentOptions.BaselineLeft;
+                    tm.alignment = TextAlignmentOptions.MidlineLeft;
                     break;
                 case "center center":
-                    tm.alignment = TextAlignmentOptions.Center;
+                    tm.alignment = TextAlignmentOptions.Midline;
                     break;
                 case "center right":
-                    tm.alignment = TextAlignmentOptions.BaselineRight;
-                    break;
-                case "center align":
-                    tm.alignment = TextAlignmentOptions.CenterGeoAligned;
+                    tm.alignment = TextAlignmentOptions.MidlineRight;
                     break;
                 case "bottom left":
                     tm.alignment = TextAlignmentOptions.BottomLeft;
@@ -114,23 +112,64 @@ namespace ArenaUnity
                 case "bottom right":
                     tm.alignment = TextAlignmentOptions.BottomRight;
                     break;
-                case "bottom align":
-                    tm.alignment = TextAlignmentOptions.BottomGeoAligned;
+                default:
+                    tm.alignment = TextAlignmentOptions.MidlineLeft;
                     break;
             }
 
-            switch (json.Align)
+            // Adjust RectTransform pivot based on alignment to keep origin consistent
+            switch (baseline.ToLower())
             {
-                case ArenaTextJson.AlignType.Left:
-                    tm.horizontalAlignment = HorizontalAlignmentOptions.Left;
+                case "top":
+                    rt.pivot = new Vector2(rt.pivot.x, 1f);
                     break;
-                case ArenaTextJson.AlignType.Center:
-                    tm.horizontalAlignment = HorizontalAlignmentOptions.Center;
+                case "bottom":
+                    rt.pivot = new Vector2(rt.pivot.x, 0f);
                     break;
-                case ArenaTextJson.AlignType.Right:
-                    tm.horizontalAlignment = HorizontalAlignmentOptions.Right;
+                case "center":
+                default:
+                    rt.pivot = new Vector2(rt.pivot.x, 0.5f);
                     break;
             }
+
+            float rtWidth = rt.rect.width;
+            float textW = tm.preferredWidth;
+            float pivotX = 0.5f;
+
+            if (rtWidth > 0)
+            {
+                // Calculate where the text block geometrically starts within the RectTransform based on TMPro alignment
+                float textNormStart = 0f;
+                switch (align.ToLower())
+                {
+                    case "left":
+                        textNormStart = 0f;
+                        break;
+                    case "center":
+                        textNormStart = (rtWidth - textW) / 2f / rtWidth;
+                        break;
+                    case "right":
+                        textNormStart = (rtWidth - textW) / rtWidth;
+                        break;
+                }
+
+                float textNormW = textW / rtWidth;
+                switch (anchor.ToLower())
+                {
+                    case "left":
+                        pivotX = textNormStart;
+                        break;
+                    case "center":
+                    case "align":
+                    default:
+                        pivotX = textNormStart + (textNormW / 2f);
+                        break;
+                    case "right":
+                        pivotX = textNormStart + textNormW;
+                        break;
+                }
+            }
+            rt.pivot = new Vector2(pivotX, rt.pivot.y);
         }
 
         // text
@@ -177,31 +216,39 @@ namespace ArenaUnity
                     data.Baseline = ArenaTextJson.BaselineType.Top;
                     data.Anchor = ArenaTextJson.AnchorType.Align;
                     break;
-                case TextAlignmentOptions.BaselineLeft:
+                case TextAlignmentOptions.MidlineLeft:
                     data.Baseline = ArenaTextJson.BaselineType.Center;
-                    data.Anchor = ArenaTextJson.AnchorType.Left;
+                    data.Align = ArenaTextJson.AlignType.Left;
                     break;
-                case TextAlignmentOptions.Center:
+                case TextAlignmentOptions.Midline:
                     data.Baseline = ArenaTextJson.BaselineType.Center;
-                    data.Anchor = ArenaTextJson.AnchorType.Center;
+                    data.Align = ArenaTextJson.AlignType.Center;
                     break;
-                case TextAlignmentOptions.BaselineRight:
+                case TextAlignmentOptions.MidlineRight:
                     data.Baseline = ArenaTextJson.BaselineType.Center;
-                    data.Anchor = ArenaTextJson.AnchorType.Right;
-                    break;
-                case TextAlignmentOptions.CenterGeoAligned:
-                    data.Baseline = ArenaTextJson.BaselineType.Center;
-                    data.Anchor = ArenaTextJson.AnchorType.Align;
+                    data.Align = ArenaTextJson.AlignType.Right;
                     break;
                 case TextAlignmentOptions.BottomLeft:
                     data.Baseline = ArenaTextJson.BaselineType.Bottom;
-                    data.Anchor = ArenaTextJson.AnchorType.Left;
+                    data.Align = ArenaTextJson.AlignType.Left;
                     break;
                 case TextAlignmentOptions.Bottom:
                     data.Baseline = ArenaTextJson.BaselineType.Bottom;
-                    data.Anchor = ArenaTextJson.AnchorType.Center;
+                    data.Align = ArenaTextJson.AlignType.Center;
+                    break;
+                case TextAlignmentOptions.BottomRight:
+                    data.Baseline = ArenaTextJson.BaselineType.Bottom;
+                    data.Align = ArenaTextJson.AlignType.Right;
                     break;
             }
+
+            // Unity RectTransform Pivot maps mapping back to A-Frame anchor
+            if (tm.rectTransform.pivot.x <= 0.1f)
+                data.Anchor = ArenaTextJson.AnchorType.Left;
+            else if (tm.rectTransform.pivot.x >= 0.9f)
+                data.Anchor = ArenaTextJson.AnchorType.Right;
+            else
+                data.Anchor = ArenaTextJson.AnchorType.Center;
             return data != null ? JObject.FromObject(data) : null;
         }
 
