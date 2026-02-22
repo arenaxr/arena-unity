@@ -139,26 +139,6 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
-        private static string defFontImage = null;
-        [JsonProperty(PropertyName = "fontImage")]
-        [Tooltip("Font image texture path to render text. Defaults to the font's name with extension replaced to .png. Don't need to specify if using a stock font. (derived from font name).")]
-        public string FontImage = defFontImage;
-        public bool ShouldSerializeFontImage()
-        {
-            // fontImage
-            return (FontImage != defFontImage);
-        }
-
-        private static float? defHeight = null;
-        [JsonProperty(PropertyName = "height")]
-        [Tooltip("Height of text block. (derived from text size).")]
-        public float? Height = defHeight;
-        public bool ShouldSerializeHeight()
-        {
-            // height
-            return (Height != defHeight);
-        }
-
         private static float defLetterSpacing = 0f;
         [JsonProperty(PropertyName = "letterSpacing")]
         [Tooltip("Letter spacing in pixels.")]
@@ -167,16 +147,6 @@ namespace ArenaUnity.Schemas
         {
             // letterSpacing
             return (LetterSpacing != defLetterSpacing);
-        }
-
-        private static float? defLineHeight = null;
-        [JsonProperty(PropertyName = "lineHeight")]
-        [Tooltip("Line height in pixels. (derived from font file).")]
-        public float? LineHeight = defLineHeight;
-        public bool ShouldSerializeLineHeight()
-        {
-            // lineHeight
-            return (LineHeight != defLineHeight);
         }
 
         private static float defOpacity = 1f;
@@ -296,16 +266,6 @@ namespace ArenaUnity.Schemas
             return (WhiteSpace != defWhiteSpace);
         }
 
-        private static float defWidth = 5f;
-        [JsonProperty(PropertyName = "width")]
-        [Tooltip("Width in meters. (derived from geometry if exists).")]
-        public float Width = defWidth;
-        public bool ShouldSerializeWidth()
-        {
-            // width
-            return (Width != defWidth);
-        }
-
         private static float defWrapCount = 40f;
         [JsonProperty(PropertyName = "wrapCount")]
         [Tooltip("Number of characters before wrapping text (more or less).")]
@@ -314,16 +274,6 @@ namespace ArenaUnity.Schemas
         {
             // wrapCount
             return (WrapCount != defWrapCount);
-        }
-
-        private static float? defWrapPixels = null;
-        [JsonProperty(PropertyName = "wrapPixels")]
-        [Tooltip("Number of pixels before wrapping text. (derived from wrapCount).")]
-        public float? WrapPixels = defWrapPixels;
-        public bool ShouldSerializeWrapPixels()
-        {
-            // wrapPixels
-            return (WrapPixels != defWrapPixels);
         }
 
         private static float defXoffset = 0f;

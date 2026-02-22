@@ -21,10 +21,7 @@ namespace ArenaUnity
         // DONE: baseline
         // DONE: color
         // TODO: font
-        // TODO: fontImage
-        // DONE: height
         // DONE: letterSpacing
-        // DONE: lineHeight
         // DONE: opacity
         // TODO: shader
         // TODO: side
@@ -33,9 +30,7 @@ namespace ArenaUnity
         // TODO: transparent
         // DONE: value
         // DONE: whiteSpace
-        // DONE: width
         // DONE: wrapCount
-        // DONE: wrapPixels
         // TODO: xOffset
         // TODO: zOffset
 
@@ -43,8 +38,6 @@ namespace ArenaUnity
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
-
             TextMeshPro tm = gameObject.GetComponent<TextMeshPro>();
             if (tm == null)
                 tm = gameObject.AddComponent<TextMeshPro>();
@@ -52,7 +45,8 @@ namespace ArenaUnity
             tm.enableAutoSizing = false;
             float wrapCount = json.WrapCount > 0 ? json.WrapCount : 40f;
             // Balance scale multiplier to compensate for TextMeshPro default 3D unit scale mappings
-            tm.fontSize = (json.Width / wrapCount) * 20f;
+            float defaultWidth = 5f;
+            tm.fontSize = (defaultWidth / wrapCount) * 20f;
             tm.overflowMode = TextOverflowModes.Overflow;
 
             if (json.Text != null)
@@ -63,14 +57,12 @@ namespace ArenaUnity
                 tm.color = ArenaUnity.ToUnityColor(json.Color);
             tm.alpha = json.Opacity;
             tm.characterSpacing = json.LetterSpacing;
-            if (json.LineHeight.HasValue)
-                tm.lineSpacing = json.LineHeight.Value;
             tm.enableWordWrapping = (json.WhiteSpace != ArenaTextJson.WhiteSpaceType.Nowrap);
 
             RectTransform rt = gameObject.GetComponent<RectTransform>();
 
             // Calculate exact visual height needed natively
-            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, json.Width);
+            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, defaultWidth);
             rt.ForceUpdateRectTransforms(); // Process wrap lines
 
             rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, tm.preferredHeight);
@@ -182,10 +174,7 @@ namespace ArenaUnity
             data.Color = ArenaUnity.ToArenaColor(tm.color);
             data.Opacity = tm.alpha;
             data.LetterSpacing = tm.characterSpacing;
-            data.LineHeight = tm.lineSpacing;
             data.WhiteSpace = tm.enableWordWrapping ? ArenaTextJson.WhiteSpaceType.Normal : ArenaTextJson.WhiteSpaceType.Nowrap;
-            data.Width = tm.rectTransform.rect.width;
-            data.Height = tm.rectTransform.rect.height;
             switch (tm.horizontalAlignment)
             {
                 case HorizontalAlignmentOptions.Left:
