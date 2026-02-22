@@ -15,24 +15,22 @@ namespace ArenaUnity
     {
         // ARENA image component unity conversion status:
         // DONE: url
-        // TODO: height
+        // DONE: height
         // TODO: segmentsHeight
         // TODO: segmentsWidth
-        // TODO: width
+        // DONE: width
 
         public ArenaImageJson json = new ArenaImageJson();
 
         protected override void ApplyRender()
         {
             var url = json.Url;
+            string assetPath = null;
             if (url != null && ArenaClientScene.Instance != null)
             {
-                string assetPath = ArenaClientScene.Instance.checkLocalAsset(url);
-                if (assetPath != null)
-                {
-                    AttachImage(assetPath, gameObject);
-                }
+                assetPath = ArenaClientScene.Instance.checkLocalAsset(url);
             }
+            AttachImage(assetPath, gameObject, json);
         }
 
         public override void UpdateObject()
@@ -50,15 +48,38 @@ namespace ArenaUnity
             updatedJson = newJson;
         }
 
-        internal static void AttachImage(string assetPath, GameObject gobj)
+        internal static void AttachImage(string assetPath, GameObject gobj, ArenaImageJson json = null)
         {
-            if (assetPath == null) return;
-            Sprite sprite = LoadSpriteFromFile(assetPath);
-            if (sprite != null)
+            Sprite sprite = null;
+            if (assetPath != null)
             {
-                SpriteRenderer spriteRenderer = gobj.AddComponent<SpriteRenderer>();
-                spriteRenderer.GetComponent<SpriteRenderer>().sprite = sprite;
-                spriteRenderer.drawMode = SpriteDrawMode.Sliced;
+                sprite = LoadSpriteFromFile(assetPath);
+            }
+
+            if (sprite == null)
+            {
+                Texture2D tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+                tex.SetPixel(0, 0, Color.white);
+                tex.Apply();
+                sprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f, 1, SpriteMeshType.FullRect);
+            }
+
+            SpriteRenderer spriteRenderer = gobj.GetComponent<SpriteRenderer>();
+            if (spriteRenderer == null)
+            {
+                spriteRenderer = gobj.AddComponent<SpriteRenderer>();
+            }
+
+            spriteRenderer.sprite = sprite;
+            spriteRenderer.drawMode = SpriteDrawMode.Sliced;
+
+            if (json != null)
+            {
+                spriteRenderer.size = new Vector2(json.Width, json.Height);
+                // note: SpriteRenderer does not support segmentsWidth or segmentsHeight
+            }
+            else
+            {
                 spriteRenderer.size = Vector2.one;
             }
         }
