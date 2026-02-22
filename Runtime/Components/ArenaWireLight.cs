@@ -21,37 +21,46 @@ namespace ArenaUnity
         // TODO: decay
         // DONE: distance
         // TODO: envMap
-        // TODO: groundColor
+        // DONE: groundColor
         // DONE: intensity
         // TODO: light
-        // TODO: penumbra
-        // TODO: shadowBias
+        // DONE: penumbra
+        // DONE: shadowBias
         // TODO: shadowCameraBottom
         // TODO: shadowCameraFar
         // TODO: shadowCameraFov
         // TODO: shadowCameraLeft
-        // TODO: shadowCameraNear
+        // DONE: shadowCameraNear
         // TODO: shadowCameraRight
         // TODO: shadowCameraTop
         // TODO: shadowCameraVisible
         // TODO: shadowMapHeight
         // TODO: shadowMapWidth
         // TODO: shadowRadius
-        // TODO: target
+        // DONE: target
         // DONE: type
 
         public ArenaLightJson json = new ArenaLightJson();
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
-
-            if (json.Type == ArenaLightJson.TypeType.Ambient)
+            if (json.Type == ArenaLightJson.TypeType.Ambient || json.Type == ArenaLightJson.TypeType.Hemisphere)
             {
-                RenderSettings.ambientMode = AmbientMode.Flat;
+                if (json.Type == ArenaLightJson.TypeType.Hemisphere)
+                {
+                    RenderSettings.ambientMode = AmbientMode.Trilight;
+                    if (json.Color != null)
+                        RenderSettings.ambientSkyColor = ArenaUnity.ToUnityColor(json.Color);
+                    if (json.GroundColor != null)
+                        RenderSettings.ambientGroundColor = ArenaUnity.ToUnityColor(json.GroundColor);
+                }
+                else
+                {
+                    RenderSettings.ambientMode = AmbientMode.Flat;
+                    if (json.Color != null)
+                        RenderSettings.ambientLight = ArenaUnity.ToUnityColor(json.Color);
+                }
                 RenderSettings.ambientIntensity = json.Intensity;
-                if (json.Color != null)
-                    RenderSettings.ambientLight = ArenaUnity.ToUnityColor(json.Color);
             }
             else
             {
@@ -67,17 +76,46 @@ namespace ArenaUnity
                     case ArenaLightJson.TypeType.Point:
                         light.type = LightType.Point;
                         light.range = json.Distance;
+                        // Unity's light.bounceIntensity could arguably be tied to decay but let's just observe standard decay mappings
+                        // Light component does not have a direct exact analog for threejs 'decay' without custom curves
                         break;
                     case ArenaLightJson.TypeType.Spot:
                         light.type = LightType.Spot;
                         light.range = json.Distance;
                         light.spotAngle = json.Angle;
+                        light.innerSpotAngle = json.Angle * (1f - json.Penumbra);
                         break;
                 }
                 light.intensity = json.Intensity;
                 if (json.Color != null)
                     light.color = ArenaUnity.ToUnityColor(json.Color);
+
                 light.shadows = !json.CastShadow ? LightShadows.None : LightShadows.Soft;
+                if (json.CastShadow)
+                {
+                    light.shadowBias = json.ShadowBias;
+                    // Unity handles shadow map resolution and frustum slightly differently, often globally or per pipeline.
+                    // But we can map shadow map width and height hints to custom resolution where applicable, though standard Light doesn't expose it directly except via LightShadows enum.
+                    light.shadowNearPlane = json.ShadowCameraNear;
+                    // Note: shadowMapWidth, shadowMapHeight, shadowCameraFar, shadowCameraFov etc. might not have direct simple mappings in the base Light component.
+                }
+
+                if (!string.IsNullOrEmpty(json.Target))
+                {
+                    // If target exists, point the light towards the target GameObject
+                    GameObject targetObj = GameObject.Find(json.Target);
+                    if (targetObj != null)
+                    {
+                        light.transform.LookAt(targetObj.transform);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(json.EnvMap))
+                {
+                    // Loading an environment map usually involves downloading a cubemap and applying it to RenderSettings.customReflection
+                    // That process requires async downloading via ArenaClientScene or similar, so we'll just log it for now as a TODO.
+                    Debug.LogWarning("ArenaWireLight: envMap setting is noted but dynamically loading cubemaps at runtime is not fully implemented yet.");
+                }
             }
         }
 
@@ -87,24 +125,30 @@ namespace ArenaUnity
             // TODO: translate from RenderSettings.ambientMode, may need centralized one-time publish
             var data = new ArenaLightJson();
             Light light = gobj.GetComponent<Light>();
-            switch (light.type)
+            if (light != null)
             {
-                case LightType.Directional:
-                    data.Type = ArenaLightJson.TypeType.Directional;
-                    break;
-                case LightType.Point:
-                    data.Type = ArenaLightJson.TypeType.Point;
-                    data.Distance = ArenaUnity.ArenaFloat(light.range);
-                    break;
-                case LightType.Spot:
-                    data.Type = ArenaLightJson.TypeType.Spot;
-                    data.Distance = ArenaUnity.ArenaFloat(light.range);
-                    data.Angle = ArenaUnity.ArenaFloat(light.spotAngle);
-                    break;
+                switch (light.type)
+                {
+                    case LightType.Directional:
+                        data.Type = ArenaLightJson.TypeType.Directional;
+                        break;
+                    case LightType.Point:
+                        data.Type = ArenaLightJson.TypeType.Point;
+                        data.Distance = ArenaUnity.ArenaFloat(light.range);
+                        break;
+                    case LightType.Spot:
+                        data.Type = ArenaLightJson.TypeType.Spot;
+                        data.Distance = ArenaUnity.ArenaFloat(light.range);
+                        data.Angle = ArenaUnity.ArenaFloat(light.spotAngle);
+                        data.Penumbra = ArenaUnity.ArenaFloat(1f - (light.innerSpotAngle / light.spotAngle));
+                        break;
+                }
+                data.Intensity = ArenaUnity.ArenaFloat(light.intensity);
+                data.Color = ArenaUnity.ToArenaColor(light.color);
+                data.CastShadow = light.shadows != LightShadows.None;
+                data.ShadowBias = ArenaUnity.ArenaFloat(light.shadowBias);
+                data.ShadowCameraNear = ArenaUnity.ArenaFloat(light.shadowNearPlane);
             }
-            data.Intensity = ArenaUnity.ArenaFloat(light.intensity);
-            data.Color = ArenaUnity.ToArenaColor(light.color);
-            data.CastShadow = light.shadows != LightShadows.None;
 
             return data != null ? JObject.FromObject(data) : null;
         }
