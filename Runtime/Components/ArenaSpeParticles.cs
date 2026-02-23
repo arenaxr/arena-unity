@@ -14,7 +14,7 @@ namespace ArenaUnity.Components
     public class ArenaSpeParticles : ArenaComponent
     {
         // ARENA spe-particles component unity conversion status:
-        // TODO: acceleration
+        // DONE: acceleration
         // TODO: accelerationDistribution
         // TODO: accelerationSpread
         // TODO: activeMultiplier
@@ -22,30 +22,30 @@ namespace ArenaUnity.Components
         // TODO: alphaTest
         // TODO: angle
         // TODO: angleSpread
-        // TODO: blending
-        // TODO: color
+        // DONE: blending
+        // DONE: color
         // TODO: colorSpread
-        // TODO: depthTest
-        // TODO: depthWrite
+        // DONE: depthTest
+        // DONE: depthWrite
         // TODO: direction
-        // TODO: distribution
+        // DONE: distribution
         // TODO: drag
         // TODO: dragSpread
-        // TODO: duration
+        // DONE: duration
         // TODO: emitterScale
         // TODO: enableInEditor
-        // TODO: enabled
+        // DONE: enabled
         // TODO: frustumCulled
         // TODO: hasPerspective
-        // TODO: maxAge
+        // DONE: maxAge
         // TODO: maxAgeSpread
-        // TODO: opacity
+        // DONE: opacity
         // TODO: opacitySpread
-        // TODO: particleCount
+        // DONE: particleCount
         // TODO: positionDistribution
-        // TODO: positionOffset
-        // TODO: positionSpread
-        // TODO: radius
+        // DONE: positionOffset
+        // DONE: positionSpread
+        // DONE: radius
         // TODO: radiusScale
         // TODO: randomizeAcceleration
         // TODO: randomizeAngle
@@ -56,30 +56,169 @@ namespace ArenaUnity.Components
         // TODO: randomizeRotation
         // TODO: randomizeSize
         // TODO: randomizeVelocity
-        // TODO: relative
+        // DONE: relative
         // TODO: rotation
         // TODO: rotationAxis
         // TODO: rotationAxisSpread
         // TODO: rotationSpread
         // TODO: rotationStatic
-        // TODO: size
+        // DONE: size
         // TODO: sizeSpread
-        // TODO: texture
+        // DONE: texture
         // TODO: textureFrameCount
         // TODO: textureFrameLoop
         // TODO: textureFrames
         // TODO: useTransparency
-        // TODO: velocity
+        // DONE: velocity
         // TODO: velocityDistribution
         // TODO: velocitySpread
         // TODO: wiggle
         // TODO: wiggleSpread
 
+        // NEXT STEPS FOR ADVANCED PARTICLES:
+        // 1. Implementing SizeOverLifetime & ColorOverLifetime arrays based on SPE's logic.
+        //    A-Frame's SPE component can array lengths beyond simple start/end, Unity's `MinMaxCurve` or `Gradient` will be needed.
+        // 2. Add spritesheet animation mapping (textureFrames, textureFrameCount, textureFrameLoop) using `ParticleSystem.TextureSheetAnimationModule`.
+        // 3. Add random spread mapping. For instance, `PositionSpread` and `ColorSpread` require `ParticleSystem.MinMaxCurve` / `MinMaxGradient` with random between two constants.
+
         public ArenaSpeParticlesJson json = new ArenaSpeParticlesJson();
+        private ParticleSystem ps;
+        private ParticleSystemRenderer psr;
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            if (ps == null)
+            {
+                ps = gameObject.AddComponent<ParticleSystem>();
+                psr = gameObject.GetComponent<ParticleSystemRenderer>();
+            }
+
+            var main = ps.main;
+
+            main.loop = json.Duration < 0;
+            if (json.Duration > 0)
+                main.duration = json.Duration;
+
+            main.startLifetime = json.MaxAge;
+            main.playOnAwake = json.Enabled;
+            // TODO: handle enableInEditor, affectedByFog
+
+            if (json.Size != null && json.Size.Length > 0)
+            {
+                if (json.Size[0].HasValue)
+                    main.startSize = json.Size[0].Value;
+                // TODO: use SizeOverLifetime if multiple sizes provided
+            }
+
+            if (json.Color != null && json.Color.Length > 0)
+            {
+                ColorUtility.TryParseHtmlString(json.Color[0], out Color startColor);
+                if (json.Opacity != null && json.Opacity.Length > 0 && json.Opacity[0].HasValue)
+                    startColor.a = json.Opacity[0].Value;
+                main.startColor = startColor;
+                // TODO: use ColorOverLifetime if multiple colors/opacities provided
+            }
+
+            main.maxParticles = json.ParticleCount;
+            // TODO: handle ActiveMultiplier
+
+            var emission = ps.emission;
+            emission.enabled = true;
+            // Rough approximation of rate, A-Frame SPE is more complex
+            emission.rateOverTime = json.ParticleCount / json.MaxAge;
+
+            var shape = ps.shape;
+            shape.enabled = true;
+            switch (json.Distribution)
+            {
+                case ArenaSpeParticlesJson.DistributionType.Box:
+                    shape.shapeType = ParticleSystemShapeType.Box;
+                    shape.scale = ArenaUnity.ToUnityScale(json.PositionSpread);
+                    break;
+                case ArenaSpeParticlesJson.DistributionType.Sphere:
+                    shape.shapeType = ParticleSystemShapeType.Sphere;
+                    shape.radius = json.Radius;
+                    // TODO: how to handle json.RadiusScale
+                    break;
+                case ArenaSpeParticlesJson.DistributionType.Disc:
+                    shape.shapeType = ParticleSystemShapeType.Circle;
+                    shape.radius = json.Radius;
+                    // TODO: how to handle json.RadiusScale
+                    break;
+            }
+            shape.position = ArenaUnity.ToUnityPosition(json.PositionOffset);
+
+            var velocityOverLifetime = ps.velocityOverLifetime;
+            velocityOverLifetime.enabled = true;
+            velocityOverLifetime.x = new ParticleSystem.MinMaxCurve((float)json.Velocity.X);
+            velocityOverLifetime.y = new ParticleSystem.MinMaxCurve((float)json.Velocity.Y);
+            velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(-(float)json.Velocity.Z);
+
+            var forceOverLifetime = ps.forceOverLifetime;
+            forceOverLifetime.enabled = true;
+            forceOverLifetime.x = new ParticleSystem.MinMaxCurve((float)json.Acceleration.X);
+            forceOverLifetime.y = new ParticleSystem.MinMaxCurve((float)json.Acceleration.Y);
+            forceOverLifetime.z = new ParticleSystem.MinMaxCurve(-(float)json.Acceleration.Z);
+
+            main.simulationSpace = json.Relative == ArenaSpeParticlesJson.RelativeType.World ? ParticleSystemSimulationSpace.World : ParticleSystemSimulationSpace.Local;
+
+            // Texture support
+            psr.material = new Material(ArenaUnity.GetUnlitShader());
+            if (!string.IsNullOrEmpty(json.Texture))
+            {
+                string assetPath = ArenaClientScene.Instance.checkLocalAsset((string)json.Texture);
+                if (assetPath != null)
+                {
+                    ArenaMaterial.AttachMaterialTexture(assetPath, gameObject);
+                }
+            }
+            else
+            {
+                // Assign a sensible default circular particle if no texture is provided, matching SPE behavior
+                // (This can be refined later)
+            }
+
+            switch(json.Blending)
+            {
+                case ArenaSpeParticlesJson.BlendingType.Additive:
+                    psr.material.SetFloat("_Mode", 3f); // Transparent
+                    psr.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    psr.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    break;
+                case ArenaSpeParticlesJson.BlendingType.Multiply:
+                    psr.material.SetFloat("_Mode", 3f);
+                    psr.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.DstColor);
+                    psr.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    break;
+                case ArenaSpeParticlesJson.BlendingType.Subtractive:
+                    // Unity doesn't have a direct "subtractive" mapping in the standard setup easily accessible here without a custom shader, using Fade as fallback
+                case ArenaSpeParticlesJson.BlendingType.Normal:
+                case ArenaSpeParticlesJson.BlendingType.No:
+                default:
+                    psr.material.SetFloat("_Mode", 2f); // Fade
+                    psr.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    psr.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    break;
+            }
+
+            if (json.DepthTest)
+                psr.material.SetFloat("_ZTest", (float)UnityEngine.Rendering.CompareFunction.LessEqual);
+            else
+                psr.material.SetFloat("_ZTest", (float)UnityEngine.Rendering.CompareFunction.Always);
+
+            if (json.DepthWrite)
+                psr.material.SetFloat("_ZWrite", 1f);
+            else
+                psr.material.SetFloat("_ZWrite", 0f);
+
+            if (json.Enabled) {
+                if (!ps.isPlaying) {
+                     ps.Play();
+                }
+            } else {
+                ps.Stop();
+                ps.Clear();
+            }
         }
 
         public override void UpdateObject()

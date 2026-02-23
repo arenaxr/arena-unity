@@ -315,6 +315,14 @@ namespace ArenaUnity
             c.apply = true;
         }
 
+        public static void ApplySpeParticles(GameObject gobj, ArenaDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaSpeParticles>(out var particles))
+                particles = gobj.AddComponent<ArenaSpeParticles>();
+            particles.json = JsonConvert.DeserializeObject<ArenaSpeParticlesJson>(MergeRawJson(particles.json, data.SpeParticles));
+            particles.apply = true;
+        }
+
         // wire objects
 
         public static void ApplyGeometry(string primitive, object data, GameObject gobj)
