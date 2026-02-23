@@ -32,7 +32,7 @@ namespace ArenaUnity.Editor.Components
             if (Application.isPlaying)
             {
                 var authStyle = new GUIStyle(EditorStyles.label);
-                authStyle.normal.textColor = aobj.TextColor;
+                authStyle.normal.textColor = ArenaHierarchyColor.GetTextColor(aobj.HasPermissions);
                 var authString = aobj.HasPermissions ? "A" : "Not a";
                 GUILayout.Label($"{authString}uthorized to publish changes", authStyle);
             }

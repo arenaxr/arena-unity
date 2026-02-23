@@ -9,7 +9,6 @@ using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PrettyHierarchy;
 using TMPro;
 using UnityEngine;
 
@@ -20,8 +19,10 @@ namespace ArenaUnity
     /// </summary>
     [HelpURL("https://docs.arenaxr.org/content/schemas")]
     [DisallowMultipleComponent]
-    public class ArenaObject : PrettyObject
+    public class ArenaObject : MonoBehaviour, IArenaPermissions
     {
+        public bool HasPermissions { get; set; }
+
         [Tooltip("Message type in persistence storage schema")]
         public string messageType = "object"; // default to object
         [Tooltip("Persist this object in the ARENA server database (default true = persist on server)")]

@@ -3,7 +3,6 @@
     "rootNamespace": "",
     "references": [
         "conix.arena.unity",
-        "PrettyHierarchy",
         "GaussianSplatting",
         "GaussianSplattingEditor",
         "glTFast",

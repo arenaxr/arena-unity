@@ -5,7 +5,6 @@
         "GaussianSplattingEditor",
         "glTFast",
         "glTFast.Export",
-        "PrettyHierarchy",
         "Unity.Burst",
         "Unity.Collections",
         "Unity.Mathematics",

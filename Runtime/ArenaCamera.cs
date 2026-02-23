@@ -8,15 +8,16 @@ using ArenaUnity.Components;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PrettyHierarchy;
 using TMPro;
 using UnityEngine;
 
 namespace ArenaUnity
 {
     [DisallowMultipleComponent]
-    public class ArenaCamera : PrettyObject
+    public class ArenaCamera : MonoBehaviour, IArenaPermissions
     {
+        public bool HasPermissions { get; set; }
+
         private const float cameraKeepAliveMs = 1f; // 1 second
         private float publishInterval; // varies
 
