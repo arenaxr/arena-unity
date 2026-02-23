@@ -16,7 +16,7 @@ namespace ArenaUnity.Components
         // ARENA spe-particles component unity conversion status:
         // DONE: acceleration
         // TODO: accelerationDistribution
-        // TODO: accelerationSpread
+        // DONE: accelerationSpread
         // TODO: activeMultiplier
         // TODO: affectedByFog
         // TODO: alphaTest
@@ -24,7 +24,7 @@ namespace ArenaUnity.Components
         // TODO: angleSpread
         // DONE: blending
         // DONE: color
-        // TODO: colorSpread
+        // DONE: colorSpread
         // DONE: depthTest
         // DONE: depthWrite
         // TODO: direction
@@ -40,13 +40,13 @@ namespace ArenaUnity.Components
         // DONE: maxAge
         // TODO: maxAgeSpread
         // DONE: opacity
-        // TODO: opacitySpread
+        // DONE: opacitySpread
         // DONE: particleCount
-        // TODO: positionDistribution
+        // DONE: positionDistribution
         // DONE: positionOffset
         // DONE: positionSpread
         // DONE: radius
-        // TODO: radiusScale
+        // DONE: radiusScale
         // TODO: randomizeAcceleration
         // TODO: randomizeAngle
         // TODO: randomizeColor
@@ -63,15 +63,15 @@ namespace ArenaUnity.Components
         // TODO: rotationSpread
         // TODO: rotationStatic
         // DONE: size
-        // TODO: sizeSpread
+        // DONE: sizeSpread
         // DONE: texture
         // DONE: textureFrameCount
         // DONE: textureFrameLoop
         // DONE: textureFrames
-        // TODO: useTransparency
+        // DONE: useTransparency
         // DONE: velocity
-        // TODO: velocityDistribution
-        // TODO: velocitySpread
+        // DONE: velocityDistribution
+        // DONE: velocitySpread
         // TODO: wiggle
         // TODO: wiggleSpread
 
@@ -105,24 +105,42 @@ namespace ArenaUnity.Components
             if (json.Size != null && json.Size.Length > 0)
             {
                 if (json.Size[0].HasValue)
-                    main.startSize = (float)json.Size[0].Value;
-
-                if (json.Size.Length > 1)
                 {
-                    var sizeOverLifetime = ps.sizeOverLifetime;
-                    sizeOverLifetime.enabled = true;
-                    var curve = new AnimationCurve();
-                    for (int i = 0; i < json.Size.Length; i++)
+                    float startSize = (float)json.Size[0].Value;
+                    main.startSize = startSize;
+
+                    if (json.Size.Length > 1 || (json.SizeSpread != null && json.SizeSpread.Length > 0))
                     {
-                        if (json.Size[i].HasValue)
+                        var sizeOverLifetime = ps.sizeOverLifetime;
+                        sizeOverLifetime.enabled = true;
+
+                        int len = Mathf.Max(json.Size.Length, json.SizeSpread != null ? json.SizeSpread.Length : 0);
+                        var curveMin = new AnimationCurve();
+                        var curveMax = new AnimationCurve();
+
+                        for (int i = 0; i < len; i++)
                         {
-                            float t = (float)i / (json.Size.Length - 1);
-                            // Unity's sizeOverLifetime applies a multiplier to startSize
-                            float multiplier = (float)json.Size[0].Value != 0 ? (float)json.Size[i].Value / (float)json.Size[0].Value : 0;
-                            curve.AddKey(t, multiplier);
+                            float t = len == 1 ? 0f : (float)i / (len - 1);
+
+                            float sVal = 1f;
+                            if (json.Size.Length > 0) {
+                                int sIdx = Mathf.Min(i, json.Size.Length - 1);
+                                if (json.Size[sIdx].HasValue)
+                                    sVal = startSize != 0 ? (float)json.Size[sIdx].Value / startSize : 0;
+                            }
+
+                            float spreadVal = 0f;
+                            if (json.SizeSpread != null && json.SizeSpread.Length > 0) {
+                                int spIdx = Mathf.Min(i, json.SizeSpread.Length - 1);
+                                if (json.SizeSpread[spIdx].HasValue)
+                                    spreadVal = startSize != 0 ? (float)json.SizeSpread[spIdx].Value / startSize : 0;
+                            }
+
+                            curveMin.AddKey(t, Mathf.Max(0, sVal - spreadVal));
+                            curveMax.AddKey(t, sVal + spreadVal);
                         }
+                        sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, curveMin, curveMax);
                     }
-                    sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, curve);
                 }
             }
 
@@ -133,41 +151,78 @@ namespace ArenaUnity.Components
                     startColor.a = json.Opacity[0].Value;
                 main.startColor = startColor;
 
-                if (json.Color.Length > 1 || (json.Opacity != null && json.Opacity.Length > 1))
+                bool hasColorSpread = json.ColorSpread != null && json.ColorSpread.Length > 0;
+                bool hasOpacitySpread = json.OpacitySpread != null && json.OpacitySpread.Length > 0;
+
+                if (json.Color.Length > 1 || (json.Opacity != null && json.Opacity.Length > 1) || hasColorSpread || hasOpacitySpread)
                 {
                     var colorOverLifetime = ps.colorOverLifetime;
                     colorOverLifetime.enabled = true;
 
-                    int colorLen = json.Color.Length;
-                    int alphaLen = json.Opacity != null ? json.Opacity.Length : 0;
+                    int colorLen = Mathf.Max(json.Color.Length, hasColorSpread ? json.ColorSpread.Length : 0);
+                    int alphaLen = Mathf.Max(json.Opacity != null ? json.Opacity.Length : 0, hasOpacitySpread ? json.OpacitySpread.Length : 0);
 
-                    Gradient g = new Gradient();
-                    var colorKeys = new GradientColorKey[colorLen];
-                    var alphaKeys = new GradientAlphaKey[alphaLen == 0 ? 1 : alphaLen];
+                    // Unity requires at least 2 keys
+                    int cKeysLength = Mathf.Max(2, colorLen);
+                    int aKeysLength = Mathf.Max(2, alphaLen);
 
-                    for (int i = 0; i < colorLen; i++) {
-                        ColorUtility.TryParseHtmlString(json.Color[i], out Color c);
-                        float t = colorLen == 1 ? 0f : (float)i / (colorLen - 1);
-                        colorKeys[i] = new GradientColorKey(c, t);
-                    }
-                    if (alphaLen == 0) {
-                        alphaKeys = new GradientAlphaKey[2];
-                        alphaKeys[0] = new GradientAlphaKey(startColor.a, 0f);
-                        alphaKeys[1] = new GradientAlphaKey(startColor.a, 1f);
-                    } else if (alphaLen == 1) {
-                        alphaKeys = new GradientAlphaKey[2];
-                        float a = json.Opacity[0].HasValue ? json.Opacity[0].Value : 1f;
-                        alphaKeys[0] = new GradientAlphaKey(a, 0f);
-                        alphaKeys[1] = new GradientAlphaKey(a, 1f);
-                    } else {
-                        for (int i = 0; i < alphaLen; i++) {
-                            float a = json.Opacity[i].HasValue ? json.Opacity[i].Value : 1f;
-                            float t = (float)i / (alphaLen - 1);
-                            alphaKeys[i] = new GradientAlphaKey(a, t);
+                    Gradient gMin = new Gradient();
+                    Gradient gMax = new Gradient();
+                    var colorKeysMin = new GradientColorKey[cKeysLength];
+                    var colorKeysMax = new GradientColorKey[cKeysLength];
+                    var alphaKeysMin = new GradientAlphaKey[aKeysLength];
+                    var alphaKeysMax = new GradientAlphaKey[aKeysLength];
+
+                    for (int i = 0; i < cKeysLength; i++) {
+                        float t = (cKeysLength == 1) ? 0f : (float)i / (cKeysLength - 1);
+
+                        int cIdx = Mathf.Min(i, json.Color.Length - 1);
+                        Color c = startColor;
+                        if (cIdx >= 0) ColorUtility.TryParseHtmlString(json.Color[cIdx], out c);
+
+                        float sr = 0, sg = 0, sb = 0;
+                        if (hasColorSpread) {
+                            int sIdx = Mathf.Min(i, json.ColorSpread.Length - 1);
+                            if (json.ColorSpread[sIdx] != null) {
+                                sr = (float)json.ColorSpread[sIdx].X;
+                                sg = (float)json.ColorSpread[sIdx].Y;
+                                sb = (float)json.ColorSpread[sIdx].Z;
+                            }
                         }
+
+                        Color cMin = new Color(Mathf.Clamp01(c.r - sr), Mathf.Clamp01(c.g - sg), Mathf.Clamp01(c.b - sb));
+                        Color cMax = new Color(Mathf.Clamp01(c.r + sr), Mathf.Clamp01(c.g + sg), Mathf.Clamp01(c.b + sb));
+                        colorKeysMin[i] = new GradientColorKey(cMin, t);
+                        colorKeysMax[i] = new GradientColorKey(cMax, t);
                     }
-                    g.SetKeys(colorKeys, alphaKeys);
-                    colorOverLifetime.color = new ParticleSystem.MinMaxGradient(g);
+
+                    for (int i = 0; i < aKeysLength; i++) {
+                        float t = (aKeysLength == 1) ? 0f : (float)i / (aKeysLength - 1);
+
+                        float a = startColor.a;
+                        if (json.Opacity != null && json.Opacity.Length > 0) {
+                            int aIdx = Mathf.Min(i, json.Opacity.Length - 1);
+                            if (json.Opacity[aIdx].HasValue) a = json.Opacity[aIdx].Value;
+                        }
+
+                        float spreadA = 0f;
+                        if (hasOpacitySpread) {
+                            int sIdx = Mathf.Min(i, json.OpacitySpread.Length - 1);
+                            if (json.OpacitySpread[sIdx].HasValue) spreadA = json.OpacitySpread[sIdx].Value;
+                        }
+
+                        alphaKeysMin[i] = new GradientAlphaKey(Mathf.Clamp01(a - spreadA), t);
+                        alphaKeysMax[i] = new GradientAlphaKey(Mathf.Clamp01(a + spreadA), t);
+                    }
+
+                    gMin.SetKeys(colorKeysMin, alphaKeysMin);
+                    gMax.SetKeys(colorKeysMax, alphaKeysMax);
+
+                    if (!hasColorSpread && !hasOpacitySpread) {
+                        colorOverLifetime.color = new ParticleSystem.MinMaxGradient(gMin);
+                    } else {
+                        colorOverLifetime.color = new ParticleSystem.MinMaxGradient(gMin, gMax);
+                    }
                 }
             }
 
@@ -179,9 +234,16 @@ namespace ArenaUnity.Components
             // Rough approximation of rate, A-Frame SPE is more complex
             emission.rateOverTime = json.ParticleCount / json.MaxAge;
 
+            // Position Distribution (Shape)
             var shape = ps.shape;
             shape.enabled = true;
-            switch (json.Distribution)
+
+            // SPE defaults to 'Distribution' if 'PositionDistribution' is None
+            var posDist = json.PositionDistribution != ArenaSpeParticlesJson.PositionDistributionType.None ?
+                          (ArenaSpeParticlesJson.DistributionType)(int)json.PositionDistribution :
+                          json.Distribution;
+
+            switch (posDist)
             {
                 case ArenaSpeParticlesJson.DistributionType.Box:
                     shape.shapeType = ParticleSystemShapeType.Box;
@@ -200,29 +262,63 @@ namespace ArenaUnity.Components
             }
             shape.position = ArenaUnity.ToUnityPosition(json.PositionOffset);
 
-            var velocityOverLifetime = ps.velocityOverLifetime;
-            velocityOverLifetime.enabled = true;
-            velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(
-                (float)(json.Velocity.X - json.VelocitySpread.X / 2.0),
-                (float)(json.Velocity.X + json.VelocitySpread.X / 2.0));
-            velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(
-                (float)(json.Velocity.Y - json.VelocitySpread.Y / 2.0),
-                (float)(json.Velocity.Y + json.VelocitySpread.Y / 2.0));
-            velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(
-                (float)(-json.Velocity.Z - json.VelocitySpread.Z / 2.0), // Z axis is flipped for Unity
-                (float)(-json.Velocity.Z + json.VelocitySpread.Z / 2.0));
+            // Velocity Distribution
+            var velDist = json.VelocityDistribution != ArenaSpeParticlesJson.VelocityDistributionType.None ?
+                          (ArenaSpeParticlesJson.DistributionType)(int)json.VelocityDistribution :
+                          json.Distribution;
 
+            var velocityOverLifetime = ps.velocityOverLifetime;
             var forceOverLifetime = ps.forceOverLifetime;
-            forceOverLifetime.enabled = true;
-            forceOverLifetime.x = new ParticleSystem.MinMaxCurve(
-                (float)(json.Acceleration.X - json.AccelerationSpread.X / 2.0),
-                (float)(json.Acceleration.X + json.AccelerationSpread.X / 2.0));
-            forceOverLifetime.y = new ParticleSystem.MinMaxCurve(
-                (float)(json.Acceleration.Y - json.AccelerationSpread.Y / 2.0),
-                (float)(json.Acceleration.Y + json.AccelerationSpread.Y / 2.0));
-            forceOverLifetime.z = new ParticleSystem.MinMaxCurve(
-                (float)(-json.Acceleration.Z - json.AccelerationSpread.Z / 2.0), // Z axis is flipped for Unity
-                (float)(-json.Acceleration.Z + json.AccelerationSpread.Z / 2.0));
+
+            if (velDist == ArenaSpeParticlesJson.DistributionType.Box)
+            {
+                // Box / None: Particles move along the explicit Velocity/Acceleration vectors
+                velocityOverLifetime.enabled = true;
+                velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(
+                    (float)(json.Velocity.X - json.VelocitySpread.X / 2.0),
+                    (float)(json.Velocity.X + json.VelocitySpread.X / 2.0));
+                velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(
+                    (float)(json.Velocity.Y - json.VelocitySpread.Y / 2.0),
+                    (float)(json.Velocity.Y + json.VelocitySpread.Y / 2.0));
+                velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(
+                    (float)(-json.Velocity.Z - json.VelocitySpread.Z / 2.0), // Z axis is flipped for Unity
+                    (float)(-json.Velocity.Z + json.VelocitySpread.Z / 2.0));
+
+                forceOverLifetime.enabled = true;
+                forceOverLifetime.x = new ParticleSystem.MinMaxCurve(
+                    (float)(json.Acceleration.X - json.AccelerationSpread.X / 2.0),
+                    (float)(json.Acceleration.X + json.AccelerationSpread.X / 2.0));
+                forceOverLifetime.y = new ParticleSystem.MinMaxCurve(
+                    (float)(json.Acceleration.Y - json.AccelerationSpread.Y / 2.0),
+                    (float)(json.Acceleration.Y + json.AccelerationSpread.Y / 2.0));
+                forceOverLifetime.z = new ParticleSystem.MinMaxCurve(
+                    (float)(-json.Acceleration.Z - json.AccelerationSpread.Z / 2.0), // Z axis is flipped for Unity
+                    (float)(-json.Acceleration.Z + json.AccelerationSpread.Z / 2.0));
+            }
+            else
+            {
+                // Sphere / Disc: Velocity dictates "Speed" outwards from center, not rigid XYZ vectors
+                // A-Frame SPE only uses Velocity.X for speed in these distributions.
+                velocityOverLifetime.enabled = false;
+                forceOverLifetime.enabled = false;
+
+                var speedCurve = new ParticleSystem.MinMaxCurve(
+                    (float)(json.Velocity.X - json.VelocitySpread.X / 2.0),
+                    (float)(json.Velocity.X + json.VelocitySpread.X / 2.0)
+                );
+
+                main.startSpeed = speedCurve;
+
+                // Acceleration mapping for radial shapes is more complex in Shuriken,
+                // roughly mapped to radial multiplier or linear velocity over time.
+                if (json.Acceleration.X != 0 || json.AccelerationSpread.X != 0) {
+                    var radialVel = velocityOverLifetime;
+                    radialVel.enabled = true;
+                    radialVel.radial = new ParticleSystem.MinMaxCurve(
+                        (float)(json.Acceleration.X - json.AccelerationSpread.X / 2.0),
+                        (float)(json.Acceleration.X + json.AccelerationSpread.X / 2.0));
+                }
+            }
 
             main.simulationSpace = json.Relative == ArenaSpeParticlesJson.RelativeType.World ? ParticleSystemSimulationSpace.World : ParticleSystemSimulationSpace.Local;
 
