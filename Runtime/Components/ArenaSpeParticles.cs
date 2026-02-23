@@ -19,9 +19,9 @@ namespace ArenaUnity.Components
         // DONE: accelerationSpread
         // TODO: activeMultiplier
         // TODO: affectedByFog
-        // TODO: alphaTest
-        // TODO: angle
-        // TODO: angleSpread
+        // DONE: alphaTest
+        // DONE: angle
+        // DONE: angleSpread
         // DONE: blending
         // DONE: color
         // DONE: colorSpread
@@ -47,21 +47,21 @@ namespace ArenaUnity.Components
         // DONE: positionSpread
         // DONE: radius
         // DONE: radiusScale
-        // TODO: randomizeAcceleration
-        // TODO: randomizeAngle
-        // TODO: randomizeColor
-        // TODO: randomizeDrag
-        // TODO: randomizeOpacity
-        // TODO: randomizePosition
-        // TODO: randomizeRotation
-        // TODO: randomizeSize
-        // TODO: randomizeVelocity
+        // DONE: randomizeAcceleration
+        // DONE: randomizeAngle
+        // DONE: randomizeColor
+        // DONE: randomizeDrag
+        // DONE: randomizeOpacity
+        // DONE: randomizePosition
+        // DONE: randomizeRotation
+        // DONE: randomizeSize
+        // DONE: randomizeVelocity
         // DONE: relative
-        // TODO: rotation
-        // TODO: rotationAxis
-        // TODO: rotationAxisSpread
-        // TODO: rotationSpread
-        // TODO: rotationStatic
+        // DONE: rotation
+        // DONE: rotationAxis
+        // DONE: rotationAxisSpread
+        // DONE: rotationSpread
+        // DONE: rotationStatic
         // DONE: size
         // DONE: sizeSpread
         // DONE: texture
@@ -78,7 +78,6 @@ namespace ArenaUnity.Components
         // NEXT STEPS FOR ADVANCED PARTICLES:
         // 1. Implementing SizeOverLifetime & ColorOverLifetime arrays based on SPE's logic.
         //    A-Frame's SPE component can array lengths beyond simple start/end, Unity's `MinMaxCurve` or `Gradient` will be needed.
-        // 2. Add random spread mapping. For instance, `PositionSpread` and `ColorSpread` require `ParticleSystem.MinMaxCurve` / `MinMaxGradient` with random between two constants.
 
         public ArenaSpeParticlesJson json = new ArenaSpeParticlesJson();
         private ParticleSystem ps;
@@ -113,6 +112,25 @@ namespace ArenaUnity.Components
 
             // Global sizing ratio to convert A-Frame 'size' parameter space (+ EmitterScale global scalar) into Unity meters
             float globalScaleRatio = (json.EmitterScale / 100f) * 0.1f;
+
+            // Angle (Initial 2D Rotation)
+            if (json.Angle != null && json.Angle.Length > 0 && json.Angle[0].HasValue)
+            {
+                float angle = json.Angle[0].Value;
+                float angleSpread = 0f;
+                if (json.AngleSpread != null && json.AngleSpread.Length > 0 && json.AngleSpread[0].HasValue)
+                    angleSpread = json.AngleSpread[0].Value;
+
+                main.startRotation3D = false;
+                if (angleSpread > 0)
+                {
+                    main.startRotation = new ParticleSystem.MinMaxCurve(angle - angleSpread / 2f, angle + angleSpread / 2f);
+                }
+                else
+                {
+                    main.startRotation = angle;
+                }
+            }
 
             // TODO: handle enableInEditor, affectedByFog
 
@@ -373,6 +391,58 @@ namespace ArenaUnity.Components
             {
                 var noise = ps.noise;
                 noise.enabled = false;
+            }
+
+            // Rotation (Angular Velocity or Fixed 3D Rotation)
+            var rotOverLifetime = ps.rotationOverLifetime;
+            if (json.RotationStatic)
+            {
+                rotOverLifetime.enabled = false;
+                if (json.Rotation != 0 || json.RotationSpread != 0)
+                {
+                    main.startRotation3D = true;
+                    float rotRads = json.Rotation * Mathf.Deg2Rad;
+                    float rotSpreadRads = json.RotationSpread * Mathf.Deg2Rad;
+                    float minRot = rotRads - rotSpreadRads / 2f;
+                    float maxRot = rotRads + rotSpreadRads / 2f;
+
+                    Vector3 axis = new Vector3((float)json.RotationAxis.X, (float)json.RotationAxis.Y, (float)json.RotationAxis.Z);
+                    if (axis == Vector3.zero) axis = Vector3.forward;
+                    axis.Normalize();
+
+                    main.startRotationX = new ParticleSystem.MinMaxCurve(minRot * axis.x, maxRot * axis.x);
+                    main.startRotationY = new ParticleSystem.MinMaxCurve(minRot * axis.y, maxRot * axis.y);
+                    main.startRotationZ = new ParticleSystem.MinMaxCurve(minRot * axis.z, maxRot * axis.z);
+                }
+            }
+            else if (json.Rotation != 0 || json.RotationSpread != 0)
+            {
+                rotOverLifetime.enabled = true;
+                // Unity rotation over lifetime takes radians per second in script!
+                float angularVel = (json.Rotation * Mathf.Deg2Rad) / json.MaxAge;
+                float angularVelSpread = (json.RotationSpread * Mathf.Deg2Rad) / json.MaxAge;
+
+                float minVel = angularVel - angularVelSpread / 2f;
+                float maxVel = angularVel + angularVelSpread / 2f;
+
+                Vector3 axis = new Vector3((float)json.RotationAxis.X, (float)json.RotationAxis.Y, (float)json.RotationAxis.Z);
+                if (axis == Vector3.zero)
+                {
+                    rotOverLifetime.separateAxes = false;
+                    rotOverLifetime.z = new ParticleSystem.MinMaxCurve(minVel, maxVel);
+                }
+                else
+                {
+                    rotOverLifetime.separateAxes = true;
+                    axis.Normalize();
+                    rotOverLifetime.x = new ParticleSystem.MinMaxCurve(minVel * axis.x, maxVel * axis.x);
+                    rotOverLifetime.y = new ParticleSystem.MinMaxCurve(minVel * axis.y, maxVel * axis.y);
+                    rotOverLifetime.z = new ParticleSystem.MinMaxCurve(minVel * axis.z, maxVel * axis.z);
+                }
+            }
+            else
+            {
+                rotOverLifetime.enabled = false;
             }
 
             main.simulationSpace = json.Relative == ArenaSpeParticlesJson.RelativeType.World ? ParticleSystemSimulationSpace.World : ParticleSystemSimulationSpace.Local;
