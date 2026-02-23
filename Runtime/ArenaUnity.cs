@@ -665,7 +665,7 @@ namespace ArenaUnity
 
         public static Shader GetParticleShader()
         {
-            string particleShader = "Particles/Standard Unlit";
+            string particleShader = "Legacy Shaders/Particles/Alpha Blended";
             if (DefaultRenderPipeline)
             {
                 if (DefaultRenderPipeline.GetType().ToString().Contains("HDRenderPipelineAsset"))

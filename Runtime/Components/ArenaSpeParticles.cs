@@ -518,13 +518,14 @@ namespace ArenaUnity.Components
                 textureSheetAnimation.enabled = false;
             }
 
-            // Texture support
-            Material mat = psr.material;
+            // Texture support — use sharedMaterial to avoid Unity's copy-on-access behavior
+            // (renderer.material creates a new copy every access, causing property loss)
+            Material mat = psr.sharedMaterial;
             if (mat == null || mat.name == "Default-Material" || mat.shader.name == "Standard")
             {
                 // Ensure a particle material is used if Unity assigned a default Lit material
                 mat = new Material(ArenaUnity.GetParticleShader());
-                psr.material = mat;
+                psr.sharedMaterial = mat;
             }
 
             if (!string.IsNullOrEmpty(json.Texture))
@@ -533,7 +534,15 @@ namespace ArenaUnity.Components
                 if (assetPath != null)
                 {
                     mat.shader = ArenaUnity.GetParticleShader();
-                    ArenaMaterial.AttachMaterialTexture(assetPath, gameObject);
+
+                    // Load texture directly onto mat to avoid material instance splits
+                    if (System.IO.File.Exists(assetPath))
+                    {
+                        var bytes = System.IO.File.ReadAllBytes(assetPath);
+                        var tex = new Texture2D(1, 1);
+                        tex.LoadImage(bytes);
+                        mat.mainTexture = tex;
+                    }
 
                     // URP Particle shaders often use _BaseMap instead of _MainTex
                     if (mat.HasProperty("_BaseMap") && mat.mainTexture != null)
@@ -544,120 +553,193 @@ namespace ArenaUnity.Components
             }
 
             bool isURP = ArenaUnity.DefaultRenderPipeline != null;
+
+            // Setup blending mode — for Standard (non-URP) pipeline, each case exactly mirrors
+            // Unity's official StandardParticlesShaderGUI.SetupMaterialWithBlendMode
             if (json.UseTransparency)
             {
-                mat.SetOverrideTag("RenderType", "Transparent");
-                if (isURP) mat.SetFloat("_Surface", 1f); // URP Transparent
-                mat.renderQueue = 3000;
-            }
+                switch(json.Blending)
+                {
+                    case ArenaSpeParticlesJson.BlendingType.Additive:
+                        if (isURP)
+                        {
+                            mat.SetFloat("_Surface", 1f);
+                            mat.SetFloat("_Mode", 2f);
+                            mat.SetFloat("_Blend", 2f);
+                            mat.SetOverrideTag("RenderType", "Transparent");
+                            mat.SetInt("_BlendOp", (int)UnityEngine.Rendering.BlendOp.Add);
+                            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                            mat.SetInt("_ZWrite", 0);
+                            mat.EnableKeyword("_ADDITIVEBLEND");
+                            mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                            mat.SetFloat("_AlphaClip", 0f);
+                            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                        }
+                        else
+                        {
+                            // Unity Particle BlendMode.Additive
+                            mat.SetOverrideTag("RenderType", "Transparent");
+                            mat.SetInt("_BlendOp", (int)UnityEngine.Rendering.BlendOp.Add);
+                            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                            mat.SetInt("_ZWrite", 0);
+                            mat.DisableKeyword("_ALPHATEST_ON");
+                            mat.EnableKeyword("_ALPHABLEND_ON");
+                            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                            mat.DisableKeyword("_ALPHAMODULATE_ON");
+                            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                        }
+                        break;
 
-            switch(json.Blending)
-            {
-                case ArenaSpeParticlesJson.BlendingType.Additive:
-                    if (isURP) { mat.SetFloat("_Mode", 2f); mat.SetFloat("_Blend", 2f); }
-                    else {
-                        mat.SetFloat("_Mode", 2f); // Fade/Straight Alpha in standard
-                        mat.SetFloat("_ColorMode", 0f); // Multiply
-                        mat.SetFloat("_BlendOp", (float)UnityEngine.Rendering.BlendOp.Add);
-                    }
-                    mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                    mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.One);
-                    mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                    if (json.UseTransparency) {
-                        if (isURP) mat.EnableKeyword("_ADDITIVEBLEND");
-                        else mat.EnableKeyword("_ALPHABLEND_ON");
-                    }
-                    break;
-                case ArenaSpeParticlesJson.BlendingType.Multiply:
-                    if (isURP) { mat.SetFloat("_Mode", 2f); mat.SetFloat("_Blend", 3f); }
-                    else {
-                        mat.SetFloat("_Mode", 2f); // Fade/Straight Alpha in standard
-                        mat.SetFloat("_ColorMode", 0f); // Multiply
-                        mat.SetFloat("_BlendOp", (float)UnityEngine.Rendering.BlendOp.Add);
-                    }
-                    mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.DstColor);
-                    mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
-                    mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                    if (json.UseTransparency) {
-                        if (isURP) mat.EnableKeyword("_MULTIPLYBLEND");
-                        else mat.EnableKeyword("_ALPHABLEND_ON");
-                    }
-                    break;
-                case ArenaSpeParticlesJson.BlendingType.Subtractive:
-                    if (isURP) { mat.SetFloat("_Mode", 2f); mat.SetFloat("_Blend", 0f); }
-                    else {
-                        mat.SetFloat("_Mode", 2f); // Fade/Straight Alpha in standard
-                        mat.SetFloat("_ColorMode", 0f); // Multiply
-                        mat.SetFloat("_BlendOp", (float)UnityEngine.Rendering.BlendOp.ReverseSubtract);
-                    }
-                    // Standard straight alpha blending
-                    mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                    mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                    mat.DisableKeyword("_ALPHAPREMULTIPLY_ON"); // Prevent black edges
+                    case ArenaSpeParticlesJson.BlendingType.Multiply:
+                        if (isURP)
+                        {
+                            mat.SetFloat("_Surface", 1f);
+                            mat.SetFloat("_Mode", 2f);
+                            mat.SetFloat("_Blend", 3f);
+                            mat.SetOverrideTag("RenderType", "Transparent");
+                            mat.SetInt("_BlendOp", (int)UnityEngine.Rendering.BlendOp.Add);
+                            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.DstColor);
+                            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                            mat.SetInt("_ZWrite", 0);
+                            mat.EnableKeyword("_MULTIPLYBLEND");
+                            mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                            mat.SetFloat("_AlphaClip", 0f);
+                            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                        }
+                        else
+                        {
+                            // Unity Particle BlendMode.Modulate
+                            mat.SetOverrideTag("RenderType", "Transparent");
+                            mat.SetInt("_BlendOp", (int)UnityEngine.Rendering.BlendOp.Add);
+                            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.DstColor);
+                            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                            mat.SetInt("_ZWrite", 0);
+                            mat.DisableKeyword("_ALPHATEST_ON");
+                            mat.DisableKeyword("_ALPHABLEND_ON");
+                            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                            mat.EnableKeyword("_ALPHAMODULATE_ON");
+                            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                        }
+                        break;
 
-                    if (json.UseTransparency)
-                    {
-                        if (isURP) mat.EnableKeyword("_ALPHABLEND_ON");
-                        else mat.EnableKeyword("_ALPHABLEND_ON");
-                    }
-                    break;
-                case ArenaSpeParticlesJson.BlendingType.Normal:
-                case ArenaSpeParticlesJson.BlendingType.No:
-                default:
-                    if (isURP) { mat.SetFloat("_Mode", 2f); mat.SetFloat("_Blend", 0f); }
-                    else {
-                        mat.SetFloat("_Mode", 2f); // Fade/Straight Alpha in standard
-                        mat.SetFloat("_ColorMode", 0f); // Multiply
-                        mat.SetFloat("_BlendOp", (float)UnityEngine.Rendering.BlendOp.Add);
-                    }
+                    case ArenaSpeParticlesJson.BlendingType.Subtractive:
+                        if (isURP)
+                        {
+                            mat.SetFloat("_Surface", 1f);
+                            mat.SetFloat("_Mode", 2f);
+                            mat.SetFloat("_Blend", 0f);
+                            mat.SetOverrideTag("RenderType", "Transparent");
+                            mat.SetInt("_BlendOp", (int)UnityEngine.Rendering.BlendOp.ReverseSubtract);
+                            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                            mat.SetInt("_ZWrite", 0);
+                            mat.EnableKeyword("_ALPHABLEND_ON");
+                            mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                            mat.SetFloat("_AlphaClip", 0f);
+                            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                        }
+                        else
+                        {
+                            // Unity Particle BlendMode.Subtractive
+                            mat.SetOverrideTag("RenderType", "Transparent");
+                            mat.SetInt("_BlendOp", (int)UnityEngine.Rendering.BlendOp.ReverseSubtract);
+                            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                            mat.SetInt("_ZWrite", 0);
+                            mat.DisableKeyword("_ALPHATEST_ON");
+                            mat.EnableKeyword("_ALPHABLEND_ON");
+                            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                            mat.DisableKeyword("_ALPHAMODULATE_ON");
+                            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                        }
+                        break;
 
-                    // Standard straight alpha blending for Normal/No mode
-                    mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                    mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                    mat.DisableKeyword("_ALPHAPREMULTIPLY_ON"); // Prevent black edges
-
-                    if (json.UseTransparency)
-                    {
-                        if (isURP) mat.EnableKeyword("_ALPHABLEND_ON");
-                        else mat.EnableKeyword("_ALPHABLEND_ON");
-                    }
-                    break;
-            }
-
-            if (json.UseTransparency)
-            {
-                mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                // URP requires this specific alpha test tag for standard straight transparency
-                mat.SetFloat("_AlphaClip", 0f);
+                    case ArenaSpeParticlesJson.BlendingType.Normal:
+                    case ArenaSpeParticlesJson.BlendingType.No:
+                    default:
+                        if (isURP)
+                        {
+                            mat.SetFloat("_Surface", 1f);
+                            mat.SetFloat("_Mode", 2f);
+                            mat.SetFloat("_Blend", 0f);
+                            mat.SetOverrideTag("RenderType", "Transparent");
+                            mat.SetInt("_BlendOp", (int)UnityEngine.Rendering.BlendOp.Add);
+                            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                            mat.SetInt("_ZWrite", 0);
+                            mat.EnableKeyword("_ALPHABLEND_ON");
+                            mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                            mat.SetFloat("_AlphaClip", 0f);
+                            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                        }
+                        else
+                        {
+                            // Unity Particle BlendMode.Fade — standard alpha blending
+                            mat.SetOverrideTag("RenderType", "Transparent");
+                            mat.SetInt("_BlendOp", (int)UnityEngine.Rendering.BlendOp.Add);
+                            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                            mat.SetInt("_ZWrite", 0);
+                            mat.DisableKeyword("_ALPHATEST_ON");
+                            mat.EnableKeyword("_ALPHABLEND_ON");
+                            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                            mat.DisableKeyword("_ALPHAMODULATE_ON");
+                            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                        }
+                        break;
+                }
             }
             else
             {
-                mat.SetOverrideTag("RenderType", "Opaque");
-                if (isURP) mat.SetFloat("_Surface", 0f); // URP Opaque
-                mat.renderQueue = -1;
-                mat.SetFloat("_Mode", 0f); // Opaque in standard
-
-                if (!isURP) {
-                    mat.SetFloat("_ColorMode", 0f);
-                    mat.SetFloat("_BlendOp", (float)UnityEngine.Rendering.BlendOp.Add);
-                }
-
+                // Opaque — no transparency
+                mat.SetOverrideTag("RenderType", "");
+                if (isURP) mat.SetFloat("_Surface", 0f);
+                mat.SetInt("_BlendOp", (int)UnityEngine.Rendering.BlendOp.Add);
+                mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                mat.SetInt("_ZWrite", 1);
+                mat.DisableKeyword("_ALPHATEST_ON");
+                mat.DisableKeyword("_ALPHABLEND_ON");
+                mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                mat.DisableKeyword("_ALPHAMODULATE_ON");
                 mat.DisableKeyword("_SURFACE_TYPE_TRANSPARENT");
                 mat.DisableKeyword("_ADDITIVEBLEND");
                 mat.DisableKeyword("_MULTIPLYBLEND");
-                mat.DisableKeyword("_ALPHABLEND_ON");
-                mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                mat.renderQueue = -1;
             }
 
             if (json.DepthTest)
-                mat.SetFloat("_ZTest", (float)UnityEngine.Rendering.CompareFunction.LessEqual);
+                mat.SetInt("_ZTest", (int)UnityEngine.Rendering.CompareFunction.LessEqual);
             else
-                mat.SetFloat("_ZTest", (float)UnityEngine.Rendering.CompareFunction.Always);
+                mat.SetInt("_ZTest", (int)UnityEngine.Rendering.CompareFunction.Always);
 
+            // Allow explicit DepthWrite override from JSON (default is false)
             if (json.DepthWrite)
-                mat.SetFloat("_ZWrite", 1f);
-            else
-                mat.SetFloat("_ZWrite", 0f);
+                mat.SetInt("_ZWrite", 1);
+
+            // DEBUG: Final material state + texture alpha check
+            string keywords = string.Join(", ", mat.shaderKeywords);
+            string texInfo = "NULL";
+            if (mat.mainTexture != null)
+            {
+                Texture2D t = mat.mainTexture as Texture2D;
+                if (t != null)
+                {
+                    Color corner = t.GetPixel(0, 0);
+                    Color center = t.GetPixel(t.width / 2, t.height / 2);
+                    texInfo = $"{t.width}x{t.height} fmt:{t.format} corner:({corner.r:F2},{corner.g:F2},{corner.b:F2},{corner.a:F2}) center:({center.r:F2},{center.g:F2},{center.b:F2},{center.a:F2})";
+                }
+            }
+            var main2 = ps.main;
+            Debug.Log($"[SpeParticles] {gameObject.name} FINAL: shader:{mat.shader.name} " +
+                $"tex:[{texInfo}] matColor:{mat.color} " +
+                $"SrcBlend:{mat.GetInt("_SrcBlend")} DstBlend:{mat.GetInt("_DstBlend")} " +
+                $"ZWrite:{mat.GetInt("_ZWrite")} RenderQueue:{mat.renderQueue} " +
+                $"Keywords:[{keywords}] " +
+                $"startColor:{main2.startColor.color} startColorA:{main2.startColor.color.a} " +
+                $"renderMode:{psr.renderMode} mat==shared:{mat == psr.sharedMaterial}");
 
             if (json.Enabled) {
                 if (!ps.isPlaying) {
