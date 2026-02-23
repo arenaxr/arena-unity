@@ -139,10 +139,10 @@ namespace ArenaUnity.Components
                 if (json.Size[0].HasValue)
                 {
                     float startSize = (float)json.Size[0].Value;
-                    main.startSize = startSize * globalScaleRatio;
 
-                    if (json.Size.Length > 1 || (json.SizeSpread != null && json.SizeSpread.Length > 0))
+                    if (json.Size.Length > 1)
                     {
+                        main.startSize = startSize * globalScaleRatio;
                         var sizeOverLifetime = ps.sizeOverLifetime;
                         sizeOverLifetime.enabled = true;
 
@@ -155,11 +155,9 @@ namespace ArenaUnity.Components
                             float t = len == 1 ? 0f : (float)i / (len - 1);
 
                             float sVal = 1f;
-                            if (json.Size.Length > 0) {
-                                int sIdx = Mathf.Min(i, json.Size.Length - 1);
-                                if (json.Size[sIdx].HasValue)
-                                    sVal = startSize != 0 ? (float)json.Size[sIdx].Value / startSize : 0;
-                            }
+                            int sIdx = Mathf.Min(i, json.Size.Length - 1);
+                            if (json.Size[sIdx].HasValue)
+                                sVal = startSize != 0 ? (float)json.Size[sIdx].Value / startSize : 0;
 
                             float spreadVal = 0f;
                             if (json.SizeSpread != null && json.SizeSpread.Length > 0) {
@@ -168,10 +166,32 @@ namespace ArenaUnity.Components
                                     spreadVal = startSize != 0 ? (float)json.SizeSpread[spIdx].Value / startSize : 0;
                             }
 
-                            curveMin.AddKey(t, Mathf.Max(0, sVal - spreadVal));
-                            curveMax.AddKey(t, sVal + spreadVal);
+                            curveMin.AddKey(t, Mathf.Max(0, sVal - spreadVal / 2f));
+                            curveMax.AddKey(t, sVal + spreadVal / 2f);
                         }
                         sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, curveMin, curveMax);
+                    }
+                    else
+                    {
+                        var sizeOverLifetime = ps.sizeOverLifetime;
+                        sizeOverLifetime.enabled = false;
+
+                        float spreadVal = 0f;
+                        if (json.SizeSpread != null && json.SizeSpread.Length > 0 && json.SizeSpread[0].HasValue) {
+                            spreadVal = (float)json.SizeSpread[0].Value;
+                        }
+
+                        if (spreadVal > 0)
+                        {
+                            main.startSize = new ParticleSystem.MinMaxCurve(
+                                Mathf.Max(0, startSize - spreadVal / 2f) * globalScaleRatio,
+                                (startSize + spreadVal / 2f) * globalScaleRatio
+                            );
+                        }
+                        else
+                        {
+                            main.startSize = startSize * globalScaleRatio;
+                        }
                     }
                 }
             }
@@ -181,13 +201,16 @@ namespace ArenaUnity.Components
                 ColorUtility.TryParseHtmlString(json.Color[0], out Color startColor);
                 if (json.Opacity != null && json.Opacity.Length > 0 && json.Opacity[0].HasValue)
                     startColor.a = json.Opacity[0].Value;
-                main.startColor = startColor;
 
                 bool hasColorSpread = json.ColorSpread != null && json.ColorSpread.Length > 0;
                 bool hasOpacitySpread = json.OpacitySpread != null && json.OpacitySpread.Length > 0;
 
-                if (json.Color.Length > 1 || (json.Opacity != null && json.Opacity.Length > 1) || hasColorSpread || hasOpacitySpread)
+                if (json.Color.Length > 1 || (json.Opacity != null && json.Opacity.Length > 1))
                 {
+                    // For arrays across lifetime, explicit gradient evaluation requires the particle core color
+                    // to not multiply the gradient darker. Prevent Blackout bug.
+                    main.startColor = Color.white;
+
                     var colorOverLifetime = ps.colorOverLifetime;
                     colorOverLifetime.enabled = true;
 
@@ -222,8 +245,8 @@ namespace ArenaUnity.Components
                             }
                         }
 
-                        Color cMin = new Color(Mathf.Clamp01(c.r - sr), Mathf.Clamp01(c.g - sg), Mathf.Clamp01(c.b - sb));
-                        Color cMax = new Color(Mathf.Clamp01(c.r + sr), Mathf.Clamp01(c.g + sg), Mathf.Clamp01(c.b + sb));
+                        Color cMin = new Color(Mathf.Clamp01(c.r - sr / 2f), Mathf.Clamp01(c.g - sg / 2f), Mathf.Clamp01(c.b - sb / 2f));
+                        Color cMax = new Color(Mathf.Clamp01(c.r + sr / 2f), Mathf.Clamp01(c.g + sg / 2f), Mathf.Clamp01(c.b + sb / 2f));
                         colorKeysMin[i] = new GradientColorKey(cMin, t);
                         colorKeysMax[i] = new GradientColorKey(cMax, t);
                     }
@@ -243,8 +266,8 @@ namespace ArenaUnity.Components
                             if (json.OpacitySpread[sIdx].HasValue) spreadA = json.OpacitySpread[sIdx].Value;
                         }
 
-                        alphaKeysMin[i] = new GradientAlphaKey(Mathf.Clamp01(a - spreadA), t);
-                        alphaKeysMax[i] = new GradientAlphaKey(Mathf.Clamp01(a + spreadA), t);
+                        alphaKeysMin[i] = new GradientAlphaKey(Mathf.Clamp01(a - spreadA / 2f), t);
+                        alphaKeysMax[i] = new GradientAlphaKey(Mathf.Clamp01(a + spreadA / 2f), t);
                     }
 
                     gMin.SetKeys(colorKeysMin, alphaKeysMin);
@@ -254,6 +277,33 @@ namespace ArenaUnity.Components
                         colorOverLifetime.color = new ParticleSystem.MinMaxGradient(gMin);
                     } else {
                         colorOverLifetime.color = new ParticleSystem.MinMaxGradient(gMin, gMax);
+                    }
+                }
+                else
+                {
+                    var colorOverLifetime = ps.colorOverLifetime;
+                    colorOverLifetime.enabled = false;
+
+                    if (hasColorSpread || hasOpacitySpread)
+                    {
+                        float sr = 0, sg = 0, sb = 0, spreadA = 0;
+                        if (hasColorSpread && json.ColorSpread[0] != null) {
+                            sr = (float)json.ColorSpread[0].X;
+                            sg = (float)json.ColorSpread[0].Y;
+                            sb = (float)json.ColorSpread[0].Z;
+                        }
+                        if (hasOpacitySpread && json.OpacitySpread[0].HasValue) {
+                            spreadA = json.OpacitySpread[0].Value;
+                        }
+
+                        Color cMin = new Color(Mathf.Clamp01(startColor.r - sr / 2f), Mathf.Clamp01(startColor.g - sg / 2f), Mathf.Clamp01(startColor.b - sb / 2f), Mathf.Clamp01(startColor.a - spreadA / 2f));
+                        Color cMax = new Color(Mathf.Clamp01(startColor.r + sr / 2f), Mathf.Clamp01(startColor.g + sg / 2f), Mathf.Clamp01(startColor.b + sb / 2f), Mathf.Clamp01(startColor.a + spreadA / 2f));
+
+                        main.startColor = new ParticleSystem.MinMaxGradient(cMin, cMax);
+                    }
+                    else
+                    {
+                         main.startColor = startColor;
                     }
                 }
             }
