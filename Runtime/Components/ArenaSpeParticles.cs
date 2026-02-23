@@ -32,13 +32,13 @@ namespace ArenaUnity.Components
         // DONE: drag
         // DONE: dragSpread
         // DONE: duration
-        // TODO: emitterScale
+        // DONE: emitterScale
         // TODO: enableInEditor
         // DONE: enabled
         // TODO: frustumCulled
         // TODO: hasPerspective
         // DONE: maxAge
-        // TODO: maxAgeSpread
+        // DONE: maxAgeSpread
         // DONE: opacity
         // DONE: opacitySpread
         // DONE: particleCount
@@ -98,8 +98,22 @@ namespace ArenaUnity.Components
             if (json.Duration > 0)
                 main.duration = json.Duration;
 
-            main.startLifetime = json.MaxAge;
+            if (json.MaxAgeSpread > 0)
+                main.startLifetime = new ParticleSystem.MinMaxCurve(
+                    Mathf.Max(0f, json.MaxAge - json.MaxAgeSpread / 2f),
+                    json.MaxAge + json.MaxAgeSpread / 2f);
+            else
+                main.startLifetime = json.MaxAge;
+
             main.playOnAwake = json.Enabled;
+
+            // Unity's default StartSpeed is often 5, which blows the shape outwards uncontrollably.
+            // A-Frame explicitly controls velocity via VelocityOverLifetime or Custom radial vectors.
+            main.startSpeed = 0f;
+
+            // Global sizing ratio to convert A-Frame 'size' parameter space (+ EmitterScale global scalar) into Unity meters
+            float globalScaleRatio = (json.EmitterScale / 100f) * 0.1f;
+
             // TODO: handle enableInEditor, affectedByFog
 
             if (json.Size != null && json.Size.Length > 0)
@@ -107,7 +121,7 @@ namespace ArenaUnity.Components
                 if (json.Size[0].HasValue)
                 {
                     float startSize = (float)json.Size[0].Value;
-                    main.startSize = startSize;
+                    main.startSize = startSize * globalScaleRatio;
 
                     if (json.Size.Length > 1 || (json.SizeSpread != null && json.SizeSpread.Length > 0))
                     {
