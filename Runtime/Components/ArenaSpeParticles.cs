@@ -75,10 +75,6 @@ namespace ArenaUnity.Components
         // DONE: wiggle
         // DONE: wiggleSpread
 
-        // NEXT STEPS FOR ADVANCED PARTICLES:
-        // 1. Implementing SizeOverLifetime & ColorOverLifetime arrays based on SPE's logic.
-        //    A-Frame's SPE component can array lengths beyond simple start/end, Unity's `MinMaxCurve` or `Gradient` will be needed.
-
         public ArenaSpeParticlesJson json = new ArenaSpeParticlesJson();
         private ParticleSystem ps;
         private ParticleSystemRenderer psr;
@@ -559,9 +555,13 @@ namespace ArenaUnity.Components
             {
                 case ArenaSpeParticlesJson.BlendingType.Additive:
                     if (isURP) { mat.SetFloat("_Mode", 2f); mat.SetFloat("_Blend", 2f); }
-                    else mat.SetFloat("_Mode", 3f); // Transparent in standard
-                    mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                    mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    else {
+                        mat.SetFloat("_Mode", 2f); // Fade/Straight Alpha in standard
+                        mat.SetFloat("_ColorMode", 0f); // Multiply
+                        mat.SetFloat("_BlendOp", (float)UnityEngine.Rendering.BlendOp.Add);
+                    }
+                    mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.One);
                     mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
                     if (json.UseTransparency) {
                         if (isURP) mat.EnableKeyword("_ADDITIVEBLEND");
@@ -570,9 +570,13 @@ namespace ArenaUnity.Components
                     break;
                 case ArenaSpeParticlesJson.BlendingType.Multiply:
                     if (isURP) { mat.SetFloat("_Mode", 2f); mat.SetFloat("_Blend", 3f); }
-                    else mat.SetFloat("_Mode", 3f); // Transparent in standard
-                    mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.DstColor);
-                    mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    else {
+                        mat.SetFloat("_Mode", 2f); // Fade/Straight Alpha in standard
+                        mat.SetFloat("_ColorMode", 0f); // Multiply
+                        mat.SetFloat("_BlendOp", (float)UnityEngine.Rendering.BlendOp.Add);
+                    }
+                    mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.DstColor);
+                    mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
                     mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
                     if (json.UseTransparency) {
                         if (isURP) mat.EnableKeyword("_MULTIPLYBLEND");
@@ -580,15 +584,36 @@ namespace ArenaUnity.Components
                     }
                     break;
                 case ArenaSpeParticlesJson.BlendingType.Subtractive:
+                    if (isURP) { mat.SetFloat("_Mode", 2f); mat.SetFloat("_Blend", 0f); }
+                    else {
+                        mat.SetFloat("_Mode", 2f); // Fade/Straight Alpha in standard
+                        mat.SetFloat("_ColorMode", 0f); // Multiply
+                        mat.SetFloat("_BlendOp", (float)UnityEngine.Rendering.BlendOp.ReverseSubtract);
+                    }
+                    // Standard straight alpha blending
+                    mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    mat.DisableKeyword("_ALPHAPREMULTIPLY_ON"); // Prevent black edges
+
+                    if (json.UseTransparency)
+                    {
+                        if (isURP) mat.EnableKeyword("_ALPHABLEND_ON");
+                        else mat.EnableKeyword("_ALPHABLEND_ON");
+                    }
+                    break;
                 case ArenaSpeParticlesJson.BlendingType.Normal:
                 case ArenaSpeParticlesJson.BlendingType.No:
                 default:
                     if (isURP) { mat.SetFloat("_Mode", 2f); mat.SetFloat("_Blend", 0f); }
-                    else mat.SetFloat("_Mode", 3f); // Transparent in standard
+                    else {
+                        mat.SetFloat("_Mode", 2f); // Fade/Straight Alpha in standard
+                        mat.SetFloat("_ColorMode", 0f); // Multiply
+                        mat.SetFloat("_BlendOp", (float)UnityEngine.Rendering.BlendOp.Add);
+                    }
 
                     // Standard straight alpha blending for Normal/No mode
-                    mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                    mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                     mat.DisableKeyword("_ALPHAPREMULTIPLY_ON"); // Prevent black edges
 
                     if (json.UseTransparency)
@@ -611,6 +636,12 @@ namespace ArenaUnity.Components
                 if (isURP) mat.SetFloat("_Surface", 0f); // URP Opaque
                 mat.renderQueue = -1;
                 mat.SetFloat("_Mode", 0f); // Opaque in standard
+
+                if (!isURP) {
+                    mat.SetFloat("_ColorMode", 0f);
+                    mat.SetFloat("_BlendOp", (float)UnityEngine.Rendering.BlendOp.Add);
+                }
+
                 mat.DisableKeyword("_SURFACE_TYPE_TRANSPARENT");
                 mat.DisableKeyword("_ADDITIVEBLEND");
                 mat.DisableKeyword("_MULTIPLYBLEND");
