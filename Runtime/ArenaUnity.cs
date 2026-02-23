@@ -663,6 +663,19 @@ namespace ArenaUnity
             return Shader.Find(unlitShader);
         }
 
+        public static Shader GetParticleShader()
+        {
+            string particleShader = "Particles/Standard Unlit";
+            if (DefaultRenderPipeline)
+            {
+                if (DefaultRenderPipeline.GetType().ToString().Contains("HDRenderPipelineAsset"))
+                    particleShader = "HDRP/Particles/Unlit";
+                else
+                    particleShader = "Universal Render Pipeline/Particles/Unlit";
+            }
+            return Shader.Find(particleShader);
+        }
+
         public static void ApplyHandAvatar(string object_id, string url, GameObject gobj)
         {
             if (ArenaClientScene.Instance != null)
