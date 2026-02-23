@@ -27,10 +27,10 @@ namespace ArenaUnity.Components
         // DONE: colorSpread
         // DONE: depthTest
         // DONE: depthWrite
-        // TODO: direction
+        // DONE: direction
         // DONE: distribution
-        // TODO: drag
-        // TODO: dragSpread
+        // DONE: drag
+        // DONE: dragSpread
         // DONE: duration
         // TODO: emitterScale
         // TODO: enableInEditor
@@ -72,8 +72,8 @@ namespace ArenaUnity.Components
         // DONE: velocity
         // DONE: velocityDistribution
         // DONE: velocitySpread
-        // TODO: wiggle
-        // TODO: wiggleSpread
+        // DONE: wiggle
+        // DONE: wiggleSpread
 
         // NEXT STEPS FOR ADVANCED PARTICLES:
         // 1. Implementing SizeOverLifetime & ColorOverLifetime arrays based on SPE's logic.
@@ -318,6 +318,47 @@ namespace ArenaUnity.Components
                         (float)(json.Acceleration.X - json.AccelerationSpread.X / 2.0),
                         (float)(json.Acceleration.X + json.AccelerationSpread.X / 2.0));
                 }
+            }
+
+            // Drag (Air Resistance)
+            if (json.Drag > 0 || json.DragSpread > 0)
+            {
+                var limitVelocity = ps.limitVelocityOverLifetime;
+                limitVelocity.enabled = true;
+                // In A-Frame SPE, drag is an acceleration coefficient. In Unity, we map it to Dampen
+                limitVelocity.dampen = Mathf.Clamp01(json.Drag);
+                // We leave the limit at a negligible multiplier to allow the dampen to strictly act as drag against existing velocity
+                limitVelocity.limit = new ParticleSystem.MinMaxCurve(
+                    Mathf.Max(0f, json.Drag - json.DragSpread / 2f),
+                    Mathf.Max(0f, json.Drag + json.DragSpread / 2f)
+                );
+            }
+            else
+            {
+                var limitVelocity = ps.limitVelocityOverLifetime;
+                limitVelocity.enabled = false;
+            }
+
+            // Wiggle (Turbulence/Noise)
+            if (json.Wiggle > 0 || json.WiggleSpread > 0)
+            {
+                var noise = ps.noise;
+                noise.enabled = true;
+                // Unity Noise strength is absolute world-space displacement, so we map Wiggle as strength
+                noise.strength = new ParticleSystem.MinMaxCurve(
+                    Mathf.Max(0f, json.Wiggle - json.WiggleSpread / 2f),
+                    json.Wiggle + json.WiggleSpread / 2f
+                );
+                // A-Frame Wiggle is usually rapid jitter, so frequency is set reasonably high
+                noise.frequency = 1.0f;
+                noise.positionAmount = 1.0f;
+                noise.rotationAmount = 0.0f;
+                noise.sizeAmount = 0.0f;
+            }
+            else
+            {
+                var noise = ps.noise;
+                noise.enabled = false;
             }
 
             main.simulationSpace = json.Relative == ArenaSpeParticlesJson.RelativeType.World ? ParticleSystemSimulationSpace.World : ParticleSystemSimulationSpace.Local;
