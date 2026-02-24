@@ -79,6 +79,64 @@ namespace ArenaUnity.Components
         private ParticleSystem ps;
         private ParticleSystemRenderer psr;
 
+        // Fallback dictionary for CSS color names not supported by Unity's ColorUtility.TryParseHtmlString.
+        // Unity supports: red, cyan, blue, darkblue, lightblue, purple, yellow, lime, fuchsia, white,
+        // silver, grey, black, orange, brown, maroon, green, olive, navy, teal, aqua, magenta.
+        // This dictionary covers additional CSS named colors that may appear in A-Frame content.
+        private static readonly Dictionary<string, string> CssColorFallback = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase)
+        {
+            { "violet", "#EE82EE" },
+            { "indigo", "#4B0082" },
+            { "coral", "#FF7F50" },
+            { "crimson", "#DC143C" },
+            { "gold", "#FFD700" },
+            { "hotpink", "#FF69B4" },
+            { "khaki", "#F0E68C" },
+            { "lavender", "#E6E6FA" },
+            { "orchid", "#DA70D6" },
+            { "plum", "#DDA0DD" },
+            { "salmon", "#FA8072" },
+            { "skyblue", "#87CEEB" },
+            { "tomato", "#FF6347" },
+            { "turquoise", "#40E0D0" },
+            { "wheat", "#F5DEB3" },
+            { "ivory", "#FFFFF0" },
+            { "beige", "#F5F5DC" },
+            { "tan", "#D2B48C" },
+            { "pink", "#FFC0CB" },
+            { "chartreuse", "#7FFF00" },
+            { "deeppink", "#FF1493" },
+            { "darkorange", "#FF8C00" },
+            { "dodgerblue", "#1E90FF" },
+            { "firebrick", "#B22222" },
+            { "forestgreen", "#228B22" },
+            { "goldenrod", "#DAA520" },
+            { "limegreen", "#32CD32" },
+            { "midnightblue", "#191970" },
+            { "orangered", "#FF4500" },
+            { "royalblue", "#4169E1" },
+            { "seagreen", "#2E8B57" },
+            { "slateblue", "#6A5ACD" },
+            { "springgreen", "#00FF7F" },
+            { "steelblue", "#4682B4" },
+        };
+
+        /// <summary>
+        /// Parse a color string, with fallback for CSS names not supported by Unity.
+        /// </summary>
+        private static bool TryParseColor(string colorStr, out Color color)
+        {
+            if (ColorUtility.TryParseHtmlString(colorStr, out color))
+                return true;
+
+            // Try CSS color fallback dictionary
+            if (CssColorFallback.TryGetValue(colorStr, out string hex))
+                return ColorUtility.TryParseHtmlString(hex, out color);
+
+            color = Color.white;
+            return false;
+        }
+
         protected override void ApplyRender()
         {
             if (ps == null)
@@ -111,7 +169,8 @@ namespace ArenaUnity.Components
             // A-Frame explicitly controls velocity via VelocityOverLifetime or Custom radial vectors.
             main.startSpeed = 0f;
 
-            // Global sizing ratio to convert A-Frame 'size' parameter space (+ EmitterScale global scalar) into Unity meters
+            // Global sizing ratio to convert A-Frame 'size' parameter space (+ EmitterScale global scalar) into Unity meters.
+            // A-Frame SPE size units are not 1:1 with Unity meters. Calibrated from visual comparison.
             float globalScaleRatio = (json.EmitterScale / 100f) * 0.1f;
 
             // Angle (Initial 2D Rotation)
@@ -149,7 +208,17 @@ namespace ArenaUnity.Components
 
                     if (json.Size.Length > 1)
                     {
-                        main.startSize = startSize * globalScaleRatio;
+                        // Find the maximum size value across the lifetime to use as the normalization reference.
+                        // This avoids division-by-zero when startSize == 0 (e.g. size: [0, 2, 0]).
+                        float maxSize = startSize;
+                        for (int i = 1; i < json.Size.Length; i++)
+                        {
+                            if (json.Size[i].HasValue)
+                                maxSize = Mathf.Max(maxSize, (float)json.Size[i].Value);
+                        }
+
+                        // Use the max value as the Unity startSize so the curve can normalize against it
+                        main.startSize = maxSize * globalScaleRatio;
                         var sizeOverLifetime = ps.sizeOverLifetime;
                         sizeOverLifetime.enabled = true;
 
@@ -164,13 +233,13 @@ namespace ArenaUnity.Components
                             float sVal = 1f;
                             int sIdx = Mathf.Min(i, json.Size.Length - 1);
                             if (json.Size[sIdx].HasValue)
-                                sVal = startSize != 0 ? (float)json.Size[sIdx].Value / startSize : 0;
+                                sVal = maxSize != 0 ? (float)json.Size[sIdx].Value / maxSize : 0;
 
                             float spreadVal = 0f;
                             if (json.SizeSpread != null && json.SizeSpread.Length > 0) {
                                 int spIdx = Mathf.Min(i, json.SizeSpread.Length - 1);
                                 if (json.SizeSpread[spIdx].HasValue)
-                                    spreadVal = startSize != 0 ? (float)json.SizeSpread[spIdx].Value / startSize : 0;
+                                    spreadVal = maxSize != 0 ? (float)json.SizeSpread[spIdx].Value / maxSize : 0;
                             }
 
                             curveMin.AddKey(t, Mathf.Max(0, sVal - spreadVal / 2f));
@@ -205,7 +274,7 @@ namespace ArenaUnity.Components
 
             if (json.Color != null && json.Color.Length > 0)
             {
-                ColorUtility.TryParseHtmlString(json.Color[0], out Color startColor);
+                TryParseColor(json.Color[0], out Color startColor);
                 if (json.Opacity != null && json.Opacity.Length > 0 && json.Opacity[0].HasValue)
                     startColor.a = json.Opacity[0].Value;
 
@@ -240,7 +309,7 @@ namespace ArenaUnity.Components
 
                         int cIdx = Mathf.Min(i, json.Color.Length - 1);
                         Color c = startColor;
-                        if (cIdx >= 0) ColorUtility.TryParseHtmlString(json.Color[cIdx], out c);
+                        if (cIdx >= 0) TryParseColor(json.Color[cIdx], out c);
 
                         float sr = 0, sg = 0, sb = 0;
                         if (hasColorSpread) {
@@ -306,7 +375,20 @@ namespace ArenaUnity.Components
                         Color cMin = new Color(Mathf.Clamp01(startColor.r - sr / 2f), Mathf.Clamp01(startColor.g - sg / 2f), Mathf.Clamp01(startColor.b - sb / 2f), Mathf.Clamp01(startColor.a - spreadA / 2f));
                         Color cMax = new Color(Mathf.Clamp01(startColor.r + sr / 2f), Mathf.Clamp01(startColor.g + sg / 2f), Mathf.Clamp01(startColor.b + sb / 2f), Mathf.Clamp01(startColor.a + spreadA / 2f));
 
-                        main.startColor = new ParticleSystem.MinMaxGradient(cMin, cMax);
+                        // Use Gradient-based MinMaxGradient so Unity picks random color points
+                        // between the two gradients, allowing per-channel variation (true multicolor)
+                        // instead of simple interpolation between two flat colors (which produces grayscale).
+                        Gradient gMinSingle = new Gradient();
+                        gMinSingle.SetKeys(
+                            new GradientColorKey[] { new GradientColorKey(cMin, 0f), new GradientColorKey(cMin, 1f) },
+                            new GradientAlphaKey[] { new GradientAlphaKey(cMin.a, 0f), new GradientAlphaKey(cMin.a, 1f) }
+                        );
+                        Gradient gMaxSingle = new Gradient();
+                        gMaxSingle.SetKeys(
+                            new GradientColorKey[] { new GradientColorKey(cMax, 0f), new GradientColorKey(cMax, 1f) },
+                            new GradientAlphaKey[] { new GradientAlphaKey(cMax.a, 0f), new GradientAlphaKey(cMax.a, 1f) }
+                        );
+                        main.startColor = new ParticleSystem.MinMaxGradient(gMinSingle, gMaxSingle);
                     }
                     else
                     {
@@ -321,6 +403,10 @@ namespace ArenaUnity.Components
             emission.enabled = true;
             // ActiveMultiplier scales emission rate; values > 1 create burst-like behavior
             emission.rateOverTime = (json.ParticleCount / json.MaxAge) * json.ActiveMultiplier;
+
+            // Direction: backward is handled after velocity/acceleration setup by adding
+            // a negative radial velocity to pull particles inward.
+            bool isBackward = json.Direction == ArenaSpeParticlesJson.DirectionType.Backward;
 
             // Position Distribution (Shape)
             var shape = ps.shape;
@@ -420,7 +506,7 @@ namespace ArenaUnity.Components
                     (float)(json.Acceleration.Y - json.AccelerationSpread.Y / 2.0),
                     (float)(json.Acceleration.Y + json.AccelerationSpread.Y / 2.0));
                 forceOverLifetime.z = new ParticleSystem.MinMaxCurve(
-                    (float)(-json.Acceleration.Z - json.AccelerationSpread.Z / 2.0), // Z axis is flipped for Unity
+                    (float)(-json.Acceleration.Z - json.AccelerationSpread.Z / 2.0),
                     (float)(-json.Acceleration.Z + json.AccelerationSpread.Z / 2.0));
             }
             else
@@ -433,6 +519,37 @@ namespace ArenaUnity.Components
                     velocityOverLifetime.radial = new ParticleSystem.MinMaxCurve(
                         (float)(json.Acceleration.X - json.AccelerationSpread.X / 2.0),
                         (float)(json.Acceleration.X + json.AccelerationSpread.X / 2.0));
+                }
+            }
+
+            // Direction: backward — In A-Frame SPE, backward reverses the particle lifecycle so
+            // particles appear to implode (converge to center). We implement this by negating
+            // the startSpeed and spawning only from the disc/sphere edge.
+            if (isBackward)
+            {
+                velocityOverLifetime.enabled = true;
+                if (velDist == ArenaSpeParticlesJson.DistributionType.Box)
+                {
+                    // Negate box velocity vectors
+                    velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(
+                        -(float)(json.Velocity.X + json.VelocitySpread.X / 2.0),
+                        -(float)(json.Velocity.X - json.VelocitySpread.X / 2.0));
+                    velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(
+                        -(float)(json.Velocity.Y + json.VelocitySpread.Y / 2.0),
+                        -(float)(json.Velocity.Y - json.VelocitySpread.Y / 2.0));
+                    velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(
+                        (float)(json.Velocity.Z + json.VelocitySpread.Z / 2.0),
+                        (float)(json.Velocity.Z - json.VelocitySpread.Z / 2.0));
+                }
+                else
+                {
+                    // Sphere / Disc: negate startSpeed so particles fly inward from disc edge.
+                    // Set radiusThickness=0 to spawn only at the outer edge.
+                    float speedMax = (float)(json.Velocity.X + json.VelocitySpread.X / 2.0);
+                    float speedMin = (float)(json.Velocity.X - json.VelocitySpread.X / 2.0);
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(-speedMax, -speedMin);
+                    shape.enabled = true;
+                    shape.radiusThickness = 0f; // spawn at edge only
                 }
             }
 
@@ -587,6 +704,20 @@ namespace ArenaUnity.Components
                     {
                         mat.SetTexture("_BaseMap", mat.mainTexture);
                     }
+                }
+            }
+            else
+            {
+                // No texture specified — create a 1x1 white pixel texture to match A-Frame SPE's
+                // default behavior where untextured particles render as small white squares.
+                if (mat.mainTexture == null)
+                {
+                    var defaultTex = new Texture2D(1, 1);
+                    defaultTex.SetPixel(0, 0, Color.white);
+                    defaultTex.Apply();
+                    mat.mainTexture = defaultTex;
+                    if (mat.HasProperty("_BaseMap"))
+                        mat.SetTexture("_BaseMap", defaultTex);
                 }
             }
 
