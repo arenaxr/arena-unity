@@ -81,11 +81,12 @@ namespace ArenaUnity.Components
 
         protected override void ApplyRender()
         {
+            ps = gameObject.GetComponent<ParticleSystem>();
             if (ps == null)
             {
                 ps = gameObject.AddComponent<ParticleSystem>();
-                psr = gameObject.GetComponent<ParticleSystemRenderer>();
             }
+            psr = gameObject.GetComponent<ParticleSystemRenderer>();
 
             // Stop and clear existing particles before reconfiguring to prevent
             // stale particles from persisting with old shape/velocity settings
