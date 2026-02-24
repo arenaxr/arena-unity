@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using ArenaUnity.Schemas.Converter;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
@@ -148,6 +149,7 @@ namespace ArenaUnity.Schemas
 
         private static string[] defColor = { "#fff" };
         [JsonProperty(PropertyName = "color")]
+        [JsonConverter(typeof(ArenaColorArrayJsonConverter))]
         [Tooltip("Array of colors over the particle's lifetime, max 4 elements.")]
         public string[] Color = defColor;
         public bool ShouldSerializeColor()

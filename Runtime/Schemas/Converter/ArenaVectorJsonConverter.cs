@@ -8,7 +8,7 @@ using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace ArenaUnity.Schemas
+namespace ArenaUnity.Schemas.Converter
 {
     /// <summary>
     /// Custom JSON converter for ArenaVector3Json that handles both object {"x":1,"y":2,"z":3}

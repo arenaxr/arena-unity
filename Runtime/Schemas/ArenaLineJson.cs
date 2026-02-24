@@ -14,6 +14,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
+using ArenaUnity.Schemas.Converter;
 
 namespace ArenaUnity.Schemas
 {
@@ -28,6 +29,7 @@ namespace ArenaUnity.Schemas
         // line member-fields
 
         private static string defColor = "#74BEC1";
+        [JsonConverter(typeof(ArenaColorJsonConverter))]
         [JsonProperty(PropertyName = "color")]
         [Tooltip("Line color.")]
         public string Color = defColor;

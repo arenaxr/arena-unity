@@ -14,6 +14,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
+using ArenaUnity.Schemas.Converter;
 
 namespace ArenaUnity.Schemas
 {
@@ -86,6 +87,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defDressingColor = "#795449";
+        [JsonConverter(typeof(ArenaColorJsonConverter))]
         [JsonProperty(PropertyName = "dressingColor")]
         [Tooltip("Base color of dressing objects.")]
         public string DressingColor = defDressingColor;
@@ -184,6 +186,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defGridColor = "#ccc";
+        [JsonConverter(typeof(ArenaColorJsonConverter))]
         [JsonProperty(PropertyName = "gridColor")]
         [Tooltip("Color of the grid.")]
         public string GridColor = defGridColor;
@@ -220,6 +223,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defGroundColor = "#553e35";
+        [JsonConverter(typeof(ArenaColorJsonConverter))]
         [JsonProperty(PropertyName = "groundColor")]
         [Tooltip("Main color of the ground.")]
         public string GroundColor = defGroundColor;
@@ -230,6 +234,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defGroundColor2 = "#694439";
+        [JsonConverter(typeof(ArenaColorJsonConverter))]
         [JsonProperty(PropertyName = "groundColor2")]
         [Tooltip("Secondary color of the ground. Used for textures, ignored if groundTexture is none.")]
         public string GroundColor2 = defGroundColor2;
@@ -292,6 +297,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defHorizonColor = "#ffa500";
+        [JsonConverter(typeof(ArenaColorJsonConverter))]
         [JsonProperty(PropertyName = "horizonColor")]
         [Tooltip("Horizon Color")]
         public string HorizonColor = defHorizonColor;
@@ -421,6 +427,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defSkyColor = "#ffa500";
+        [JsonConverter(typeof(ArenaColorJsonConverter))]
         [JsonProperty(PropertyName = "skyColor")]
         [Tooltip("Sky Color")]
         public string SkyColor = defSkyColor;

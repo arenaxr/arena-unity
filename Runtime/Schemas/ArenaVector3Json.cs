@@ -14,6 +14,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
+using ArenaUnity.Schemas.Converter;
 
 namespace ArenaUnity.Schemas
 {

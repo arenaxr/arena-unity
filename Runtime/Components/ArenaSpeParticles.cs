@@ -3,7 +3,6 @@
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
@@ -79,63 +78,6 @@ namespace ArenaUnity.Components
         private ParticleSystem ps;
         private ParticleSystemRenderer psr;
 
-        // Fallback dictionary for CSS color names not supported by Unity's ColorUtility.TryParseHtmlString.
-        // Unity supports: red, cyan, blue, darkblue, lightblue, purple, yellow, lime, fuchsia, white,
-        // silver, grey, black, orange, brown, maroon, green, olive, navy, teal, aqua, magenta.
-        // This dictionary covers additional CSS named colors that may appear in A-Frame content.
-        private static readonly Dictionary<string, string> CssColorFallback = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase)
-        {
-            { "violet", "#EE82EE" },
-            { "indigo", "#4B0082" },
-            { "coral", "#FF7F50" },
-            { "crimson", "#DC143C" },
-            { "gold", "#FFD700" },
-            { "hotpink", "#FF69B4" },
-            { "khaki", "#F0E68C" },
-            { "lavender", "#E6E6FA" },
-            { "orchid", "#DA70D6" },
-            { "plum", "#DDA0DD" },
-            { "salmon", "#FA8072" },
-            { "skyblue", "#87CEEB" },
-            { "tomato", "#FF6347" },
-            { "turquoise", "#40E0D0" },
-            { "wheat", "#F5DEB3" },
-            { "ivory", "#FFFFF0" },
-            { "beige", "#F5F5DC" },
-            { "tan", "#D2B48C" },
-            { "pink", "#FFC0CB" },
-            { "chartreuse", "#7FFF00" },
-            { "deeppink", "#FF1493" },
-            { "darkorange", "#FF8C00" },
-            { "dodgerblue", "#1E90FF" },
-            { "firebrick", "#B22222" },
-            { "forestgreen", "#228B22" },
-            { "goldenrod", "#DAA520" },
-            { "limegreen", "#32CD32" },
-            { "midnightblue", "#191970" },
-            { "orangered", "#FF4500" },
-            { "royalblue", "#4169E1" },
-            { "seagreen", "#2E8B57" },
-            { "slateblue", "#6A5ACD" },
-            { "springgreen", "#00FF7F" },
-            { "steelblue", "#4682B4" },
-        };
-
-        /// <summary>
-        /// Parse a color string, with fallback for CSS names not supported by Unity.
-        /// </summary>
-        private static bool TryParseColor(string colorStr, out Color color)
-        {
-            if (ColorUtility.TryParseHtmlString(colorStr, out color))
-                return true;
-
-            // Try CSS color fallback dictionary
-            if (CssColorFallback.TryGetValue(colorStr, out string hex))
-                return ColorUtility.TryParseHtmlString(hex, out color);
-
-            color = Color.white;
-            return false;
-        }
 
         protected override void ApplyRender()
         {
@@ -274,7 +216,7 @@ namespace ArenaUnity.Components
 
             if (json.Color != null && json.Color.Length > 0)
             {
-                TryParseColor(json.Color[0], out Color startColor);
+                Color startColor = ArenaUnity.ToUnityColor(json.Color[0]);
                 if (json.Opacity != null && json.Opacity.Length > 0 && json.Opacity[0].HasValue)
                     startColor.a = json.Opacity[0].Value;
 
@@ -309,7 +251,7 @@ namespace ArenaUnity.Components
 
                         int cIdx = Mathf.Min(i, json.Color.Length - 1);
                         Color c = startColor;
-                        if (cIdx >= 0) TryParseColor(json.Color[cIdx], out c);
+                        if (cIdx >= 0) c = ArenaUnity.ToUnityColor(json.Color[cIdx]);
 
                         float sr = 0, sg = 0, sb = 0;
                         if (hasColorSpread) {

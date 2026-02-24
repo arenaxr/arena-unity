@@ -14,6 +14,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
+using ArenaUnity.Schemas.Converter;
 
 namespace ArenaUnity.Schemas
 {
@@ -73,6 +74,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defColor = "#ffffff";
+        [JsonConverter(typeof(ArenaColorJsonConverter))]
         [JsonProperty(PropertyName = "color")]
         [Tooltip("Base diffuse color.")]
         public string Color = defColor;
@@ -133,6 +135,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defEmissive = "#000000";
+        [JsonConverter(typeof(ArenaColorJsonConverter))]
         [JsonProperty(PropertyName = "emissive")]
         [Tooltip("The color of the emissive lighting component. Used to make objects produce light even without other lighting in the scene. Requires `shader: standard` or `phong`.")]
         public string Emissive = defEmissive;
@@ -323,6 +326,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defSpecular = "#111111";
+        [JsonConverter(typeof(ArenaColorJsonConverter))]
         [JsonProperty(PropertyName = "specular")]
         [Tooltip("This defines how shiny the material is and the color of its shine. Requires `shader: phong`.")]
         public string Specular = defSpecular;

@@ -14,6 +14,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
+using ArenaUnity.Schemas.Converter;
 
 namespace ArenaUnity.Schemas
 {
@@ -34,6 +35,7 @@ namespace ArenaUnity.Schemas
         public bool? hasAudio = null;
         public bool? hasVideo = null;
         public bool? hasAvatar = null;
+        [JsonConverter(typeof(ArenaColorJsonConverter))]
         public string color = "#000000";
         public string headModelPath = "/static/models/avatars/robobit.glb";
 

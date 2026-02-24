@@ -213,7 +213,7 @@ namespace ArenaUnity
         }
         public static Color ToUnityColor(string color)
         {
-            ColorUtility.TryParseHtmlString(color, out Color colorObj);
+            ColorUtility.TryParseHtmlString(Schemas.Converter.ArenaCssColors.Normalize(color), out Color colorObj);
             return colorObj;
         }
         public static Color ToUnityColor(string color, float opacity)

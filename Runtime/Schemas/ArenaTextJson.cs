@@ -14,6 +14,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
+using ArenaUnity.Schemas.Converter;
 
 namespace ArenaUnity.Schemas
 {
@@ -100,6 +101,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defColor = "#000000";
+        [JsonConverter(typeof(ArenaColorJsonConverter))]
         [JsonProperty(PropertyName = "color")]
         [Tooltip("Text color.")]
         public string Color = defColor;
