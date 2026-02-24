@@ -203,7 +203,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector2Json defOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
-        [JsonProperty(PropertyName = "offset")]
+        [JsonProperty(PropertyName = "offset", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture offset to be used.")]
         public ArenaVector2Json Offset = defOffset;
         public bool ShouldSerializeOffset()
@@ -253,7 +253,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector2Json defRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
-        [JsonProperty(PropertyName = "repeat")]
+        [JsonProperty(PropertyName = "repeat", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("How many times a texture (defined by src) repeats in the X and Y direction.")]
         public ArenaVector2Json Repeat = defRepeat;
         public bool ShouldSerializeRepeat()

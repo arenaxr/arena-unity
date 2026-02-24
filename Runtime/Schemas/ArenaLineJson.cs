@@ -37,7 +37,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defEnd = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': -0.5, 'y': -0.5, 'z': 0}");
-        [JsonProperty(PropertyName = "end")]
+        [JsonProperty(PropertyName = "end", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("End coordinate.")]
         public ArenaVector3Json End = defEnd;
         public bool ShouldSerializeEnd()
@@ -56,7 +56,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defStart = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0.5, 'z': 0}");
-        [JsonProperty(PropertyName = "start")]
+        [JsonProperty(PropertyName = "start", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Start point coordinate.")]
         public ArenaVector3Json Start = defStart;
         public bool ShouldSerializeStart()

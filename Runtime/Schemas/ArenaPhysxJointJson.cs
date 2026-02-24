@@ -63,7 +63,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector2Json defBreakForce = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': -1, 'y': -1}");
-        [JsonProperty(PropertyName = "breakForce")]
+        [JsonProperty(PropertyName = "breakForce", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Force needed to break the constraint. First component is linear force, second is angular force in degrees. Set both components >= 0 to enable.")]
         public ArenaVector2Json BreakForce = defBreakForce;
         public bool ShouldSerializeBreakForce()
@@ -103,7 +103,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector2Json defProjectionTolerance = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': -1, 'y': -1}");
-        [JsonProperty(PropertyName = "projectionTolerance")]
+        [JsonProperty(PropertyName = "projectionTolerance", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Kinematic projection, which forces joint back into alignment when the solver fails. First component is linear tolerance in meters, second is angular tolerance in degrees.")]
         public ArenaVector2Json ProjectionTolerance = defProjectionTolerance;
         public bool ShouldSerializeProjectionTolerance()

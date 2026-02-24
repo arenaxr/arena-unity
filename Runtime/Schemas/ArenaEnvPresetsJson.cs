@@ -126,7 +126,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defDressingVariance = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}");
-        [JsonProperty(PropertyName = "dressingVariance")]
+        [JsonProperty(PropertyName = "dressingVariance", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Maximum x,y,z meters to randomize the size and rotation of each dressing object. Use 0 0 0 for no variation in size nor rotation.")]
         public ArenaVector3Json DressingVariance = defDressingVariance;
         public bool ShouldSerializeDressingVariance()
@@ -240,7 +240,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defGroundScale = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}");
-        [JsonProperty(PropertyName = "groundScale")]
+        [JsonProperty(PropertyName = "groundScale", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Ground dimensions (in meters).")]
         public ArenaVector3Json GroundScale = defGroundScale;
         public bool ShouldSerializeGroundScale()
@@ -322,7 +322,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defLightPosition = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1, 'z': -0.2}");
-        [JsonProperty(PropertyName = "lightPosition")]
+        [JsonProperty(PropertyName = "lightPosition", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Position of the main light. If skyType is atmospheric, only the orientation matters (is a directional light) and it can turn the scene into night when lowered towards the horizon.")]
         public ArenaVector3Json LightPosition = defLightPosition;
         public bool ShouldSerializeLightPosition()

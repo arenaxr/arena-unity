@@ -59,7 +59,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector2Json defLinearLimit = null;
-        [JsonProperty(PropertyName = "linearLimit")]
+        [JsonProperty(PropertyName = "linearLimit", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("[D6, Prismatic] Limit on linear movement. Only affects x, y, and z axes. First component is the minimum allowed position.")]
         public ArenaVector2Json LinearLimit = defLinearLimit;
         public bool ShouldSerializeLinearLimit()
@@ -69,7 +69,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector2Json defAngularLimit = null;
-        [JsonProperty(PropertyName = "angularLimit")]
+        [JsonProperty(PropertyName = "angularLimit", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("[Revolute] Limit on angular movement in degrees. First component is the minimum allowed angle, second is the maximum.")]
         public ArenaVector2Json AngularLimit = defAngularLimit;
         public bool ShouldSerializeAngularLimit()
@@ -79,7 +79,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector2Json defLimitCone = null;
-        [JsonProperty(PropertyName = "limitCone")]
+        [JsonProperty(PropertyName = "limitCone", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("[D6] Two angles in degrees specifying a cone in which the joint is allowed to swing, like a pendulum.")]
         public ArenaVector2Json LimitCone = defLimitCone;
         public bool ShouldSerializeLimitCone()
@@ -89,7 +89,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector2Json defTwistLimit = null;
-        [JsonProperty(PropertyName = "twistLimit")]
+        [JsonProperty(PropertyName = "twistLimit", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("[D6] Minimum and maximum angles in degrees that the joint is allowed to twist.")]
         public ArenaVector2Json TwistLimit = defTwistLimit;
         public bool ShouldSerializeTwistLimit()

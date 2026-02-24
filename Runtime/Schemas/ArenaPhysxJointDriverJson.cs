@@ -79,7 +79,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defLinearVelocity = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
-        [JsonProperty(PropertyName = "linearVelocity")]
+        [JsonProperty(PropertyName = "linearVelocity", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Target linear velocity relative to the joint.")]
         public ArenaVector3Json LinearVelocity = defLinearVelocity;
         public bool ShouldSerializeLinearVelocity()
@@ -89,7 +89,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defAngularVelocity = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
-        [JsonProperty(PropertyName = "angularVelocity")]
+        [JsonProperty(PropertyName = "angularVelocity", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Target angular velocity relative to the joint.")]
         public ArenaVector3Json AngularVelocity = defAngularVelocity;
         public bool ShouldSerializeAngularVelocity()

@@ -47,7 +47,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defOffsetPosition = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1.6, 'z': 0}");
-        [JsonProperty(PropertyName = "offsetPosition")]
+        [JsonProperty(PropertyName = "offsetPosition", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Use as a static teleport x,y,z offset.")]
         public ArenaVector3Json OffsetPosition = defOffsetPosition;
         public bool ShouldSerializeOffsetPosition()

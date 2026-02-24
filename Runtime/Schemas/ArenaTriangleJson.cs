@@ -28,7 +28,7 @@ namespace ArenaUnity.Schemas
         // triangle member-fields
 
         private static ArenaVector3Json defVertexA = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0.5, 'z': 0}");
-        [JsonProperty(PropertyName = "vertexA")]
+        [JsonProperty(PropertyName = "vertexA", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("vertex A")]
         public ArenaVector3Json VertexA = defVertexA;
         public bool ShouldSerializeVertexA()
@@ -37,7 +37,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defVertexB = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': -0.5, 'y': -0.5, 'z': 0}");
-        [JsonProperty(PropertyName = "vertexB")]
+        [JsonProperty(PropertyName = "vertexB", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("vertex B")]
         public ArenaVector3Json VertexB = defVertexB;
         public bool ShouldSerializeVertexB()
@@ -46,7 +46,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defVertexC = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0.5, 'y': -0.5, 'z': 0}");
-        [JsonProperty(PropertyName = "vertexC")]
+        [JsonProperty(PropertyName = "vertexC", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("vertex C")]
         public ArenaVector3Json VertexC = defVertexC;
         public bool ShouldSerializeVertexC()

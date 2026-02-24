@@ -87,6 +87,11 @@ namespace ArenaUnity.Components
                 psr = gameObject.GetComponent<ParticleSystemRenderer>();
             }
 
+            // Stop and clear existing particles before reconfiguring to prevent
+            // stale particles from persisting with old shape/velocity settings
+            ps.Stop();
+            ps.Clear();
+
             var main = ps.main;
 
             main.loop = json.Duration < 0;
@@ -319,29 +324,43 @@ namespace ArenaUnity.Components
 
             // Position Distribution (Shape)
             var shape = ps.shape;
-            shape.enabled = true;
 
             // SPE defaults to 'Distribution' if 'PositionDistribution' is None
             var posDist = json.PositionDistribution != ArenaSpeParticlesJson.PositionDistributionType.None ?
                           (ArenaSpeParticlesJson.DistributionType)(int)json.PositionDistribution :
                           json.Distribution;
 
-            switch (posDist)
+            // In A-Frame SPE, box distribution with positionSpread {0,0,0} emits from a single point.
+            // Disable the shape module for point-source emission (particles spawn at the transform origin).
+            bool isPointSource = (posDist == ArenaSpeParticlesJson.DistributionType.Box &&
+                                  json.PositionSpread.X == 0 && json.PositionSpread.Y == 0 && json.PositionSpread.Z == 0) ||
+                                 ((posDist == ArenaSpeParticlesJson.DistributionType.Sphere ||
+                                   posDist == ArenaSpeParticlesJson.DistributionType.Disc) && json.Radius == 0);
+
+            if (isPointSource)
             {
-                case ArenaSpeParticlesJson.DistributionType.Box:
-                    shape.shapeType = ParticleSystemShapeType.Box;
-                    shape.scale = ArenaUnity.ToUnityScale(json.PositionSpread);
-                    break;
-                case ArenaSpeParticlesJson.DistributionType.Sphere:
-                    shape.shapeType = ParticleSystemShapeType.Sphere;
-                    shape.radius = json.Radius;
-                    shape.scale = ArenaUnity.ToUnityScale(json.RadiusScale);
-                    break;
-                case ArenaSpeParticlesJson.DistributionType.Disc:
-                    shape.shapeType = ParticleSystemShapeType.Circle;
-                    shape.radius = json.Radius;
-                    shape.scale = ArenaUnity.ToUnityScale(json.RadiusScale);
-                    break;
+                shape.enabled = false;
+            }
+            else
+            {
+                shape.enabled = true;
+                switch (posDist)
+                {
+                    case ArenaSpeParticlesJson.DistributionType.Box:
+                        shape.shapeType = ParticleSystemShapeType.Box;
+                        shape.scale = ArenaUnity.ToUnityScale(json.PositionSpread);
+                        break;
+                    case ArenaSpeParticlesJson.DistributionType.Sphere:
+                        shape.shapeType = ParticleSystemShapeType.Sphere;
+                        shape.radius = json.Radius;
+                        shape.scale = ArenaUnity.ToUnityScale(json.RadiusScale);
+                        break;
+                    case ArenaSpeParticlesJson.DistributionType.Disc:
+                        shape.shapeType = ParticleSystemShapeType.Circle;
+                        shape.radius = json.Radius;
+                        shape.scale = ArenaUnity.ToUnityScale(json.RadiusScale);
+                        break;
+                }
             }
             shape.position = ArenaUnity.ToUnityPosition(json.PositionOffset);
 
@@ -357,6 +376,10 @@ namespace ArenaUnity.Components
 
             var velocityOverLifetime = ps.velocityOverLifetime;
             var forceOverLifetime = ps.forceOverLifetime;
+
+            // Explicitly set velocity/force space to Local to match SPE's emitter-relative behavior
+            velocityOverLifetime.space = ParticleSystemSimulationSpace.Local;
+            forceOverLifetime.space = ParticleSystemSimulationSpace.Local;
 
             if (velDist == ArenaSpeParticlesJson.DistributionType.Box)
             {

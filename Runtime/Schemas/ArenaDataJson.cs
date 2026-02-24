@@ -47,7 +47,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defPosition = null;
-        [JsonProperty(PropertyName = "position")]
+        [JsonProperty(PropertyName = "position", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("3D object position.")]
         public ArenaVector3Json Position = defPosition;
         public bool ShouldSerializePosition()
@@ -57,7 +57,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaRotationJson defRotation = null;
-        [JsonProperty(PropertyName = "rotation")]
+        [JsonProperty(PropertyName = "rotation", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("3D object rotation in quaternion representation; Right-handed coordinate system. Euler degrees are deprecated in wire message format.")]
         public ArenaRotationJson Rotation = defRotation;
         public bool ShouldSerializeRotation()
@@ -67,7 +67,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defScale = null;
-        [JsonProperty(PropertyName = "scale")]
+        [JsonProperty(PropertyName = "scale", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("3D object scale.")]
         public ArenaVector3Json Scale = defScale;
         public bool ShouldSerializeScale()

@@ -99,7 +99,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defShapeOffset = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
-        [JsonProperty(PropertyName = "shapeOffset")]
+        [JsonProperty(PropertyName = "shapeOffset", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Offset applied to generated collision shapes.")]
         public ArenaVector3Json ShapeOffset = defShapeOffset;
         public bool ShouldSerializeShapeOffset()

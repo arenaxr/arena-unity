@@ -38,7 +38,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defTargetPosition = null;
-        [JsonProperty(PropertyName = "targetPosition")]
+        [JsonProperty(PropertyName = "targetPosition", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("The event destination position in 3D.")]
         public ArenaVector3Json TargetPosition = defTargetPosition;
         public bool ShouldSerializeTargetPosition()
@@ -47,7 +47,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static ArenaVector3Json defOriginPosition = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1.6, 'z': 0}");
-        [JsonProperty(PropertyName = "originPosition")]
+        [JsonProperty(PropertyName = "originPosition", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("The event origination position in 3D.")]
         public ArenaVector3Json OriginPosition = defOriginPosition;
         public bool ShouldSerializeOriginPosition()
