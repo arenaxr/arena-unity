@@ -21,6 +21,7 @@ namespace ArenaUnity.Schemas
     /// Vector2
     /// </summary>
     [Serializable]
+    [JsonConverter(typeof(ArenaVector2JsonConverter))]
     public class ArenaVector2Json
     {
         [JsonIgnore]
