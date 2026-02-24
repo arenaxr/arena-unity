@@ -15,10 +15,10 @@ namespace ArenaUnity.Components
     {
         // ARENA spe-particles component unity conversion status:
         // DONE: acceleration
-        // TODO: accelerationDistribution
+        // DONE: accelerationDistribution
         // DONE: accelerationSpread
-        // TODO: activeMultiplier
-        // TODO: affectedByFog
+        // DONE: activeMultiplier
+        // DONE: affectedByFog
         // DONE: alphaTest
         // DONE: angle
         // DONE: angleSpread
@@ -33,10 +33,10 @@ namespace ArenaUnity.Components
         // DONE: dragSpread
         // DONE: duration
         // DONE: emitterScale
-        // TODO: enableInEditor
+        // DONE: enableInEditor
         // DONE: enabled
-        // TODO: frustumCulled
-        // TODO: hasPerspective
+        // DONE: frustumCulled
+        // DONE: hasPerspective
         // DONE: maxAge
         // DONE: maxAgeSpread
         // DONE: opacity
@@ -128,7 +128,13 @@ namespace ArenaUnity.Components
                 }
             }
 
-            // TODO: handle enableInEditor, affectedByFog
+            // EnableInEditor: play particles in editor when not in play mode
+#if UNITY_EDITOR
+            if (json.EnableInEditor && !Application.isPlaying)
+            {
+                if (!ps.isPlaying) ps.Play();
+            }
+#endif
 
             if (json.Size != null && json.Size.Length > 0)
             {
@@ -305,12 +311,11 @@ namespace ArenaUnity.Components
             }
 
             main.maxParticles = json.ParticleCount;
-            // TODO: handle ActiveMultiplier
 
             var emission = ps.emission;
             emission.enabled = true;
-            // Rough approximation of rate, A-Frame SPE is more complex
-            emission.rateOverTime = json.ParticleCount / json.MaxAge;
+            // ActiveMultiplier scales emission rate; values > 1 create burst-like behavior
+            emission.rateOverTime = (json.ParticleCount / json.MaxAge) * json.ActiveMultiplier;
 
             // Position Distribution (Shape)
             var shape = ps.shape;
@@ -345,12 +350,17 @@ namespace ArenaUnity.Components
                           (ArenaSpeParticlesJson.DistributionType)(int)json.VelocityDistribution :
                           json.Distribution;
 
+            // Acceleration Distribution
+            var accelDist = json.AccelerationDistribution != ArenaSpeParticlesJson.AccelerationDistributionType.None ?
+                            (ArenaSpeParticlesJson.DistributionType)(int)json.AccelerationDistribution :
+                            json.Distribution;
+
             var velocityOverLifetime = ps.velocityOverLifetime;
             var forceOverLifetime = ps.forceOverLifetime;
 
             if (velDist == ArenaSpeParticlesJson.DistributionType.Box)
             {
-                // Box / None: Particles move along the explicit Velocity/Acceleration vectors
+                // Box / None: Particles move along the explicit Velocity vectors
                 velocityOverLifetime.enabled = true;
                 velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(
                     (float)(json.Velocity.X - json.VelocitySpread.X / 2.0),
@@ -361,7 +371,24 @@ namespace ArenaUnity.Components
                 velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(
                     (float)(-json.Velocity.Z - json.VelocitySpread.Z / 2.0), // Z axis is flipped for Unity
                     (float)(-json.Velocity.Z + json.VelocitySpread.Z / 2.0));
+            }
+            else
+            {
+                // Sphere / Disc: Velocity dictates "Speed" outwards from center, not rigid XYZ vectors
+                // A-Frame SPE only uses Velocity.X for speed in these distributions.
+                velocityOverLifetime.enabled = false;
 
+                var speedCurve = new ParticleSystem.MinMaxCurve(
+                    (float)(json.Velocity.X - json.VelocitySpread.X / 2.0),
+                    (float)(json.Velocity.X + json.VelocitySpread.X / 2.0)
+                );
+
+                main.startSpeed = speedCurve;
+            }
+
+            // Acceleration — apply as XYZ force (box) or radial (sphere/disc)
+            if (accelDist == ArenaSpeParticlesJson.DistributionType.Box)
+            {
                 forceOverLifetime.enabled = true;
                 forceOverLifetime.x = new ParticleSystem.MinMaxCurve(
                     (float)(json.Acceleration.X - json.AccelerationSpread.X / 2.0),
@@ -375,24 +402,12 @@ namespace ArenaUnity.Components
             }
             else
             {
-                // Sphere / Disc: Velocity dictates "Speed" outwards from center, not rigid XYZ vectors
-                // A-Frame SPE only uses Velocity.X for speed in these distributions.
-                velocityOverLifetime.enabled = false;
+                // Sphere / Disc: only Acceleration.X is used as radial acceleration
                 forceOverLifetime.enabled = false;
-
-                var speedCurve = new ParticleSystem.MinMaxCurve(
-                    (float)(json.Velocity.X - json.VelocitySpread.X / 2.0),
-                    (float)(json.Velocity.X + json.VelocitySpread.X / 2.0)
-                );
-
-                main.startSpeed = speedCurve;
-
-                // Acceleration mapping for radial shapes is more complex in Shuriken,
-                // roughly mapped to radial multiplier or linear velocity over time.
-                if (json.Acceleration.X != 0 || json.AccelerationSpread.X != 0) {
-                    var radialVel = velocityOverLifetime;
-                    radialVel.enabled = true;
-                    radialVel.radial = new ParticleSystem.MinMaxCurve(
+                if (json.Acceleration.X != 0 || json.AccelerationSpread.X != 0)
+                {
+                    velocityOverLifetime.enabled = true;
+                    velocityOverLifetime.radial = new ParticleSystem.MinMaxCurve(
                         (float)(json.Acceleration.X - json.AccelerationSpread.X / 2.0),
                         (float)(json.Acceleration.X + json.AccelerationSpread.X / 2.0));
                 }
@@ -553,6 +568,20 @@ namespace ArenaUnity.Components
             }
 
             bool isURP = ArenaUnity.DefaultRenderPipeline != null;
+
+            // AlphaTest — alpha cutoff threshold
+            if (json.AlphaTest > 0)
+            {
+                mat.SetFloat("_Cutoff", json.AlphaTest);
+                mat.EnableKeyword("_ALPHATEST_ON");
+                if (isURP) mat.SetFloat("_AlphaClip", 1f);
+            }
+
+            // AffectedByFog — toggle fog shader keyword
+            if (json.AffectedByFog)
+                mat.EnableKeyword("_FOG_ON");
+            else
+                mat.DisableKeyword("_FOG_ON");
 
             // Setup blending mode — for Standard (non-URP) pipeline, each case exactly mirrors
             // Unity's official StandardParticlesShaderGUI.SetupMaterialWithBlendMode
@@ -719,27 +748,19 @@ namespace ArenaUnity.Components
             if (json.DepthWrite)
                 mat.SetInt("_ZWrite", 1);
 
-            // DEBUG: Final material state + texture alpha check
-            string keywords = string.Join(", ", mat.shaderKeywords);
-            string texInfo = "NULL";
-            if (mat.mainTexture != null)
+            // FrustumCulled — when false, expand bounds so particles are never culled off-screen
+            if (!json.FrustumCulled)
             {
-                Texture2D t = mat.mainTexture as Texture2D;
-                if (t != null)
-                {
-                    Color corner = t.GetPixel(0, 0);
-                    Color center = t.GetPixel(t.width / 2, t.height / 2);
-                    texInfo = $"{t.width}x{t.height} fmt:{t.format} corner:({corner.r:F2},{corner.g:F2},{corner.b:F2},{corner.a:F2}) center:({center.r:F2},{center.g:F2},{center.b:F2},{center.a:F2})";
-                }
+                var bounds = new Bounds(Vector3.zero, Vector3.one * 10000f);
+                psr.bounds = bounds;
             }
-            var main2 = ps.main;
-            Debug.Log($"[SpeParticles] {gameObject.name} FINAL: shader:{mat.shader.name} " +
-                $"tex:[{texInfo}] matColor:{mat.color} " +
-                $"SrcBlend:{mat.GetInt("_SrcBlend")} DstBlend:{mat.GetInt("_DstBlend")} " +
-                $"ZWrite:{mat.GetInt("_ZWrite")} RenderQueue:{mat.renderQueue} " +
-                $"Keywords:[{keywords}] " +
-                $"startColor:{main2.startColor.color} startColorA:{main2.startColor.color.a} " +
-                $"renderMode:{psr.renderMode} mat==shared:{mat == psr.sharedMaterial}");
+
+            // HasPerspective — when false, clamp particle size to reduce perspective scaling
+            if (!json.HasPerspective)
+            {
+                psr.minParticleSize = 1f;
+                psr.maxParticleSize = 1f;
+            }
 
             if (json.Enabled) {
                 if (!ps.isPlaying) {
