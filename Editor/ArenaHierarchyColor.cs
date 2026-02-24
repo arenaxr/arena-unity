@@ -58,11 +58,14 @@ namespace ArenaUnity.Editor
 
                         // Draw background over existing Unity text
                         // x offset 16 is approximately where the text starts
-                        Rect bgRect = new Rect(selectionRect.x + 16f, selectionRect.y, selectionRect.width - 16f, selectionRect.height);
+                        // Use large width to extend background to the right edge of the hierarchy window
+                        float bgX = selectionRect.x + 16f;
+                        Rect bgRect = new Rect(bgX, selectionRect.y, 50000f - bgX, selectionRect.height);
                         EditorGUI.DrawRect(bgRect, bgColor);
 
                         // Draw colored text
-                        Rect textRect = new Rect(selectionRect.x + 18f, selectionRect.y, selectionRect.width - 18f, selectionRect.height);
+                        float textX = selectionRect.x + 18f;
+                        Rect textRect = new Rect(textX, selectionRect.y, 50000f - textX, selectionRect.height);
                         GUIStyle labelStyle = new GUIStyle(EditorStyles.label);
                         labelStyle.normal.textColor = textColor;
                         EditorGUI.LabelField(textRect, instance.name, labelStyle);
