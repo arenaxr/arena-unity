@@ -49,8 +49,10 @@ namespace ArenaUnity
             tm.fontSize = (defaultWidth / wrapCount) * 20f;
             tm.overflowMode = TextOverflowModes.Overflow;
 
+#pragma warning disable 0618 // Intentionally consuming deprecated property for backward compatibility
             if (json.Text != null)
                 tm.text = json.Text; // data.text is deprecated, users get a console warning at json ingest
+#pragma warning restore 0618
             else if (json.Value != null)
                 tm.text = json.Value;
             if (json.Color != null)
