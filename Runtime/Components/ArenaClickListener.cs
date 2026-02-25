@@ -45,7 +45,10 @@ namespace ArenaUnity.Components
                 {   // primitive geometry
                     MeshCollider mc = gameObject.AddComponent<MeshCollider>();
                     mc.sharedMesh = mf.mesh;
-                    mc.convex = true; // simplify collision mesh when possible
+                    if (mf.mesh.triangles.Length / 3 <= 256)
+                    {
+                        mc.convex = true; // simplify collision mesh when possible
+                    }
                     meshAvailable = true;
                 }
                 else
