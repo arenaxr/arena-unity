@@ -178,7 +178,7 @@ namespace ArenaUnity
         {
             bool nameSafe = true;
             // local inventory before MQTT
-            foreach (var aobj in FindObjectsOfType<ArenaObject>())
+            foreach (var aobj in FindObjectsByType<ArenaObject>(FindObjectsSortMode.None))
             {
                 if (!arenaObjs.ContainsKey(aobj.name))
                 {
@@ -209,7 +209,7 @@ namespace ArenaUnity
             realm = arenaDefaults.realm;
 
             // start auth flow and MQTT connection
-            ArenaCamera[] camlist = FindObjectsOfType<ArenaCamera>();
+            ArenaCamera[] camlist = FindObjectsByType<ArenaCamera>(FindObjectsSortMode.None);
             name = $"{originalName} (Authenticating...)";
             cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, camlist.Length > 0, arenaDefaults.latencyTopic));
             yield return cd.coroutine;

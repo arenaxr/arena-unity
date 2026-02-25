@@ -60,7 +60,7 @@ namespace ArenaUnity
 
             // runtime created arena objects still need to be checked for name uniqueness
             bool found = false;
-            foreach (var aobj in FindObjectsOfType<ArenaObject>())
+            foreach (var aobj in FindObjectsByType<ArenaObject>(FindObjectsSortMode.None))
             {
                 if (aobj.name == name)
                 {
