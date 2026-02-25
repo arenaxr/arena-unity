@@ -108,6 +108,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaClickListenerJson defClickListener = null;
         [JsonProperty(PropertyName = "click-listener")]
+        [JsonConverter(typeof(Converter.ArenaBooleanObjectJsonConverter<ArenaClickListenerJson>))]
         [Tooltip("Object will listen for mouse events like clicks.")]
         public ArenaClickListenerJson ClickListener = defClickListener;
         public bool ShouldSerializeClickListener()
