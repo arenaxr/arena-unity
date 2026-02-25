@@ -59,7 +59,11 @@ namespace ArenaUnity
                 tm.color = ArenaUnity.ToUnityColor(json.Color);
             tm.alpha = json.Opacity;
             tm.characterSpacing = json.LetterSpacing;
+#if UNITY_6000_0_OR_NEWER
+            tm.textWrappingMode = (json.WhiteSpace != ArenaTextJson.WhiteSpaceType.Nowrap) ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+#else
             tm.enableWordWrapping = (json.WhiteSpace != ArenaTextJson.WhiteSpaceType.Nowrap);
+#endif
 
             RectTransform rt = gameObject.GetComponent<RectTransform>();
 
@@ -176,7 +180,11 @@ namespace ArenaUnity
             data.Color = ArenaUnity.ToArenaColor(tm.color);
             data.Opacity = tm.alpha;
             data.LetterSpacing = tm.characterSpacing;
+#if UNITY_6000_0_OR_NEWER
+            data.WhiteSpace = (tm.textWrappingMode != TextWrappingModes.NoWrap) ? ArenaTextJson.WhiteSpaceType.Normal : ArenaTextJson.WhiteSpaceType.Nowrap;
+#else
             data.WhiteSpace = tm.enableWordWrapping ? ArenaTextJson.WhiteSpaceType.Normal : ArenaTextJson.WhiteSpaceType.Nowrap;
+#endif
             switch (tm.horizontalAlignment)
             {
                 case HorizontalAlignmentOptions.Left:
