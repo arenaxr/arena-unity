@@ -2,6 +2,52 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.5.0](https://github.com/arenaxr/arena-unity/compare/v1.4.4...v1.5.0) (2026-02-25)
+
+
+### Features
+
+* **animation-mixer:** add support for duration, useRegExp ([c9381d0](https://github.com/arenaxr/arena-unity/commit/c9381d062721b9403c0a43da4bf0a6682fb5d3c9))
+* **materal:** support alphaTest, metalness, roughness, emissive, repeat, offset, visible + fixed shader overwrite bug ([8fedb96](https://github.com/arenaxr/arena-unity/commit/8fedb96ce73f1ff096e70f84acd4a06211e0700f))
+* **particles:** add particle spread handling ([9e04001](https://github.com/arenaxr/arena-unity/commit/9e040017d1e68a11b4b0fb489310149e52517027))
+* **particles:** add support for PsrticleSystem ([075a290](https://github.com/arenaxr/arena-unity/commit/075a29081918acd0a4ea14ea42bbe689b5ce0816))
+* **particles:** add support for texture frames ([1d4c365](https://github.com/arenaxr/arena-unity/commit/1d4c3656997cd1ad45b7ed0c50148dd1e087f052))
+* **particles:** support accelerationDistribution, activeMultiplier, affectedByFog, enableInEditor, frustumCulled, hasPerspective, and fix alphaTest ([e53d157](https://github.com/arenaxr/arena-unity/commit/e53d157618505b38700208d8311fbcd942d1411f))
+* **particles:** support angle, rotation, randomize ([fdec53d](https://github.com/arenaxr/arena-unity/commit/fdec53dcb254d1642aeb19630cc3975c31d296b7))
+* **particles:** support emitterScale, maxAgeSpread ([9bbea40](https://github.com/arenaxr/arena-unity/commit/9bbea401dbac5c79e36ec213470789a68053f994))
+* **particles:** support wiggle/drag ([efb8eb9](https://github.com/arenaxr/arena-unity/commit/efb8eb925ef9b1ecc08311b61793ad21d0e93699))
+* **text:** support opacity, letterSpacing, lineHeight, whiteSpace, and multi-line align ([df3e22a](https://github.com/arenaxr/arena-unity/commit/df3e22aec47ed152790c3c9bed15b66e6e73e4e0))
+
+
+### Bug Fixes
+
+* **animation:** correct schema errors in animation deserialization ([ed27471](https://github.com/arenaxr/arena-unity/commit/ed2747161579216b5d7aa1e970ae28c8908dc128))
+* **auth:** auto-add gitignore for manual auth flow, closes [#58](https://github.com/arenaxr/arena-unity/issues/58) ([36dbf16](https://github.com/arenaxr/arena-unity/commit/36dbf1605c619b3586eaef641c6fa3476d555e9f))
+* **auth:** remove PrettyHierarchy dep, create permissions interface ([14866a2](https://github.com/arenaxr/arena-unity/commit/14866a27ec6596f4ceb5d6b04bb073bfaddcf4a6))
+* **click-listener:** simplify collision mesh only for smaller triangle models ([5e3ec00](https://github.com/arenaxr/arena-unity/commit/5e3ec00170f77092b48a9fe161a03cc05ac6ef01))
+* **color:** properly convert all css webcolors at deserialization ([b22b76c](https://github.com/arenaxr/arena-unity/commit/b22b76c13b9505b3e971dbf95d45dd6b111c1290))
+* **deprecated:** silence lib's intentional consumption of dperecated properties ([9d4bfad](https://github.com/arenaxr/arena-unity/commit/9d4bfad7eb6467ed3c468ea15493e438b709a99f))
+* **editor:** fixed permission color layout error in hierarchy right edge ([ee7d4ad](https://github.com/arenaxr/arena-unity/commit/ee7d4adb32bd64756dbb31a09a63092c1e984b46))
+* **editor:** migrated InstanceIDToObject uses for unity v6+ ([a73ec8a](https://github.com/arenaxr/arena-unity/commit/a73ec8ad5f6ac69dc1d318bc9176c034d3cf491d))
+* **image:** support width, height, always render mesh even when url does not load ([e2d3072](https://github.com/arenaxr/arena-unity/commit/e2d3072a6790cddf0bf0f7a1b841215200c614ed))
+* **json:** added legacy deserialization converters for str/bool-&gt;object, closes [#141](https://github.com/arenaxr/arena-unity/issues/141) ([b74c705](https://github.com/arenaxr/arena-unity/commit/b74c705357d297e4e10ed4c73b9f0727ff711d26))
+* **json:** handle vec3/vec2 string scalars as strings ([27e536d](https://github.com/arenaxr/arena-unity/commit/27e536d5f685e685eaa11a787699c6f16893710d))
+* **light:** add support for target, shadowBias, shadowCameraNear, penumbra, groundColor ([45b5dbe](https://github.com/arenaxr/arena-unity/commit/45b5dbefa47a2dce2b756b00295ce62f54f9c898))
+* **line/thickline:** corrected color shaders for lines ([8915ff6](https://github.com/arenaxr/arena-unity/commit/8915ff616ae5d5950f373242e1d7fa7e38eb7c8f))
+* **particles:** add instantiation protection ([7287953](https://github.com/arenaxr/arena-unity/commit/7287953365da3b30ca7f61ae3414f034835b3cda))
+* **particles:** correctly applied shader for particle alpha blending ([bae4a9c](https://github.com/arenaxr/arena-unity/commit/bae4a9cf92562d5b65c194ea5e5847be4cd21c23))
+* **particles:** fixed color over lifetime multipler and native random spreading ([85747a6](https://github.com/arenaxr/arena-unity/commit/85747a6625bd84e649bd95cb238c89d324058664))
+* **particles:** fixed issues with colors and backward direction ([3d78b80](https://github.com/arenaxr/arena-unity/commit/3d78b8053353bcfd00faf4973467924bc91e61e1))
+* **particles:** handle string scalar vec3/vec2 conversions automatically ([4623ff9](https://github.com/arenaxr/arena-unity/commit/4623ff97d8eaf2e6f9884d5d632e9b7118518079))
+* **particles:** solved distribution bug, added dist insurance, fixed deserialization creation errors ([ac4197d](https://github.com/arenaxr/arena-unity/commit/ac4197d21c160111a1b8a4dd4df2479236f367ca))
+* **scene:** migrate FindObjectByType useage for unity v6+ ([81f9f20](https://github.com/arenaxr/arena-unity/commit/81f9f20674df12a585c8d5c5c0c097e80b1e7b26))
+* **text:** adjust scaling multipliers to normalize TextMeshPro physical geometry metrics ([f9fae06](https://github.com/arenaxr/arena-unity/commit/f9fae06fa43ba1df52579242c87e384002810eb8))
+* **text:** adjust sizing scalar to match a-frame wrapCount ([26d7f14](https://github.com/arenaxr/arena-unity/commit/26d7f14bcab2ed18290abb6ef8596f4c396bc097))
+* **text:** correct text alignment archoring like aframe ([d69a909](https://github.com/arenaxr/arena-unity/commit/d69a909a7996e89ae7fbe5c73dc6fe9da49bcb8f))
+* **text:** handle unity 6+ TextWrappingModes ([7243149](https://github.com/arenaxr/arena-unity/commit/72431498a2e10e1f9338df82ba3884a8db90e07c))
+* **text:** remove rendering with a-frame runtime text prop ([1a68b52](https://github.com/arenaxr/arena-unity/commit/1a68b5239d678cfe8db15b23e917352879ef1a80))
+* **version:** update version warnings to be persistant when known ([0808b07](https://github.com/arenaxr/arena-unity/commit/0808b07608140aaea9b955b9d8759eba4bf5a84e))
+
 ## [1.4.4](https://github.com/arenaxr/arena-unity/compare/v1.4.3...v1.4.4) (2026-01-29)
 
 
