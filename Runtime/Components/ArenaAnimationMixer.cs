@@ -18,11 +18,12 @@ namespace ArenaUnity.Components
         // DONE: clampWhenFinished
         // DONE: clip
         // DONE: crossFadeDuration
-        // TODO: duration
+        // DONE: duration
         // DONE: loop
-        // TODO: repetitions
         // DONE: startAt
         // DONE: timeScale
+        // DONE: useRegExp
+        // NOTE: repetitions not supported by Unity's legacy Animation system
 
         // NOTE: There is an easy clip parser but only #if UNITY_EDITOR (AnimationUtility.GetAnimationClips()).
 
@@ -55,8 +56,18 @@ namespace ArenaUnity.Components
             }
             if (json.ClampWhenFinished) anim.wrapMode = WrapMode.ClampForever;
 
-            // play animations according to clip and wildcard
-            string pattern = @$"{json.Clip.Replace("*", @"\w*")}"; // update wildcards for .Net
+            // play animations according to clip pattern
+            // useRegExp: true = treat clip as regex directly, false = convert wildcards to regex
+            string pattern;
+            if (json.UseRegExp)
+            {
+                pattern = json.Clip;
+            }
+            else
+            {
+                pattern = @$"{json.Clip.Replace("*", @"\w*")}"; // convert wildcards for .Net
+            }
+
             if (animations != null && animations.Count > 0)
             {
                 for (int i = 0; i < animations.Count; i++)
@@ -65,8 +76,19 @@ namespace ArenaUnity.Components
                     anim[animations[i]].layer = i;
                     anim[animations[i]].speed = json.TimeScale;
                     anim[animations[i]].time = json.StartAt / 1000;
+
+                    // apply duration override (adjust speed to achieve target duration)
+                    if (json.Duration > 0 && anim[animations[i]].clip != null)
+                    {
+                        float clipLength = anim[animations[i]].clip.length;
+                        if (clipLength > 0)
+                        {
+                            anim[animations[i]].speed = clipLength / json.Duration * json.TimeScale;
+                        }
+                    }
+
                     bool includeClip = false;
-                    if (json.Clip.Contains("*")) // only use regex for wildcards
+                    if (json.UseRegExp || json.Clip.Contains("*"))
                     {
                         Match m = Regex.Match(animations[i], pattern);
                         if (m.Success) includeClip = true;
