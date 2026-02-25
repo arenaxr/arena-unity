@@ -31,6 +31,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaVector3Json defAcceleration = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         [JsonProperty(PropertyName = "acceleration", ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("For sphere and disc distributions, only the x axis is used.")]
         public ArenaVector3Json Acceleration = defAcceleration;
         public bool ShouldSerializeAcceleration()
@@ -63,6 +64,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaVector3Json defAccelerationSpread = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         [JsonProperty(PropertyName = "accelerationSpread", ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Spread of the particle's acceleration. for sphere and disc distributions, only the x axis is used.")]
         public ArenaVector3Json AccelerationSpread = defAccelerationSpread;
         public bool ShouldSerializeAccelerationSpread()
@@ -380,6 +382,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaVector3Json defPositionOffset = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         [JsonProperty(PropertyName = "positionOffset", ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Fixed offset to the apply to the emitter relative to its parent entity.")]
         public ArenaVector3Json PositionOffset = defPositionOffset;
         public bool ShouldSerializePositionOffset()
@@ -390,6 +393,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaVector3Json defPositionSpread = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         [JsonProperty(PropertyName = "positionSpread", ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Particles are positioned within +- of these local bounds. for sphere and disc distributions only the x axis is used.")]
         public ArenaVector3Json PositionSpread = defPositionSpread;
         public bool ShouldSerializePositionSpread()
@@ -410,6 +414,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaVector3Json defRadiusScale = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}");
         [JsonProperty(PropertyName = "radiusScale", ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Scales the emitter for sphere and disc shapes to form oblongs and ellipses.")]
         public ArenaVector3Json RadiusScale = defRadiusScale;
         public bool ShouldSerializeRadiusScale()
@@ -538,6 +543,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaVector3Json defRotationAxis = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         [JsonProperty(PropertyName = "rotationAxis", ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Local axis when using rotation.")]
         public ArenaVector3Json RotationAxis = defRotationAxis;
         public bool ShouldSerializeRotationAxis()
@@ -548,6 +554,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaVector3Json defRotationAxisSpread = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         [JsonProperty(PropertyName = "rotationAxisSpread", ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Variance in the axis of rotation.")]
         public ArenaVector3Json RotationAxisSpread = defRotationAxisSpread;
         public bool ShouldSerializeRotationAxisSpread()
@@ -628,6 +635,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaVector2Json defTextureFrames = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         [JsonProperty(PropertyName = "textureFrames", ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        [JsonConverter(typeof(ArenaVector2JsonConverter))]
         [Tooltip("X and Y frames for a spritesheet. each particle will transition through every frame of the spritesheet over its lifetime (see textureFramesLoop).")]
         public ArenaVector2Json TextureFrames = defTextureFrames;
         public bool ShouldSerializeTextureFrames()
@@ -648,6 +656,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaVector3Json defVelocity = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         [JsonProperty(PropertyName = "velocity", ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("For sphere and disc distributions, only the x axis is used.")]
         public ArenaVector3Json Velocity = defVelocity;
         public bool ShouldSerializeVelocity()
@@ -680,6 +689,7 @@ namespace ArenaUnity.Schemas
 
         private static ArenaVector3Json defVelocitySpread = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         [JsonProperty(PropertyName = "velocitySpread", ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Variance for the velocity.")]
         public ArenaVector3Json VelocitySpread = defVelocitySpread;
         public bool ShouldSerializeVelocitySpread()
