@@ -47,6 +47,16 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
+        private static bool defUseRegExp = false;
+        [JsonProperty(PropertyName = "useRegExp")]
+        [Tooltip("If true, the clip property will be treated as a regular expression instead of a wildcard pattern.")]
+        public bool UseRegExp = defUseRegExp;
+        public bool ShouldSerializeUseRegExp()
+        {
+            // useRegExp
+            return (UseRegExp != defUseRegExp);
+        }
+
         private static float defCrossFadeDuration = 0f;
         [JsonProperty(PropertyName = "crossFadeDuration")]
         [Tooltip("Duration of cross-fades between clips, in seconds.")]
@@ -87,10 +97,10 @@ namespace ArenaUnity.Schemas
             return (Loop != defLoop);
         }
 
-        private static string defRepetitions = "";
-        [JsonProperty(PropertyName = "repetitions")]
-        [Tooltip("Number of times to play the clip, in addition to the first play (empty string = Infinity). Repetitions are ignored for loop: once.")]
-        public string Repetitions = defRepetitions;
+        private static float defRepetitions = float.PositiveInfinity;
+        [JsonProperty(PropertyName = "repetitions", NullValueHandling = NullValueHandling.Ignore)]
+        [Tooltip("Number of times to play the clip, in addition to the first play (Infinity = loop forever). Repetitions are ignored for loop: once.")]
+        public float Repetitions = defRepetitions;
         public bool ShouldSerializeRepetitions()
         {
             // repetitions

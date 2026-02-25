@@ -14,6 +14,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
+using ArenaUnity.Schemas.Converter;
 
 namespace ArenaUnity.Schemas
 {
@@ -169,7 +170,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defFrom = "";
-        [JsonConverter(typeof(string))] // TODO (mwfarb): remove explicit conversion to avoid walking errors
+        [JsonConverter(typeof(ArenaStringObjectJsonConverter))]
         [JsonProperty(PropertyName = "from")]
         [Tooltip("Initial value at start of animation. If not specified, the current property value of the entity will be used (will be sampled on each animation start). It is best to specify a from value when possible for stability.")]
         public string From = defFrom;
@@ -190,6 +191,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defLoop = "0";
+        [JsonConverter(typeof(ArenaStringObjectJsonConverter))]
         [JsonProperty(PropertyName = "loop")]
         [Tooltip("How many times the animation should repeat. If the value is true, the animation will repeat infinitely.")]
         public string Loop = defLoop;
@@ -209,7 +211,7 @@ namespace ArenaUnity.Schemas
             return (PauseEvents != defPauseEvents);
         }
 
-        private static string defProperty = null;
+        private static string defProperty = "";
         [JsonProperty(PropertyName = "property")]
         [Tooltip("Property to animate. Can be a component name, a dot-delimited property of a component (e.g., material.color), or a plain attribute.")]
         public string Property = defProperty;
@@ -250,7 +252,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string defTo = "";
-        [JsonConverter(typeof(string))] // TODO (mwfarb): remove explicit conversion to avoid walking errors
+        [JsonConverter(typeof(ArenaStringObjectJsonConverter))]
         [JsonProperty(PropertyName = "to")]
         [Tooltip("Target value at end of animation.")]
         public string To = defTo;
