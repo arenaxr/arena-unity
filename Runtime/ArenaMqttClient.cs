@@ -397,6 +397,7 @@ namespace ArenaUnity
             {
                 // check for local mqtt auth
                 Debug.LogWarning("Using local MQTT token.");
+                EnsureGitignore(Path.GetDirectoryName(Path.GetFullPath(localMqttPath)), mqttTokenFile);
                 if (authType != Auth.Manual)
                 {
                     Debug.LogError($"Authentication type '{authType}' when using local token may create ambiguous results. Switch to '{Auth.Manual}'.");
@@ -781,6 +782,42 @@ namespace ArenaUnity
         {
             string base64Padded = base64.PadRight(base64.Length + (4 - base64.Length % 4) % 4, '=');
             return Encoding.UTF8.GetString(Convert.FromBase64String(base64Padded));
+        }
+
+        /// <summary>
+        /// Ensure a .gitignore file exists in the given directory and contains the specified filename.
+        /// Prevents accidental commits of sensitive token files to source control.
+        /// </summary>
+        internal static void EnsureGitignore(string directory, string filename)
+        {
+            if (string.IsNullOrEmpty(directory)) directory = ".";
+            string gitignorePath = Path.Combine(directory, ".gitignore");
+            try
+            {
+                if (File.Exists(gitignorePath))
+                {
+                    string contents = File.ReadAllText(gitignorePath);
+                    // check if the filename is already covered
+                    string[] lines = contents.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string line in lines)
+                    {
+                        if (line.Trim() == filename) return; // already listed
+                    }
+                    // append the entry
+                    string separator = contents.EndsWith("\n") || contents.EndsWith("\r") ? "" : "\n";
+                    File.AppendAllText(gitignorePath, $"{separator}{filename}\n");
+                    Debug.Log($"Updated .gitignore at '{gitignorePath}' to include '{filename}'.");
+                }
+                else
+                {
+                    File.WriteAllText(gitignorePath, $"{filename}\n");
+                    Debug.Log($"Created .gitignore at '{gitignorePath}' to protect '{filename}' from commits.");
+                }
+            }
+            catch (IOException e)
+            {
+                Debug.LogWarning($"Unable to update .gitignore for '{filename}': {e.Message}");
+            }
         }
 
         /// <summary>
