@@ -30,13 +30,19 @@ namespace ArenaUnity.Editor
 
         private static void HandleHierarchyWindowItemOnGUI(int instanceID, Rect selectionRect)
         {
+#if UNITY_6000_0_OR_NEWER
+            var instance = EditorUtility.EntityIdToObject(instanceID) as GameObject;
+#else
             var instance = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
+#endif
             if (instance != null)
             {
                 var permissionsObj = instance.GetComponent<IArenaPermissions>();
                 if (permissionsObj != null)
                 {
+#pragma warning disable CS0618 // Selection.Contains(int) is deprecated in Unity 6 but signature is unchanged
                     bool isSelected = Selection.Contains(instanceID);
+#pragma warning restore CS0618
                     bool isHovered = selectionRect.Contains(Event.current.mousePosition);
 
                     if (!isSelected)
