@@ -1,0 +1,896 @@
+[
+    {
+        "object_id": "green-blob-sphere",
+        "attributes": {
+            "object_type": "sphere",
+            "position": {
+                "x": 12,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 1,
+            "color": "#004400",
+            "segmentsWidth": 8,
+            "segmentsHeight": 8
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    },
+    {
+        "object_id": "world-relative",
+        "attributes": {
+            "object_type": "box",
+            "depth": 1,
+            "height": 1,
+            "width": 1,
+            "position": {
+                "x": 21,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "particleCount": 50,
+                "maxAge": 1,
+                "acceleration": {
+                    "x": 0,
+                    "y": -2,
+                    "z": 0
+                },
+                "relative": "world"
+            },
+            "animation": {
+                "dir": "alternate",
+                "easing": "linear",
+                "loop": "true",
+                "to": "{\"x\":22,\"y\":1,\"z\":-10}",
+                "property": "position",
+                "dur": 3000
+            },
+            "scale": {
+                "x": 0.2,
+                "y": 0.2,
+                "z": 0.2
+            },
+            "color": "#964b00"
+        },
+        "createdAt": "2024-04-16T17:08:24.045Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.045Z"
+    },
+    {
+        "object_id": "sparkler",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 18,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "particleCount": 50,
+                "maxAge": 0.5,
+                "distribution": "sphere",
+                "radius": 0.01,
+                "velocity": {
+                    "x": 1
+                },
+                "acceleration": {
+                    "x": 1
+                }
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.045Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.045Z"
+    },
+    {
+        "object_id": "smoke",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": -3,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/fog.png",
+                "velocity": {
+                    "x": 0.2,
+                    "y": 1,
+                    "z": 0
+                },
+                "velocitySpread": {
+                    "x": 0.2,
+                    "y": 0,
+                    "z": 0.2
+                },
+                "particleCount": 50,
+                "maxAge": 4,
+                "size": [
+                    3,
+                    8
+                ],
+                "opacity": [
+                    0,
+                    1,
+                    0
+                ],
+                "color": [
+                    "#aaa",
+                    "#222"
+                ]
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    },
+    {
+        "object_id": "snowfall",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": -18,
+                "y": 3,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "color": [
+                    "#ccc"
+                ],
+                "blending": "normal",
+                "positionSpread": {
+                    "x": 2,
+                    "y": 0,
+                    "z": 2
+                },
+                "radius": 0,
+                "randomizePosition": true,
+                "particleCount": 50,
+                "velocity": {
+                    "x": 0,
+                    "y": -0.5,
+                    "z": 0
+                },
+                "velocitySpread": {
+                    "x": 0.1,
+                    "y": 0.2,
+                    "z": 0.1
+                },
+                "wiggleSpread": 1,
+                "maxAge": 6,
+                "emitterScale": 100
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    },
+    {
+        "object_id": "rotating",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 6,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "particleCount": 300,
+                "velocity": {
+                    "x": 0.5,
+                    "y": 0,
+                    "z": 0
+                },
+                "maxAge": 3,
+                "distribution": "disc",
+                "rotationAxis": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 1
+                },
+                "rotation": 120,
+                "rotationSpread": 120,
+                "radius": 0.1
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    },
+    {
+        "object_id": "rainfall",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": -21,
+                "y": 3,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "color": [
+                    "blue"
+                ],
+                "positionSpread": {
+                    "x": 2,
+                    "y": 0,
+                    "z": 2
+                },
+                "radius": 0,
+                "randomizePosition": true,
+                "particleCount": 50,
+                "velocity": {
+                    "x": 0,
+                    "y": -10,
+                    "z": 0
+                },
+                "maxAge": 0.25
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    },
+    {
+        "object_id": "multicolor",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 9,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "particleCount": 300,
+                "maxAge": 3,
+                "distribution": "sphere",
+                "color": [
+                    "#888"
+                ],
+                "colorSpread": [
+                    {
+                        "x": 1,
+                        "y": 1,
+                        "z": 1
+                    },
+                    {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                ],
+                "size": [
+                    0,
+                    2,
+                    0
+                ]
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    },
+    {
+        "object_id": "no-texture",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 27,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "maxAge": 2,
+                "maxAgeSpread": 1,
+                "particleCount": 50,
+                "opacity": [
+                    0,
+                    1,
+                    1,
+                    0
+                ],
+                "positionSpread": {
+                    "x": 1,
+                    "y": 1,
+                    "z": 1
+                },
+                "velocitySpread": {
+                    "x": 0.4,
+                    "y": 0.4,
+                    "z": 0.4
+                },
+                "randomizePosition": true
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    },
+    {
+        "object_id": "no-texture-no-perspective",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 30,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "maxAge": 2,
+                "maxAgeSpread": 1,
+                "particleCount": 50,
+                "opacity": [
+                    0,
+                    1,
+                    1,
+                    0
+                ],
+                "positionSpread": {
+                    "x": 1,
+                    "y": 1,
+                    "z": 1
+                },
+                "velocitySpread": {
+                    "x": 0.4,
+                    "y": 0.4,
+                    "z": 0.4
+                },
+                "hasPerspective": true,
+                "randomizePosition": true
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    },
+    {
+        "object_id": "multiple-distribution",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 15,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "particleCount": 300,
+                "maxAge": 1,
+                "distribution": "disc",
+                "accelerationDistribution": "box",
+                "acceleration": {
+                    "x": 0,
+                    "y": 2,
+                    "z": 0
+                },
+                "color": [
+                    "orange"
+                ]
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    },
+    {
+        "object_id": "more-frames",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": -9,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/explosion_sheet.png",
+                "textureFrames": {
+                    "x": 5,
+                    "y": 5
+                },
+                "distribution": "sphere",
+                "radius": 0.1,
+                "particleCount": 20,
+                "maxAge": 1,
+                "size": [
+                    16
+                ],
+                "activeMultiplier": 0.5
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    },
+    {
+        "object_id": "active-multiplier",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 3,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "particleCount": 2000,
+                "velocity": {
+                    "x": 0.3,
+                    "y": 0,
+                    "z": 0
+                },
+                "maxAge": 3,
+                "distribution": "disc",
+                "activeMultiplier": 10000,
+                "size": [
+                    0.1,
+                    0.5
+                ],
+                "radius": 0.1,
+                "color": [
+                    "violet"
+                ]
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.028Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.028Z"
+    },
+    {
+        "object_id": "frames",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 0,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/fireworks_sheet.png",
+                "textureFrames": {
+                    "x": 5,
+                    "y": 5
+                },
+                "particleCount": 2,
+                "maxAge": 2,
+                "size": [
+                    15
+                ]
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    },
+    {
+        "object_id": "fountain",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": -30,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "color": [
+                    "blue"
+                ],
+                "velocity": {
+                    "x": 0,
+                    "y": 10,
+                    "z": 0
+                },
+                "velocitySpread": {
+                    "x": 2,
+                    "y": 0,
+                    "z": 2
+                },
+                "acceleration": {
+                    "x": 0,
+                    "y": -10,
+                    "z": 0
+                }
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    },
+    {
+        "object_id": "fog",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": -6,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/fog.png",
+                "positionSpread": {
+                    "x": 2,
+                    "y": 0,
+                    "z": 2
+                },
+                "velocitySpread": {
+                    "x": 0.1,
+                    "y": 0.05,
+                    "z": 0.1
+                },
+                "particleCount": 50,
+                "maxAge": 10,
+                "size": [
+                    6,
+                    10
+                ],
+                "opacity": [
+                    0,
+                    1,
+                    0
+                ],
+                "randomizePosition": true
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    },
+    {
+        "object_id": "flutter",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": -27,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "color": [
+                    "violet"
+                ],
+                "positionSpread": {
+                    "x": 0.5
+                },
+                "radius": 0,
+                "size": [
+                    8
+                ],
+                "randomizePosition": true,
+                "particleCount": 4,
+                "maxAge": 0.1
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.036Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.036Z"
+    },
+    {
+        "object_id": "fireworks",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": -15,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "color": [
+                    "yellow",
+                    "red"
+                ],
+                "distribution": "disc",
+                "radius": 0.1,
+                "randomizePosition": true,
+                "particleCount": 100,
+                "velocity": {
+                    "x": 5
+                },
+                "velocitySpread": "3",
+                "drag": 1,
+                "maxAge": 0.5,
+                "activeMultiplier": 1000,
+                "size": [
+                    1,
+                    0.2
+                ]
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.036Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.036Z"
+    },
+    {
+        "object_id": "disc",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": -24,
+                "y": 2,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "positionSpread": {
+                    "x": 1,
+                    "y": 0,
+                    "z": 0
+                },
+                "velocity": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "distribution": "disc",
+                "radius": 2,
+                "randomizePosition": true
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.036Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.036Z"
+    },
+    {
+        "object_id": "backwards-fireworks",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": -12,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "color": [
+                    "yellow",
+                    "red"
+                ],
+                "distribution": "disc",
+                "radius": 0.1,
+                "randomizePosition": true,
+                "particleCount": 100,
+                "velocity": {
+                    "x": 5
+                },
+                "velocitySpread": "3",
+                "drag": 1,
+                "maxAge": 0.5,
+                "activeMultiplier": 1000,
+                "size": [
+                    1,
+                    0.2
+                ],
+                "direction": "backward"
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.036Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.036Z"
+    },
+    {
+        "object_id": "additive-blending",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 24,
+                "y": 1,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "particleCount": 50,
+                "maxAgeSpread": 5,
+                "distribution": "sphere",
+                "radius": 0.5,
+                "size": [
+                    5
+                ],
+                "color": [
+                    "blue"
+                ],
+                "blending": "additive"
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.029Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.029Z"
+    },
+    {
+        "object_id": "additive-blending-child",
+        "attributes": {
+            "object_type": "plane",
+            "height": 1,
+            "width": 1,
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": -1
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "parent": "additive-blending",
+            "color": "#ff0000"
+        },
+        "createdAt": "2024-04-16T17:08:24.034Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.034Z"
+    },
+    {
+        "object_id": "green-blob",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "parent": "green-blob-sphere",
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "color": [
+                    "green"
+                ],
+                "particleCount": 100,
+                "maxAge": 1,
+                "distribution": "sphere",
+                "velocity": {
+                    "x": 0.5
+                },
+                "acceleration": {
+                    "x": -1
+                },
+                "sizeSpread": [
+                    2
+                ],
+                "randomizeSize": true
+            }
+        },
+        "createdAt": "2024-04-16T17:08:24.040Z",
+        "type": "object",
+        "updatedAt": "2024-04-16T17:08:24.040Z"
+    }
+]

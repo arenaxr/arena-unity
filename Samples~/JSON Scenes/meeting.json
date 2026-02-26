@@ -1,0 +1,990 @@
+[
+    {
+        "object_id": "ocean",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 0,
+                "y": -10.4,
+                "z": 2.53
+            },
+            "rotation": {
+                "w": 0.707,
+                "x": -0.707,
+                "y": 0,
+                "z": 0
+            },
+            "ocean": {
+                "color": "#92e2e2",
+                "width": 25,
+                "depth": 25,
+                "density": 15,
+                "speed": 2
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-04-18T15:05:22.370Z",
+        "type": "object",
+        "updatedAt": "2024-04-18T15:05:22.370Z"
+    },
+    {
+        "object_id": "bounceball",
+        "type": "object",
+        "attributes": {
+            "object_type": "sphere",
+            "radius": 0.5,
+            "position": {
+                "x": -1.5,
+                "y": 3,
+                "z": -1.5
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "material": {
+                "color": "#ab0000"
+            },
+            "depth": 0.5,
+            "height": 0.5,
+            "width": 0.5,
+            "physx-body": {
+                "mass": 1
+            },
+            "physx-material": {
+                "restitution": 1.85
+            },
+            "physx-force-pushable": {
+                "force": 10
+            },
+            "click-listener": {
+                "enabled": true,
+                "bubble": true
+            },
+            "physx-grab": true
+        },
+        "createdAt": "2025-03-24T15:03:59.044Z",
+        "updatedAt": "2025-06-13T17:52:06.335Z"
+    },
+    {
+        "object_id": "splat",
+        "attributes": {
+            "object_type": "gaussian_splatting",
+            "src": "store/splats/luma-seal.splat",
+            "position": {
+                "x": 3.407,
+                "y": -0.1,
+                "z": 11.357
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-11-08T20:54:05.687Z",
+        "type": "object",
+        "updatedAt": "2026-02-02T17:20:32.978Z"
+    },
+    {
+        "object_id": "test-gltf",
+        "type": "object",
+        "attributes": {
+            "object_type": "gltf-model",
+            "url": "/store/models/factory_robot_arm/scene.gltf",
+            "position": {
+                "x": 3.479,
+                "y": 0.6,
+                "z": 5.576
+            },
+            "rotation": {
+                "w": -0.707,
+                "x": 0,
+                "y": -0.707,
+                "z": 0
+            },
+            "scale": {
+                "x": 0.003,
+                "y": 0.003,
+                "z": 0.003
+            },
+            "animation-mixer": {
+                "clip": "Armature.002|Armature.002Action.001",
+                "loop": "pingpong"
+            }
+        },
+        "createdAt": "2024-11-15T20:29:03.214Z",
+        "updatedAt": "2025-08-18T19:54:26.735Z"
+    },
+    {
+        "object_id": "motoman",
+        "attributes": {
+            "object_type": "urdf-model",
+            "url": "store/users/mwfarb/xacro/motoman_gp4_support/urdf/gp4.xacro",
+            "position": {
+                "x": 3.52862,
+                "y": 0.6,
+                "z": 4.52714
+            },
+            "rotation": {
+                "w": 0.70711,
+                "x": -0.70711,
+                "y": 0,
+                "z": 0
+            },
+            "joints": "joint_1_s:45",
+            "urlBase": "/store/users/mwfarb/xacro/motoman_gp4_support",
+            "scale": {
+                "x": 1.49141,
+                "y": 1.49141,
+                "z": 1.49141
+            }
+        },
+        "createdAt": "2024-05-30T12:45:35.559Z",
+        "type": "object",
+        "updatedAt": "2024-06-05T21:12:23.023Z"
+    },
+    {
+        "object_id": "capsule",
+        "attributes": {
+            "object_type": "capsule",
+            "length": 1,
+            "radius": 0.5,
+            "position": {
+                "x": 0,
+                "y": 0.5,
+                "z": 12
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "segmentsCap": 36,
+            "segmentsRadial": 36
+        },
+        "createdAt": "2024-04-18T15:05:22.370Z",
+        "type": "object",
+        "updatedAt": "2024-04-18T15:05:22.370Z"
+    },
+    {
+        "object_id": "draco_robot",
+        "type": "object",
+        "attributes": {
+            "object_type": "gltf-model",
+            "url": "/store/models/robot-draco.glb",
+            "position": {
+                "x": -1.924,
+                "y": 2,
+                "z": -0.042
+            },
+            "rotation": {
+                "w": 0.987,
+                "x": -0.161,
+                "y": 0,
+                "z": 0
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            },
+            "click-listener": {
+                "enabled": true,
+                "bubble": true
+            },
+            "animation_mixer": {
+                "clip": "*",
+                "loop": "repeat",
+                "repetitions": null,
+                "timeScale": 1
+            },
+            "model-container": {
+                "x": 0.3,
+                "y": 2,
+                "z": 0.3,
+                "uniform": false
+            }
+        },
+        "createdAt": "2025-02-13T00:23:01.818Z",
+        "updatedAt": "2026-02-23T00:03:26.402Z"
+    },
+    {
+        "object_id": "startPosition1",
+        "type": "object",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 3.5,
+                "y": 0.5,
+                "z": 5
+            },
+            "rotation": {
+                "w": 0,
+                "x": 0,
+                "y": -1,
+                "z": 0
+            },
+            "landmark": {
+                "randomRadiusMin": 3,
+                "randomRadiusMax": 3,
+                "lookAtLandmark": true,
+                "label": "",
+                "startingPosition": true,
+                "constrainToNavMesh": "any"
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-11-29T16:06:07.274Z",
+        "updatedAt": "2024-11-29T16:06:07.274Z"
+    },
+    {
+        "object_id": "ui-panel",
+        "attributes": {
+            "object_type": "roundedbox",
+            "position": {
+                "x": 8,
+                "y": 1,
+                "z": 3
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "look-at": "#my-camera",
+            "panel": {
+                "width": 1,
+                "height": 1,
+                "depth": 0.05
+            },
+            "material": {
+                "color": "#424470"
+            },
+            "buffer": true,
+            "depth": 0.05,
+            "height": 1,
+            "primitive": "roundedbox",
+            "radius": 1,
+            "radiusSegments": 10,
+            "skipCache": false,
+            "width": 1
+        },
+        "createdAt": "2024-04-18T15:05:22.377Z",
+        "type": "object",
+        "updatedAt": "2025-06-13T17:52:06.338Z"
+    },
+    {
+        "object_id": "startPosition3",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 20,
+                "y": 0,
+                "z": 20
+            },
+            "landmark": {
+                "label": "outside room"
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-04-18T15:05:22.370Z",
+        "type": "object",
+        "updatedAt": "2024-04-18T15:05:22.370Z"
+    },
+    {
+        "object_id": "startPosition2",
+        "type": "object",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 3.3,
+                "y": -1.1,
+                "z": 10.8
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "landmark": {
+                "randomRadiusMin": 0,
+                "randomRadiusMax": 0,
+                "lookAtLandmark": true,
+                "label": "Seal from top",
+                "startingPosition": false
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-11-29T15:59:45.408Z",
+        "updatedAt": "2024-11-29T15:59:45.408Z"
+    },
+    {
+        "object_id": "rainfall",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 5,
+                "y": 15,
+                "z": 5
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "spe-particles": {
+                "texture": "static/images/textures/blob.png",
+                "color": [
+                    "#92e2e2"
+                ],
+                "positionSpread": {
+                    "x": 25,
+                    "y": 10,
+                    "z": 25
+                },
+                "radius": 0,
+                "randomizePosition": true,
+                "particleCount": 500,
+                "velocity": {
+                    "x": 0,
+                    "y": -10,
+                    "z": 0
+                },
+                "maxAge": 0.25,
+                "size": [
+                    0.4
+                ]
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-04-18T15:05:22.370Z",
+        "type": "object",
+        "updatedAt": "2024-04-18T15:05:22.370Z"
+    },
+    {
+        "object_id": "prism",
+        "attributes": {
+            "object_type": "prism",
+            "depth": 1,
+            "height": 1,
+            "width": 1,
+            "position": {
+                "x": 7,
+                "y": 0.59,
+                "z": 0
+            },
+            "rotation": {
+                "x": 5,
+                "y": 0,
+                "z": 0
+            }
+        },
+        "createdAt": "2024-04-18T15:05:22.370Z",
+        "type": "object",
+        "updatedAt": "2024-04-18T15:05:22.370Z"
+    },
+    {
+        "object_id": "2746dfa5-f945-466c-b752-8c701fce7e7b",
+        "type": "scene-options",
+        "attributes": {
+            "env-presets": {
+                "active": true,
+                "preset": "none",
+                "ground": "none",
+                "skyType": "none",
+                "dressing": "mushrooms"
+            },
+            "scene-options": {
+                "originMarker": true,
+                "maxAVDist": 20,
+                "privateScene": true,
+                "physics": {
+                    "enabled": true
+                },
+                "clickableOnlyEvents": true,
+                "videoFrustumCulling": true,
+                "videoDistanceConstraints": true,
+                "videoDefaultResolutionConstraint": 180,
+                "disableVideoCulling": false,
+                "navMesh": "/store/users/wiselab/room_models/kingshall/kingshall-v2-nav.glb",
+                "volume": 1,
+                "distanceModel": "inverse",
+                "refDistance": 4,
+                "rolloffFactor": 1,
+                "sceneHeadModels": [
+                    {
+                        "name": "Head, Gray",
+                        "url": "/store/models/Head.gltf"
+                    },
+                    {
+                        "name": "Head 2",
+                        "url": "/store/models/Head2.glb"
+                    }
+                ]
+            }
+        },
+        "createdAt": "2025-04-14T17:49:27.733Z",
+        "updatedAt": "2025-04-14T17:49:27.733Z"
+    },
+    {
+        "object_id": "lod_parent",
+        "attributes": {
+            "object_type": "box",
+            "depth": 0.1,
+            "height": 0.1,
+            "width": 0.1,
+            "position": {
+                "x": 7,
+                "y": 0,
+                "z": 10
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "material": {
+                "color": "#7f7f7f"
+            }
+        },
+        "createdAt": "2024-04-18T15:05:22.370Z",
+        "type": "object",
+        "updatedAt": "2024-04-18T15:05:22.370Z"
+    },
+    {
+        "object_id": "fire",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 3.47,
+                "y": 15.2,
+                "z": 5.99
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-04-18T15:05:22.370Z",
+        "type": "object",
+        "updatedAt": "2024-04-18T15:05:22.370Z"
+    },
+    {
+        "object_id": "ambient",
+        "attributes": {
+            "object_type": "light",
+            "type": "ambient",
+            "color": "#ffffff",
+            "intensity": 1,
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": -352.827,
+                "z": 0
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-04-18T15:05:22.370Z",
+        "type": "object",
+        "updatedAt": "2024-04-18T15:05:22.370Z"
+    },
+    {
+        "object_id": "abox",
+        "type": "object",
+        "attributes": {
+            "object_type": "box",
+            "depth": 1,
+            "height": 1,
+            "width": 1,
+            "position": {
+                "x": -1.5,
+                "y": -0.5,
+                "z": -1.5
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "material": {
+                "color": "#7f7f7f"
+            }
+        },
+        "createdAt": "2025-03-24T15:03:46.196Z",
+        "updatedAt": "2025-03-24T15:03:46.196Z"
+    },
+    {
+        "object_id": "360cam",
+        "attributes": {
+            "object_type": "videosphere",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 5000,
+            "jitsi-video": {
+                "displayName": "360cam"
+            }
+        },
+        "createdAt": "2024-04-18T15:05:22.370Z",
+        "type": "object",
+        "updatedAt": "2024-04-18T15:05:22.370Z"
+    },
+    {
+        "object_id": "0393025461_anonymous-speaker",
+        "attributes": {
+            "object_type": "box",
+            "depth": 1,
+            "height": 1,
+            "width": 1,
+            "material": {
+                "color": "#1a1e89"
+            },
+            "position": {
+                "x": 0.255,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "w": 1
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-04-18T15:05:22.364Z",
+        "type": "object",
+        "updatedAt": "2025-08-19T19:49:36.093Z"
+    },
+    {
+        "object_id": "f0380f91-f82d-43aa-b806-33192d705f5f",
+        "attributes": {
+            "name": "wiselab/init3d",
+            "instantiate": "single",
+            "filename": "init3d.py",
+            "filetype": "PY",
+            "env": [
+                "MID=${moduleid}",
+                "SCENE=${scene}",
+                "NAMESPACE=${namespace}",
+                "MQTTH=${mqtth}",
+                "REALM=realm",
+                "MID=${moduleid}",
+                "SCENE=${scene}",
+                "NAMESPACE=${namespace}",
+                "MQTTH=${mqtth}",
+                "REALM=realm"
+            ]
+        },
+        "createdAt": "2024-04-18T15:05:22.364Z",
+        "type": "program",
+        "updatedAt": "2024-04-18T15:05:22.364Z"
+    },
+    {
+        "object_id": "785444bd-c408-4725-9a7b-d5eec9d3d931",
+        "attributes": {
+            "name": "wiselab/face-avatar",
+            "instantiate": "single",
+            "filename": "avatar.py",
+            "filetype": "PY",
+            "env": [
+                "SCENE=${scene}",
+                "MQTTH=${mqtth}",
+                "REALM=realm",
+                "SCENE=${scene}",
+                "MQTTH=${mqtth}",
+                "REALM=realm"
+            ],
+            "channels": [
+                {
+                    "path": "/ch/${scene}",
+                    "type": "pubsub",
+                    "mode": "rw",
+                    "params": {
+                        "topic": "realm/s/${scene}"
+                    }
+                },
+                {
+                    "path": "/ch/${scene}",
+                    "type": "pubsub",
+                    "mode": "rw",
+                    "params": {
+                        "topic": "realm/s/${scene}"
+                    }
+                }
+            ]
+        },
+        "createdAt": "2024-04-18T15:05:22.364Z",
+        "type": "program",
+        "updatedAt": "2024-04-18T15:05:22.364Z"
+    },
+    {
+        "object_id": "ambientLight",
+        "attributes": {
+            "object_type": "light",
+            "type": "ambient",
+            "color": "#ffffff",
+            "intensity": 1,
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-04-18T10:44:17.660Z",
+        "type": "object",
+        "updatedAt": "2024-06-05T21:10:11.952Z"
+    },
+    {
+        "object_id": "screenshare",
+        "attributes": {
+            "object_type": "cube",
+            "position": {
+                "x": 2.5,
+                "y": 2.7,
+                "z": 0
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "scale": {
+                "x": 6.4,
+                "y": 3.6,
+                "z": 0.101
+            },
+            "click-listener": true,
+            "material": {
+                "color": "#ffffff"
+            },
+            "shadow": {
+                "cast": true,
+                "receive": true
+            },
+            "depth": 1,
+            "height": 1,
+            "width": 1
+        },
+        "createdAt": "2024-04-18T10:44:17.660Z",
+        "type": "object",
+        "updatedAt": "2025-06-13T17:52:36.545Z"
+    },
+    {
+        "object_id": "the_king_s_hall_skokloster_castle",
+        "attributes": {
+            "object_type": "gltf-model",
+            "url": "/store/users/wiselab/room_models/the_king_s_hall_skokloster_castle/scene.gltf",
+            "position": {
+                "x": 3.99,
+                "y": 1.4,
+                "z": -9
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-04-18T10:44:17.660Z",
+        "type": "object",
+        "updatedAt": "2025-06-13T17:52:12.990Z"
+    },
+    {
+        "object_id": "sparks",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "parent": "fire",
+            "spe-particles": {
+                "texture": "static/images/textures/square.png",
+                "color": [
+                    "yellow",
+                    "red"
+                ],
+                "particleCount": 10,
+                "maxAge": 0.5,
+                "maxAgeSpread": 0.4,
+                "velocity": {
+                    "x": 0,
+                    "y": 5,
+                    "z": 0
+                },
+                "velocitySpread": {
+                    "x": 0,
+                    "y": 3,
+                    "z": 0
+                },
+                "wiggle": 1,
+                "wiggleSpread": 5,
+                "emitterScale": 50,
+                "sizeSpread": [
+                    0.5
+                ],
+                "randomizeVelocity": true
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-04-18T15:05:22.370Z",
+        "type": "object",
+        "updatedAt": "2024-04-18T15:05:22.370Z"
+    },
+    {
+        "object_id": "flames",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "parent": "fire",
+            "spe-particles": {
+                "texture": "static/images/textures/explosion_sheet.png",
+                "textureFrames": {
+                    "x": 5,
+                    "y": 5
+                },
+                "velocity": {
+                    "x": 0.4,
+                    "y": 0.1,
+                    "z": 0
+                },
+                "acceleration": {
+                    "x": 0,
+                    "y": 2,
+                    "z": 0
+                },
+                "accelerationSpread": {
+                    "x": 0,
+                    "y": 2,
+                    "z": 0
+                },
+                "velocitySpread": {
+                    "x": 0.4,
+                    "y": 0,
+                    "z": 0.4
+                },
+                "particleCount": 15,
+                "maxAge": 1,
+                "size": [
+                    4,
+                    8
+                ],
+                "sizeSpread": [
+                    2
+                ],
+                "opacity": [
+                    1,
+                    0
+                ],
+                "wiggle": 0,
+                "blending": "additive"
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-04-18T15:05:22.370Z",
+        "type": "object",
+        "updatedAt": "2024-04-18T15:05:22.370Z"
+    },
+    {
+        "object_id": "smoke",
+        "attributes": {
+            "object_type": "entity",
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "parent": "fire",
+            "spe-particles": {
+                "texture": "static/images/textures/fog.png",
+                "velocity": {
+                    "x": 0.4,
+                    "y": 2,
+                    "z": 0
+                },
+                "velocitySpread": {
+                    "x": 1.4,
+                    "y": 0,
+                    "z": 1.4
+                },
+                "particleCount": 50,
+                "maxAge": 4,
+                "size": [
+                    8,
+                    16
+                ],
+                "opacity": [
+                    0,
+                    1,
+                    0
+                ],
+                "color": [
+                    "#666",
+                    "#222"
+                ]
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            }
+        },
+        "createdAt": "2024-04-18T15:05:22.370Z",
+        "type": "object",
+        "updatedAt": "2024-04-18T15:05:22.370Z"
+    },
+    {
+        "object_id": "lodTest",
+        "type": "object",
+        "attributes": {
+            "object_type": "gltf-model",
+            "url": "store/models/Head2.glb",
+            "position": {
+                "x": 0,
+                "y": 2,
+                "z": 0
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            },
+            "gltf-model-lod": {
+                "detailedUrl": "store/models/BrainStem.glb",
+                "detailedDistance": 6,
+                "updateRate": 333,
+                "retainCache": false
+            },
+            "goto-landmark": {
+                "on": "mouseup",
+                "landmark": "startPosition2"
+            },
+            "click-listener": {
+                "enabled": true,
+                "bubble": true
+            },
+            "parent": "lod_parent"
+        },
+        "createdAt": "2024-11-29T15:52:57.873Z",
+        "updatedAt": "2025-06-13T17:52:07.623Z"
+    }
+]
