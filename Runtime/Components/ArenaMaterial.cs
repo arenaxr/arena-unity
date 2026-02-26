@@ -37,12 +37,12 @@ namespace ArenaUnity.Components
         // TODO: displacementScale
         // TODO: displacementTextureOffset
         // TODO: displacementTextureRepeat
-        // TODO: dithering
+        // TODO: dithering (HDRP/URP only, no Standard RP equivalent)
         // DONE: emissive
         // DONE: emissiveIntensity
         // TODO: envMap (standard/phong environment map)
-        // TODO: flatShading
-        // TODO: fog
+        // DONE: flatShading
+        // DONE: fog
         // DONE: metalness
         // TODO: metalnessMap (standard texture map)
         // TODO: metalnessTextureOffset
@@ -68,9 +68,9 @@ namespace ArenaUnity.Components
         // TODO: specular
         // TODO: sphericalEnvMap (standard/phong environment map)
         // DONE: src
-        // TODO: toneMapped
+        // TODO: toneMapped (HDRP/URP only, no Standard RP equivalent)
         // DONE: transparent
-        // TODO: vertexColorsEnabled
+        // DONE: vertexColorsEnabled
         // DONE: visible
         // DONE: wireframe
         // DONE: wireframeLinewidth
@@ -189,6 +189,36 @@ namespace ArenaUnity.Components
                         material.mainTextureScale = new Vector2(json.Repeat.X, json.Repeat.Y);
                     if (json.Offset != null)
                         material.mainTextureOffset = new Vector2(json.Offset.X, json.Offset.Y);
+
+                    // FlatShading
+                    if (json.FlatShading)
+                    {
+                        var meshFilter = gameObject.GetComponent<MeshFilter>();
+                        if (meshFilter != null && meshFilter.sharedMesh != null)
+                        {
+                            // Duplicate mesh to avoid modifying shared mesh
+                            var mesh = Instantiate(meshFilter.sharedMesh);
+                            mesh.RecalculateNormals();
+                            meshFilter.mesh = mesh;
+                        }
+                    }
+
+                    // Fog
+                    if (!json.Fog)
+                    {
+                        material.DisableKeyword("_FOG");
+                        material.SetShaderPassEnabled("FORWARD", true); // ensure forward pass still runs
+                    }
+                    else
+                    {
+                        material.EnableKeyword("_FOG");
+                    }
+
+                    // VertexColorsEnabled
+                    if (json.VertexColorsEnabled)
+                        material.EnableKeyword("_VERTEXCOLOR");
+                    else
+                        material.DisableKeyword("_VERTEXCOLOR");
 
                     // For runtime set/change transparency mode, follow GUI params
                     // https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/StandardShaderGUI.cs#L344
@@ -319,6 +349,18 @@ namespace ArenaUnity.Components
             data.Repeat = new ArenaVector2Json { X = ArenaUnity.ArenaFloat(mat.mainTextureScale.x), Y = ArenaUnity.ArenaFloat(mat.mainTextureScale.y) };
             data.Offset = new ArenaVector2Json { X = ArenaUnity.ArenaFloat(mat.mainTextureOffset.x), Y = ArenaUnity.ArenaFloat(mat.mainTextureOffset.y) };
             data.Visible = renderer.enabled;
+
+            // FlatShading — cannot reliably detect from material alone, skip in export
+
+            // Fog
+            if (mat.IsKeywordEnabled("_FOG"))
+                data.Fog = true;
+            else
+                data.Fog = false; // default is true in A-Frame, but we export the actual state
+
+            // VertexColorsEnabled
+            data.VertexColorsEnabled = mat.IsKeywordEnabled("_VERTEXCOLOR");
+
             // Side (face culling)
             if (mat.HasProperty("_Cull"))
             {
