@@ -852,11 +852,19 @@ namespace ArenaUnity.Components
                 psr.bounds = bounds;
             }
 
-            // HasPerspective — when false, clamp particle size to reduce perspective scaling
+            // HasPerspective — when false, particles should maintain constant screen-space size
+            // regardless of distance (SPE shader: perspective = 1.0, gl_PointSize = size in pixels).
+            // Unity minParticleSize/maxParticleSize are fractions of viewport height.
+            // Convert the raw SPE size (pixels) to a viewport-height fraction.
             if (!json.HasPerspective)
             {
-                psr.minParticleSize = 1f;
-                psr.maxParticleSize = 1f;
+                float speSize = (json.Size != null && json.Size.Length > 0 && json.Size[0].HasValue)
+                    ? json.Size[0].Value : 1f;
+                // Approximate viewport height; use Screen.height when available, fallback to 1080
+                float viewportHeight = Screen.height > 0 ? Screen.height : 1080f;
+                float screenFraction = Mathf.Clamp(speSize / viewportHeight, 0.001f, 0.5f);
+                psr.minParticleSize = screenFraction;
+                psr.maxParticleSize = screenFraction;
             }
 
             if (json.Enabled) {
