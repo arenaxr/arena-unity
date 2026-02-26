@@ -33,7 +33,7 @@ namespace ArenaUnity
         protected override void ApplyRender()
         {
             // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
-            Debug.Log("UI Card!");
+            //Debug.Log("UI Card!");
         }
 
         public override void UpdateObject()
