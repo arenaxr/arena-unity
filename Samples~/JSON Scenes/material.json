@@ -1,0 +1,609 @@
+[
+    {
+        "object_id": "light-directional",
+        "attributes": {
+            "object_type": "light",
+            "position": {
+                "x": 0,
+                "y": 5,
+                "z": 5
+            },
+            "rotation": {
+                "w": 0.924,
+                "x": -0.383,
+                "y": 0,
+                "z": 0
+            },
+            "light": {
+                "type": "directional",
+                "color": "#ffffff",
+                "intensity": 1.0
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "light-ambient",
+        "attributes": {
+            "object_type": "light",
+            "light": {
+                "type": "ambient",
+                "color": "#404040",
+                "intensity": 0.5
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "flat-basic-red",
+        "attributes": {
+            "object_type": "torusKnot",
+            "position": {
+                "x": -30,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "tube": 0.3,
+            "material": {
+                "shader": "flat",
+                "color": "#ff0000"
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "flat-basic-blue",
+        "attributes": {
+            "object_type": "sphere",
+            "position": {
+                "x": -27,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "material": {
+                "shader": "flat",
+                "color": "#0066ff"
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "flat-basic-green",
+        "attributes": {
+            "object_type": "box",
+            "position": {
+                "x": -24,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 0.924,
+                "x": 0.146,
+                "y": 0.354,
+                "z": 0.054
+            },
+            "depth": 1.4,
+            "height": 1.4,
+            "width": 1.4,
+            "material": {
+                "shader": "flat",
+                "color": "#00cc44"
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "phong-default",
+        "attributes": {
+            "object_type": "torusKnot",
+            "position": {
+                "x": -21,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "tube": 0.3,
+            "material": {
+                "shader": "phong",
+                "color": "#ff0000"
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "phong-shiny",
+        "attributes": {
+            "object_type": "torusKnot",
+            "position": {
+                "x": -18,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "tube": 0.3,
+            "material": {
+                "shader": "phong",
+                "color": "#ff0000",
+                "shininess": 200
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "phong-specular-white",
+        "attributes": {
+            "object_type": "sphere",
+            "position": {
+                "x": -15,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "material": {
+                "shader": "phong",
+                "color": "#3366cc",
+                "shininess": 150,
+                "specular": "#ffffff"
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "standard-default",
+        "attributes": {
+            "object_type": "torusKnot",
+            "position": {
+                "x": -12,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "tube": 0.3,
+            "material": {
+                "shader": "standard",
+                "color": "#ff0000"
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "standard-smooth",
+        "attributes": {
+            "object_type": "torusKnot",
+            "position": {
+                "x": -9,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "tube": 0.3,
+            "material": {
+                "shader": "standard",
+                "color": "#ff0000",
+                "roughness": 0
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "standard-rough",
+        "attributes": {
+            "object_type": "torusKnot",
+            "position": {
+                "x": -6,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "tube": 0.3,
+            "material": {
+                "shader": "standard",
+                "color": "#ff0000",
+                "roughness": 1
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "standard-metallic",
+        "attributes": {
+            "object_type": "sphere",
+            "position": {
+                "x": -3,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "material": {
+                "shader": "standard",
+                "color": "#cc8833",
+                "metalness": 1,
+                "roughness": 0.2
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "standard-metallic-smooth",
+        "attributes": {
+            "object_type": "sphere",
+            "position": {
+                "x": 0,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "material": {
+                "shader": "standard",
+                "color": "#cc8833",
+                "metalness": 1,
+                "roughness": 0
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "emissive-glow",
+        "attributes": {
+            "object_type": "sphere",
+            "position": {
+                "x": 3,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "material": {
+                "shader": "standard",
+                "color": "#220000",
+                "emissive": "#ff4400",
+                "emissiveIntensity": 0.8
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "transparent-half",
+        "attributes": {
+            "object_type": "box",
+            "position": {
+                "x": 6,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 0.924,
+                "x": 0.146,
+                "y": 0.354,
+                "z": 0.054
+            },
+            "depth": 1.4,
+            "height": 1.4,
+            "width": 1.4,
+            "material": {
+                "shader": "standard",
+                "color": "#0088ff",
+                "opacity": 0.5,
+                "transparent": true
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "transparent-quarter",
+        "attributes": {
+            "object_type": "sphere",
+            "position": {
+                "x": 9,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "material": {
+                "shader": "standard",
+                "color": "#ff00ff",
+                "opacity": 0.25,
+                "transparent": true
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "wireframe-red",
+        "attributes": {
+            "object_type": "torusKnot",
+            "position": {
+                "x": 12,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "tube": 0.3,
+            "material": {
+                "shader": "standard",
+                "color": "#ff0000",
+                "wireframe": true
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "wireframe-blue",
+        "attributes": {
+            "object_type": "sphere",
+            "position": {
+                "x": 15,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "material": {
+                "shader": "flat",
+                "color": "#0066ff",
+                "wireframe": true
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "flat-shading",
+        "attributes": {
+            "object_type": "sphere",
+            "position": {
+                "x": 18,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "segmentsWidth": 12,
+            "segmentsHeight": 12,
+            "material": {
+                "shader": "standard",
+                "color": "#ff6600",
+                "flatShading": true
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "double-sided",
+        "attributes": {
+            "object_type": "plane",
+            "position": {
+                "x": 21,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 0.924,
+                "x": 0,
+                "y": 0.383,
+                "z": 0
+            },
+            "height": 1.6,
+            "width": 1.6,
+            "material": {
+                "shader": "standard",
+                "color": "#9933ff",
+                "side": "double"
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "additive-blend",
+        "attributes": {
+            "object_type": "sphere",
+            "position": {
+                "x": 24,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "material": {
+                "shader": "flat",
+                "color": "#ff3300",
+                "blending": "additive",
+                "transparent": true,
+                "opacity": 0.7,
+                "depthWrite": false
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "standard-white-rough",
+        "attributes": {
+            "object_type": "cylinder",
+            "position": {
+                "x": 27,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.6,
+            "height": 1.6,
+            "material": {
+                "shader": "standard",
+                "color": "#ffffff",
+                "roughness": 0.8,
+                "metalness": 0
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    },
+    {
+        "object_id": "phong-reflective",
+        "attributes": {
+            "object_type": "sphere",
+            "position": {
+                "x": 30,
+                "y": 1.5,
+                "z": -10
+            },
+            "rotation": {
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "radius": 0.8,
+            "material": {
+                "shader": "phong",
+                "color": "#226644",
+                "shininess": 300,
+                "specular": "#aaffaa",
+                "reflectivity": 1
+            }
+        },
+        "createdAt": "2026-02-26T08:43:00.000Z",
+        "type": "object",
+        "updatedAt": "2026-02-26T08:43:00.000Z"
+    }
+]
