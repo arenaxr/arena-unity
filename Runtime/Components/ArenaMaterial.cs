@@ -30,7 +30,7 @@ namespace ArenaUnity.Components
         // TODO: bumpTextureRepeat
         // DONE: color
         // TODO: combine
-        // TODO: depthTest
+        // DONE: depthTest
         // DONE: depthWrite
         // TODO: displacementBias (standard/phong texture map)
         // TODO: displacementMap
@@ -48,8 +48,8 @@ namespace ArenaUnity.Components
         // TODO: metalnessMap (standard texture map)
         // TODO: metalnessTextureOffset
         // TODO: metalnessTextureRepeat
-        // TODO: normalMap (standard/phong texture map)
-        // TODO: normalScale
+        // DONE: normalMap (standard/phong texture map)
+        // DONE: normalScale
         // TODO: normalTextureOffset
         // TODO: normalTextureRepeat
         // TODO: npot
@@ -65,10 +65,10 @@ namespace ArenaUnity.Components
         // TODO: roughnessTextureRepeat
         // DONE: shader, TODO: add phong
         // TODO: shininess
-        // TODO: side
+        // DONE: side
         // TODO: specular
         // TODO: sphericalEnvMap (standard/phong environment map)
-        // TODO: src
+        // DONE: src
         // TODO: toneMapped
         // DONE: transparent
         // TODO: vertexColorsEnabled
@@ -136,6 +136,44 @@ namespace ArenaUnity.Components
                         material.SetFloat("_Metallic", json.Metalness);
                     if (material.HasProperty("_Glossiness"))
                         material.SetFloat("_Glossiness", 1f - json.Roughness);
+
+                    // Side (face culling)
+                    // A-Frame: front = render front face, back = render back face, double = render both
+                    // Unity _Cull: 0 = Off (double), 1 = Front (render back), 2 = Back (render front, default)
+                    if (material.HasProperty("_Cull"))
+                    {
+                        switch (json.Side)
+                        {
+                            case ArenaMaterialJson.SideType.Front:
+                                material.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Back); break;
+                            case ArenaMaterialJson.SideType.Back:
+                                material.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Front); break;
+                            case ArenaMaterialJson.SideType.Double:
+                                material.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off); break;
+                        }
+                    }
+
+                    // DepthTest
+                    if (material.HasProperty("_ZTest"))
+                    {
+                        material.SetInt("_ZTest", json.DepthTest
+                            ? (int)UnityEngine.Rendering.CompareFunction.LessEqual
+                            : (int)UnityEngine.Rendering.CompareFunction.Always);
+                    }
+
+                    // Normal map
+                    if (!string.IsNullOrEmpty(json.NormalMap) && ArenaClientScene.Instance != null)
+                    {
+                        string normalMapPath = ArenaClientScene.Instance.checkLocalAsset(json.NormalMap);
+                        AttachNormalMap(normalMapPath, json.NormalScale, material);
+                    }
+
+                    // Src texture
+                    if (!string.IsNullOrEmpty(json.Src) && ArenaClientScene.Instance != null)
+                    {
+                        string srcPath = ArenaClientScene.Instance.checkLocalAsset(json.Src);
+                        AttachMaterialTexture(srcPath, gameObject);
+                    }
 
                     if (json.Emissive != null && json.Emissive != "#000000" && material.HasProperty("_EmissionColor"))
                     {
@@ -283,7 +321,34 @@ namespace ArenaUnity.Components
             data.Repeat = new ArenaVector2Json { X = ArenaUnity.ArenaFloat(mat.mainTextureScale.x), Y = ArenaUnity.ArenaFloat(mat.mainTextureScale.y) };
             data.Offset = new ArenaVector2Json { X = ArenaUnity.ArenaFloat(mat.mainTextureOffset.x), Y = ArenaUnity.ArenaFloat(mat.mainTextureOffset.y) };
             data.Visible = renderer.enabled;
-            //data.side = "double";
+            // Side (face culling)
+            if (mat.HasProperty("_Cull"))
+            {
+                switch ((UnityEngine.Rendering.CullMode)mat.GetInt("_Cull"))
+                {
+                    case UnityEngine.Rendering.CullMode.Back:
+                        data.Side = ArenaMaterialJson.SideType.Front; break;
+                    case UnityEngine.Rendering.CullMode.Front:
+                        data.Side = ArenaMaterialJson.SideType.Back; break;
+                    case UnityEngine.Rendering.CullMode.Off:
+                        data.Side = ArenaMaterialJson.SideType.Double; break;
+                }
+            }
+
+            // DepthTest
+            if (mat.HasProperty("_ZTest"))
+            {
+                var zTest = (UnityEngine.Rendering.CompareFunction)mat.GetInt("_ZTest");
+                data.DepthTest = zTest != UnityEngine.Rendering.CompareFunction.Always;
+            }
+
+            // Normal map
+            if (mat.HasProperty("_BumpMap") && mat.GetTexture("_BumpMap") != null)
+            {
+                // Note: normalMap URL is not recoverable from Unity texture, only set flag
+                if (mat.HasProperty("_BumpScale"))
+                    data.NormalScale = new ArenaVector2Json { X = ArenaUnity.ArenaFloat(mat.GetFloat("_BumpScale")), Y = ArenaUnity.ArenaFloat(mat.GetFloat("_BumpScale")) };
+            }
             switch ((MatRendMode)mat.GetFloat("_Mode"))
             {
                 case MatRendMode.Opaque:
@@ -332,6 +397,29 @@ namespace ArenaUnity.Components
                 var renderer = gobj.GetComponent<Renderer>();
                 if (renderer != null)
                     renderer.material.mainTexture = tex;
+            }
+        }
+
+        /// <summary>
+        /// Load and attach a normal map texture to a material.
+        /// </summary>
+        private static void AttachNormalMap(string normalMapUrl, ArenaVector2Json normalScale, Material material)
+        {
+            // Normal map loading requires the asset to be resolved locally
+            // (same pattern as AttachMaterialTexture, called from ArenaClientScene)
+            // For now, check if the URL is a local path
+            if (File.Exists(normalMapUrl))
+            {
+                var bytes = File.ReadAllBytes(normalMapUrl);
+                var tex = new Texture2D(1, 1, TextureFormat.RGBA32, true, true); // linear for normal maps
+                tex.LoadImage(bytes);
+                if (material.HasProperty("_BumpMap"))
+                {
+                    material.EnableKeyword("_NORMALMAP");
+                    material.SetTexture("_BumpMap", tex);
+                    if (normalScale != null && material.HasProperty("_BumpScale"))
+                        material.SetFloat("_BumpScale", normalScale.X);
+                }
             }
         }
 

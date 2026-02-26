@@ -84,7 +84,7 @@ namespace ArenaUnity
         const string prefixHandL = "handLeft_";
         const string prefixHandR = "handRight_";
         static readonly List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
-        static readonly string[] msgUriTags = { "url", "src", "obj", "mtl", "overrideSrc", "detailedUrl", "headModelPath", "texture", "navMesh" };
+        static readonly string[] msgUriTags = { "url", "src", "obj", "mtl", "overrideSrc", "detailedUrl", "headModelPath", "texture", "navMesh", "normalMap" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "video", "audio" };
         static readonly string[] requiredShadersStandardRP = {
@@ -847,11 +847,7 @@ namespace ArenaUnity
                     case "animation-mixer": ArenaUnity.ApplyAnimationMixer(gobj, data); break;
                     // TODO: case "gltf-model-lod": ArenaUnity.ApplyGltfModelLod(gobj, data); break;
                     // TODO: case "modelUpdate": ArenaUnity.ApplyModelUpdate(gobj, data); break;
-                    case "material":
-                        ArenaUnity.ApplyMaterial(gobj, data);
-                        if (!string.IsNullOrEmpty(data.Material.Src))
-                            ArenaMaterial.AttachMaterialTexture(checkLocalAsset((string)data.Material.Src), gobj);
-                        break;
+                    case "material": ArenaUnity.ApplyMaterial(gobj, data); break;
                 }
             }
         }
