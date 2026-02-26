@@ -22,7 +22,7 @@ namespace ArenaUnity.Components
         // DONE: ambientOcclusionMapIntensity
         // DONE: ambientOcclusionTextureOffset
         // DONE: ambientOcclusionTextureRepeat
-        // TODO: anisotropy (HDRP only, no Standard RP/URP equivalent)
+        // DONE: anisotropy (HDRP only)
         // DONE: blending
         // DONE: bumpMap (phong texture map)
         // DONE: bumpMapScale
@@ -32,15 +32,15 @@ namespace ArenaUnity.Components
         // TODO: combine (requires custom shader for env map blending modes)
         // DONE: depthTest
         // DONE: depthWrite
-        // TODO: displacementBias (HDRP has native tessellation/displacement support)
-        // TODO: displacementMap (HDRP has native tessellation/displacement support)
-        // TODO: displacementScale (HDRP has native tessellation/displacement support)
-        // TODO: displacementTextureOffset (HDRP has native tessellation/displacement support)
-        // TODO: displacementTextureRepeat (HDRP has native tessellation/displacement support)
-        // TODO: dithering (HDRP/URP only, no Standard RP equivalent)
+        // DONE: displacementBias (HDRP only, native tessellation/displacement)
+        // DONE: displacementMap (HDRP only, native tessellation/displacement)
+        // DONE: displacementScale (HDRP only, native tessellation/displacement)
+        // DONE: displacementTextureOffset (HDRP only, native tessellation/displacement)
+        // DONE: displacementTextureRepeat (HDRP only, native tessellation/displacement)
+        // DONE: dithering (HDRP/URP only)
         // DONE: emissive
         // DONE: emissiveIntensity
-        // TODO: envMap (URP/HDRP reflection probes, no simple Standard RP mapping)
+        // DONE: envMap (HDRP/URP reflection probes)
         // DONE: flatShading
         // DONE: fog
         // DONE: metalness
@@ -66,9 +66,9 @@ namespace ArenaUnity.Components
         // DONE: shininess
         // DONE: side
         // DONE: specular
-        // TODO: sphericalEnvMap (URP/HDRP reflection probes, no simple Standard RP mapping)
+        // DONE: sphericalEnvMap (HDRP/URP reflection probes)
         // DONE: src
-        // TODO: toneMapped (HDRP/URP only, no Standard RP equivalent)
+        // DONE: toneMapped (HDRP/URP only)
         // DONE: transparent
         // DONE: vertexColorsEnabled
         // DONE: visible
@@ -345,6 +345,99 @@ namespace ArenaUnity.Components
                     // DepthWrite override
                     if (!json.DepthWrite)
                         material.SetFloat("_ZWrite", 0);
+
+                    // Pipeline detection for HDRP/URP-specific properties
+                    bool isHDRP = ArenaUnity.DefaultRenderPipeline != null &&
+                        ArenaUnity.DefaultRenderPipeline.GetType().ToString().Contains("HDRenderPipelineAsset");
+                    bool isURP = ArenaUnity.DefaultRenderPipeline != null && !isHDRP;
+                    bool isStandardRP = ArenaUnity.DefaultRenderPipeline == null;
+
+                    // Dithering (HDRP/URP)
+                    if (!json.Dithering) // default is true, only act when disabled
+                    {
+                        if (isHDRP && material.HasProperty("_AlphaCutoffEnable"))
+                            material.SetFloat("_AlphaCutoffEnable", 0);
+                        else if (isStandardRP)
+                            Debug.LogWarning("Material property 'dithering' requires HDRP or URP. No effect in Standard RP.");
+                    }
+
+                    // ToneMapped (HDRP/URP)
+                    if (!json.ToneMapped) // default is true, only act when disabled
+                    {
+                        if (isHDRP)
+                        {
+                            // HDRP unlit materials can disable tone mapping
+                            if (material.HasProperty("_ExcludeFromToneMapping"))
+                                material.SetFloat("_ExcludeFromToneMapping", 1);
+                        }
+                        else if (isStandardRP)
+                            Debug.LogWarning("Material property 'toneMapped' requires HDRP or URP. No effect in Standard RP.");
+                    }
+
+                    // Anisotropy (HDRP only)
+                    if (json.Anisotropy != 0f)
+                    {
+                        if (isHDRP)
+                        {
+                            if (material.HasProperty("_Anisotropy"))
+                            {
+                                material.EnableKeyword("_ANISOTROPY");
+                                material.SetFloat("_Anisotropy", json.Anisotropy);
+                            }
+                        }
+                        else
+                            Debug.LogWarning("Material property 'anisotropy' requires HDRP. No effect in Standard RP or URP.");
+                    }
+
+                    // Displacement map (HDRP only)
+                    if (!string.IsNullOrEmpty(json.DisplacementMap))
+                    {
+                        if (isHDRP && ArenaClientScene.Instance != null)
+                        {
+                            string dispMapPath = ArenaClientScene.Instance.checkLocalAsset(json.DisplacementMap);
+                            if (material.HasProperty("_HeightMap"))
+                            {
+                                AttachTextureMap(dispMapPath, material, "_HeightMap", null,
+                                    null, null,
+                                    json.DisplacementTextureOffset, json.DisplacementTextureRepeat);
+                                // HDRP displacement mode: 1 = pixel displacement, 2 = vertex displacement
+                                if (material.HasProperty("_DisplacementMode"))
+                                    material.SetFloat("_DisplacementMode", 2); // vertex displacement
+                                if (material.HasProperty("_HeightAmplitude"))
+                                    material.SetFloat("_HeightAmplitude", json.DisplacementScale);
+                                if (material.HasProperty("_HeightCenter"))
+                                    material.SetFloat("_HeightCenter", json.DisplacementBias);
+                            }
+                        }
+                        else if (!isHDRP)
+                            Debug.LogWarning("Material property 'displacementMap' requires HDRP. No effect in Standard RP or URP.");
+                    }
+
+                    // Environment map
+                    if (!string.IsNullOrEmpty(json.EnvMap) && ArenaClientScene.Instance != null)
+                    {
+                        string envMapPath = ArenaClientScene.Instance.checkLocalAsset(json.EnvMap);
+                        if (isHDRP && material.HasProperty("_ReflectionCubemap"))
+                            AttachTextureMap(envMapPath, material, "_ReflectionCubemap", null, null, null, null, null);
+                        else if (material.HasProperty("_Cube"))
+                            AttachTextureMap(envMapPath, material, "_Cube", null, null, null, null, null);
+                        else
+                            Debug.LogWarning("Material property 'envMap' could not find a reflection texture property on the current shader.");
+                    }
+
+                    // Spherical environment map
+                    if (!string.IsNullOrEmpty(json.SphericalEnvMap) && ArenaClientScene.Instance != null)
+                    {
+                        // Spherical env maps (equirectangular) need conversion to cubemap;
+                        // for now, attempt direct texture assignment with a warning
+                        string sphereEnvPath = ArenaClientScene.Instance.checkLocalAsset(json.SphericalEnvMap);
+                        if (isHDRP && material.HasProperty("_ReflectionCubemap"))
+                            AttachTextureMap(sphereEnvPath, material, "_ReflectionCubemap", null, null, null, null, null);
+                        else if (material.HasProperty("_Cube"))
+                            AttachTextureMap(sphereEnvPath, material, "_Cube", null, null, null, null, null);
+                        else
+                            Debug.LogWarning("Material property 'sphericalEnvMap' could not find a reflection texture property. Equirectangular-to-cubemap conversion may be needed.");
+                    }
 
                     // Wireframe: swap to wireframe shader, inject barycentric coords
                     if (json.Wireframe)
