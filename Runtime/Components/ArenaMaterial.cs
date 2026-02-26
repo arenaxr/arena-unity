@@ -43,7 +43,6 @@ namespace ArenaUnity.Components
         // TODO: envMap (standard/phong environment map)
         // TODO: flatShading
         // TODO: fog
-        // TODO: height
         // DONE: metalness
         // TODO: metalnessMap (standard texture map)
         // TODO: metalnessTextureOffset
@@ -73,7 +72,6 @@ namespace ArenaUnity.Components
         // DONE: transparent
         // TODO: vertexColorsEnabled
         // DONE: visible
-        // TODO: width
         // DONE: wireframe
         // DONE: wireframeLinewidth
 

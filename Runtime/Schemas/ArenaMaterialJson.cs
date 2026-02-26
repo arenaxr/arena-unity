@@ -315,16 +315,6 @@ namespace ArenaUnity.Schemas
             return (Fog != defFog);
         }
 
-        private static int defHeight = 256;
-        [JsonProperty(PropertyName = "height")]
-        [Tooltip("Height of video (in pixels), if defining a video texture. Requires `shader: standard` or `flat`.")]
-        public int Height = defHeight;
-        public bool ShouldSerializeHeight()
-        {
-            // height
-            return (Height != defHeight);
-        }
-
         private static float defMetalness = 0f;
         [JsonProperty(PropertyName = "metalness")]
         [Tooltip("How metallic the material is from 0 to 1. Requires `shader: standard`.")]
@@ -634,16 +624,6 @@ namespace ArenaUnity.Schemas
         {
             // visible
             return (Visible != defVisible);
-        }
-
-        private static int defWidth = 512;
-        [JsonProperty(PropertyName = "width")]
-        [Tooltip("Width of video (in pixels), if defining a video texture. Requires `shader: standard` or `flat`.")]
-        public int Width = defWidth;
-        public bool ShouldSerializeWidth()
-        {
-            // width
-            return (Width != defWidth);
         }
 
         private static bool defWireframe = false;
