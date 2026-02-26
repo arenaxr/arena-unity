@@ -18,16 +18,16 @@ namespace ArenaUnity.Components
     {
         // ARENA material component unity conversion status:
         // DONE: alphaTest
-        // TODO: ambientOcclusionMap (standard/phong texture map)
-        // TODO: ambientOcclusionMapIntensity
-        // TODO: ambientOcclusionTextureOffset
-        // TODO: ambientOcclusionTextureRepeat
+        // DONE: ambientOcclusionMap (standard/phong texture map)
+        // DONE: ambientOcclusionMapIntensity
+        // DONE: ambientOcclusionTextureOffset
+        // DONE: ambientOcclusionTextureRepeat
         // TODO: anisotropy
         // DONE: blending
-        // TODO: bumpMap (phong texture map)
-        // TODO: bumpMapScale
-        // TODO: bumpTextureOffset
-        // TODO: bumpTextureRepeat
+        // DONE: bumpMap (phong texture map)
+        // DONE: bumpMapScale
+        // DONE: bumpTextureOffset
+        // DONE: bumpTextureRepeat
         // DONE: color
         // TODO: combine
         // DONE: depthTest
@@ -44,13 +44,13 @@ namespace ArenaUnity.Components
         // DONE: flatShading
         // DONE: fog
         // DONE: metalness
-        // TODO: metalnessMap (standard texture map)
-        // TODO: metalnessTextureOffset
-        // TODO: metalnessTextureRepeat
+        // DONE: metalnessMap (standard texture map)
+        // DONE: metalnessTextureOffset
+        // DONE: metalnessTextureRepeat
         // DONE: normalMap (standard/phong texture map)
         // DONE: normalScale
-        // TODO: normalTextureOffset
-        // TODO: normalTextureRepeat
+        // DONE: normalTextureOffset
+        // DONE: normalTextureRepeat
         // TODO: npot
         // DONE: offset
         // DONE: opacity
@@ -59,9 +59,9 @@ namespace ArenaUnity.Components
         // TODO: refractionRatio
         // DONE: repeat
         // DONE: roughness
-        // TODO: roughnessMap (standard texture map)
-        // TODO: roughnessTextureOffset
-        // TODO: roughnessTextureRepeat
+        // DONE: roughnessMap (standard texture map)
+        // DONE: roughnessTextureOffset
+        // DONE: roughnessTextureRepeat
         // DONE: shader, TODO: add phong
         // TODO: shininess
         // DONE: side
@@ -163,7 +163,50 @@ namespace ArenaUnity.Components
                     if (!string.IsNullOrEmpty(json.NormalMap) && ArenaClientScene.Instance != null)
                     {
                         string normalMapPath = ArenaClientScene.Instance.checkLocalAsset(json.NormalMap);
-                        AttachNormalMap(normalMapPath, json.NormalScale, material);
+                        AttachTextureMap(normalMapPath, material, "_BumpMap", "_NORMALMAP",
+                            json.NormalScale, "_BumpScale",
+                            json.NormalTextureOffset, json.NormalTextureRepeat, linear: true);
+                    }
+
+                    // Ambient occlusion map
+                    if (!string.IsNullOrEmpty(json.AmbientOcclusionMap) && ArenaClientScene.Instance != null)
+                    {
+                        string aoMapPath = ArenaClientScene.Instance.checkLocalAsset(json.AmbientOcclusionMap);
+                        AttachTextureMap(aoMapPath, material, "_OcclusionMap", null,
+                            null, null,
+                            json.AmbientOcclusionTextureOffset, json.AmbientOcclusionTextureRepeat);
+                        if (material.HasProperty("_OcclusionStrength"))
+                            material.SetFloat("_OcclusionStrength", json.AmbientOcclusionMapIntensity);
+                    }
+
+                    // Metalness map
+                    if (!string.IsNullOrEmpty(json.MetalnessMap) && ArenaClientScene.Instance != null)
+                    {
+                        string metMapPath = ArenaClientScene.Instance.checkLocalAsset(json.MetalnessMap);
+                        AttachTextureMap(metMapPath, material, "_MetallicGlossMap", "_METALLICGLOSSMAP",
+                            null, null,
+                            json.MetalnessTextureOffset, json.MetalnessTextureRepeat);
+                    }
+
+                    // Roughness map (Unity packs smoothness into metallic alpha)
+                    if (!string.IsNullOrEmpty(json.RoughnessMap) && ArenaClientScene.Instance != null)
+                    {
+                        string roughMapPath = ArenaClientScene.Instance.checkLocalAsset(json.RoughnessMap);
+                        AttachTextureMap(roughMapPath, material, "_MetallicGlossMap", "_METALLICGLOSSMAP",
+                            null, null,
+                            json.RoughnessTextureOffset, json.RoughnessTextureRepeat);
+                        // Roughness maps need smoothness source set to albedo alpha
+                        if (material.HasProperty("_SmoothnessTextureChannel"))
+                            material.SetFloat("_SmoothnessTextureChannel", 1); // 1 = albedo alpha
+                    }
+
+                    // Bump map (phong — uses same Unity property as normalMap)
+                    if (!string.IsNullOrEmpty(json.BumpMap) && ArenaClientScene.Instance != null)
+                    {
+                        string bumpMapPath = ArenaClientScene.Instance.checkLocalAsset(json.BumpMap);
+                        AttachTextureMap(bumpMapPath, material, "_BumpMap", "_NORMALMAP",
+                            new ArenaVector2Json { X = json.BumpMapScale, Y = json.BumpMapScale }, "_BumpScale",
+                            json.BumpTextureOffset, json.BumpTextureRepeat, linear: true);
                     }
 
                     // Src texture
@@ -385,10 +428,23 @@ namespace ArenaUnity.Components
             // Normal map
             if (mat.HasProperty("_BumpMap") && mat.GetTexture("_BumpMap") != null)
             {
-                // Note: normalMap URL is not recoverable from Unity texture, only set flag
                 if (mat.HasProperty("_BumpScale"))
                     data.NormalScale = new ArenaVector2Json { X = ArenaUnity.ArenaFloat(mat.GetFloat("_BumpScale")), Y = ArenaUnity.ArenaFloat(mat.GetFloat("_BumpScale")) };
             }
+
+            // Ambient occlusion map
+            if (mat.HasProperty("_OcclusionMap") && mat.GetTexture("_OcclusionMap") != null)
+            {
+                if (mat.HasProperty("_OcclusionStrength"))
+                    data.AmbientOcclusionMapIntensity = ArenaUnity.ArenaFloat(mat.GetFloat("_OcclusionStrength"));
+            }
+
+            // Metalness map
+            if (mat.HasProperty("_MetallicGlossMap") && mat.GetTexture("_MetallicGlossMap") != null)
+            {
+                // Note: map URL is not recoverable from Unity texture
+            }
+
             switch ((MatRendMode)mat.GetFloat("_Mode"))
             {
                 case MatRendMode.Opaque:
@@ -441,25 +497,40 @@ namespace ArenaUnity.Components
         }
 
         /// <summary>
-        /// Load and attach a normal map texture to a material.
+        /// Load a texture from a local file and attach it to a material property.
+        /// Shared helper for normalMap, ambientOcclusionMap, metalnessMap, roughnessMap, bumpMap.
         /// </summary>
-        private static void AttachNormalMap(string normalMapUrl, ArenaVector2Json normalScale, Material material)
+        private static void AttachTextureMap(
+            string assetPath, Material material,
+            string textureProperty, string keyword,
+            ArenaVector2Json scale, string scaleProperty,
+            ArenaVector2Json textureOffset, ArenaVector2Json textureRepeat,
+            bool linear = false)
         {
-            // Normal map loading requires the asset to be resolved locally
-            // (same pattern as AttachMaterialTexture, called from ArenaClientScene)
-            // For now, check if the URL is a local path
-            if (File.Exists(normalMapUrl))
+            if (string.IsNullOrEmpty(assetPath) || !File.Exists(assetPath)) return;
+            if (!material.HasProperty(textureProperty)) return;
+
+            var bytes = File.ReadAllBytes(assetPath);
+            var tex = linear
+                ? new Texture2D(1, 1, TextureFormat.RGBA32, true, true)
+                : new Texture2D(1, 1);
+            tex.LoadImage(bytes);
+
+            material.SetTexture(textureProperty, tex);
+            if (!string.IsNullOrEmpty(keyword))
+                material.EnableKeyword(keyword);
+
+            if (scale != null && !string.IsNullOrEmpty(scaleProperty) && material.HasProperty(scaleProperty))
+                material.SetFloat(scaleProperty, scale.X);
+
+            // Apply per-map texture offset and repeat via material property IDs
+            string stProperty = textureProperty + "_ST";
+            if (material.HasProperty(textureProperty))
             {
-                var bytes = File.ReadAllBytes(normalMapUrl);
-                var tex = new Texture2D(1, 1, TextureFormat.RGBA32, true, true); // linear for normal maps
-                tex.LoadImage(bytes);
-                if (material.HasProperty("_BumpMap"))
-                {
-                    material.EnableKeyword("_NORMALMAP");
-                    material.SetTexture("_BumpMap", tex);
-                    if (normalScale != null && material.HasProperty("_BumpScale"))
-                        material.SetFloat("_BumpScale", normalScale.X);
-                }
+                Vector2 offset = textureOffset != null ? new Vector2(textureOffset.X, textureOffset.Y) : Vector2.zero;
+                Vector2 repeat = textureRepeat != null ? new Vector2(textureRepeat.X, textureRepeat.Y) : Vector2.one;
+                material.SetTextureOffset(textureProperty, offset);
+                material.SetTextureScale(textureProperty, repeat);
             }
         }
 
