@@ -89,6 +89,7 @@ namespace ArenaUnity
         static readonly string[] skipMimeClasses = { "video", "audio" };
         static readonly string[] requiredShadersStandardRP = {
             "Standard",
+            "Standard (Specular setup)",
             "Unlit/Color",
             "glTF/PbrMetallicRoughness",
             "glTF/PbrSpecularGlossiness",

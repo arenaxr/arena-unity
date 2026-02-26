@@ -22,25 +22,25 @@ namespace ArenaUnity.Components
         // DONE: ambientOcclusionMapIntensity
         // DONE: ambientOcclusionTextureOffset
         // DONE: ambientOcclusionTextureRepeat
-        // TODO: anisotropy
+        // TODO: anisotropy (HDRP only, no Standard RP/URP equivalent)
         // DONE: blending
         // DONE: bumpMap (phong texture map)
         // DONE: bumpMapScale
         // DONE: bumpTextureOffset
         // DONE: bumpTextureRepeat
         // DONE: color
-        // TODO: combine
+        // TODO: combine (requires custom shader for env map blending modes)
         // DONE: depthTest
         // DONE: depthWrite
-        // TODO: displacementBias (standard/phong texture map)
-        // TODO: displacementMap
-        // TODO: displacementScale
-        // TODO: displacementTextureOffset
-        // TODO: displacementTextureRepeat
+        // TODO: displacementBias (HDRP has native tessellation/displacement support)
+        // TODO: displacementMap (HDRP has native tessellation/displacement support)
+        // TODO: displacementScale (HDRP has native tessellation/displacement support)
+        // TODO: displacementTextureOffset (HDRP has native tessellation/displacement support)
+        // TODO: displacementTextureRepeat (HDRP has native tessellation/displacement support)
         // TODO: dithering (HDRP/URP only, no Standard RP equivalent)
         // DONE: emissive
         // DONE: emissiveIntensity
-        // TODO: envMap (standard/phong environment map)
+        // TODO: envMap (URP/HDRP reflection probes, no simple Standard RP mapping)
         // DONE: flatShading
         // DONE: fog
         // DONE: metalness
@@ -51,22 +51,22 @@ namespace ArenaUnity.Components
         // DONE: normalScale
         // DONE: normalTextureOffset
         // DONE: normalTextureRepeat
-        // TODO: npot
+        // N/A:  npot (Unity handles non-power-of-two textures automatically)
         // DONE: offset
         // DONE: opacity
-        // TODO: reflectivity
-        // TODO: refract
-        // TODO: refractionRatio
+        // DONE: reflectivity
+        // TODO: refract (requires custom refraction shader)
+        // TODO: refractionRatio (requires custom refraction shader)
         // DONE: repeat
         // DONE: roughness
         // DONE: roughnessMap (standard texture map)
         // DONE: roughnessTextureOffset
         // DONE: roughnessTextureRepeat
-        // DONE: shader, TODO: add phong
-        // TODO: shininess
+        // DONE: shader (standard, flat, phong)
+        // DONE: shininess
         // DONE: side
-        // TODO: specular
-        // TODO: sphericalEnvMap (standard/phong environment map)
+        // DONE: specular
+        // TODO: sphericalEnvMap (URP/HDRP reflection probes, no simple Standard RP mapping)
         // DONE: src
         // TODO: toneMapped (HDRP/URP only, no Standard RP equivalent)
         // DONE: transparent
@@ -121,6 +121,8 @@ namespace ArenaUnity.Components
                          Convert.ToBoolean(json.Transparent));
                     if (json.Shader == ArenaMaterialJson.ShaderType.Flat)
                         material.shader = Shader.Find(needsCustomUnlit ? UnlitBlendShaderName : "Unlit/Color");
+                    else if (json.Shader == ArenaMaterialJson.ShaderType.Phong)
+                        material.shader = Shader.Find(litShader == "Standard" ? "Standard (Specular setup)" : litShader);
                     else
                         material.shader = Shader.Find(litShader);
 
@@ -134,6 +136,20 @@ namespace ArenaUnity.Components
                         material.SetFloat("_Metallic", json.Metalness);
                     if (material.HasProperty("_Glossiness"))
                         material.SetFloat("_Glossiness", 1f - json.Roughness);
+
+                    // Phong-specific properties (Standard Specular setup)
+                    if (json.Shader == ArenaMaterialJson.ShaderType.Phong)
+                    {
+                        // Shininess: A-Frame 0-128 → Unity glossiness 0-1
+                        if (material.HasProperty("_Glossiness"))
+                            material.SetFloat("_Glossiness", Mathf.Clamp01(json.Shininess / 128f));
+                        // Specular color
+                        if (json.Specular != null && material.HasProperty("_SpecColor"))
+                            material.SetColor("_SpecColor", ArenaUnity.ToUnityColor(json.Specular));
+                        // Reflectivity (glossy reflections strength)
+                        if (material.HasProperty("_GlossyReflections"))
+                            material.SetFloat("_GlossyReflections", json.Reflectivity);
+                    }
 
                     // Side (face culling)
                     // A-Frame: front = render front face, back = render back face, double = render both
@@ -371,6 +387,16 @@ namespace ArenaUnity.Components
                 default:
                 case "Standard":
                     data.Shader = ArenaMaterialJson.ShaderType.Standard; break;
+                case "Standard (Specular setup)":
+                    data.Shader = ArenaMaterialJson.ShaderType.Phong;
+                    // Export phong-specific properties
+                    if (mat.HasProperty("_Glossiness"))
+                        data.Shininess = ArenaUnity.ArenaFloat(mat.GetFloat("_Glossiness") * 128f);
+                    if (mat.HasProperty("_SpecColor"))
+                        data.Specular = ArenaUnity.ToArenaColor(mat.GetColor("_SpecColor"));
+                    if (mat.HasProperty("_GlossyReflections"))
+                        data.Reflectivity = ArenaUnity.ArenaFloat(mat.GetFloat("_GlossyReflections"));
+                    break;
                 case "Unlit/Color":
                 case "Unlit/Texture":
                 case "Unlit/Texture Colored":
