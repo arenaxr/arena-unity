@@ -18,19 +18,40 @@ namespace ArenaUnity.Components
     {
         // ARENA material component unity conversion status:
         // DONE: alphaTest
+        // TODO: ambientOcclusionMap (standard/phong texture map)
+        // TODO: ambientOcclusionMapIntensity
+        // TODO: ambientOcclusionTextureOffset
+        // TODO: ambientOcclusionTextureRepeat
         // TODO: anisotropy
         // DONE: blending
+        // TODO: bumpMap (phong texture map)
+        // TODO: bumpMapScale
+        // TODO: bumpTextureOffset
+        // TODO: bumpTextureRepeat
         // DONE: color
         // TODO: combine
         // TODO: depthTest
         // DONE: depthWrite
+        // TODO: displacementBias (standard/phong texture map)
+        // TODO: displacementMap
+        // TODO: displacementScale
+        // TODO: displacementTextureOffset
+        // TODO: displacementTextureRepeat
         // TODO: dithering
         // DONE: emissive
         // DONE: emissiveIntensity
+        // TODO: envMap (standard/phong environment map)
         // TODO: flatShading
         // TODO: fog
         // TODO: height
         // DONE: metalness
+        // TODO: metalnessMap (standard texture map)
+        // TODO: metalnessTextureOffset
+        // TODO: metalnessTextureRepeat
+        // TODO: normalMap (standard/phong texture map)
+        // TODO: normalScale
+        // TODO: normalTextureOffset
+        // TODO: normalTextureRepeat
         // TODO: npot
         // DONE: offset
         // DONE: opacity
@@ -39,10 +60,14 @@ namespace ArenaUnity.Components
         // TODO: refractionRatio
         // DONE: repeat
         // DONE: roughness
+        // TODO: roughnessMap (standard texture map)
+        // TODO: roughnessTextureOffset
+        // TODO: roughnessTextureRepeat
         // DONE: shader, TODO: add phong
         // TODO: shininess
         // TODO: side
         // TODO: specular
+        // TODO: sphericalEnvMap (standard/phong environment map)
         // TODO: src
         // TODO: toneMapped
         // DONE: transparent
