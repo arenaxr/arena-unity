@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
@@ -18,11 +19,11 @@ namespace ArenaUnity.Components
         // ARENA material component unity conversion status:
         // DONE: alphaTest
         // TODO: anisotropy
-        // TODO: blending
+        // DONE: blending
         // DONE: color
         // TODO: combine
         // TODO: depthTest
-        // TODO: depthWrite
+        // DONE: depthWrite
         // TODO: dithering
         // DONE: emissive
         // DONE: emissiveIntensity
@@ -48,8 +49,11 @@ namespace ArenaUnity.Components
         // TODO: vertexColorsEnabled
         // DONE: visible
         // TODO: width
-        // TODO: wireframe
-        // TODO: wireframeLinewidth
+        // DONE: wireframe
+        // DONE: wireframeLinewidth
+
+        private const string WireframeShaderName = "Hidden/Arena/Wireframe";
+        private const string UnlitBlendShaderName = "Hidden/Arena/UnlitBlend";
 
         public enum MatRendMode
         {   // TODO: the standards for "_Mode" seem to be missing?
@@ -87,7 +91,19 @@ namespace ArenaUnity.Components
 
                     Color c = material.GetColor(ArenaUnity.ColorPropertyName);
                     material.SetColor(ArenaUnity.ColorPropertyName, new Color(c.r, c.g, c.b, json.Opacity));
-                    material.shader = Shader.Find(json.Shader == ArenaMaterialJson.ShaderType.Flat ? "Unlit/Color" : litShader);
+
+                    // Use custom unlit shader when flat + blending/transparency/depthWrite overrides are needed
+                    bool needsCustomUnlit = json.Shader == ArenaMaterialJson.ShaderType.Flat &&
+                        (json.Blending != ArenaMaterialJson.BlendingType.Normal || !json.DepthWrite ||
+                         Convert.ToBoolean(json.Transparent));
+                    if (json.Shader == ArenaMaterialJson.ShaderType.Flat)
+                        material.shader = Shader.Find(needsCustomUnlit ? UnlitBlendShaderName : "Unlit/Color");
+                    else
+                        material.shader = Shader.Find(litShader);
+
+                    // Custom unlit uses _Color property directly
+                    if (needsCustomUnlit && json.Color != null)
+                        material.SetColor("_Color", ArenaUnity.ToUnityColor(json.Color, json.Opacity));
 
                     if (material.HasProperty("_Cutoff"))
                         material.SetFloat("_Cutoff", json.AlphaTest);
@@ -148,6 +164,61 @@ namespace ArenaUnity.Components
                         material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
                         material.renderQueue = 3000;
                     }
+
+                    // Blending mode (override blend factors set above)
+                    if (json.Blending != ArenaMaterialJson.BlendingType.Normal)
+                    {
+                        switch (json.Blending)
+                        {
+                            case ArenaMaterialJson.BlendingType.Additive:
+                                material.SetFloat("_SrcBlend", (float)BlendMode.One);
+                                material.SetFloat("_DstBlend", (float)BlendMode.One);
+                                material.renderQueue = 3000;
+                                break;
+                            case ArenaMaterialJson.BlendingType.Multiply:
+                                material.SetFloat("_SrcBlend", (float)BlendMode.DstColor);
+                                material.SetFloat("_DstBlend", (float)BlendMode.Zero);
+                                material.renderQueue = 3000;
+                                break;
+                            case ArenaMaterialJson.BlendingType.Subtractive:
+                                material.SetFloat("_SrcBlend", (float)BlendMode.Zero);
+                                material.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcColor);
+                                material.renderQueue = 3000;
+                                break;
+                            case ArenaMaterialJson.BlendingType.None:
+                                material.SetFloat("_SrcBlend", (float)BlendMode.One);
+                                material.SetFloat("_DstBlend", (float)BlendMode.Zero);
+                                break;
+                        }
+                    }
+
+                    // DepthWrite override
+                    if (!json.DepthWrite)
+                        material.SetFloat("_ZWrite", 0);
+
+                    // Wireframe: swap to wireframe shader, inject barycentric coords
+                    if (json.Wireframe)
+                    {
+                        Shader wireShader = Shader.Find(WireframeShaderName);
+                        if (wireShader != null)
+                        {
+                            material.shader = wireShader;
+                            Color wireColor = json.Color != null
+                                ? ArenaUnity.ToUnityColor(json.Color, json.Opacity)
+                                : Color.white;
+                            material.SetColor("_Color", wireColor);
+                            material.SetFloat("_WireThickness", json.WireframeLinewidth);
+
+                            // Inject barycentric coordinates into UV2 for wireframe rendering
+                            var meshFilter = gameObject.GetComponent<MeshFilter>();
+                            if (meshFilter != null && meshFilter.mesh != null)
+                                InjectBarycentricCoords(meshFilter.mesh);
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"Wireframe shader '{WireframeShaderName}' not found. Ensure it is included in the build.");
+                        }
+                    }
                 }
             }
         }
@@ -170,6 +241,7 @@ namespace ArenaUnity.Components
                 case "Unlit/Texture":
                 case "Unlit/Texture Colored":
                 case "Legacy Shaders/Transparent/Diffuse":
+                case UnlitBlendShaderName:
                     data.Shader = ArenaMaterialJson.ShaderType.Flat; break;
             }
             //data.url = ToArenaTexture(mat);
@@ -197,6 +269,14 @@ namespace ArenaUnity.Components
                     data.Transparent = true; break;
             }
             data.Opacity = ArenaUnity.ArenaFloat(mat.color.a);
+
+            // Wireframe
+            if (mat.shader.name == WireframeShaderName)
+                data.Wireframe = true;
+
+            // DepthWrite
+            if (mat.HasProperty("_ZWrite") && mat.GetInt("_ZWrite") == 0)
+                data.DepthWrite = false;
 
             return data != null ? JObject.FromObject(data) : null;
         }
@@ -228,6 +308,56 @@ namespace ArenaUnity.Components
                 if (renderer != null)
                     renderer.material.mainTexture = tex;
             }
+        }
+
+        /// <summary>
+        /// Inject barycentric coordinates into a mesh's UV2 channel for wireframe rendering.
+        /// Each triangle vertex gets a unique (1,0,0), (0,1,0), (0,0,1) coordinate.
+        /// Vertices are duplicated so each triangle has its own unique set.
+        /// </summary>
+        private static void InjectBarycentricCoords(Mesh mesh)
+        {
+            if (mesh.uv2 != null && mesh.uv2.Length == mesh.vertexCount && mesh.vertexCount > 0)
+            {
+                // Check if barycentric coords were already injected
+                var existingUv2 = mesh.uv2;
+                if (existingUv2.Length > 0 && (existingUv2[0].x > 0.9f || existingUv2[0].y > 0.9f))
+                    return;
+            }
+
+            int[] triangles = mesh.triangles;
+            Vector3[] oldVerts = mesh.vertices;
+            Vector3[] oldNormals = mesh.normals;
+            Vector2[] oldUv = mesh.uv;
+
+            int triCount = triangles.Length;
+            var newVerts = new Vector3[triCount];
+            var newNormals = new Vector3[triCount];
+            var newUv = new Vector2[triCount];
+            var baryCoords = new List<Vector3>(triCount);
+            var newTriangles = new int[triCount];
+
+            Vector3[] baryValues = { new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1) };
+
+            for (int i = 0; i < triCount; i++)
+            {
+                int oldIdx = triangles[i];
+                newVerts[i] = oldVerts[oldIdx];
+                if (oldNormals.Length > oldIdx)
+                    newNormals[i] = oldNormals[oldIdx];
+                if (oldUv.Length > oldIdx)
+                    newUv[i] = oldUv[oldIdx];
+                baryCoords.Add(baryValues[i % 3]);
+                newTriangles[i] = i;
+            }
+
+            mesh.vertices = newVerts;
+            if (oldNormals.Length > 0)
+                mesh.normals = newNormals;
+            if (oldUv.Length > 0)
+                mesh.uv = newUv;
+            mesh.SetUVs(1, baryCoords);
+            mesh.triangles = newTriangles;
         }
     }
 }
