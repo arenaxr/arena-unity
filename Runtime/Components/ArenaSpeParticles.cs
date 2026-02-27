@@ -410,86 +410,104 @@ namespace ArenaUnity.Components
             velocityOverLifetime.space = ParticleSystemSimulationSpace.Local;
             forceOverLifetime.space = ParticleSystemSimulationSpace.Local;
 
-            if (velDist == ArenaSpeParticlesJson.DistributionType.Box && accelDist == ArenaSpeParticlesJson.DistributionType.Box)
+            float maxAge = json.MaxAge > 0 ? json.MaxAge : 1f;
+
+            // 1. Velocity (Initial Impulse)
+            velocityOverLifetime.enabled = true;
+            velocityOverLifetime.space = ParticleSystemSimulationSpace.Local;
+
+            if (velDist == ArenaSpeParticlesJson.DistributionType.Box)
             {
-                // Box / None for both velocity and acceleration: combine into linear ramp curves
-                // Formula: v(t) = v0 + a * t * maxAge (where t is 0-1)
-                velocityOverLifetime.enabled = true;
-                float maxAge = json.MaxAge > 0 ? json.MaxAge : 1f;
+                main.startSpeed = 0f;
+                float signZ = -1f; // Flip Z
+                float vX = (float)json.Velocity.X;
+                float vY = (float)json.Velocity.Y;
+                float vZ = (float)json.Velocity.Z;
+                float sX = (float)json.VelocitySpread.X;
+                float sY = (float)json.VelocitySpread.Y;
+                float sZ = (float)json.VelocitySpread.Z;
 
-                ParticleSystem.MinMaxCurve GetCombinedCurve(float v0, float vSpread, float a, float aSpread, bool flip)
+                if (isBackward) { vX = -vX; vY = -vY; vZ = -vZ; }
+
+                velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(vX - sX/2f, vX + sX/2f);
+                velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(vY - sY/2f, vY + sY/2f);
+                velocityOverLifetime.z = new ParticleSystem.MinMaxCurve((vZ - sZ/2f) * signZ, (vZ + sZ/2f) * signZ);
+                // Ensure z min is always less than max
+                if (velocityOverLifetime.z.constantMin > velocityOverLifetime.z.constantMax)
                 {
-                    float sign = flip ? -1f : 1f;
-                    float v0_min = (v0 - vSpread / 2f) * sign;
-                    float v0_max = (v0 + vSpread / 2f) * sign;
-                    float a_min = (a - aSpread / 2f) * sign;
-                    float a_max = (a + aSpread / 2f) * sign;
-
-                    // Ensure min is always the smaller value even if negative
-                    if (v0_min > v0_max) { float tmp = v0_min; v0_min = v0_max; v0_max = tmp; }
-                    if (a_min > a_max) { float tmp = a_min; a_min = a_max; a_max = tmp; }
-
-                    float v_end_min = v0_min + a_min * maxAge;
-                    float v_end_max = v0_max + a_max * maxAge;
-
-                    if (isBackward)
-                    {
-                        // In backward mode, particles implode: start at edge and move to center.
-                        // We negate both velocity and acceleration components.
-                        float endMin = -v_end_max;
-                        float endMax = -v_end_min;
-                        float startMin = -v0_max;
-                        float startMax = -v0_min;
-                        v0_min = startMin; v0_max = startMax;
-                        v_end_min = endMin; v_end_max = endMax;
-                    }
-
-                    var curveMin = AnimationCurve.Linear(0f, v0_min, 1f, v_end_min);
-                    var curveMax = AnimationCurve.Linear(0f, v0_max, 1f, v_end_max);
-
-                    return new ParticleSystem.MinMaxCurve(1f, curveMin, curveMax);
+                    float min = velocityOverLifetime.z.constantMax;
+                    float max = velocityOverLifetime.z.constantMin;
+                    velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(min, max);
                 }
-
-                velocityOverLifetime.x = GetCombinedCurve((float)json.Velocity.X, (float)json.VelocitySpread.X, (float)json.Acceleration.X, (float)json.AccelerationSpread.X, false);
-                velocityOverLifetime.y = GetCombinedCurve((float)json.Velocity.Y, (float)json.VelocitySpread.Y, (float)json.Acceleration.Y, (float)json.AccelerationSpread.Y, false);
-                velocityOverLifetime.z = GetCombinedCurve((float)json.Velocity.Z, (float)json.VelocitySpread.Z, (float)json.Acceleration.Z, (float)json.AccelerationSpread.Z, true); // Z is flipped
             }
             else
             {
-                // Radial distribution (Sphere/Disc) or mixed:
-                // Velocity dictates "Speed" outwards from center, acceleration is radial.
-                velocityOverLifetime.enabled = false;
-
+                // Radial Velocity
                 float speedMin = (float)(json.Velocity.X - json.VelocitySpread.X / 2.0);
                 float speedMax = (float)(json.Velocity.X + json.VelocitySpread.X / 2.0);
-
                 if (isBackward)
                 {
                     main.startSpeed = new ParticleSystem.MinMaxCurve(-speedMax, -speedMin);
-                    shape.enabled = true;
-                    shape.radiusThickness = 0f; // spawn at edge only
+                    shape.radiusThickness = 0f; // spawn at edge
                 }
                 else
                 {
                     main.startSpeed = new ParticleSystem.MinMaxCurve(speedMin, speedMax);
                 }
+                // Zero out absolute XYZ velocity to avoid overriding radial movement
+                velocityOverLifetime.x = 0;
+                velocityOverLifetime.y = 0;
+                velocityOverLifetime.z = 0;
+            }
 
-                // Acceleration — apply as radial velocity over lifetime
-                if (json.Acceleration.X != 0 || json.AccelerationSpread.X != 0)
+            // 2. Acceleration (Constant force or radial ramp)
+            forceOverLifetime.enabled = true;
+            forceOverLifetime.space = ParticleSystemSimulationSpace.Local;
+
+            if (accelDist == ArenaSpeParticlesJson.DistributionType.Box)
+            {
+                float signZ = -1f;
+                float aX = (float)json.Acceleration.X;
+                float aY = (float)json.Acceleration.Y;
+                float aZ = (float)json.Acceleration.Z;
+                float sX = (float)json.AccelerationSpread.X;
+                float sY = (float)json.AccelerationSpread.Y;
+                float sZ = (float)json.AccelerationSpread.Z;
+
+                if (isBackward) { aX = -aX; aY = -aY; aZ = -aZ; }
+
+                forceOverLifetime.x = new ParticleSystem.MinMaxCurve(aX - sX/2f, aX + sX/2f);
+                forceOverLifetime.y = new ParticleSystem.MinMaxCurve(aY - sY/2f, aY + sY/2f);
+                forceOverLifetime.z = new ParticleSystem.MinMaxCurve((aZ - sZ/2f) * signZ, (aZ + sZ/2f) * signZ);
+                if (forceOverLifetime.z.constantMin > forceOverLifetime.z.constantMax)
                 {
-                    velocityOverLifetime.enabled = true;
-                    float axMin = (float)(json.Acceleration.X - json.AccelerationSpread.X / 2.0);
-                    float axMax = (float)(json.Acceleration.X + json.AccelerationSpread.X / 2.0);
-
-                    if (isBackward)
-                    {
-                        float min = -axMax;
-                        float max = -axMin;
-                        axMin = min; axMax = max;
-                    }
-
-                    velocityOverLifetime.radial = new ParticleSystem.MinMaxCurve(axMin, axMax);
+                    float min = forceOverLifetime.z.constantMax;
+                    float max = forceOverLifetime.z.constantMin;
+                    forceOverLifetime.z = new ParticleSystem.MinMaxCurve(min, max);
                 }
+                velocityOverLifetime.radial = 0;
+            }
+            else
+            {
+                // Radial Acceleration (Simulate as a ramped radial velocity)
+                float raMin = (float)(json.Acceleration.X - json.AccelerationSpread.X / 2.0);
+                float raMax = (float)(json.Acceleration.X + json.AccelerationSpread.X / 2.0);
+
+                if (isBackward)
+                {
+                    float tmp = -raMax;
+                    raMax = -raMin;
+                    raMin = tmp;
+                }
+
+                // Ramp from 0 to actual acceleration * maxAge
+                var curveMin = AnimationCurve.Linear(0, 0, 1, raMin * maxAge);
+                var curveMax = AnimationCurve.Linear(0, 0, 1, raMax * maxAge);
+                velocityOverLifetime.radial = new ParticleSystem.MinMaxCurve(1f, curveMin, curveMax);
+
+                forceOverLifetime.x = 0;
+                forceOverLifetime.y = 0;
+                forceOverLifetime.z = 0;
             }
 
             // Drag (Air Resistance)
