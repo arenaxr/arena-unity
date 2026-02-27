@@ -601,11 +601,37 @@ namespace ArenaUnity.Components
             updatedJson = newJson;
         }
 
+        private static readonly HashSet<string> videoExtensions = new HashSet<string>(
+            StringComparer.OrdinalIgnoreCase) { ".mp4", ".webm", ".ogg", ".mov" };
+
         internal static void AttachMaterialTexture(string assetPath, GameObject gobj)
         {
             if (assetPath == null) return;
-            if (File.Exists(assetPath))
+            if (!File.Exists(assetPath)) return;
+
+            string ext = Path.GetExtension(assetPath);
+            if (videoExtensions.Contains(ext))
             {
+                // Video: use VideoPlayer → RenderTexture → material
+                var vp = gobj.GetComponent<UnityEngine.Video.VideoPlayer>();
+                if (vp == null)
+                    vp = gobj.AddComponent<UnityEngine.Video.VideoPlayer>();
+                vp.source = UnityEngine.Video.VideoSource.Url;
+                vp.url = Path.GetFullPath(assetPath);
+                vp.isLooping = true;
+                vp.playOnAwake = true;
+                vp.renderMode = UnityEngine.Video.VideoRenderMode.MaterialOverride;
+                var renderer = gobj.GetComponent<Renderer>();
+                if (renderer != null)
+                {
+                    vp.targetMaterialRenderer = renderer;
+                    vp.targetMaterialProperty = "_MainTex";
+                }
+                vp.Play();
+            }
+            else
+            {
+                // Image: load texture directly
                 var bytes = File.ReadAllBytes(assetPath);
                 var tex = new Texture2D(1, 1);
                 tex.LoadImage(bytes);
