@@ -85,6 +85,14 @@ namespace ArenaUnity
             }
 
             isJsonValidated = jsonData != null;
+            // Scene-loaded objects (created=true) already have their transform set from
+            // ARENA data. Snapshot it so HasLocalTransformChanged() returns false on the
+            // first tick — preventing spurious re-publishes caused by async GLTF loading,
+            // reparenting, or animations setting transform.hasChanged after initial setup.
+            if (created)
+            {
+                SnapshotLocalTransform();
+            }
             StartCoroutine(PublishTickThrottle());
         }
 
