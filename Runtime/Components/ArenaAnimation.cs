@@ -305,6 +305,22 @@ namespace ArenaUnity.Components
 
         private static Vector3? ParseVector3(string value)
         {
+            // Handle JSON object format: {"x":1,"y":2,"z":3}
+            if (value.TrimStart().StartsWith("{"))
+            {
+                try
+                {
+                    var obj = JsonConvert.DeserializeObject<Dictionary<string, float>>(value);
+                    if (obj != null)
+                    {
+                        obj.TryGetValue("x", out float x);
+                        obj.TryGetValue("y", out float y);
+                        obj.TryGetValue("z", out float z);
+                        return new Vector3(x, y, z);
+                    }
+                }
+                catch { /* fall through to other formats */ }
+            }
             // Handle space-delimited "x y z" format
             string[] parts = value.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length >= 3)
