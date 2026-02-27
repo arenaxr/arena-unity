@@ -815,7 +815,7 @@ namespace ArenaUnity
                         break;
 
                     // expected attributes
-                    // TODO: case "animation": ArenaUnity.ApplyAnimation(gobj, data); break;
+                    case "animation": ArenaUnity.ApplyAnimation(gobj, data); break;
                     case "armarker": ArenaUnity.ApplyArmarker(gobj, data); break;
                     case "click-listener": ArenaUnity.ApplyClickListener(gobj, data); break;
                     // TODO: case "box-collision-listener": ArenaUnity.ApplyBoxCollisionListener(gobj, data); break;

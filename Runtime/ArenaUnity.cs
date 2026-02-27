@@ -153,6 +153,20 @@ namespace ArenaUnity
                     rotationEuler.Z
                 ), invertY);
         }
+        /// <summary>
+        /// Convert a Unity quaternion back to A-Frame euler angles (degrees).
+        /// CAUTION: Do not use ToArenaRotationEuler() for publishing back toARENA!
+        /// A merge with quaternion type will leave a mix of xyz euler and w quaternion = badness.
+        /// </summary>
+        public static Vector3 ToArenaRotationEuler(Quaternion rotationQuat, bool invertY = true)
+        {
+            Quaternion intermediate = new Quaternion(
+                -rotationQuat.x,
+                rotationQuat.y * (invertY ? -1 : 1),
+                rotationQuat.z,
+                rotationQuat.w);
+            return intermediate.eulerAngles;
+        }
         public static Quaternion UnityToGltfRotationQuat(Quaternion rotationQuat)
         {
             var euler = rotationQuat.eulerAngles;
@@ -165,9 +179,6 @@ namespace ArenaUnity
             euler.y -= 180;
             return Quaternion.Euler(euler);
         }
-        // CAUTION: Do not use ToArenaRotationEuler() for ARENA!
-        // A merge with quaternion type will leave a mix of xyz euler and w quaternion = badness.
-        // public static ArenaVector3Json ToArenaRotationEuler(Vector3 rotationEuler, bool invertY = true) { }
 
         // scale
         public static ArenaVector3Json ToArenaScale(Vector3 scale)
@@ -273,6 +284,14 @@ namespace ArenaUnity
             {
                 light.enabled = data.RemoteRender.Enabled;
             }
+        }
+
+        public static void ApplyAnimation(GameObject gobj, ArenaDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaAnimation>(out var c))
+                c = gobj.AddComponent<ArenaAnimation>();
+            c.json = JsonConvert.DeserializeObject<ArenaAnimationJson>(MergeRawJson(c.json, data.Animation));
+            c.apply = true;
         }
 
         public static void ApplyArmarker(GameObject gobj, ArenaDataJson data)

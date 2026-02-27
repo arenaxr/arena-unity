@@ -44,6 +44,21 @@ namespace ArenaUnity
 
         internal bool Created { get { return created; } set { created = value; } }
 
+        // Transform publish suppression: Components that modify the transform for non-user
+        // reasons (e.g. animation, physx) should set this to true to prevent the change from
+        // being republished to the MQTT scene graph. After modifying the transform, the
+        // component should also reset transform.hasChanged = false.
+        //
+        // Future strategies considered for transform change tracking:
+        //   Option 1 (current): Suppress flag — components set suppressTransformPublish = true
+        //     before modifying transform. Simple, minimal overhead, requires component cooperation.
+        //   Option 2: Transform snapshot — store lastPublished pos/rot/scale and compare each
+        //     tick. Naturally deduplicates but doesn't identify the change source.
+        //   Option 3: Source tracking — enum TransformSource { User, Animation, Physics, Remote }
+        //     set by each modifier. Most explicit and auditable, but heavier to maintain.
+        [HideInInspector]
+        public bool suppressTransformPublish = false;
+
         private float publishInterval; // varies
         private bool created = false;
         private string oldName; // test for rename
@@ -70,27 +85,80 @@ namespace ArenaUnity
             }
 
             isJsonValidated = jsonData != null;
+            // Scene-loaded objects (created=true) already have their transform set from
+            // ARENA data. Snapshot it so HasLocalTransformChanged() returns false on the
+            // first tick — preventing spurious re-publishes caused by async GLTF loading,
+            // reparenting, or animations setting transform.hasChanged after initial setup.
+            if (created)
+            {
+                SnapshotLocalTransform();
+            }
             StartCoroutine(PublishTickThrottle());
         }
 
+        // Snapshot of the last-published local transform, used to determine if this
+        // object's local transform actually changed vs inheriting parent's hasChanged.
+        private Vector3 lastPublishedLocalPos;
+        private Quaternion lastPublishedLocalRot;
+        private Vector3 lastPublishedLocalScale;
+        private bool hasTransformSnapshot = false;
+
         IEnumerator PublishTickThrottle()
         {
-            // TODO (mwfarb): prevent child objects of parent.transform.hasChanged = true from publishing unnecessarily
-
             while (true)
             {
                 // send only when changed, each publishInterval
                 if ((transform.hasChanged) && ArenaClientScene.Instance)
                 {
-                    int ms = objectUpdateMs != ArenaClientScene.Instance.globalUpdateMs ? objectUpdateMs : ArenaClientScene.Instance.globalUpdateMs;
-                    publishInterval = (float)ms / 1000f;
-                    if (PublishCreateUpdate(true))
+                    if (suppressTransformPublish)
                     {
+                        // Transform is being driven by animation/physics — silently
+                        // swallow the change without publishing. The component that set
+                        // suppressTransformPublish is responsible for clearing it when done.
                         transform.hasChanged = false;
+                    }
+                    else if (!HasLocalTransformChanged())
+                    {
+                        // Unity propagates transform.hasChanged to children when a parent
+                        // moves, even if the child's local transform is unchanged. Only
+                        // publish when this object's local transform actually changed.
+                        transform.hasChanged = false;
+                    }
+                    else
+                    {
+                        int ms = objectUpdateMs != ArenaClientScene.Instance.globalUpdateMs ? objectUpdateMs : ArenaClientScene.Instance.globalUpdateMs;
+                        publishInterval = (float)ms / 1000f;
+                        if (PublishCreateUpdate(true))
+                        {
+                            SnapshotLocalTransform();
+                            transform.hasChanged = false;
+                        }
                     }
                 }
                 yield return new WaitForSeconds(publishInterval);
             }
+        }
+
+        /// <summary>
+        /// Check if this object's local transform differs from the last snapshot.
+        /// </summary>
+        private bool HasLocalTransformChanged()
+        {
+            if (!hasTransformSnapshot) return true; // first time, always consider changed
+            return transform.localPosition != lastPublishedLocalPos ||
+                   transform.localRotation != lastPublishedLocalRot ||
+                   transform.localScale != lastPublishedLocalScale;
+        }
+
+        /// <summary>
+        /// Store the current local transform as the latest published values.
+        /// </summary>
+        private void SnapshotLocalTransform()
+        {
+            lastPublishedLocalPos = transform.localPosition;
+            lastPublishedLocalRot = transform.localRotation;
+            lastPublishedLocalScale = transform.localScale;
+            hasTransformSnapshot = true;
         }
 
         void Update()
