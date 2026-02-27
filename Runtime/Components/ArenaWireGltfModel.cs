@@ -24,6 +24,11 @@ namespace ArenaUnity
         //       or graceful fallback when Draco is required but unavailable.
         // TODO: Handle GLBs with empty materials array — assign a sensible default material
         //       (e.g. gray PBR) instead of relying on glTFast's fallback which may produce pink.
+        // TODO: GLTF models with negative parent scale (e.g. scale z=-1) face backwards.
+        //       The -180° Y correction (GltfToUnityRotationQuat) interacts incorrectly with
+        //       negative parent scale. Needs investigation into glTFast's internal coordinate
+        //       conversion (X-axis inversion) to find a fix that doesn't break ARENA-level
+        //       child objects inheriting the parent's scale (e.g. PlaneProp parented to Plane).
 
         public ArenaGltfModelJson json = new ArenaGltfModelJson();
 
@@ -106,6 +111,7 @@ namespace ArenaUnity
             if (mobj != null)
             {
                 mobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(mobj.transform.localRotation);
+
                 foreach (Transform child in mobj.transform.GetComponentsInChildren<Transform>())
                 {   // prevent inadvertent editing of gltf elements
                     child.gameObject.isStatic = true;
