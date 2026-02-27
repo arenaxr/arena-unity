@@ -724,7 +724,7 @@ namespace ArenaUnity
                 {
                     gobj.SetActive(false);
                     parentalQueue.Add(parent);
-                    childObjs.Add(msg.object_id, gobj);
+                    childObjs[msg.object_id] = gobj;
                 }
             }
             else
