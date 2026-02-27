@@ -410,89 +410,85 @@ namespace ArenaUnity.Components
             velocityOverLifetime.space = ParticleSystemSimulationSpace.Local;
             forceOverLifetime.space = ParticleSystemSimulationSpace.Local;
 
-            if (velDist == ArenaSpeParticlesJson.DistributionType.Box)
+            if (velDist == ArenaSpeParticlesJson.DistributionType.Box && accelDist == ArenaSpeParticlesJson.DistributionType.Box)
             {
-                // Box / None: Particles move along the explicit Velocity vectors
+                // Box / None for both velocity and acceleration: combine into linear ramp curves
+                // Formula: v(t) = v0 + a * t * maxAge (where t is 0-1)
                 velocityOverLifetime.enabled = true;
-                velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(
-                    (float)(json.Velocity.X - json.VelocitySpread.X / 2.0),
-                    (float)(json.Velocity.X + json.VelocitySpread.X / 2.0));
-                velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(
-                    (float)(json.Velocity.Y - json.VelocitySpread.Y / 2.0),
-                    (float)(json.Velocity.Y + json.VelocitySpread.Y / 2.0));
-                velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(
-                    (float)(-json.Velocity.Z - json.VelocitySpread.Z / 2.0), // Z axis is flipped for Unity
-                    (float)(-json.Velocity.Z + json.VelocitySpread.Z / 2.0));
+                float maxAge = json.MaxAge > 0 ? json.MaxAge : 1f;
+
+                ParticleSystem.MinMaxCurve GetCombinedCurve(float v0, float vSpread, float a, float aSpread, bool flip)
+                {
+                    float sign = flip ? -1f : 1f;
+                    float v0_min = (v0 - vSpread / 2f) * sign;
+                    float v0_max = (v0 + vSpread / 2f) * sign;
+                    float a_min = (a - aSpread / 2f) * sign;
+                    float a_max = (a + aSpread / 2f) * sign;
+
+                    // Ensure min is always the smaller value even if negative
+                    if (v0_min > v0_max) { float tmp = v0_min; v0_min = v0_max; v0_max = tmp; }
+                    if (a_min > a_max) { float tmp = a_min; a_min = a_max; a_max = tmp; }
+
+                    float v_end_min = v0_min + a_min * maxAge;
+                    float v_end_max = v0_max + a_max * maxAge;
+
+                    if (isBackward)
+                    {
+                        // In backward mode, particles implode: start at edge and move to center.
+                        // We negate both velocity and acceleration components.
+                        float endMin = -v_end_max;
+                        float endMax = -v_end_min;
+                        float startMin = -v0_max;
+                        float startMax = -v0_min;
+                        v0_min = startMin; v0_max = startMax;
+                        v_end_min = endMin; v_end_max = endMax;
+                    }
+
+                    var curveMin = AnimationCurve.Linear(0f, v0_min, 1f, v_end_min);
+                    var curveMax = AnimationCurve.Linear(0f, v0_max, 1f, v_end_max);
+
+                    return new ParticleSystem.MinMaxCurve(1f, curveMin, curveMax);
+                }
+
+                velocityOverLifetime.x = GetCombinedCurve((float)json.Velocity.X, (float)json.VelocitySpread.X, (float)json.Acceleration.X, (float)json.AccelerationSpread.X, false);
+                velocityOverLifetime.y = GetCombinedCurve((float)json.Velocity.Y, (float)json.VelocitySpread.Y, (float)json.Acceleration.Y, (float)json.AccelerationSpread.Y, false);
+                velocityOverLifetime.z = GetCombinedCurve((float)json.Velocity.Z, (float)json.VelocitySpread.Z, (float)json.Acceleration.Z, (float)json.AccelerationSpread.Z, true); // Z is flipped
             }
             else
             {
-                // Sphere / Disc: Velocity dictates "Speed" outwards from center, not rigid XYZ vectors
-                // A-Frame SPE only uses Velocity.X for speed in these distributions.
+                // Radial distribution (Sphere/Disc) or mixed:
+                // Velocity dictates "Speed" outwards from center, acceleration is radial.
                 velocityOverLifetime.enabled = false;
 
-                var speedCurve = new ParticleSystem.MinMaxCurve(
-                    (float)(json.Velocity.X - json.VelocitySpread.X / 2.0),
-                    (float)(json.Velocity.X + json.VelocitySpread.X / 2.0)
-                );
+                float speedMin = (float)(json.Velocity.X - json.VelocitySpread.X / 2.0);
+                float speedMax = (float)(json.Velocity.X + json.VelocitySpread.X / 2.0);
 
-                main.startSpeed = speedCurve;
-            }
-
-            // Acceleration — apply as XYZ force (box) or radial (sphere/disc)
-            if (accelDist == ArenaSpeParticlesJson.DistributionType.Box)
-            {
-                forceOverLifetime.enabled = true;
-                forceOverLifetime.x = new ParticleSystem.MinMaxCurve(
-                    (float)(json.Acceleration.X - json.AccelerationSpread.X / 2.0),
-                    (float)(json.Acceleration.X + json.AccelerationSpread.X / 2.0));
-                forceOverLifetime.y = new ParticleSystem.MinMaxCurve(
-                    (float)(json.Acceleration.Y - json.AccelerationSpread.Y / 2.0),
-                    (float)(json.Acceleration.Y + json.AccelerationSpread.Y / 2.0));
-                forceOverLifetime.z = new ParticleSystem.MinMaxCurve(
-                    (float)(-json.Acceleration.Z - json.AccelerationSpread.Z / 2.0),
-                    (float)(-json.Acceleration.Z + json.AccelerationSpread.Z / 2.0));
-            }
-            else
-            {
-                // Sphere / Disc: only Acceleration.X is used as radial acceleration
-                forceOverLifetime.enabled = false;
-                if (json.Acceleration.X != 0 || json.AccelerationSpread.X != 0)
+                if (isBackward)
                 {
-                    velocityOverLifetime.enabled = true;
-                    velocityOverLifetime.radial = new ParticleSystem.MinMaxCurve(
-                        (float)(json.Acceleration.X - json.AccelerationSpread.X / 2.0),
-                        (float)(json.Acceleration.X + json.AccelerationSpread.X / 2.0));
-                }
-            }
-
-            // Direction: backward — In A-Frame SPE, backward reverses the particle lifecycle so
-            // particles appear to implode (converge to center). We implement this by negating
-            // the startSpeed and spawning only from the disc/sphere edge.
-            if (isBackward)
-            {
-                velocityOverLifetime.enabled = true;
-                if (velDist == ArenaSpeParticlesJson.DistributionType.Box)
-                {
-                    // Negate box velocity vectors
-                    velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(
-                        -(float)(json.Velocity.X + json.VelocitySpread.X / 2.0),
-                        -(float)(json.Velocity.X - json.VelocitySpread.X / 2.0));
-                    velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(
-                        -(float)(json.Velocity.Y + json.VelocitySpread.Y / 2.0),
-                        -(float)(json.Velocity.Y - json.VelocitySpread.Y / 2.0));
-                    velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(
-                        (float)(json.Velocity.Z + json.VelocitySpread.Z / 2.0),
-                        (float)(json.Velocity.Z - json.VelocitySpread.Z / 2.0));
-                }
-                else
-                {
-                    // Sphere / Disc: negate startSpeed so particles fly inward from disc edge.
-                    // Set radiusThickness=0 to spawn only at the outer edge.
-                    float speedMax = (float)(json.Velocity.X + json.VelocitySpread.X / 2.0);
-                    float speedMin = (float)(json.Velocity.X - json.VelocitySpread.X / 2.0);
                     main.startSpeed = new ParticleSystem.MinMaxCurve(-speedMax, -speedMin);
                     shape.enabled = true;
                     shape.radiusThickness = 0f; // spawn at edge only
+                }
+                else
+                {
+                    main.startSpeed = new ParticleSystem.MinMaxCurve(speedMin, speedMax);
+                }
+
+                // Acceleration — apply as radial velocity over lifetime
+                if (json.Acceleration.X != 0 || json.AccelerationSpread.X != 0)
+                {
+                    velocityOverLifetime.enabled = true;
+                    float axMin = (float)(json.Acceleration.X - json.AccelerationSpread.X / 2.0);
+                    float axMax = (float)(json.Acceleration.X + json.AccelerationSpread.X / 2.0);
+
+                    if (isBackward)
+                    {
+                        float min = -axMax;
+                        float max = -axMin;
+                        axMin = min; axMax = max;
+                    }
+
+                    velocityOverLifetime.radial = new ParticleSystem.MinMaxCurve(axMin, axMax);
                 }
             }
 
