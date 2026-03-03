@@ -18,7 +18,7 @@ namespace ArenaUnity
     public class ArenaWireObjModel : ArenaComponent
     {
         // ARENA obj-model component unity conversion status:
-        // DONE: src
+        // DONE: obj
         // TODO: mtl
 
         public ArenaObjModelJson json = new ArenaObjModelJson();

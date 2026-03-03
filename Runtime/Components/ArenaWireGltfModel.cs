@@ -19,6 +19,7 @@ namespace ArenaUnity
     {
         // ARENA gltf-model component unity conversion status:
         // DONE: url
+
         // TODO: Handle KHR_draco_mesh_compression — GLBs requiring Draco decode render pink
         //       if com.unity.cloud.draco package is not installed. Consider adding a warning
         //       or graceful fallback when Draco is required but unavailable.

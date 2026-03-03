@@ -11,18 +11,18 @@ using UnityEngine;
 
 namespace ArenaUnity.Components
 {
-    public class ArenaDynamicBody : ArenaComponent
+    public class ArenaPhysxJoint : ArenaComponent
     {
-        // ARENA dynamic-body component unity conversion status:
-        // TODO: mass
-        // TODO: linearDamping
-        // TODO: angularDamping
-        // TODO: shape
-        // TODO: cylinderAxis
-        // TODO: sphereRadius
+        // ARENA physx-joint component unity conversion status:
+        // TODO: breakForce
+        // TODO: collideWithTarget
+        // TODO: projectionTolerance
+        // TODO: removeElOnBreak
+        // TODO: softFixed
+        // TODO: target
         // TODO: type
 
-        public ArenaDynamicBodyJson json = new ArenaDynamicBodyJson();
+        public ArenaPhysxJointJson json = new ArenaPhysxJointJson();
 
         protected override void ApplyRender()
         {

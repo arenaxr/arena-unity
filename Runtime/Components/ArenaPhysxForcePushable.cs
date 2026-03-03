@@ -11,15 +11,13 @@ using UnityEngine;
 
 namespace ArenaUnity.Components
 {
-    public class ArenaStaticBody : ArenaComponent
+    public class ArenaPhysxForcePushable : ArenaComponent
     {
-        // ARENA static-body component unity conversion status:
-        // TODO: shape
-        // TODO: cylinderAxis
-        // TODO: sphereRadius
-        // TODO: type
+        // ARENA physx-force-pushable component unity conversion status:
+        // TODO: force
+        // TODO: on
 
-        public ArenaStaticBodyJson json = new ArenaStaticBodyJson();
+        public ArenaPhysxForcePushableJson json = new ArenaPhysxForcePushableJson();
 
         protected override void ApplyRender()
         {

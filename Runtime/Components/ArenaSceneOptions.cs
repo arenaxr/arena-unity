@@ -31,6 +31,8 @@ namespace ArenaUnity.Components
         // TODO: volume
         // TODO: physics
         // TODO: ar-hit-test
+        // TODO: openvps
+        // TODO: originMarker
 
         public ArenaSceneOptionsJson json = new ArenaSceneOptionsJson();
 

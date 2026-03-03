@@ -18,6 +18,9 @@ namespace ArenaUnity.Components
         // TODO: title
         // TODO: label
         // TODO: placeholder
+        // TODO: inputType
+        // TODO: inputOptions
+        // TODO: inputValue
 
         public ArenaTextinputJson json = new ArenaTextinputJson();
 

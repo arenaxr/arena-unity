@@ -34,6 +34,7 @@ namespace ArenaUnity.Components
         // TODO: startEvents (requires ARENA event bus integration)
         // DONE: to
         // TODO: type (color type hint, currently inferred from property)
+
         // TODO: multiple animations per object (animation__name syntax)
 
         public ArenaAnimationJson json = new ArenaAnimationJson();

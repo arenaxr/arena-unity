@@ -11,14 +11,20 @@ using UnityEngine;
 
 namespace ArenaUnity.Components
 {
-    public class ArenaImpulse : ArenaComponent
+    public class ArenaPhysxJointDriver : ArenaComponent
     {
-        // ARENA impulse component unity conversion status:
-        // TODO: force
-        // TODO: on
-        // TODO: position
+        // ARENA physx-joint-driver component unity conversion status:
+        // TODO: angularVelocity
+        // TODO: axes
+        // TODO: damping
+        // TODO: forceLimit
+        // TODO: linearVelocity
+        // TODO: lockOtherAxes
+        // TODO: slerpRotation
+        // TODO: stiffness
+        // TODO: useAcceleration
 
-        public ArenaImpulseJson json = new ArenaImpulseJson();
+        public ArenaPhysxJointDriverJson json = new ArenaPhysxJointDriverJson();
 
         protected override void ApplyRender()
         {

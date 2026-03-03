@@ -23,7 +23,7 @@ namespace ArenaUnity.Components
         // DONE: startAt
         // DONE: timeScale
         // DONE: useRegExp
-        // NOTE: repetitions not supported by Unity's legacy Animation system
+        // N/A: repetitions not supported by Unity's legacy Animation system
 
         // NOTE: There is an easy clip parser but only #if UNITY_EDITOR (AnimationUtility.GetAnimationClips()).
 

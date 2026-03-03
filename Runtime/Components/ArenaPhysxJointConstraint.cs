@@ -1,22 +1,31 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
 
-using ArenaUnity.Components;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
+using UnityEngine;
 
-namespace ArenaUnity
+namespace ArenaUnity.Components
 {
-    public class ArenaWireUrdfModel : ArenaComponent
+    public class ArenaPhysxJointConstraint : ArenaComponent
     {
-        // ARENA urdf-model component unity conversion status:
-        // TODO: url
-        // TODO: urlBase
-        // TODO: joints
+        // ARENA physx-joint-constraint component unity conversion status:
+        // TODO: angularLimit
+        // TODO: constrainedAxes
+        // TODO: damping
+        // TODO: freeAxes
+        // TODO: limitCone
+        // TODO: linearLimit
+        // TODO: lockedAxes
+        // TODO: restitution
+        // TODO: stiffness
+        // TODO: twistLimit
 
-        public ArenaUrdfModelJson json = new ArenaUrdfModelJson();
+        public ArenaPhysxJointConstraintJson json = new ArenaPhysxJointConstraintJson();
 
         protected override void ApplyRender()
         {
@@ -31,7 +40,7 @@ namespace ArenaUnity
                 var aobj = GetComponent<ArenaObject>();
                 if (aobj != null)
                 {
-                    aobj.PublishUpdate($"{newJson}");
+                    aobj.PublishUpdate($"{{\"{json.componentName}\":{newJson}}}");
                     apply = true;
                 }
             }
