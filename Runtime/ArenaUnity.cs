@@ -597,6 +597,47 @@ namespace ArenaUnity
             objmodel.apply = true;
         }
 
+        // physx attributes
+        public static void ApplyPhysxBody(GameObject gobj, ArenaDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaPhysxBody>(out var c))
+                c = gobj.AddComponent<ArenaPhysxBody>();
+            c.json = JsonConvert.DeserializeObject<ArenaPhysxBodyJson>(MergeRawJson(c.json, data.PhysxBody));
+            c.apply = true;
+        }
+
+        public static void ApplyPhysxMaterial(GameObject gobj, ArenaDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaPhysxMaterial>(out var c))
+                c = gobj.AddComponent<ArenaPhysxMaterial>();
+            c.json = JsonConvert.DeserializeObject<ArenaPhysxMaterialJson>(MergeRawJson(c.json, data.PhysxMaterial));
+            c.apply = true;
+        }
+
+        public static void ApplyPhysxJoint(GameObject gobj, ArenaDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaPhysxJoint>(out var c))
+                c = gobj.AddComponent<ArenaPhysxJoint>();
+            c.json = JsonConvert.DeserializeObject<ArenaPhysxJointJson>(MergeRawJson(c.json, data.PhysxJoint));
+            c.apply = true;
+        }
+
+        public static void ApplyPhysxForcePushable(GameObject gobj, ArenaDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaPhysxForcePushable>(out var c))
+                c = gobj.AddComponent<ArenaPhysxForcePushable>();
+            c.json = JsonConvert.DeserializeObject<ArenaPhysxForcePushableJson>(MergeRawJson(c.json, data.PhysxForcePushable));
+            c.apply = true;
+        }
+
+        public static void ApplyBoxCollisionListener(GameObject gobj, ArenaDataJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaBoxCollisionListener>(out var c))
+                c = gobj.AddComponent<ArenaBoxCollisionListener>();
+            c.json = JsonConvert.DeserializeObject<ArenaBoxCollisionListenerJson>(MergeRawJson(c.json, data.BoxCollisionListener));
+            c.apply = true;
+        }
+
         //ARENAUI Objects
         public static void ApplyWireArenauiCard(object indata, GameObject gobj)
         {

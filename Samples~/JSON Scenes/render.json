@@ -1,4 +1,5 @@
-[{
+[
+    {
         "object_id": "gltf-model_helios",
         "action": "create",
         "type": "object",
@@ -146,13 +147,12 @@
         "persist": true,
         "data": {
             "object_type": "box",
-            "dynamic-body": {
+            "physx-body": {
                 "type": "dynamic"
             },
-            "impulse": {
+            "physx-force-pushable": {
                 "on": "mousedown",
-                "force": "-1 20 -1",
-                "position": "1 1 1"
+                "force": 20
             },
             "sound": {
                 "positional": true,
@@ -187,13 +187,12 @@
         "persist": true,
         "data": {
             "object_type": "box",
-            "dynamic-body": {
+            "physx-body": {
                 "type": "dynamic"
             },
-            "impulse": {
+            "physx-force-pushable": {
                 "on": "mousedown",
-                "force": "-1 40 -1",
-                "position": "1 1 1"
+                "force": 40
             },
             "sound": {
                 "positional": true,
@@ -257,13 +256,12 @@
         "persist": true,
         "data": {
             "object_type": "sphere",
-            "dynamic-body": {
+            "physx-body": {
                 "type": "dynamic"
             },
-            "impulse": {
+            "physx-force-pushable": {
                 "on": "mouseup",
-                "force": "1 50 1",
-                "position": "1 1 1"
+                "force": 50
             },
             "sound": {
                 "positional": true,
@@ -512,7 +510,7 @@
         }
     },
     {
-        "object_id": "d62bd3c3-f771-4f65-8833-9e288a18d825",
+        "object_id": "scene-options",
         "action": "create",
         "type": "scene-options",
         "persist": true,
@@ -522,6 +520,14 @@
                 "preset": "starry",
                 "fog": 0,
                 "groundTexture": "checkerboard"
+            },
+            "scene-options": {
+                "originMarker": true,
+                "maxAVDist": 20,
+                "privateScene": false,
+                "physics": {
+                    "enabled": true
+                }
             }
         }
     },
@@ -532,8 +538,8 @@
         "persist": true,
         "data": {
             "object_type": "light",
-                "type": "ambient",
-                "color": "#363942"
+            "type": "ambient",
+            "color": "#363942"
         }
     },
     {
@@ -548,9 +554,9 @@
                 "y": 1.58,
                 "z": -1.14
             },
-                "type": "point",
-                "color": "#9090AD",
-                "intensity": "0.75"
+            "type": "point",
+            "color": "#9090AD",
+            "intensity": "0.75"
         }
     },
     {
@@ -565,8 +571,8 @@
                 "y": 0.39,
                 "z": 1.25
             },
-                "type": "point",
-                "color": "#C2E6C7"
+            "type": "point",
+            "color": "#C2E6C7"
         }
     }
 ]

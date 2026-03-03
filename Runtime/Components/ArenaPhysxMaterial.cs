@@ -18,17 +18,38 @@ namespace ArenaUnity.Components
         // TODO: collisionGroup
         // TODO: collisionLayers
         // TODO: contactOffset
-        // TODO: density
-        // TODO: dynamicFriction
+        // DONE: density
+        // DONE: dynamicFriction
         // TODO: restOffset
-        // TODO: restitution
-        // TODO: staticFriction
+        // DONE: restitution
+        // DONE: staticFriction
 
         public ArenaPhysxMaterialJson json = new ArenaPhysxMaterialJson();
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            if (!ArenaSceneOptions.PhysicsEnabled) return;
+
+            Collider[] colliders = gameObject.GetComponents<Collider>();
+            foreach (Collider c in colliders)
+            {
+                if (c.sharedMaterial == null || c.sharedMaterial.name != "ArenaPhysxMaterial")
+                {
+                    c.sharedMaterial = new PhysicMaterial("ArenaPhysxMaterial");
+                }
+                c.sharedMaterial.staticFriction = json.StaticFriction;
+                c.sharedMaterial.dynamicFriction = json.DynamicFriction;
+                c.sharedMaterial.bounciness = json.Restitution;
+            }
+
+            if (json.Density.HasValue)
+            {
+                Rigidbody rb = gameObject.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.SetDensity(json.Density.Value);
+                }
+            }
         }
 
         public override void UpdateObject()

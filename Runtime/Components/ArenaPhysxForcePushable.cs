@@ -14,14 +14,63 @@ namespace ArenaUnity.Components
     public class ArenaPhysxForcePushable : ArenaComponent
     {
         // ARENA physx-force-pushable component unity conversion status:
-        // TODO: force
-        // TODO: on
+        // DONE: force
+        // DONE: on
 
         public ArenaPhysxForcePushableJson json = new ArenaPhysxForcePushableJson();
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            if (!ArenaSceneOptions.PhysicsEnabled) return;
+
+            SetSuppressTransform(true);
+        }
+
+        private void SetSuppressTransform(bool suppress)
+        {
+            var aobj = GetComponent<ArenaObject>();
+            if (aobj != null)
+                aobj.suppressTransformPublish = suppress;
+        }
+
+        private void OnDisable()
+        {
+            SetSuppressTransform(false);
+        }
+
+        private void OnDestroy()
+        {
+            SetSuppressTransform(false);
+        }
+
+        private void OnMouseDown()
+        {
+            if (!ArenaSceneOptions.PhysicsEnabled) return;
+
+            if (json.On == ArenaPhysxForcePushableJson.OnType.Mousedown)
+            {
+                ApplyForce();
+            }
+        }
+
+        private void OnMouseUp()
+        {
+            if (!ArenaSceneOptions.PhysicsEnabled) return;
+
+            if (json.On == ArenaPhysxForcePushableJson.OnType.Mouseup)
+            {
+                ApplyForce();
+            }
+        }
+
+        private void ApplyForce()
+        {
+            Rigidbody rb = GetComponent<Rigidbody>();
+            if (rb != null && Camera.main != null)
+            {
+                Vector3 direction = (transform.position - Camera.main.transform.position).normalized;
+                rb.AddForce(direction * json.Force, ForceMode.Impulse);
+            }
         }
 
         public override void UpdateObject()

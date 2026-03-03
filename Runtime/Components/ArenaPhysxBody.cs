@@ -14,19 +14,62 @@ namespace ArenaUnity.Components
     public class ArenaPhysxBody : ArenaComponent
     {
         // ARENA physx-body component unity conversion status:
-        // TODO: angularDamping
+        // DONE: angularDamping
         // TODO: emitCollisionEvents
-        // TODO: highPrecision
-        // TODO: linearDamping
-        // TODO: mass
+        // DONE: highPrecision
+        // DONE: linearDamping
+        // DONE: mass
         // TODO: shapeOffset
-        // TODO: type
+        // DONE: type
 
         public ArenaPhysxBodyJson json = new ArenaPhysxBodyJson();
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            if (!ArenaSceneOptions.PhysicsEnabled) return;
+
+            Rigidbody rb = gameObject.GetComponent<Rigidbody>();
+
+            if (json.Type == ArenaPhysxBodyJson.TypeType.Static)
+            {
+                if (rb != null)
+                {
+                    Destroy(rb);
+                }
+                SetSuppressTransform(false);
+            }
+            else
+            {
+                if (rb == null)
+                {
+                    rb = gameObject.AddComponent<Rigidbody>();
+                }
+
+                rb.isKinematic = (json.Type == ArenaPhysxBodyJson.TypeType.Kinematic);
+                rb.mass = json.Mass;
+                rb.drag = json.LinearDamping;
+                rb.angularDrag = json.AngularDamping;
+                rb.collisionDetectionMode = json.HighPrecision ? CollisionDetectionMode.ContinuousDynamic : CollisionDetectionMode.Discrete;
+
+                SetSuppressTransform(true);
+            }
+        }
+
+        private void SetSuppressTransform(bool suppress)
+        {
+            var aobj = GetComponent<ArenaObject>();
+            if (aobj != null)
+                aobj.suppressTransformPublish = suppress;
+        }
+
+        private void OnDisable()
+        {
+            SetSuppressTransform(false);
+        }
+
+        private void OnDestroy()
+        {
+            SetSuppressTransform(false);
         }
 
         public override void UpdateObject()

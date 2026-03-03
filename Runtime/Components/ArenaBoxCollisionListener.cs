@@ -14,14 +14,59 @@ namespace ArenaUnity.Components
     public class ArenaBoxCollisionListener : ArenaComponent
     {
         // ARENA box-collision-listener component unity conversion status:
-        // TODO: enabled
+        // DONE: enabled
         // TODO: dynamic
 
         public ArenaBoxCollisionListenerJson json = new ArenaBoxCollisionListenerJson();
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            if (!ArenaSceneOptions.PhysicsEnabled) return;
+
+            if (json.Enabled)
+            {
+                Collider c = gameObject.GetComponent<Collider>();
+                if (c == null)
+                {
+                    c = gameObject.AddComponent<BoxCollider>();
+                }
+            }
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (!ArenaSceneOptions.PhysicsEnabled) return;
+
+            if (json.Enabled)
+            {
+                PublishCollisionEvent("collision-start", collision);
+            }
+        }
+
+        private void OnCollisionExit(Collision collision)
+        {
+            if (!ArenaSceneOptions.PhysicsEnabled) return;
+
+            if (json.Enabled)
+            {
+                PublishCollisionEvent("collision-end", collision);
+            }
+        }
+
+        private void PublishCollisionEvent(string eventType, Collision collision)
+        {
+            if (ArenaClientScene.Instance == null || Camera.main == null) return;
+
+            ArenaEventJson data = new ArenaEventJson
+            {
+                OriginPosition = ArenaUnity.ToArenaPosition(transform.localPosition),
+                TargetPosition = ArenaUnity.ToArenaPosition(collision.transform.localPosition),
+                Target = collision.gameObject.name,
+            };
+            string clientEventData = JsonConvert.SerializeObject(data);
+            ArenaCamera arenaCam = Camera.main.GetComponent<ArenaCamera>();
+            string camName = arenaCam != null ? arenaCam.camid : "local-camera";
+            ArenaClientScene.Instance.PublishEvent(eventType, camName, clientEventData);
         }
 
         public override void UpdateObject()

@@ -73,6 +73,7 @@ namespace ArenaUnity
         internal List<string> parentalQueue = new List<string>();
         internal List<string> localCameraIds = new List<string>();
         internal ArenaDefaultsJson arenaDefaults { get; private set; }
+        public ArenaSceneOptionsJson sceneOptions { get; internal set; }
 
         // Define callbacks
         public delegate void DecodeMessageDelegate(string topic, string message);
@@ -321,6 +322,24 @@ namespace ArenaUnity
         private IEnumerator SceneLoadPersist()
         {
             CoroutineWithData cd;
+
+            // 1. Fetch scene-options first so their effects (like physics ground planes) apply before other objects
+            cd = new CoroutineWithData(this, HttpRequestAuth($"https://{arenaDefaults.persistHost}{arenaDefaults.persistPath}{namespaceName}/{sceneName}?type=scene-options", csrfToken));
+            yield return cd.coroutine;
+            if (isCrdSuccess(cd.result))
+            {
+                string optionsJsonString = cd.result.ToString();
+                List<ArenaObjectJson> optionsMessages = JsonConvert.DeserializeObject<List<ArenaObjectJson>>(optionsJsonString);
+                foreach (ArenaObjectJson msg in optionsMessages)
+                {
+                    msg.persist = true;
+                    // Note: scene-options generally don't have downloadable assets that block instantiation,
+                    // so we can apply them directly.
+                    CreateUpdateObject(msg, msg.attributes);
+                }
+            }
+
+            // 2. Fetch the rest of the objects
             cd = new CoroutineWithData(this, HttpRequestAuth($"https://{arenaDefaults.persistHost}{arenaDefaults.persistPath}{namespaceName}/{sceneName}", csrfToken));
             yield return cd.coroutine;
             if (!isCrdSuccess(cd.result)) yield break;
@@ -337,6 +356,9 @@ namespace ArenaUnity
                 string object_id = msg.object_id;
                 string msg_type = msg.type;
                 msg.persist = true; // always true coming from persist
+
+                // Skip scene-options as they were already applied
+                if (msg_type == "scene-options") continue;
 
                 if (arenaObjs != null && !arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
                 {
@@ -818,10 +840,12 @@ namespace ArenaUnity
                     case "animation": ArenaUnity.ApplyAnimation(gobj, data); break;
                     case "armarker": ArenaUnity.ApplyArmarker(gobj, data); break;
                     case "click-listener": ArenaUnity.ApplyClickListener(gobj, data); break;
-                    // TODO: case "box-collision-listener": ArenaUnity.ApplyBoxCollisionListener(gobj, data); break;
-                    // TODO: case "collision-listener": ArenaUnity.ApplyCollisionListener(gobj, data); break;
                     // TODO: case "blip": ArenaUnity.ApplyBlip(gobj, data); break;
-                    // TODO: case "dynamic-body": ArenaUnity.ApplyDynamicBody(gobj, data); break;
+                    case "physx-body": ArenaUnity.ApplyPhysxBody(gobj, data); break;
+                    case "physx-material": ArenaUnity.ApplyPhysxMaterial(gobj, data); break;
+                    case "box-collision-listener": ArenaUnity.ApplyBoxCollisionListener(gobj, data); break;
+                    case "physx-joint": ArenaUnity.ApplyPhysxJoint(gobj, data); break;
+                    case "physx-force-pushable": ArenaUnity.ApplyPhysxForcePushable(gobj, data); break;
                     case "geometry":
                         if (object_type == "entity")
                             ArenaUnity.ApplyGeometry(null, data.Geometry, gobj); break;
@@ -831,7 +855,6 @@ namespace ArenaUnity
                     // TODO: case "hide-on-enter-vr": ArenaUnity.ApplyHideOnEnterVr(gobj, data); break;
                     // TODO: case "show-on-enter-ar": ArenaUnity.ApplyShowOnEnterAr(gobj, data); break;
                     // TODO: case "show-on-enter-vr": ArenaUnity.ApplyShowOnEnterVr(gobj, data); break;
-                    // TODO: case "impulse": ArenaUnity.ApplyImpulse(gobj, data); break;
                     // TODO: case "landmark": ArenaUnity.ApplyLandmark(gobj, data); break;
                     // TODO: case "material-extras": ArenaUnity.ApplyMaterialExtras(gobj, data); break;
                     // TODO: case "shadow": ArenaUnity.ApplyShadow(gobj, data); break;
