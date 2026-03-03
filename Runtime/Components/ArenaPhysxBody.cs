@@ -51,6 +51,15 @@ namespace ArenaUnity.Components
                 rb.angularDrag = json.AngularDamping;
                 rb.collisionDetectionMode = json.HighPrecision ? CollisionDetectionMode.ContinuousDynamic : CollisionDetectionMode.Discrete;
 
+                if (!rb.isKinematic)
+                {
+                    MeshCollider[] meshColliders = gameObject.GetComponentsInChildren<MeshCollider>();
+                    foreach (MeshCollider mc in meshColliders)
+                    {
+                        mc.convex = true;
+                    }
+                }
+
                 SetSuppressTransform(true);
             }
         }

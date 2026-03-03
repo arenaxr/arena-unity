@@ -36,7 +36,6 @@ namespace ArenaUnity.Components
                 // do not auto-add ArenaCamera component
                 _arenaCam = _camera.GetComponent<ArenaCamera>();
             }
-
             // update colliders
             if (!meshAvailable)
             {
@@ -49,6 +48,7 @@ namespace ArenaUnity.Components
                     {
                         mc.convex = true; // simplify collision mesh when possible
                     }
+                    EnforceConvexIfDynamic(mc);
                     meshAvailable = true;
                 }
                 else
@@ -63,6 +63,15 @@ namespace ArenaUnity.Components
             }
         }
 
+        private void EnforceConvexIfDynamic(MeshCollider mc)
+        {
+            Rigidbody rb = GetComponentInParent<Rigidbody>();
+            if (rb != null && !rb.isKinematic)
+            {
+                mc.convex = true;
+            }
+        }
+
         private void AssignColliderMesh(MeshRenderer mr)
         {
             MeshCollider mcChild = mr.gameObject.AddComponent<MeshCollider>();
@@ -70,6 +79,7 @@ namespace ArenaUnity.Components
             {
                 MeshFilter mf = mr.GetComponent<MeshFilter>();
                 mcChild.sharedMesh = mf.sharedMesh;
+                EnforceConvexIfDynamic(mcChild);
                 ArenaClickListenerModel aclm = mr.gameObject.AddComponent<ArenaClickListenerModel>();
             }
         }
@@ -80,6 +90,7 @@ namespace ArenaUnity.Components
             if (mcChild != null)
             {
                 mcChild.sharedMesh = smr.sharedMesh;
+                EnforceConvexIfDynamic(mcChild);
                 ArenaClickListenerModel aclm = smr.gameObject.AddComponent<ArenaClickListenerModel>();
             }
         }

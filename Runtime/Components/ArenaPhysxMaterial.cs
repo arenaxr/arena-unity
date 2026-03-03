@@ -40,6 +40,8 @@ namespace ArenaUnity.Components
                 c.sharedMaterial.staticFriction = json.StaticFriction;
                 c.sharedMaterial.dynamicFriction = json.DynamicFriction;
                 c.sharedMaterial.bounciness = json.Restitution;
+                c.sharedMaterial.bounceCombine = PhysicMaterialCombine.Maximum;
+                c.sharedMaterial.frictionCombine = PhysicMaterialCombine.Minimum;
             }
 
             if (json.Density.HasValue)

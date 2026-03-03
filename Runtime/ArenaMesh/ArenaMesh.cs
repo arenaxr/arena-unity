@@ -19,13 +19,26 @@ namespace ArenaUnity
         protected MeshFilter filter;
         protected MeshCollider mc;
 
+        private void EnforceConvexIfDynamic(MeshCollider mc)
+        {
+            Rigidbody rb = GetComponentInParent<Rigidbody>();
+            if (rb != null && !rb.isKinematic)
+            {
+                mc.convex = true;
+            }
+        }
+
         protected override void Start()
         {
             apply = true;
             filter = GetComponent<MeshFilter>();
             ApplyRender();
             mc = GetComponent<MeshCollider>();
-            if (mc != null) mc.sharedMesh = filter.mesh;
+            if (mc != null)
+            {
+                mc.sharedMesh = filter.mesh;
+                EnforceConvexIfDynamic(mc);
+            }
         }
 
         protected override void OnValidate()
@@ -49,7 +62,11 @@ namespace ArenaUnity
             {
                 ApplyRender();
                 mc = GetComponent<MeshCollider>();
-                if (mc != null) mc.sharedMesh = filter.mesh;
+                if (mc != null)
+                {
+                    mc.sharedMesh = filter.mesh;
+                    EnforceConvexIfDynamic(mc);
+                }
                 apply = false;
             }
         }
