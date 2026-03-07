@@ -8,39 +8,39 @@
 graph TD
     subgraph unity["arena-unity (Unity Package)"]
         subgraph core["Core"]
-            clientScene["ArenaClientScene\n(Scene Lifecycle + Object Sync)"]
-            mqttClient["ArenaMqttClient\n(MQTT via M2Mqtt)"]
-            m2mqtt["M2MqttUnityClient\n(Unity Thread Bridge)"]
+            clientScene["ArenaClientScene<br/>(Scene Lifecycle + Object Sync)"]
+            mqttClient["ArenaMqttClient<br/>(MQTT via M2Mqtt)"]
+            m2mqtt["M2MqttUnityClient<br/>(Unity Thread Bridge)"]
         end
 
         subgraph objects["Object System"]
-            arenaObj["ArenaObject\n(Per-GameObject Component)"]
-            objJson["ArenaObjectJson\n(Wire Format Serialization)"]
-            arenaCam["ArenaCamera\n(User Presence: Camera)"]
-            arenaHand["ArenaHand\n(User Presence: Hands)"]
-            ttl["ArenaTtl\n(Time-to-Live)"]
+            arenaObj["ArenaObject<br/>(Per-GameObject Component)"]
+            objJson["ArenaObjectJson<br/>(Wire Format Serialization)"]
+            arenaCam["ArenaCamera<br/>(User Presence: Camera)"]
+            arenaHand["ArenaHand<br/>(User Presence: Hands)"]
+            ttl["ArenaTtl<br/>(Time-to-Live)"]
         end
 
         subgraph schemas["Schema (Auto-Generated)"]
-            schemaClasses["179 Schema Classes\n(from arena-schemas)"]
+            schemaClasses["179 Schema Classes<br/>(from arena-schemas)"]
             components["138 Component Classes"]
         end
 
         subgraph editor["Editor"]
-            inspectors["Custom Inspectors\n(ArenaObject, Scene)"]
+            inspectors["Custom Inspectors<br/>(ArenaObject, Scene)"]
         end
 
         subgraph util["Utilities"]
-            arenaUnity["ArenaUnity\n(Type Mapping + Helpers)"]
-            arenaTopics["ArenaTopics\n(Topic Builder)"]
+            arenaUnity["ArenaUnity<br/>(Type Mapping + Helpers)"]
+            arenaTopics["ArenaTopics<br/>(Topic Builder)"]
             selfSignedCert["SelfSignedCertificateHandler"]
         end
     end
 
     subgraph external["External Services"]
-        broker["MQTT Broker\n(Mosquitto)"]
-        accountSvc["arena-account\n(REST API)"]
-        google["Google OAuth\n(Device Flow)"]
+        broker["MQTT Broker<br/>(Mosquitto)"]
+        accountSvc["arena-account<br/>(REST API)"]
+        google["Google OAuth<br/>(Device Flow)"]
     end
 
     clientScene --> mqttClient
