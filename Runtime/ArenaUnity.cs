@@ -260,7 +260,7 @@ namespace ArenaUnity
 
         // object components
 
-        public static void ApplyVisible(GameObject gobj, ArenaDataJson data)
+        public static void ApplyVisible(GameObject gobj, ArenaDataObjectJson data)
         {
             // TODO (mwfarb): handle realtime renderer changes from unity.
             // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
@@ -273,7 +273,7 @@ namespace ArenaUnity
                 light.enabled = (bool)data.Visible;
             }
         }
-        public static void ApplyRemoteRender(GameObject gobj, ArenaDataJson data)
+        public static void ApplyRemoteRender(GameObject gobj, ArenaDataObjectJson data)
         {
             // arena visible component does not render, but object scripts still run, so avoid keep object Active, but do not Render.
             foreach (Renderer renderer in gobj.GetComponentsInChildren<Renderer>(true))
@@ -286,7 +286,7 @@ namespace ArenaUnity
             }
         }
 
-        public static void ApplyAnimation(GameObject gobj, ArenaDataJson data)
+        public static void ApplyAnimation(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaAnimation>(out var c))
                 c = gobj.AddComponent<ArenaAnimation>();
@@ -294,7 +294,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyArmarker(GameObject gobj, ArenaDataJson data)
+        public static void ApplyArmarker(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaArmarker>(out var c))
                 c = gobj.AddComponent<ArenaArmarker>();
@@ -302,7 +302,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyClickListener(GameObject gobj, ArenaDataJson data)
+        public static void ApplyClickListener(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaClickListener>(out var c))
                 c = gobj.AddComponent<ArenaClickListener>();
@@ -310,7 +310,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyAnimationMixer(GameObject gobj, ArenaDataJson data)
+        public static void ApplyAnimationMixer(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaAnimationMixer>(out var c))
                 c = gobj.AddComponent<ArenaAnimationMixer>();
@@ -318,7 +318,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyAttribution(GameObject gobj, ArenaDataJson data)
+        public static void ApplyAttribution(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaAttribution>(out var c))
                 c = gobj.AddComponent<ArenaAttribution>();
@@ -326,7 +326,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyMaterial(GameObject gobj, ArenaDataJson data)
+        public static void ApplyMaterial(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaMaterial>(out var c))
                 c = gobj.AddComponent<ArenaMaterial>();
@@ -334,7 +334,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplySpeParticles(GameObject gobj, ArenaDataJson data)
+        public static void ApplySpeParticles(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaSpeParticles>(out var particles))
                 particles = gobj.AddComponent<ArenaSpeParticles>();
@@ -598,7 +598,7 @@ namespace ArenaUnity
         }
 
         // physx attributes
-        public static void ApplyPhysxBody(GameObject gobj, ArenaDataJson data)
+        public static void ApplyPhysxBody(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaPhysxBody>(out var c))
                 c = gobj.AddComponent<ArenaPhysxBody>();
@@ -606,7 +606,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyPhysxMaterial(GameObject gobj, ArenaDataJson data)
+        public static void ApplyPhysxMaterial(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaPhysxMaterial>(out var c))
                 c = gobj.AddComponent<ArenaPhysxMaterial>();
@@ -614,7 +614,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyPhysxJoint(GameObject gobj, ArenaDataJson data)
+        public static void ApplyPhysxJoint(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaPhysxJoint>(out var c))
                 c = gobj.AddComponent<ArenaPhysxJoint>();
@@ -622,7 +622,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyPhysxForcePushable(GameObject gobj, ArenaDataJson data)
+        public static void ApplyPhysxForcePushable(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaPhysxForcePushable>(out var c))
                 c = gobj.AddComponent<ArenaPhysxForcePushable>();
@@ -630,7 +630,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyBoxCollisionListener(GameObject gobj, ArenaDataJson data)
+        public static void ApplyBoxCollisionListener(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaBoxCollisionListener>(out var c))
                 c = gobj.AddComponent<ArenaBoxCollisionListener>();
@@ -664,7 +664,7 @@ namespace ArenaUnity
 
         // scene options components
 
-        public static void ApplyEnvironmentPresets(GameObject gobj, ArenaArenaSceneOptionsJson data)
+        public static void ApplyEnvironmentPresets(GameObject gobj, ArenaDataSceneOptionsJson data)
         {
             if (!gobj.TryGetComponent<ArenaSceneEnvPresets>(out var c))
                 c = gobj.AddComponent<ArenaSceneEnvPresets>();
@@ -672,7 +672,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplySceneOptions(GameObject gobj, ArenaArenaSceneOptionsJson data)
+        public static void ApplySceneOptions(GameObject gobj, ArenaDataSceneOptionsJson data)
         {
             if (!gobj.TryGetComponent<ArenaSceneOptions>(out var c))
                 c = gobj.AddComponent<ArenaSceneOptions>();
@@ -680,7 +680,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyRendererSettings(GameObject gobj, ArenaArenaSceneOptionsJson data)
+        public static void ApplyRendererSettings(GameObject gobj, ArenaDataSceneOptionsJson data)
         {
             if (!gobj.TryGetComponent<ArenaSceneRendererSettings>(out var c))
                 c = gobj.AddComponent<ArenaSceneRendererSettings>();
@@ -688,7 +688,7 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyPostProcessing(GameObject gobj, ArenaArenaSceneOptionsJson data)
+        public static void ApplyPostProcessing(GameObject gobj, ArenaDataSceneOptionsJson data)
         {
             if (!gobj.TryGetComponent<ArenaScenePostProcessing>(out var c))
                 c = gobj.AddComponent<ArenaScenePostProcessing>();

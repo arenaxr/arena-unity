@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ArenaUnity.Schemas;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Oauth2.v2;
 using Google.Apis.Util.Store;
@@ -715,7 +716,7 @@ namespace ArenaUnity
                 );
                 willFlag = hasArenaCamera;
                 willTopic = lwtTopic.PUB_SCENE_PRESENCE;
-                ArenaObjectJson msg = new ArenaObjectJson
+                ArenaMessageJson msg = new ArenaMessageJson
                 {
                     object_id = userid,
                     action = "leave",

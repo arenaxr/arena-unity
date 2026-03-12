@@ -304,7 +304,7 @@ namespace ArenaUnity
                 {
                     foreach (string object_id in pendingDelete)
                     {
-                        ArenaObjectJson msg = new ArenaObjectJson
+                        ArenaMessageJson msg = new ArenaMessageJson
                         {
                             object_id = object_id,
                             action = "delete",
@@ -329,8 +329,8 @@ namespace ArenaUnity
             if (isCrdSuccess(cd.result))
             {
                 string optionsJsonString = cd.result.ToString();
-                List<ArenaObjectJson> optionsMessages = JsonConvert.DeserializeObject<List<ArenaObjectJson>>(optionsJsonString);
-                foreach (ArenaObjectJson msg in optionsMessages)
+                List<ArenaMessageJson> optionsMessages = JsonConvert.DeserializeObject<List<ArenaMessageJson>>(optionsJsonString);
+                foreach (ArenaMessageJson msg in optionsMessages)
                 {
                     msg.persist = true;
                     // Note: scene-options generally don't have downloadable assets that block instantiation,
@@ -344,14 +344,14 @@ namespace ArenaUnity
             yield return cd.coroutine;
             if (!isCrdSuccess(cd.result)) yield break;
             string jsonString = cd.result.ToString();
-            List<ArenaObjectJson> persistMessages = JsonConvert.DeserializeObject<List<ArenaObjectJson>>(jsonString);
+            List<ArenaMessageJson> persistMessages = JsonConvert.DeserializeObject<List<ArenaMessageJson>>(jsonString);
             // establish objects
             int objects_num = 1;
             if (Directory.Exists(importPath))
                 Directory.Delete(importPath, true);
             if (File.Exists($"{importPath}.meta"))
                 File.Delete($"{importPath}.meta");
-            foreach (ArenaObjectJson msg in persistMessages)
+            foreach (ArenaMessageJson msg in persistMessages)
             {
                 string object_id = msg.object_id;
                 string msg_type = msg.type;
@@ -553,7 +553,7 @@ namespace ArenaUnity
 #endif
         }
 
-        private void CreateUpdateObject(ArenaObjectJson msg, object indata, object menuCommand = null)
+        private void CreateUpdateObject(ArenaMessageJson msg, object indata, object menuCommand = null)
         {
             ArenaObject aobj = null;
             arenaObjs.TryGetValue(msg.object_id, out GameObject gobj);
@@ -632,7 +632,7 @@ namespace ArenaUnity
 
         private void UpdateSceneOptionsMessage(object indata, ArenaObject aobj, GameObject gobj, JObject jData)
         {
-            ArenaArenaSceneOptionsJson data = JsonConvert.DeserializeObject<ArenaArenaSceneOptionsJson>(indata.ToString());
+            ArenaDataSceneOptionsJson data = JsonConvert.DeserializeObject<ArenaDataSceneOptionsJson>(indata.ToString());
 
             // handle scene options attributes
             foreach (var result in jData)
@@ -659,9 +659,9 @@ namespace ArenaUnity
             }
         }
 
-        private void UpdateObjectMessage(ArenaObjectJson msg, object indata, ArenaObject aobj, GameObject gobj, JObject jData)
+        private void UpdateObjectMessage(ArenaMessageJson msg, object indata, ArenaObject aobj, GameObject gobj, JObject jData)
         {
-            ArenaDataJson data = JsonConvert.DeserializeObject<ArenaDataJson>(indata.ToString());
+            ArenaDataObjectJson data = JsonConvert.DeserializeObject<ArenaDataObjectJson>(indata.ToString());
 
             // modify Unity attributes
             bool worldPositionStays = false; // default: most children need relative position
@@ -1047,13 +1047,13 @@ namespace ArenaUnity
             if (string.IsNullOrEmpty(storeExtPath)) yield break;
 
             // send scene object metadata to MQTT
-            ArenaObjectJson msg = new ArenaObjectJson
+            ArenaMessageJson msg = new ArenaMessageJson
             {
                 object_id = name,
                 action = "create",
                 type = "object",
                 persist = true,
-                data = new ArenaDataJson
+                data = new ArenaDataObjectJson
                 {
                     object_type = "gltf-model",
                     Url = storeExtPath,
@@ -1124,7 +1124,7 @@ namespace ArenaUnity
         /// <param name="toUserId">The user id to send this message to, if private (optional).</param>
         public void PublishObject(string object_id, string msgJson, string toUserId = null)
         {
-            ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(msgJson);
+            ArenaMessageJson msg = JsonConvert.DeserializeObject<ArenaMessageJson>(msgJson);
             msg.timestamp = GetTimestamp();
             var objTopic = new ArenaTopics(
                 realm: sceneTopic.REALM,
@@ -1148,7 +1148,7 @@ namespace ArenaUnity
         /// <param name="toUserId">The user id to send this message to, if private (optional).</param>
         public void PublishCamera(string object_id, string msgJson, string toUserId = null)
         {
-            ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(msgJson);
+            ArenaMessageJson msg = JsonConvert.DeserializeObject<ArenaMessageJson>(msgJson);
             msg.timestamp = GetTimestamp();
             var camTopic = new ArenaTopics(
                 realm: sceneTopic.REALM,
@@ -1179,7 +1179,7 @@ namespace ArenaUnity
         /// <param name="toUserId">The user id to send this message to, if private (optional).</param>
         public void PublishEvent(string eventType, string source, string msgJsonData, string toUserId = null)
         {
-            ArenaObjectJson msg = new ArenaObjectJson
+            ArenaMessageJson msg = new ArenaMessageJson
             {
                 object_id = source,
                 action = "clientEvent",
@@ -1204,7 +1204,7 @@ namespace ArenaUnity
         /// <summary>
         /// Egress point for messages to send to remote graph scenes.
         /// </summary>
-        private void PublishSceneMessage(string topic, ArenaObjectJson msg)
+        private void PublishSceneMessage(string topic, ArenaMessageJson msg)
         {
             byte[] payload = System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(msg));
             Publish(topic, payload); // remote
@@ -1280,7 +1280,7 @@ namespace ArenaUnity
                     case "u":
                     case "o":
                         // handle scene objects, user objects, user presence
-                        ArenaObjectJson msg = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
+                        ArenaMessageJson msg = JsonConvert.DeserializeObject<ArenaMessageJson>(message);
                         if (loadLiveObjects)
                         {
                             StartCoroutine(ProcessArenaMessage(msg));
@@ -1300,7 +1300,7 @@ namespace ArenaUnity
             }
         }
 
-        private IEnumerator ProcessArenaMessage(ArenaObjectJson msg, object menuCommand = null)
+        private IEnumerator ProcessArenaMessage(ArenaMessageJson msg, object menuCommand = null)
         {
             CoroutineWithData cd;
             // consume object updates
@@ -1345,7 +1345,7 @@ namespace ArenaUnity
             yield break;
         }
 
-        private void ClientEventOnObject(ArenaObjectJson msg)
+        private void ClientEventOnObject(ArenaMessageJson msg)
         {
             var object_id = (string)msg.object_id;
             var msg_type = (string)msg.type;
@@ -1364,7 +1364,7 @@ namespace ArenaUnity
             // send delete of local avatars before connection closes
             foreach (var camid in localCameraIds)
             {
-                ArenaObjectJson msg = new ArenaObjectJson
+                ArenaMessageJson msg = new ArenaMessageJson
                 {
                     object_id = camid,
                     action = "delete",

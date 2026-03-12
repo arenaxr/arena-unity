@@ -178,7 +178,7 @@ namespace ArenaUnity
             if (ArenaClientScene.Instance == null || !ArenaClientScene.Instance.mqttClientConnected)
                 return;
             // pub delete old
-            ArenaObjectJson msg = new ArenaObjectJson
+            ArenaMessageJson msg = new ArenaMessageJson
             {
                 object_id = oldName,
                 action = "delete",
@@ -203,7 +203,7 @@ namespace ArenaUnity
                 ArenaClientScene.Instance.arenaObjs[name] = gameObject;
 
             // message type information
-            ArenaObjectJson msg = new ArenaObjectJson
+            ArenaMessageJson msg = new ArenaMessageJson
             {
                 object_id = name,
                 action = created ? "update" : "create",
@@ -211,7 +211,7 @@ namespace ArenaUnity
                 persist = persist,
             };
             transformOnly = created ? transformOnly : false;
-            ArenaDataJson dataUnity = new ArenaDataJson();
+            ArenaDataObjectJson dataUnity = new ArenaDataObjectJson();
             if (!string.IsNullOrEmpty(object_type))
                 dataUnity.object_type = object_type;
             else
@@ -280,7 +280,7 @@ namespace ArenaUnity
 
         public void PublishUpdate(string objData, bool all = false, bool overwrite = false)
         {
-            ArenaObjectJson msg = new ArenaObjectJson
+            ArenaMessageJson msg = new ArenaMessageJson
             {
                 object_id = name,
                 action = "update",

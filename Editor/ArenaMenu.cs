@@ -243,14 +243,14 @@ namespace ArenaUnity.Editor
             var client = ArenaClientScene.Instance;
             if (client.arenaObjs.ContainsKey(object_id))
                 object_id = $"{object_id}-{UnityEngine.Random.Range(0, 1000000)}";
-            ArenaObjectJson msg = new ArenaObjectJson
+            ArenaMessageJson msg = new ArenaMessageJson
             {
                 object_id = object_id,
                 action = "create",
                 type = "object",
                 persist = true,
             };
-            ArenaDataJson data = new ArenaDataJson
+            ArenaDataObjectJson data = new ArenaDataObjectJson
             {
                 object_type = object_type,
                 Position = ArenaUnity.ToArenaPosition(cameraPoint),

@@ -44,7 +44,7 @@ public class LaserPointer : MonoBehaviour
         if (event_type != "mousedown") return;
         int instance = UnityEngine.Random.Range(0, 100000000);
 
-        ArenaObjectJson m = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
+        ArenaMessageJson m = JsonConvert.DeserializeObject<ArenaMessageJson>(message);
         ArenaEventJson evt = JsonConvert.DeserializeObject<ArenaEventJson>(m.data.ToString());
 
         ArenaVector3Json start = evt.OriginPosition;
@@ -55,7 +55,7 @@ public class LaserPointer : MonoBehaviour
         start.Z = (float)start.Z + .1f;
 
         // laser
-        ArenaObjectJson msg = new ArenaObjectJson
+        ArenaMessageJson msg = new ArenaMessageJson
         {
             object_id = $"line-{instance}",
             action = "create",
@@ -85,14 +85,14 @@ public class LaserPointer : MonoBehaviour
         }
         _scene.PublishObject(msg.object_id, payload);
         // target
-        msg = new ArenaObjectJson
+        msg = new ArenaMessageJson
         {
             object_id = $"target-{instance}",
             action = "create",
             type = "object",
             ttl = 1,
         };
-        var data1 = new ArenaDataJson
+        var data1 = new ArenaDataObjectJson
         {
             object_type = "sphere",
             Position = end,

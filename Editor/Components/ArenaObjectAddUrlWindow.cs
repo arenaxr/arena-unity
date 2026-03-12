@@ -46,7 +46,7 @@ namespace ArenaUnity.Editor.Components
                 var client = ArenaClientScene.Instance;
                 if (client.arenaObjs.ContainsKey(object_id))
                     object_id = $"{object_id}-{UnityEngine.Random.Range(0, 1000000)}";
-                ArenaObjectJson msg = new ArenaObjectJson
+                ArenaMessageJson msg = new ArenaMessageJson
                 {
                     object_id = object_id,
                     action = "create",
@@ -54,7 +54,7 @@ namespace ArenaUnity.Editor.Components
                     persist = true,
                 };
                 Quaternion rotOut = Quaternion.identity;
-                ArenaDataJson data = new ArenaDataJson
+                ArenaDataObjectJson data = new ArenaDataObjectJson
                 {
                     object_type = object_type,
                     Url = object_url,

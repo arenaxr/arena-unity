@@ -79,7 +79,7 @@ namespace ArenaUnity
             if (messageType != "object") return false;
 
             // message type information
-            ArenaObjectJson msg = new ArenaObjectJson
+            ArenaMessageJson msg = new ArenaMessageJson
             {
                 object_id = camid,
                 action = created ? "update" : "create",
