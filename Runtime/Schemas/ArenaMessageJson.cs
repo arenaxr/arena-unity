@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -54,16 +54,22 @@ namespace ArenaUnity.Schemas
             return (timestamp != null);
         }
 
-        // TODO (mwfarb): consolidate handling of data vs attributes since they are the same
+        // Incoming JSON may use "data" or "attributes" for this payload; we normalize to "data".
         public object data = null;
         public bool ShouldSerializedata()
         {
             return (data != null);
         }
-        public object attributes = null;
-        public bool ShouldSerializeattributes()
+
+        [OnDeserialized]
+        internal void OnDeserialized(StreamingContext context)
         {
-            return (attributes != null);
+            // If the JSON used "attributes" instead of "data", move it into data.
+            if (data == null && _additionalData != null && _additionalData.TryGetValue("attributes", out JToken attrs))
+            {
+                data = attrs;
+                _additionalData.Remove("attributes");
+            }
         }
 
         // General json object management

@@ -335,7 +335,7 @@ namespace ArenaUnity
                     msg.persist = true;
                     // Note: scene-options generally don't have downloadable assets that block instantiation,
                     // so we can apply them directly.
-                    CreateUpdateObject(msg, msg.attributes);
+                    CreateUpdateObject(msg, msg.data);
                 }
             }
 
@@ -362,7 +362,7 @@ namespace ArenaUnity
 
                 if (arenaObjs != null && !arenaObjs.ContainsKey(object_id)) // do not duplicate, local project object takes priority
                 {
-                    IEnumerable<string> uris = ExtractAssetUris(msg.attributes, msgUriTags);
+                    IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
                     foreach (var uri in uris)
                     {
                         if (!string.IsNullOrWhiteSpace(uri))
@@ -371,7 +371,7 @@ namespace ArenaUnity
                             yield return cd.coroutine;
                         }
                     }
-                    CreateUpdateObject(msg, msg.attributes);
+                    CreateUpdateObject(msg, msg.data);
                 }
                 objects_num++;
             }
