@@ -1,0 +1,2093 @@
+[
+  {
+    "object_id": "scene-options",
+    "type": "scene-options",
+    "data": {
+      "env-presets": {
+        "active": true,
+        "preset": "default",
+        "lighting": "none",
+        "shadow": false,
+        "shadowSize": 10,
+        "ground": "none"
+      },
+      "scene-options": {
+        "originMarker": true,
+        "maxAVDist": 20,
+        "privateScene": true,
+        "physics": {
+          "enabled": true
+        },
+        "clickableOnlyEvents": true,
+        "videoFrustumCulling": true,
+        "videoDistanceConstraints": true,
+        "videoDefaultResolutionConstraint": 180,
+        "distanceModel": "inverse",
+        "volume": 1,
+        "refDistance": 5,
+        "rolloffFactor": 0.5
+      }
+    }
+  },
+  {
+    "object_id": "4acaa207-4420-43cc-85c6-7d37e8e33517",
+    "type": "program",
+    "data": {
+      "name": "NPC",
+      "instantiate": "single",
+      "file": "NPC.py",
+      "location": "arena/py/npc",
+      "filetype": "PY",
+      "parent": "arena-rt1",
+      "env": [
+        "MID=${moduleid}",
+        "SCENE=${scene}",
+        "NAMESPACE=${namespace}",
+        "MQTTH=${mqtth}",
+        "REALM=realm"
+      ],
+      "args": [
+        "ArenaRobot"
+      ]
+    }
+  },
+  {
+    "object_id": "e3fc3a82-a587-4bc4-828d-d1099a38020e",
+    "type": "program",
+    "data": {
+      "name": "laser-pointer",
+      "instantiate": "single",
+      "file": "laser-pointer.py",
+      "location": "arena/py/laser-pointer",
+      "filetype": "PY",
+      "parent": "arena-rt1",
+      "env": [
+        "MID=${moduleid}",
+        "SCENE=${scene}",
+        "NAMESPACE=${namespace}",
+        "MQTTH=${mqtth}",
+        "REALM=realm"
+      ]
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "[SpotAR] Cobot 100",
+    "data": {
+      "object_type": "box",
+      "depth": 0.06,
+      "height": 0.12,
+      "width": 0.12,
+      "position": {
+        "x": -2.81,
+        "y": 1.515,
+        "z": -0.16
+      },
+      "rotation": {
+        "w": -0.70711,
+        "x": 0,
+        "y": -0.70711,
+        "z": 0
+      },
+      "material": {
+        "color": "#ff1414",
+        "opacity": 0.5
+      },
+      "armarker": {
+        "markerid": "100",
+        "markertype": "apriltag_36h11",
+        "size": 120,
+        "buildable": false,
+        "dynamic": false
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "[SpotAR] Garden 102",
+    "data": {
+      "object_type": "box",
+      "depth": 0.06,
+      "height": 0.12,
+      "width": 0.12,
+      "position": {
+        "x": 10.365,
+        "y": 1.515,
+        "z": -3.38
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#ff1414",
+        "opacity": 0.5
+      },
+      "armarker": {
+        "markerid": "102",
+        "markertype": "apriltag_36h11",
+        "size": 120,
+        "buildable": false,
+        "dynamic": false
+      }
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "[SpotAR] Garden 102 - Object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/users/conix/review2022/Garden.glb",
+      "position": {
+        "x": 0,
+        "y": -0.3,
+        "z": 0.4
+      },
+      "rotation": {
+        "w": 0,
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.25,
+        "y": 0.25,
+        "z": 0.25
+      },
+      "shadow": {
+        "cast": true,
+        "receive": false
+      },
+      "parent": "[SpotAR] Garden 102",
+      "animation-mixer": {
+        "clip": "*",
+        "timeScale": 1
+      },
+      "material-extras": {
+        "encoding": "sRGBEncoding",
+        "renderOrder": 1
+      }
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "[SpotAR] Statue 104",
+    "data": {
+      "object_type": "box",
+      "depth": 0.06,
+      "height": 0.12,
+      "width": 0.12,
+      "position": {
+        "x": 4.615,
+        "y": 1.515,
+        "z": 7.36
+      },
+      "rotation": {
+        "w": 0,
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "material": {
+        "color": "#ff1414",
+        "opacity": 0.5
+      },
+      "armarker": {
+        "markerid": "104",
+        "markertype": "apriltag_36h11",
+        "size": 120,
+        "buildable": false,
+        "dynamic": false
+      }
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "[SpotAR] Statue 104 - Object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/users/conix/review2022/Statue/Statue_5k.glb",
+      "position": {
+        "x": 0,
+        "y": -0.2,
+        "z": 0.3
+      },
+      "rotation": {
+        "w": 0,
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.25,
+        "y": 0.25,
+        "z": 0.25
+      },
+      "shadow": {
+        "cast": true,
+        "receive": false
+      },
+      "parent": "[SpotAR] Statue 104",
+      "gltf-model-lod": {
+        "detailedUrl": "/store/users/conix/review2022/Statue/Statue_80k.glb",
+        "detailedDistance": 5,
+        "updateRate": 333,
+        "retainCache": false
+      },
+      "material-extras": {
+        "encoding": "sRGBEncoding",
+        "renderOrder": 1
+      }
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "[SpotAR] TicTacToe 105",
+    "data": {
+      "object_type": "box",
+      "depth": 0.06,
+      "height": 0.12,
+      "width": 0.12,
+      "position": {
+        "x": 8.415,
+        "y": 1.515,
+        "z": 7.36
+      },
+      "rotation": {
+        "w": 0,
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "material": {
+        "color": "#ff1414",
+        "opacity": 0.5
+      },
+      "armarker": {
+        "markerid": "105",
+        "markertype": "apriltag_36h11",
+        "size": 120,
+        "buildable": false,
+        "dynamic": false
+      }
+    }
+  },
+  {
+    "object_id": "ambient-scene-light",
+    "type": "object",
+    "data": {
+      "object_type": "light",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "color": "#ffffff",
+      "intensity": 0.6,
+      "type": "ambient",
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    }
+  },
+  {
+    "object_id": "ARENA_intro_card",
+    "type": "object",
+    "data": {
+      "object_type": "arenaui-card",
+      "title": "Welcome to ARENA",
+      "body": "The Augmented Reality Edge Network Architecture (ARENA) is a platform designed to simplify programming where there is a mix of virtual and physical systems, with locality and pervasive sensing as first-class citizens. ARENA makes it easy to create and host multiple applications that interact with users and other agents in an immersive 3D environment created inside a browser.",
+      "position": {
+        "x": 0,
+        "y": 2.75,
+        "z": -3.5
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "img": "/static/landing/images/xr-logo-v8.png",
+      "bodyAlign": "left",
+      "imgCaption": "",
+      "imgSize": "contain",
+      "fontSize": 0.035,
+      "widthScale": 1,
+      "closeButton": true,
+      "imgDirection": "left",
+      "visible": true
+    }
+  },
+  {
+    "object_id": "arena-aligned",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "store/users/agr/arena-scans/arena-aligned-v2.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "hide-on-enter-ar": true,
+      "visible": true,
+      "remote-render": {
+        "enabled": false
+      }
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "arena-occluder",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "store/users/agr/arena-scans/arena-occluder.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "material-extras": {
+        "transparentOccluder": true
+      },
+      "show-on-enter-ar": true
+    }
+  },
+  {
+    "object_id": "ARWindow",
+    "type": "object",
+    "data": {
+      "object_type": "entity",
+      "position": {
+        "x": 2.25,
+        "y": 1.6,
+        "z": -1.45
+      },
+      "rotation": {
+        "w": 0.81412,
+        "x": 0,
+        "y": 0.5807,
+        "z": 0
+      },
+      "visible": true
+    }
+  },
+  {
+    "object_id": "BoschCar_Body",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/Body.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_Engine_Block",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/Engine_Block.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_Engine_Exhaust",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/Engine_Exhaust.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_Engine_Exhaust_Screw",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/Engine_Exhaust_Screw.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_Engine_Screws",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/Engine_Screws.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_HeadLight_L",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/HeadLight_L.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_HeadLight_L_Screw",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/HeadLight_L_Screw.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_HeadLight_R",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/HeadLight_R.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_HeadLight_R_Screw",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/HeadLight_R_Screw.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_Hood",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/Hood.glb",
+      "position": {
+        "x": 0,
+        "y": 0.352,
+        "z": 0.122
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_Root",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "material": {
+        "color": "#00ff00",
+        "opacity": 0.2,
+        "transparent": true,
+        "visible": false
+      },
+      "position": {
+        "x": 0.25,
+        "y": 1.5,
+        "z": -3
+      },
+      "rotation": {
+        "x": 0,
+        "y": 1,
+        "z": 0,
+        "w": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    }
+  },
+  {
+    "object_id": "BoschCar_Wheel_L_Brake",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/Wheel_L_Brake.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_Wheel_L_Screws",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/Wheel_L_Screws.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_Wheel_L_Tire",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/Wheel_L_Tire.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_Wheel_R_Brake",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/Wheel_R_Brake.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_Wheel_R_Screws",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/Wheel_R_Screws.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "BoschCar_Wheel_R_Tire",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/BoschCar_Simplified/Wheel_R_Tire.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "BoschCar_Root"
+    }
+  },
+  {
+    "object_id": "calibrateParent",
+    "type": "object",
+    "data": {
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "object_type": "entity",
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    }
+  },
+  {
+    "object_id": "click-ground-plane",
+    "type": "object",
+    "data": {
+      "object_type": "plane",
+      "parent": "calibrateParent",
+      "position": {
+        "x": 0,
+        "y": -0.01,
+        "z": 0
+      },
+      "rotation": {
+        "x": -0.707,
+        "y": 0,
+        "z": 0,
+        "w": 0.707
+      },
+      "width": 10,
+      "height": 10,
+      "material": {
+        "color": "#000000",
+        "opacity": 0
+      },
+      "click-listener": true,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    }
+  },
+  {
+    "object_id": "click-position-x-neg",
+    "type": "object",
+    "data": {
+      "object_type": "cone",
+      "parent": "click-x",
+      "scale": {
+        "x": 0.03,
+        "y": 0.06,
+        "z": 0.03
+      },
+      "rotation": {
+        "x": 1,
+        "y": 0,
+        "z": 0,
+        "w": 0
+      },
+      "position": {
+        "x": 0,
+        "y": 0.082,
+        "z": 0
+      },
+      "material": {
+        "color": "#00ff00",
+        "opacity": 0.25
+      },
+      "click-listener": true
+    }
+  },
+  {
+    "object_id": "click-position-x-pos",
+    "type": "object",
+    "data": {
+      "object_type": "cone",
+      "parent": "click-x",
+      "scale": {
+        "x": 0.03,
+        "y": 0.06,
+        "z": 0.03
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "position": {
+        "x": 0,
+        "y": 0.18,
+        "z": 0
+      },
+      "material": {
+        "color": "#00ff00",
+        "opacity": 0.25
+      },
+      "click-listener": true
+    }
+  },
+  {
+    "object_id": "click-position-y-neg",
+    "type": "object",
+    "data": {
+      "object_type": "cone",
+      "parent": "click-y",
+      "scale": {
+        "x": 0.03,
+        "y": 0.06,
+        "z": 0.03
+      },
+      "rotation": {
+        "x": 1,
+        "y": 0,
+        "z": 0,
+        "w": 0
+      },
+      "position": {
+        "x": 0,
+        "y": 0.082,
+        "z": 0
+      },
+      "material": {
+        "color": "#0000ff",
+        "opacity": 0.25
+      },
+      "click-listener": true
+    }
+  },
+  {
+    "object_id": "click-position-y-pos",
+    "type": "object",
+    "data": {
+      "object_type": "cone",
+      "parent": "click-y",
+      "scale": {
+        "x": 0.03,
+        "y": 0.06,
+        "z": 0.03
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "position": {
+        "x": 0,
+        "y": 0.18,
+        "z": 0
+      },
+      "material": {
+        "color": "#0000ff",
+        "opacity": 0.25
+      },
+      "click-listener": true
+    }
+  },
+  {
+    "object_id": "click-position-z-neg",
+    "type": "object",
+    "data": {
+      "object_type": "cone",
+      "parent": "click-z",
+      "scale": {
+        "x": 0.03,
+        "y": 0.06,
+        "z": 0.03
+      },
+      "rotation": {
+        "x": 1,
+        "y": 0,
+        "z": 0,
+        "w": 0
+      },
+      "position": {
+        "x": 0,
+        "y": 0.082,
+        "z": 0
+      },
+      "material": {
+        "color": "#ff0000",
+        "opacity": 0.25
+      },
+      "click-listener": true
+    }
+  },
+  {
+    "object_id": "click-position-z-pos",
+    "type": "object",
+    "data": {
+      "object_type": "cone",
+      "parent": "click-z",
+      "scale": {
+        "x": 0.03,
+        "y": 0.06,
+        "z": 0.03
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "position": {
+        "x": 0,
+        "y": 0.18,
+        "z": 0
+      },
+      "material": {
+        "color": "#ff0000",
+        "opacity": 0.25
+      },
+      "click-listener": true
+    }
+  },
+  {
+    "object_id": "click-rotation-y-neg",
+    "type": "object",
+    "data": {
+      "object_type": "cone",
+      "parent": "click-y",
+      "scale": {
+        "x": 0.03,
+        "y": 0.06,
+        "z": 0.03
+      },
+      "rotation": {
+        "x": -0.707,
+        "y": 0,
+        "z": 0,
+        "w": 0.707
+      },
+      "position": {
+        "x": -0.03,
+        "y": 0.015,
+        "z": -0.075
+      },
+      "material": {
+        "color": "#0000ff",
+        "opacity": 0.25
+      },
+      "click-listener": true
+    }
+  },
+  {
+    "object_id": "click-rotation-y-pos",
+    "type": "object",
+    "data": {
+      "object_type": "cone",
+      "parent": "click-y",
+      "scale": {
+        "x": 0.03,
+        "y": 0.06,
+        "z": 0.03
+      },
+      "rotation": {
+        "x": -0.707,
+        "y": 0,
+        "z": 0,
+        "w": 0.707
+      },
+      "position": {
+        "x": 0.03,
+        "y": 0.015,
+        "z": -0.075
+      },
+      "material": {
+        "color": "#0000ff",
+        "opacity": 0.25
+      },
+      "click-listener": true
+    }
+  },
+  {
+    "object_id": "click-x",
+    "type": "object",
+    "data": {
+      "parent": "calibrateParent",
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": -0.707,
+        "w": 0.707
+      },
+      "position": {
+        "x": 0.075,
+        "y": 0,
+        "z": 0
+      },
+      "object_type": "entity",
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    }
+  },
+  {
+    "object_id": "click-y",
+    "type": "object",
+    "data": {
+      "parent": "calibrateParent",
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "position": {
+        "x": 0,
+        "y": 0.075,
+        "z": 0
+      },
+      "object_type": "entity",
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    }
+  },
+  {
+    "object_id": "click-z",
+    "type": "object",
+    "data": {
+      "parent": "calibrateParent",
+      "rotation": {
+        "x": 0.707,
+        "y": 0,
+        "z": 0,
+        "w": 0.707
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0.075
+      },
+      "object_type": "entity",
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "Directional Light",
+    "data": {
+      "object_type": "light",
+      "position": {
+        "x": 2,
+        "y": 10,
+        "z": 4
+      },
+      "rotation": {
+        "w": 0.817,
+        "x": -0.529,
+        "y": 0.193,
+        "z": 0.125
+      },
+      "color": "#ffffff",
+      "intensity": 1,
+      "type": "directional",
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "shadowBias": 0,
+      "shadowCameraBottom": -20,
+      "shadowCameraFar": 1000,
+      "shadowCameraFov": 90,
+      "shadowCameraLeft": -20,
+      "shadowCameraNear": 0.5,
+      "shadowCameraRight": 20,
+      "shadowCameraTop": 20,
+      "shadowCameraVisible": false,
+      "shadowMapHeight": 2048,
+      "shadowMapWidth": 2048,
+      "shadowRadius": 1,
+      "castShadow": false
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "Dragon",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/users/johnchoi/Characters/LowPoly_Animal_Pack/Dragon.glb",
+      "position": {
+        "x": 1.5,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "w": 0.966,
+        "x": 0,
+        "y": 0,
+        "z": 0.259
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "animation-mixer": {
+        "clip": "*",
+        "timeScale": 2
+      },
+      "parent": "Dragon_Anchor",
+      "shadow": {
+        "cast": true,
+        "receive": false
+      },
+      "material-extras": {
+        "encoding": "sRGBEncoding",
+        "renderOrder": 1
+      },
+      "click-listener": true,
+      "sound": {
+        "volume": 0.4,
+        "src": "/store/users/etc/DemoStuff/Sounds/bark.wav",
+        "positional": true,
+        "on": "mousedown"
+      },
+      "animation_mixer": {
+        "clip": "*",
+        "timeScale": 2
+      }
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "Dragon_Anchor",
+    "data": {
+      "object_type": "box",
+      "depth": 0.2,
+      "height": 0.2,
+      "width": 0.2,
+      "position": {
+        "x": 0,
+        "y": 2.5,
+        "z": 0
+      },
+      "rotation": {
+        "w": 0.9767119887088386,
+        "x": 0,
+        "y": 0.21455463432987312,
+        "z": 0
+      },
+      "material": {
+        "color": "#a81515",
+        "opacity": 0
+      },
+      "animation": {
+        "dur": 10000,
+        "autoplay": true,
+        "to": "0",
+        "from": "360",
+        "loop": 10000,
+        "property": "rotation.y",
+        "easing": "linear",
+        "dir": "normal"
+      }
+    }
+  },
+  {
+    "object_id": "grab_box",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 0.25,
+      "height": 0.25,
+      "width": 0.25,
+      "position": {
+        "x": -0.195,
+        "y": 0.125,
+        "z": -1.262
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#9e0091"
+      },
+      "physx-body": {
+        "mass": "10"
+      },
+      "physx-material": {
+        "restitution": "0.1"
+      },
+      "click-listener": {
+        "enabled": true,
+        "bubble": true
+      },
+      "physx-grabbable": true
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "Labels",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/public/ARENA/AprilTags (SpotAR Labels).glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "shadow": {
+        "cast": true,
+        "receive": false
+      },
+      "material-extras": {
+        "encoding": "sRGBEncoding",
+        "renderOrder": 1
+      }
+    }
+  },
+  {
+    "object_id": "MyCobotPi_J2",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/users/johnchoi/MyCobotPi/MyCobotPi_J2/MyCobotPi_J2.gltf",
+      "position": {
+        "x": 0,
+        "y": 0.143,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0.437,
+        "y": 0,
+        "z": 0,
+        "w": 0.899
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "MyCobotPi_J1"
+    }
+  },
+  {
+    "object_id": "MyCobotPi_J3",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/users/johnchoi/MyCobotPi/MyCobotPi_J3/MyCobotPi_J3.gltf",
+      "position": {
+        "x": 0,
+        "y": 0.107,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0.243,
+        "y": 0,
+        "z": 0,
+        "w": 0.97
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "MyCobotPi_J2"
+    }
+  },
+  {
+    "object_id": "MyCobotPi_J4",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/users/johnchoi/MyCobotPi/MyCobotPi_J4/MyCobotPi_J4.gltf",
+      "position": {
+        "x": 0,
+        "y": 0.097,
+        "z": 0
+      },
+      "rotation": {
+        "x": -0.272,
+        "y": 0,
+        "z": 0,
+        "w": 0.962
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "MyCobotPi_J3"
+    }
+  },
+  {
+    "object_id": "MyCobotPi_J5",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/users/johnchoi/MyCobotPi/MyCobotPi_J5/MyCobotPi_J5.gltf",
+      "position": {
+        "x": 0.063,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0.615,
+        "z": 0,
+        "w": 0.789
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "MyCobotPi_J4"
+    }
+  },
+  {
+    "object_id": "MyCobotPi_J6",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/users/johnchoi/MyCobotPi/MyCobotPi_J6/MyCobotPi_J6.gltf",
+      "position": {
+        "x": 0,
+        "y": 0.076,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0.256,
+        "w": 0.967
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "MyCobotPi_J5"
+    }
+  },
+  {
+    "object_id": "NPC_RobotBuddy",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "scale": {
+        "x": 0.8,
+        "y": 0.8,
+        "z": 0.8
+      },
+      "color": "#ff6410",
+      "depth": 0.2,
+      "width": 0.2,
+      "height": 0.2,
+      "position": {
+        "x": 7.2,
+        "y": 0,
+        "z": -2.8
+      },
+      "material": {
+        "opacity": 0.5,
+        "transparent": true,
+        "visible": false
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      }
+    }
+  },
+  {
+    "object_id": "NPC_RobotBuddy_speechBubbleCard",
+    "type": "object",
+    "data": {
+      "object_type": "arenaui-card",
+      "title": "Enter",
+      "body": "Welcome to the WiSELab, Wireless Sensing and Embedded Systems Lab! ",
+      "bodyAlign": "center",
+      "fontSize": 0.05,
+      "theme": "light",
+      "textImageRatio": 2.5,
+      "img": "https://arenaxr.org/store/users/johnchoi/Characters/RobotBuddy/RobotBuddyBlue.png",
+      "imgDirection": "left",
+      "imgSize": "cover",
+      "widthScale": 0.5,
+      "position": {
+        "x": 0,
+        "y": 1.7,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0.044,
+        "z": 0,
+        "w": 0.999
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "NPC_RobotBuddy"
+    }
+  },
+  {
+    "object_id": "NPC_RobotBuddy(Buttons)",
+    "type": "object",
+    "data": {
+      "object_type": "arenaui-button-panel",
+      "buttons": [
+        "[Next]"
+      ],
+      "font": "Roboto-Mono",
+      "theme": "light",
+      "position": {
+        "x": -0.95,
+        "y": 0.6,
+        "z": 0.4
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0.131,
+        "z": 0,
+        "w": 0.991
+      },
+      "scale": {
+        "x": 0.8,
+        "y": 0.8,
+        "z": 0.8
+      },
+      "parent": "NPC_RobotBuddy",
+      "vertical": true
+    }
+  },
+  {
+    "object_id": "NPC_RobotBuddy(GLTF)",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "https://arenaxr.org/store/users/johnchoi/Characters/RobotBuddy/RobotBuddyBlue.glb",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 1,
+        "z": 0,
+        "w": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "animation_mixer": {
+        "clip": "Idle",
+        "loop": "repeat",
+        "timeScale": 1,
+        "crossFadeDuration": 0.5
+      },
+      "parent": "NPC_RobotBuddy",
+      "click-listener": true,
+      "gltf-morph__0": {
+        "morphtarget": "a",
+        "value": "0.0"
+      },
+      "gltf-morph__1": {
+        "morphtarget": "Blink",
+        "value": "1.0"
+      }
+    }
+  },
+  {
+    "object_id": "NPC_RobotBuddy(IMAGE)",
+    "type": "object",
+    "data": {
+      "object_type": "image",
+      "url": "https://arenaxr.org/store/users/johnchoi/Images/nyan.jpg",
+      "position": {
+        "x": 1.5,
+        "y": 0.8,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": -0.131,
+        "z": 0,
+        "w": 0.991
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 0.005
+      },
+      "material": {
+        "transparent": true,
+        "opacity": 0.9,
+        "visible": false
+      },
+      "parent": "NPC_RobotBuddy"
+    }
+  },
+  {
+    "object_id": "NPC_RobotBuddy(LINK)",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "position": {
+        "x": 0,
+        "y": 0.8,
+        "z": 0.7
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "w": 1
+      },
+      "scale": {
+        "x": 0.01,
+        "y": 0.01,
+        "z": 0.01
+      },
+      "material": {
+        "color": "#00c864",
+        "transparent": true,
+        "opacity": 0.5,
+        "visible": false
+      },
+      "parent": "NPC_RobotBuddy",
+      "click-listener": true
+    }
+  },
+  {
+    "object_id": "NPC_RobotBuddy(VIDEO)",
+    "type": "object",
+    "data": {
+      "object_type": "plane",
+      "position": {
+        "x": 1.5,
+        "y": 0.8,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": -0.131,
+        "z": 0,
+        "w": 0.991
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 0.002
+      },
+      "parent": "NPC_RobotBuddy",
+      "click-listener": true,
+      "material": {
+        "h": 1080,
+        "opacity": 0.9,
+        "size": 1,
+        "transparent": true,
+        "visible": false,
+        "w": 1920
+      }
+    }
+  },
+  {
+    "object_id": "origin",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "color": "#006400",
+      "scale": {
+        "x": 0.08,
+        "y": 0.01,
+        "z": 0.08
+      }
+    }
+  },
+  {
+    "object_id": "origin-marker",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/public/armarker.glb",
+      "parent": "calibrateParent",
+      "rotation": {
+        "x": -0.707,
+        "y": 0,
+        "z": 0,
+        "w": 0.707
+      },
+      "scale": {
+        "x": 0.15,
+        "y": 0.15,
+        "z": 0.15
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "armarker": {
+        "buildable": false,
+        "dynamic": false,
+        "markerid": 0,
+        "markertype": "apriltag_36h11",
+        "size": 150
+      }
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "Plane",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/users/etc/DemoStuff/Planes/Plane1a.glb",
+      "position": {
+        "x": 2,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "w": 0.991,
+        "x": 0,
+        "y": 0,
+        "z": 0.133
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": -1
+      },
+      "parent": "Plane_Anchor",
+      "shadow": {
+        "cast": true,
+        "receive": false
+      },
+      "animation": {
+        "dur": 3000,
+        "autoplay": true,
+        "to": "15",
+        "from": "35",
+        "loop": 10000,
+        "property": "rotation.z",
+        "easing": "easeInOutQuad",
+        "dir": "alternate"
+      },
+      "material-extras": {
+        "encoding": "sRGBEncoding",
+        "renderOrder": 1
+      },
+      "click-listener": true,
+      "sound": {
+        "volume": 0.4,
+        "src": "/store/users/etc/DemoStuff/Sounds/plane.wav",
+        "positional": true,
+        "on": "mousedown"
+      },
+      "visible": true
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "Plane_Anchor",
+    "data": {
+      "object_type": "box",
+      "depth": 0.2,
+      "height": 0.2,
+      "width": 0.2,
+      "position": {
+        "x": 0,
+        "y": 2.6,
+        "z": 0
+      },
+      "rotation": {
+        "w": 0.2547137641553737,
+        "x": 0,
+        "y": 0.9670164933183925,
+        "z": 0
+      },
+      "material": {
+        "color": "#1f15a8",
+        "opacity": 0
+      },
+      "animation": {
+        "dur": 16000,
+        "autoplay": true,
+        "to": "0",
+        "from": "360",
+        "loop": 10000,
+        "property": "rotation.y",
+        "easing": "linear",
+        "dir": "normal"
+      }
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "PlaneProp",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/users/etc/DemoStuff/Planes/Plane_Prop.glb",
+      "position": {
+        "x": 0,
+        "y": 0.03,
+        "z": 0
+      },
+      "rotation": {
+        "w": 0.16108708252986642,
+        "x": 0,
+        "y": 0,
+        "z": 0.9869401966897569
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "parent": "Plane",
+      "shadow": {
+        "cast": true,
+        "receive": true
+      },
+      "material-extras": {
+        "encoding": "sRGBEncoding",
+        "renderOrder": 1
+      },
+      "animation": {
+        "dur": 1000,
+        "autoplay": true,
+        "to": "0",
+        "from": "360",
+        "loop": 100000,
+        "property": "rotation.z",
+        "easing": "linear",
+        "dir": "normal"
+      }
+    }
+  },
+  {
+    "object_id": "Portal1",
+    "type": "object",
+    "data": {
+      "object_type": "entity",
+      "position": {
+        "x": 1.86176,
+        "y": 1.6,
+        "z": -2.07917
+      },
+      "rotation": {
+        "w": 0.7071067811865476,
+        "x": 0,
+        "y": -0.7071067811865475,
+        "z": 0
+      }
+    }
+  },
+  {
+    "object_id": "Portal2",
+    "type": "object",
+    "data": {
+      "object_type": "entity",
+      "position": {
+        "x": 2.00536,
+        "y": 1.63191,
+        "z": -2.05718
+      },
+      "rotation": {
+        "w": 0.7071067811865476,
+        "x": 0,
+        "y": 0.7071067811865475,
+        "z": 0
+      }
+    }
+  },
+  {
+    "object_id": "screenshare",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 0.02,
+      "height": 1.08,
+      "width": 1.92,
+      "position": {
+        "x": -0.4,
+        "y": 2.42,
+        "z": 2.59
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#808080",
+        "opacity": 0.9,
+        "transparent": true,
+        "src": "store/users/johnchoi/Screensavers/loop/earth-1236.mp4"
+      },
+      "scale": {
+        "x": 1.2,
+        "y": 1.2,
+        "z": 1.2
+      },
+      "screenshareable": true,
+      "visible": true,
+      "click-listener": {
+        "enabled": true,
+        "bubble": true
+      }
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "screenshare_TV",
+    "data": {
+      "object_type": "box",
+      "depth": 0.02,
+      "height": 1.08,
+      "width": 1.92,
+      "position": {
+        "x": -2.41,
+        "y": 1.14,
+        "z": 0.38
+      },
+      "rotation": {
+        "w": 0.70711,
+        "x": 0,
+        "y": 0.70711,
+        "z": 0
+      },
+      "material": {
+        "color": "#ffffff",
+        "opacity": 0.9,
+        "transparent": true,
+        "src": "store/users/johnchoi/Screensavers/loop/lava-70583.mp4",
+        "alphaTest": "0.1"
+      },
+      "scale": {
+        "x": 0.45,
+        "y": 0.45,
+        "z": 0.45
+      },
+      "screenshareable": true,
+      "visible": true
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "videosphere_conf_victor",
+    "data": {
+      "object_type": "videosphere",
+      "position": {
+        "x": 6.96,
+        "y": 1.1,
+        "z": 1.43
+      },
+      "rotation": {
+        "w": 0,
+        "x": 0,
+        "y": -1,
+        "z": 0
+      },
+      "radius": 1.5,
+      "jitsi-video": {
+        "displayName": "conf_victor"
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "hide-on-enter-ar": true,
+      "material-extras": {
+        "colorSpace": "SRGBColorSpace"
+      },
+      "material": {
+        "shader": "flat",
+        "opacity": 0.9,
+        "color": "#ffffff"
+      },
+      "visible": true
+    }
+  },
+  {
+    "type": "object",
+    "object_id": "Zero Marker",
+    "data": {
+      "object_type": "box",
+      "depth": 0.15,
+      "height": 0.5,
+      "width": 0.15,
+      "position": {
+        "x": 0,
+        "y": -2,
+        "z": 0
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#ff1414",
+        "opacity": 0.5
+      }
+    }
+  }
+]
