@@ -35,7 +35,11 @@ namespace ArenaUnity.Components
             {
                 if (c.sharedMaterial == null || c.sharedMaterial.name != "ArenaPhysxMaterial")
                 {
+#if UNITY_6000_0_OR_NEWER
+                    c.sharedMaterial = new PhysicsMaterial("ArenaPhysxMaterial");
+#else
                     c.sharedMaterial = new PhysicMaterial("ArenaPhysxMaterial");
+#endif
                 }
                 c.sharedMaterial.staticFriction = json.StaticFriction;
                 c.sharedMaterial.dynamicFriction = json.DynamicFriction;

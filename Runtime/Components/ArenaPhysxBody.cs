@@ -47,8 +47,13 @@ namespace ArenaUnity.Components
 
                 rb.isKinematic = (json.Type == ArenaPhysxBodyJson.TypeType.Kinematic);
                 rb.mass = json.Mass;
+#if UNITY_6000_0_OR_NEWER
+                rb.linearDamping = json.LinearDamping;
+                rb.angularDamping = json.AngularDamping;
+#else
                 rb.drag = json.LinearDamping;
                 rb.angularDrag = json.AngularDamping;
+#endif
                 rb.collisionDetectionMode = json.HighPrecision ? CollisionDetectionMode.ContinuousDynamic : CollisionDetectionMode.Discrete;
 
                 SetSuppressTransform(true);
