@@ -612,13 +612,6 @@ namespace ArenaUnity
             }
 
             JObject jData = JObject.Parse(JsonConvert.SerializeObject(indata));
-            //new JsonSerializerSettings
-            //{
-            //    Error = (sender, args) => {
-            //        Debug.LogWarning($"{args.ErrorContext.Error.Message}: {args.ErrorContext.OriginalObject}");
-            //        args.ErrorContext.Handled = true;
-            //    },
-            //});
 
             if (aobj == null) Debug.LogError($"invalid aobj from {JsonConvert.SerializeObject(indata)}");
 
@@ -921,29 +914,35 @@ namespace ArenaUnity
             Uri uri = new Uri(url);
             UnityWebRequest www = UnityWebRequest.Get(url);
             www.downloadHandler = new DownloadHandlerBuffer();
-            //www.timeout = 5; // TODO (mwfarb): when fails like 443 hang, need to prevent curl 28 crash, this should just skip
             if (!verifyCertificate)
             {
                 www.certificateHandler = new SelfSignedCertificateHandler();
             }
-            www.SendWebRequest();
-            while (!www.isDone)
+            try
             {
-                DisplayCancelableProgressBar("ARENA", $"Downloading {uri.Segments[uri.Segments.Length - 1]}...", www.downloadProgress);
-                yield return null;
-            }
-            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.LogWarning($"{www.error}: {www.url}");
+                www.SendWebRequest();
+                while (!www.isDone)
+                {
+                    DisplayCancelableProgressBar("ARENA", $"Downloading {uri.Segments[uri.Segments.Length - 1]}...", www.downloadProgress);
+                    yield return null;
+                }
+                if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    Debug.LogWarning($"{www.error}: {www.url}");
+                    ClearProgressBar();
+                    yield break;
+                }
+                else
+                {
+                    byte[] results = www.downloadHandler.data;
+                    yield return results;
+                }
                 ClearProgressBar();
-                yield break;
             }
-            else
+            finally
             {
-                byte[] results = www.downloadHandler.data;
-                yield return results;
+                www.Dispose();
             }
-            ClearProgressBar();
         }
 
         private IEnumerator HttpUploadFSRaw(string url, byte[] payload)
@@ -958,23 +957,30 @@ namespace ArenaUnity
             www.SetRequestHeader("X-Auth", fsToken);
             UploadHandler uploadHandler = new UploadHandlerRaw(payload);
             www.uploadHandler = uploadHandler;
-            www.SendWebRequest();
-            while (!www.isDone)
+            try
             {
-                DisplayCancelableProgressBar("ARENA", $"Uploading {uri.Segments[uri.Segments.Length - 1]}...", www.uploadProgress);
-                yield return null;
-            }
-            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.LogWarning($"{www.error}: {www.url}");
+                www.SendWebRequest();
+                while (!www.isDone)
+                {
+                    DisplayCancelableProgressBar("ARENA", $"Uploading {uri.Segments[uri.Segments.Length - 1]}...", www.uploadProgress);
+                    yield return null;
+                }
+                if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    Debug.LogWarning($"{www.error}: {www.url}");
+                    ClearProgressBar();
+                    yield break;
+                }
+                else
+                {
+                    yield return true;
+                }
                 ClearProgressBar();
-                yield break;
             }
-            else
+            finally
             {
-                yield return true;
+                www.Dispose();
             }
-            ClearProgressBar();
         }
 
         public void ExportGLTFBinaryStream(string name, GameObject[] gameObjects, ExportSettings exportSettings = null, GameObjectExportSettings goeSettings = null)

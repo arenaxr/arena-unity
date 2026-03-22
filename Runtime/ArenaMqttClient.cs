@@ -745,11 +745,6 @@ namespace ArenaUnity
 
         private async Task<UserCredential> DoBrowserAuthFlow(ClientSecrets secrets)
         {
-            // TODO (mwfarb): remove this test and handle timeouts better with catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
-            //CancellationTokenSource cts = new CancellationTokenSource();
-            //cts.CancelAfter(TimeSpan.FromSeconds(3));
-            //CancellationToken ct = cts.Token;
-
             CancellationToken ct = CancellationToken.None;
             var credentials = await GoogleWebAuthorizationBroker.AuthorizeAsync(secrets, Scopes, "user", ct, new NullDataStore());
             return credentials;
@@ -856,23 +851,30 @@ namespace ArenaUnity
                 www = UnityWebRequest.Get(url);
             else
                 www = UnityWebRequest.Post(url, form);
-            yield return www.SendWebRequest();
-            if (www.responseCode == 428)
+            try
             {
-                yield return www.responseCode.ToString();
-            }
-            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.LogWarning($"{www.error}: {www.url}");
-                if (!string.IsNullOrWhiteSpace(www.downloadHandler?.text))
+                yield return www.SendWebRequest();
+                if (www.responseCode == 428)
                 {
-                    Debug.LogWarning(www.downloadHandler.text);
+                    yield return www.responseCode.ToString();
                 }
-                yield break;
+                if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    Debug.LogWarning($"{www.error}: {www.url}");
+                    if (!string.IsNullOrWhiteSpace(www.downloadHandler?.text))
+                    {
+                        Debug.LogWarning(www.downloadHandler.text);
+                    }
+                    yield break;
+                }
+                else
+                {
+                    yield return www.downloadHandler.text;
+                }
             }
-            else
+            finally
             {
-                yield return www.downloadHandler.text;
+                www.Dispose();
             }
         }
 
@@ -898,35 +900,42 @@ namespace ArenaUnity
                 www.SetRequestHeader("Cookie", cookieParts);
             if (!verifyCertificate)
                 www.certificateHandler = new SelfSignedCertificateHandler();
-            yield return www.SendWebRequest();
-            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+            try
             {
-                Debug.LogWarning($"{www.error}: {www.url}");
-                if (!string.IsNullOrWhiteSpace(www.downloadHandler?.text))
+                yield return www.SendWebRequest();
+                if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
                 {
-                    Debug.LogWarning(www.downloadHandler.text);
+                    Debug.LogWarning($"{www.error}: {www.url}");
+                    if (!string.IsNullOrWhiteSpace(www.downloadHandler?.text))
+                    {
+                        Debug.LogWarning(www.downloadHandler.text);
+                    }
+                    if (www.responseCode == 401 || www.responseCode == 403)
+                    {
+                        Debug.LogWarning($"Do you have a valid ARENA account on {www.uri.Host}?");
+                        Debug.LogWarning($"Create an account in a web browser at: {www.uri.Scheme}{www.uri.Host}/user");
+                    }
+                    yield break;
                 }
-                if (www.responseCode == 401 || www.responseCode == 403)
+                else
                 {
-                    Debug.LogWarning($"Do you have a valid ARENA account on {www.uri.Host}?");
-                    Debug.LogWarning($"Create an account in a web browser at: {www.uri.Scheme}{www.uri.Host}/user");
+                    // get the csrf cookie
+                    string SetCookie = www.GetResponseHeader("Set-Cookie");
+                    if (SetCookie != null)
+                    {
+                        if (SetCookie.Contains("csrftoken="))
+                            csrfToken = GetCookie(SetCookie, "csrftoken");
+                        else if (SetCookie.Contains("csrf="))
+                            csrfToken = GetCookie(SetCookie, "csrf");
+                        if (SetCookie.Contains("auth="))
+                            fsToken = GetCookie(SetCookie, "auth");
+                    }
+                    yield return www.downloadHandler.text;
                 }
-                yield break;
             }
-            else
+            finally
             {
-                // get the csrf cookie
-                string SetCookie = www.GetResponseHeader("Set-Cookie");
-                if (SetCookie != null)
-                {
-                    if (SetCookie.Contains("csrftoken="))
-                        csrfToken = GetCookie(SetCookie, "csrftoken");
-                    else if (SetCookie.Contains("csrf="))
-                        csrfToken = GetCookie(SetCookie, "csrf");
-                    if (SetCookie.Contains("auth="))
-                        fsToken = GetCookie(SetCookie, "auth");
-                }
-                yield return www.downloadHandler.text;
+                www.Dispose();
             }
         }
 
