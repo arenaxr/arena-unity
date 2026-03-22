@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -27,7 +27,9 @@ namespace ArenaUnity.Editor.Components
             if (am.json == null) return; // not ready
 
             // add any animation buttons
-            if (aobj != null && aobj.animations != null && aobj.animations.Count > 0)
+            var gltfModel = am.GetComponent<ArenaWireGltfModel>();
+
+            if (gltfModel != null && gltfModel.animations != null && gltfModel.animations.Count > 0)
             {
                 GUILayout.Space(5f);
                 EditorGUILayout.LabelField("Clips ", EditorStyles.boldLabel);
@@ -38,12 +40,12 @@ namespace ArenaUnity.Editor.Components
                     if (am.json != null) am.UpdateObject();
                 }
                 GUILayout.EndHorizontal();
-                for (int i = 0; i < aobj.animations.Count; i++)
+                for (int i = 0; i < gltfModel.animations.Count; i++)
                 {
                     GUILayout.BeginHorizontal("Box");
-                    if (GUILayout.Toggle((am.json.Clip == aobj.animations[i]), $"{i}: {aobj.animations[i]}"))
+                    if (GUILayout.Toggle((am.json.Clip == gltfModel.animations[i]), $"{i}: {gltfModel.animations[i]}"))
                     {
-                        am.json.Clip = aobj.animations[i];
+                        am.json.Clip = gltfModel.animations[i];
                         if (am.json != null) am.UpdateObject();
                     }
                     GUILayout.EndHorizontal();

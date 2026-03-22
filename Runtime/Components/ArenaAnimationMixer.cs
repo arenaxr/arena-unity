@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -31,6 +31,16 @@ namespace ArenaUnity.Components
         public ArenaAnimationMixerJson json = new ArenaAnimationMixerJson();
         internal List<string> animations = new List<string>();
 
+        protected override void Start()
+        {
+            base.Start();
+            var gltfModel = GetComponent<ArenaWireGltfModel>();
+            if (gltfModel != null)
+            {
+                gltfModel.OnGltfLoaded.AddListener(() => { apply = true; });
+            }
+        }
+
         protected override void ApplyRender()
         {
             // apply changes to local unity object
@@ -41,9 +51,9 @@ namespace ArenaUnity.Components
             anim.cullingType = AnimationCullingType.AlwaysAnimate;
             anim.playAutomatically = false;
 
-            var aobj = GetComponent<ArenaObject>();
-            if (aobj != null)
-                animations = aobj.animations;
+            var gltfModel = GetComponent<ArenaWireGltfModel>();
+            if (gltfModel != null && gltfModel.animations != null)
+                animations = gltfModel.animations;
             if (animations.Count > 0) anim.clip = anim[animations[0]].clip;
 
             if (json == null) return;

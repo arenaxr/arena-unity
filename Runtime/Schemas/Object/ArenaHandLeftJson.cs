@@ -6,20 +6,17 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
 
 namespace ArenaUnity.Schemas
 {
-    //TODO (mwfarb): move ArenaHandJson to automated schema when the schema translator is updated
     [Serializable]
-    public class ArenaHandJson
+    public class ArenaHandLeftJson
     {
-        public string object_type = "handLeft"; // can be handLeft or handRight
+        public string object_type = "handLeft";
 
         public string url { get; set; }
         public string dep { get; set; }

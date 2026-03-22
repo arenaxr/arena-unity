@@ -32,6 +32,10 @@ namespace ArenaUnity
         //       child objects inheriting the parent's scale (e.g. PlaneProp parented to Plane).
 
         public ArenaGltfModelJson json = new ArenaGltfModelJson();
+        public List<string> animations { get; internal set; } = null;
+
+        /// <summary>Event fired when the GLTF model is fully loaded and instantiated.</summary>
+        public UnityEngine.Events.UnityEvent OnGltfLoaded = new UnityEngine.Events.UnityEvent();
 
         protected override void ApplyRender()
         {
@@ -73,13 +77,14 @@ namespace ArenaUnity
             Uri uri = new Uri(Path.GetFullPath(assetPath));
             if (await gltf.LoadFile(assetPath, uri, imSet))
             {
+                var gltfModel = gobj.GetComponent<ArenaWireGltfModel>();
                 clips = gltf.GetAnimationClips();
-                if (clips != null && aobj != null)
+                if (clips != null && gltfModel != null)
                 {   // save animation names for easy animation-mixer reference at runtime
-                    aobj.animations = new List<string>();
+                    gltfModel.animations = new List<string>();
                     foreach (AnimationClip clip in clips)
                     {
-                        aobj.animations.Add(clip.name);
+                        gltfModel.animations.Add(clip.name);
                     }
                 }
                 var inSet = new InstantiationSettings
@@ -89,13 +94,13 @@ namespace ArenaUnity
                 var instantiator = new GameObjectInstantiator(gltf, gobj.transform, logger: new ConsoleLogger(), inSet);
                 if (await gltf.InstantiateSceneAsync(instantiator))
                 {
-                    mobj = gobj.transform.GetChild(0).gameObject; // TODO (mwfarb): find better child method
-
-                    // TODO (mwfarb): find a better way to chain commponent dependancies than this
-                    var am = gobj.GetComponent<ArenaAnimationMixer>();
-                    if (am != null)
+                    // SceneObjectCreation.Always puts the scene root as the last child
+                    if (gobj.transform.childCount > 0)
+                        mobj = gobj.transform.GetChild(gobj.transform.childCount - 1).gameObject;
+                    
+                    if (gltfModel != null)
                     {
-                        am.apply = true;
+                        gltfModel.OnGltfLoaded?.Invoke();
                     }
                 }
             }
