@@ -83,6 +83,14 @@ namespace M2MqttUnity
         private bool mqttClientConnectionClosed = false;
         public bool mqttClientConnected { get; private set; } = false;
 
+        // Reconnection settings
+        [Tooltip("Maximum number of reconnection attempts (0 to disable)")]
+        public int maxReconnectAttempts = 10;
+        private const float initialReconnectDelay = 1f;
+        private const float maxReconnectDelay = 30f;
+        private int reconnectAttempt = 0;
+        private Coroutine reconnectCoroutine = null;
+
         /// <summary>
         /// Event fired when a connection is successfully established
         /// </summary>
@@ -128,6 +136,8 @@ namespace M2MqttUnity
         protected virtual void OnConnected()
         {
             Debug.LogFormat("Connected to {0}:{1}...\n", brokerAddress, brokerPort.ToString());
+            reconnectAttempt = 0;
+            reconnectCoroutine = null;
 
             if (ConnectionSucceeded != null)
             {
@@ -212,6 +222,31 @@ namespace M2MqttUnity
         protected virtual void OnConnectionLost()
         {
             Debug.LogWarning("CONNECTION LOST!");
+            if (maxReconnectAttempts > 0 && reconnectCoroutine == null)
+            {
+                reconnectCoroutine = StartCoroutine(AttemptReconnect());
+            }
+        }
+
+        private IEnumerator AttemptReconnect()
+        {
+            while (reconnectAttempt < maxReconnectAttempts)
+            {
+                reconnectAttempt++;
+                float delay = Mathf.Min(initialReconnectDelay * Mathf.Pow(2, reconnectAttempt - 1), maxReconnectDelay);
+                Debug.Log($"MQTT reconnect attempt {reconnectAttempt}/{maxReconnectAttempts} in {delay:F1}s...");
+                yield return new WaitForSeconds(delay);
+                Connect();
+                // Wait for connection result
+                yield return new WaitForSeconds(2f);
+                if (mqttClientConnected)
+                {
+                    Debug.Log("MQTT reconnected successfully.");
+                    yield break;
+                }
+            }
+            Debug.LogError($"MQTT reconnection failed after {maxReconnectAttempts} attempts.");
+            reconnectCoroutine = null;
         }
 
         /// <summary>
