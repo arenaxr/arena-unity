@@ -1,4 +1,4 @@
-﻿/**
+/**
 * Open source software under the terms in /LICENSE
 * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
 */
@@ -480,7 +480,7 @@ namespace ArenaUnity
                                 form.AddField("client_id", client_id);
                                 form.AddField("client_secret", client_secret);
                                 form.AddField("refresh_token", refresh_token);
-                                form.AddField("grant_type", refresh_token);
+                                form.AddField("grant_type", "refresh_token");
                                 cd = new CoroutineWithData(this, HttpRequest("https://oauth2.googleapis.com/token", form));
                                 yield return cd.coroutine;
                                 if (!isCrdSuccess(cd.result)) yield break;
@@ -883,13 +883,19 @@ namespace ArenaUnity
                 www = UnityWebRequest.Get(url);
             else
                 www = UnityWebRequest.Post(url, form);
+            string cookieParts = "";
             if (csrf != null)
             {
-                www.SetRequestHeader("Cookie", $"csrftoken={csrf}");
+                cookieParts = $"csrftoken={csrf}";
                 www.SetRequestHeader("X-CSRFToken", csrf);
             }
             if (mqttPassword != null)
-                www.SetRequestHeader("Cookie", $"mqtt_token={mqttPassword}");
+            {
+                if (cookieParts.Length > 0) cookieParts += "; ";
+                cookieParts += $"mqtt_token={mqttPassword}";
+            }
+            if (cookieParts.Length > 0)
+                www.SetRequestHeader("Cookie", cookieParts);
             if (!verifyCertificate)
                 www.certificateHandler = new SelfSignedCertificateHandler();
             yield return www.SendWebRequest();
