@@ -42,6 +42,13 @@ namespace ArenaUnity
             Instance = this;
         }
 
+        private new void OnDestroy()
+        {
+            base.OnDestroy();
+            if (Instance == this)
+                Instance = null;
+        }
+
         public string realm { get; private set; }
 
         [Header("Rendering")]
@@ -545,13 +552,7 @@ namespace ArenaUnity
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             if (!File.Exists(path))
             {
-                using (FileStream fs = new FileStream(path, FileMode.Create))
-                {
-                    for (int i = 0; i < data.Length; i++)
-                    {
-                        fs.WriteByte(data[i]);
-                    }
-                }
+                File.WriteAllBytes(path, data);
             }
         }
 
@@ -896,12 +897,8 @@ namespace ArenaUnity
 
         private void RemoveObject(string object_id)
         {
-            // try to get internal list ref
             if (!arenaObjs.TryGetValue(object_id, out GameObject gobj))
-            {
-                // try to get go ref
-                gobj = GameObject.Find(object_id);
-            }
+                return;
             if (gobj == null) return;
 
             // recursively remove children if any of go
@@ -1301,7 +1298,7 @@ namespace ArenaUnity
                         ArenaMessageJson msg = JsonConvert.DeserializeObject<ArenaMessageJson>(message);
                         if (loadLiveObjects)
                         {
-                            StartCoroutine(ProcessArenaMessage(msg));
+                            ProcessArenaMessage(msg);
                         }
                         break;
                     case "r": // remote render handled by arena-renderfusion package currently
@@ -1318,7 +1315,7 @@ namespace ArenaUnity
             }
         }
 
-        private IEnumerator ProcessArenaMessage(ArenaMessageJson msg, object menuCommand = null)
+        private void ProcessArenaMessage(ArenaMessageJson msg, object menuCommand = null)
         {
             // consume object updates
             string object_id;
@@ -1328,8 +1325,6 @@ namespace ArenaUnity
                 case "update":
                     object_id = (string)msg.object_id;
                     string msg_type = (string)msg.type;
-                    float ttl = (msg.ttl != null) ? (float)msg.ttl : 0f;
-                    bool persist = Convert.ToBoolean(msg.persist);
 
                     IEnumerable<string> uris = ExtractAssetUris(msg.data, msgUriTags);
                     foreach (var uri in uris)
@@ -1358,7 +1353,6 @@ namespace ArenaUnity
                 default:
                     break;
             }
-            yield break;
         }
 
         private void ClientEventOnObject(ArenaMessageJson msg)
