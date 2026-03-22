@@ -127,14 +127,14 @@ namespace ArenaUnity.Schemas
             return (DressingUniformScale != defDressingUniformScale);
         }
 
-        private static ArenaVector3Json defDressingVariance = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}");
+        private static readonly string defDressingVarianceString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}"));
         [JsonProperty(PropertyName = "dressingVariance", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Maximum x,y,z meters to randomize the size and rotation of each dressing object. Use 0 0 0 for no variation in size nor rotation.")]
-        public ArenaVector3Json DressingVariance = defDressingVariance;
+        public ArenaVector3Json DressingVariance = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}");
         public bool ShouldSerializeDressingVariance()
         {
-            // dressingVariance
-            return (DressingVariance != defDressingVariance);
+            // DressingVariance (reference type patched)
+            return JsonConvert.SerializeObject(DressingVariance) != defDressingVarianceString;
         }
 
         private static bool defFlatShading = false;
@@ -244,14 +244,14 @@ namespace ArenaUnity.Schemas
             return (GroundColor2 != defGroundColor2);
         }
 
-        private static ArenaVector3Json defGroundScale = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}");
+        private static readonly string defGroundScaleString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}"));
         [JsonProperty(PropertyName = "groundScale", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Ground dimensions (in meters).")]
-        public ArenaVector3Json GroundScale = defGroundScale;
+        public ArenaVector3Json GroundScale = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}");
         public bool ShouldSerializeGroundScale()
         {
-            // groundScale
-            return (GroundScale != defGroundScale);
+            // GroundScale (reference type patched)
+            return JsonConvert.SerializeObject(GroundScale) != defGroundScaleString;
         }
 
         public enum GroundTextureType
@@ -327,14 +327,14 @@ namespace ArenaUnity.Schemas
             return (Lighting != defLighting);
         }
 
-        private static ArenaVector3Json defLightPosition = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1, 'z': -0.2}");
+        private static readonly string defLightPositionString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1, 'z': -0.2}"));
         [JsonProperty(PropertyName = "lightPosition", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Position of the main light. If skyType is atmospheric, only the orientation matters (is a directional light) and it can turn the scene into night when lowered towards the horizon.")]
-        public ArenaVector3Json LightPosition = defLightPosition;
+        public ArenaVector3Json LightPosition = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1, 'z': -0.2}");
         public bool ShouldSerializeLightPosition()
         {
-            // lightPosition
-            return (LightPosition != defLightPosition);
+            // LightPosition (reference type patched)
+            return JsonConvert.SerializeObject(LightPosition) != defLightPositionString;
         }
 
         private static float defPlayArea = 1f;

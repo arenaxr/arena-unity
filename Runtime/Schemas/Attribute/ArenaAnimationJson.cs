@@ -201,14 +201,14 @@ namespace ArenaUnity.Schemas
             return (Loop != defLoop);
         }
 
-        private static string[] defPauseEvents = {  };
+        private static readonly string defPauseEventsString = JsonConvert.SerializeObject(new string[] {  });
         [JsonProperty(PropertyName = "pauseEvents")]
         [Tooltip("Comma-separated list of events to listen to trigger pause. Can be resumed with resumeEvents.")]
-        public string[] PauseEvents = defPauseEvents;
+        public string[] PauseEvents = {  };
         public bool ShouldSerializePauseEvents()
         {
-            // pauseEvents
-            return (PauseEvents != defPauseEvents);
+            // PauseEvents (reference type patched)
+            return JsonConvert.SerializeObject(PauseEvents) != defPauseEventsString;
         }
 
         private static string defProperty = "";
@@ -221,14 +221,14 @@ namespace ArenaUnity.Schemas
             return (Property != defProperty);
         }
 
-        private static string[] defResumeEvents = {  };
+        private static readonly string defResumeEventsString = JsonConvert.SerializeObject(new string[] {  });
         [JsonProperty(PropertyName = "resumeEvents")]
         [Tooltip("Comma-separated list of events to listen to trigger resume after pausing.")]
-        public string[] ResumeEvents = defResumeEvents;
+        public string[] ResumeEvents = {  };
         public bool ShouldSerializeResumeEvents()
         {
-            // resumeEvents
-            return (ResumeEvents != defResumeEvents);
+            // ResumeEvents (reference type patched)
+            return JsonConvert.SerializeObject(ResumeEvents) != defResumeEventsString;
         }
 
         private static bool defRound = false;
@@ -241,14 +241,14 @@ namespace ArenaUnity.Schemas
             return (Round != defRound);
         }
 
-        private static string[] defStartEvents = {  };
+        private static readonly string defStartEventsString = JsonConvert.SerializeObject(new string[] {  });
         [JsonProperty(PropertyName = "startEvents")]
         [Tooltip("Comma-separated list of events to listen to trigger a restart and play. Animation will not autoplay if specified. startEvents will restart the animation, use pauseEvents to resume it. If there are other animation components on the entity animating the same property, those animations will be automatically paused to not conflict.")]
-        public string[] StartEvents = defStartEvents;
+        public string[] StartEvents = {  };
         public bool ShouldSerializeStartEvents()
         {
-            // startEvents
-            return (StartEvents != defStartEvents);
+            // StartEvents (reference type patched)
+            return JsonConvert.SerializeObject(StartEvents) != defStartEventsString;
         }
 
         private static string defTo = "";

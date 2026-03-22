@@ -98,14 +98,14 @@ namespace ArenaUnity.Schemas
             return (HighPrecision != defHighPrecision);
         }
 
-        private static ArenaVector3Json defShapeOffset = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
+        private static readonly string defShapeOffsetString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}"));
         [JsonProperty(PropertyName = "shapeOffset", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Offset applied to generated collision shapes.")]
-        public ArenaVector3Json ShapeOffset = defShapeOffset;
+        public ArenaVector3Json ShapeOffset = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         public bool ShouldSerializeShapeOffset()
         {
-            // shapeOffset
-            return (ShapeOffset != defShapeOffset);
+            // ShapeOffset (reference type patched)
+            return JsonConvert.SerializeObject(ShapeOffset) != defShapeOffsetString;
         }
 
         // General json object management

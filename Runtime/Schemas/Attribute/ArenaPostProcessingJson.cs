@@ -28,74 +28,74 @@ namespace ArenaUnity.Schemas
 
         // post-processing member-fields
 
-        private static object defBloom = null;
+        private static readonly string defBloomString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "bloom")]
         [Tooltip("Use bloom post-processing effect.")]
-        public object Bloom = defBloom;
+        public object Bloom = null;
         public bool ShouldSerializeBloom()
         {
-            // bloom
-            return (Bloom != defBloom);
+            // Bloom (reference type patched)
+            return JsonConvert.SerializeObject(Bloom) != defBloomString;
         }
 
-        private static object defSao = null;
+        private static readonly string defSaoString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "sao")]
         [Tooltip("Use scalable ambient occlusion (SAO) post-processing effect.")]
-        public object Sao = defSao;
+        public object Sao = null;
         public bool ShouldSerializeSao()
         {
-            // sao
-            return (Sao != defSao);
+            // Sao (reference type patched)
+            return JsonConvert.SerializeObject(Sao) != defSaoString;
         }
 
-        private static object defSsao = null;
+        private static readonly string defSsaoString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "ssao")]
         [Tooltip("Use screen space ambient occlusion (SSAO) post-processing effect.")]
-        public object Ssao = defSsao;
+        public object Ssao = null;
         public bool ShouldSerializeSsao()
         {
-            // ssao
-            return (Ssao != defSsao);
+            // Ssao (reference type patched)
+            return JsonConvert.SerializeObject(Ssao) != defSsaoString;
         }
 
-        private static object defPixel = null;
+        private static readonly string defPixelString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "pixel")]
         [Tooltip("Use Pixelation post-processing effect.")]
-        public object Pixel = defPixel;
+        public object Pixel = null;
         public bool ShouldSerializePixel()
         {
-            // pixel
-            return (Pixel != defPixel);
+            // Pixel (reference type patched)
+            return JsonConvert.SerializeObject(Pixel) != defPixelString;
         }
 
-        private static object defGlitch = null;
+        private static readonly string defGlitchString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "glitch")]
         [Tooltip("Use Glitch post-processing effect.")]
-        public object Glitch = defGlitch;
+        public object Glitch = null;
         public bool ShouldSerializeGlitch()
         {
-            // glitch
-            return (Glitch != defGlitch);
+            // Glitch (reference type patched)
+            return JsonConvert.SerializeObject(Glitch) != defGlitchString;
         }
 
-        private static object defFxaa = null;
+        private static readonly string defFxaaString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "fxaa")]
         [Tooltip("Use FXAA post-processing effect. You may want to place this last in effects list.")]
-        public object Fxaa = defFxaa;
+        public object Fxaa = null;
         public bool ShouldSerializeFxaa()
         {
-            // fxaa
-            return (Fxaa != defFxaa);
+            // Fxaa (reference type patched)
+            return JsonConvert.SerializeObject(Fxaa) != defFxaaString;
         }
 
-        private static object defSmaa = null;
+        private static readonly string defSmaaString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "smaa")]
         [Tooltip("Use SMAA post-processing effect. You may want to place this last in effects list.")]
-        public object Smaa = defSmaa;
+        public object Smaa = null;
         public bool ShouldSerializeSmaa()
         {
-            // smaa
-            return (Smaa != defSmaa);
+            // Smaa (reference type patched)
+            return JsonConvert.SerializeObject(Smaa) != defSmaaString;
         }
 
         // General json object management

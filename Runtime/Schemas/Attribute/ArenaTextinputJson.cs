@@ -154,14 +154,14 @@ namespace ArenaUnity.Schemas
             return (InputValue != defInputValue);
         }
 
-        private static string[] defInputOptions = {  };
+        private static readonly string defInputOptionsString = JsonConvert.SerializeObject(new string[] {  });
         [JsonProperty(PropertyName = "inputOptions")]
         [Tooltip("Array of options for select or radio input types")]
-        public string[] InputOptions = defInputOptions;
+        public string[] InputOptions = {  };
         public bool ShouldSerializeInputOptions()
         {
-            // inputOptions
-            return (InputOptions != defInputOptions);
+            // InputOptions (reference type patched)
+            return JsonConvert.SerializeObject(InputOptions) != defInputOptionsString;
         }
 
         // General json object management

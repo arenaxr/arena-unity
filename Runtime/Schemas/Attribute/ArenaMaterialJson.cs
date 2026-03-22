@@ -59,24 +59,24 @@ namespace ArenaUnity.Schemas
             return (AmbientOcclusionMapIntensity != defAmbientOcclusionMapIntensity);
         }
 
-        private static ArenaVector2Json defAmbientOcclusionTextureOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
+        private static readonly string defAmbientOcclusionTextureOffsetString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}"));
         [JsonProperty(PropertyName = "ambientOcclusionTextureOffset", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture offset for the ambient occlusion map.")]
-        public ArenaVector2Json AmbientOcclusionTextureOffset = defAmbientOcclusionTextureOffset;
+        public ArenaVector2Json AmbientOcclusionTextureOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
         public bool ShouldSerializeAmbientOcclusionTextureOffset()
         {
-            // ambientOcclusionTextureOffset
-            return (AmbientOcclusionTextureOffset != defAmbientOcclusionTextureOffset);
+            // AmbientOcclusionTextureOffset (reference type patched)
+            return JsonConvert.SerializeObject(AmbientOcclusionTextureOffset) != defAmbientOcclusionTextureOffsetString;
         }
 
-        private static ArenaVector2Json defAmbientOcclusionTextureRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
+        private static readonly string defAmbientOcclusionTextureRepeatString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}"));
         [JsonProperty(PropertyName = "ambientOcclusionTextureRepeat", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture repeat for the ambient occlusion map.")]
-        public ArenaVector2Json AmbientOcclusionTextureRepeat = defAmbientOcclusionTextureRepeat;
+        public ArenaVector2Json AmbientOcclusionTextureRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         public bool ShouldSerializeAmbientOcclusionTextureRepeat()
         {
-            // ambientOcclusionTextureRepeat
-            return (AmbientOcclusionTextureRepeat != defAmbientOcclusionTextureRepeat);
+            // AmbientOcclusionTextureRepeat (reference type patched)
+            return JsonConvert.SerializeObject(AmbientOcclusionTextureRepeat) != defAmbientOcclusionTextureRepeatString;
         }
 
         private static float defAnisotropy = 0f;
@@ -133,24 +133,24 @@ namespace ArenaUnity.Schemas
             return (BumpMapScale != defBumpMapScale);
         }
 
-        private static ArenaVector2Json defBumpTextureOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
+        private static readonly string defBumpTextureOffsetString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}"));
         [JsonProperty(PropertyName = "bumpTextureOffset", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture offset for the bump map. Requires `shader: phong`.")]
-        public ArenaVector2Json BumpTextureOffset = defBumpTextureOffset;
+        public ArenaVector2Json BumpTextureOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
         public bool ShouldSerializeBumpTextureOffset()
         {
-            // bumpTextureOffset
-            return (BumpTextureOffset != defBumpTextureOffset);
+            // BumpTextureOffset (reference type patched)
+            return JsonConvert.SerializeObject(BumpTextureOffset) != defBumpTextureOffsetString;
         }
 
-        private static ArenaVector2Json defBumpTextureRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
+        private static readonly string defBumpTextureRepeatString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}"));
         [JsonProperty(PropertyName = "bumpTextureRepeat", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture repeat for the bump map. Requires `shader: phong`.")]
-        public ArenaVector2Json BumpTextureRepeat = defBumpTextureRepeat;
+        public ArenaVector2Json BumpTextureRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         public bool ShouldSerializeBumpTextureRepeat()
         {
-            // bumpTextureRepeat
-            return (BumpTextureRepeat != defBumpTextureRepeat);
+            // BumpTextureRepeat (reference type patched)
+            return JsonConvert.SerializeObject(BumpTextureRepeat) != defBumpTextureRepeatString;
         }
 
         private static string defColor = "#ffffff";
@@ -234,24 +234,24 @@ namespace ArenaUnity.Schemas
             return (DisplacementScale != defDisplacementScale);
         }
 
-        private static ArenaVector2Json defDisplacementTextureOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
+        private static readonly string defDisplacementTextureOffsetString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}"));
         [JsonProperty(PropertyName = "displacementTextureOffset", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture offset for the displacement map.")]
-        public ArenaVector2Json DisplacementTextureOffset = defDisplacementTextureOffset;
+        public ArenaVector2Json DisplacementTextureOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
         public bool ShouldSerializeDisplacementTextureOffset()
         {
-            // displacementTextureOffset
-            return (DisplacementTextureOffset != defDisplacementTextureOffset);
+            // DisplacementTextureOffset (reference type patched)
+            return JsonConvert.SerializeObject(DisplacementTextureOffset) != defDisplacementTextureOffsetString;
         }
 
-        private static ArenaVector2Json defDisplacementTextureRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
+        private static readonly string defDisplacementTextureRepeatString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}"));
         [JsonProperty(PropertyName = "displacementTextureRepeat", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture repeat for the displacement map.")]
-        public ArenaVector2Json DisplacementTextureRepeat = defDisplacementTextureRepeat;
+        public ArenaVector2Json DisplacementTextureRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         public bool ShouldSerializeDisplacementTextureRepeat()
         {
-            // displacementTextureRepeat
-            return (DisplacementTextureRepeat != defDisplacementTextureRepeat);
+            // DisplacementTextureRepeat (reference type patched)
+            return JsonConvert.SerializeObject(DisplacementTextureRepeat) != defDisplacementTextureRepeatString;
         }
 
         private static bool defDithering = true;
@@ -335,24 +335,24 @@ namespace ArenaUnity.Schemas
             return (MetalnessMap != defMetalnessMap);
         }
 
-        private static ArenaVector2Json defMetalnessTextureOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
+        private static readonly string defMetalnessTextureOffsetString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}"));
         [JsonProperty(PropertyName = "metalnessTextureOffset", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture offset for the metalness map.")]
-        public ArenaVector2Json MetalnessTextureOffset = defMetalnessTextureOffset;
+        public ArenaVector2Json MetalnessTextureOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
         public bool ShouldSerializeMetalnessTextureOffset()
         {
-            // metalnessTextureOffset
-            return (MetalnessTextureOffset != defMetalnessTextureOffset);
+            // MetalnessTextureOffset (reference type patched)
+            return JsonConvert.SerializeObject(MetalnessTextureOffset) != defMetalnessTextureOffsetString;
         }
 
-        private static ArenaVector2Json defMetalnessTextureRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
+        private static readonly string defMetalnessTextureRepeatString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}"));
         [JsonProperty(PropertyName = "metalnessTextureRepeat", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture repeat for the metalness map.")]
-        public ArenaVector2Json MetalnessTextureRepeat = defMetalnessTextureRepeat;
+        public ArenaVector2Json MetalnessTextureRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         public bool ShouldSerializeMetalnessTextureRepeat()
         {
-            // metalnessTextureRepeat
-            return (MetalnessTextureRepeat != defMetalnessTextureRepeat);
+            // MetalnessTextureRepeat (reference type patched)
+            return JsonConvert.SerializeObject(MetalnessTextureRepeat) != defMetalnessTextureRepeatString;
         }
 
         private static string defNormalMap = null;
@@ -365,34 +365,34 @@ namespace ArenaUnity.Schemas
             return (NormalMap != defNormalMap);
         }
 
-        private static ArenaVector2Json defNormalScale = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
+        private static readonly string defNormalScaleString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}"));
         [JsonProperty(PropertyName = "normalScale", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Scale of the effect of the normal map in the X and Y directions.")]
-        public ArenaVector2Json NormalScale = defNormalScale;
+        public ArenaVector2Json NormalScale = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         public bool ShouldSerializeNormalScale()
         {
-            // normalScale
-            return (NormalScale != defNormalScale);
+            // NormalScale (reference type patched)
+            return JsonConvert.SerializeObject(NormalScale) != defNormalScaleString;
         }
 
-        private static ArenaVector2Json defNormalTextureOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
+        private static readonly string defNormalTextureOffsetString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}"));
         [JsonProperty(PropertyName = "normalTextureOffset", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture offset for the normal map.")]
-        public ArenaVector2Json NormalTextureOffset = defNormalTextureOffset;
+        public ArenaVector2Json NormalTextureOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
         public bool ShouldSerializeNormalTextureOffset()
         {
-            // normalTextureOffset
-            return (NormalTextureOffset != defNormalTextureOffset);
+            // NormalTextureOffset (reference type patched)
+            return JsonConvert.SerializeObject(NormalTextureOffset) != defNormalTextureOffsetString;
         }
 
-        private static ArenaVector2Json defNormalTextureRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
+        private static readonly string defNormalTextureRepeatString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}"));
         [JsonProperty(PropertyName = "normalTextureRepeat", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture repeat for the normal map.")]
-        public ArenaVector2Json NormalTextureRepeat = defNormalTextureRepeat;
+        public ArenaVector2Json NormalTextureRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         public bool ShouldSerializeNormalTextureRepeat()
         {
-            // normalTextureRepeat
-            return (NormalTextureRepeat != defNormalTextureRepeat);
+            // NormalTextureRepeat (reference type patched)
+            return JsonConvert.SerializeObject(NormalTextureRepeat) != defNormalTextureRepeatString;
         }
 
         private static bool defNpot = false;
@@ -405,14 +405,14 @@ namespace ArenaUnity.Schemas
             return (Npot != defNpot);
         }
 
-        private static ArenaVector2Json defOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
+        private static readonly string defOffsetString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}"));
         [JsonProperty(PropertyName = "offset", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture offset to be used.")]
-        public ArenaVector2Json Offset = defOffset;
+        public ArenaVector2Json Offset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
         public bool ShouldSerializeOffset()
         {
-            // offset
-            return (Offset != defOffset);
+            // Offset (reference type patched)
+            return JsonConvert.SerializeObject(Offset) != defOffsetString;
         }
 
         private static float defOpacity = 1f;
@@ -455,14 +455,14 @@ namespace ArenaUnity.Schemas
             return (RefractionRatio != defRefractionRatio);
         }
 
-        private static ArenaVector2Json defRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
+        private static readonly string defRepeatString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}"));
         [JsonProperty(PropertyName = "repeat", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("How many times a texture (defined by src) repeats in the X and Y direction.")]
-        public ArenaVector2Json Repeat = defRepeat;
+        public ArenaVector2Json Repeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         public bool ShouldSerializeRepeat()
         {
-            // repeat
-            return (Repeat != defRepeat);
+            // Repeat (reference type patched)
+            return JsonConvert.SerializeObject(Repeat) != defRepeatString;
         }
 
         private static float defRoughness = 0.5f;
@@ -485,24 +485,24 @@ namespace ArenaUnity.Schemas
             return (RoughnessMap != defRoughnessMap);
         }
 
-        private static ArenaVector2Json defRoughnessTextureOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
+        private static readonly string defRoughnessTextureOffsetString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}"));
         [JsonProperty(PropertyName = "roughnessTextureOffset", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture offset for the roughness map.")]
-        public ArenaVector2Json RoughnessTextureOffset = defRoughnessTextureOffset;
+        public ArenaVector2Json RoughnessTextureOffset = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 0, 'y': 0}");
         public bool ShouldSerializeRoughnessTextureOffset()
         {
-            // roughnessTextureOffset
-            return (RoughnessTextureOffset != defRoughnessTextureOffset);
+            // RoughnessTextureOffset (reference type patched)
+            return JsonConvert.SerializeObject(RoughnessTextureOffset) != defRoughnessTextureOffsetString;
         }
 
-        private static ArenaVector2Json defRoughnessTextureRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
+        private static readonly string defRoughnessTextureRepeatString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}"));
         [JsonProperty(PropertyName = "roughnessTextureRepeat", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Texture repeat for the roughness map.")]
-        public ArenaVector2Json RoughnessTextureRepeat = defRoughnessTextureRepeat;
+        public ArenaVector2Json RoughnessTextureRepeat = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         public bool ShouldSerializeRoughnessTextureRepeat()
         {
-            // roughnessTextureRepeat
-            return (RoughnessTextureRepeat != defRoughnessTextureRepeat);
+            // RoughnessTextureRepeat (reference type patched)
+            return JsonConvert.SerializeObject(RoughnessTextureRepeat) != defRoughnessTextureRepeatString;
         }
 
         public enum ShaderType

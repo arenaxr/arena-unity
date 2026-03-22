@@ -46,14 +46,14 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
-        private static ArenaVector3Json defOriginPosition = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1.6, 'z': 0}");
+        private static readonly string defOriginPositionString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1.6, 'z': 0}"));
         [JsonProperty(PropertyName = "originPosition", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("The event origination position in 3D.")]
-        public ArenaVector3Json OriginPosition = defOriginPosition;
+        public ArenaVector3Json OriginPosition = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1.6, 'z': 0}");
         public bool ShouldSerializeOriginPosition()
         {
-            // originPosition
-            return (OriginPosition != defOriginPosition);
+            // OriginPosition (reference type patched)
+            return JsonConvert.SerializeObject(OriginPosition) != defOriginPositionString;
         }
 
         private static string defSource = null;

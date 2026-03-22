@@ -28,14 +28,14 @@ namespace ArenaUnity.Schemas
 
         // physx-joint-driver member-fields
 
-        private static string[] defAxes = {  };
+        private static readonly string defAxesString = JsonConvert.SerializeObject(new string[] {  });
         [JsonProperty(PropertyName = "axes")]
         [Tooltip("Which axes the joint should operate on. Should be some combination of x, y, z, twist, swing.")]
-        public string[] Axes = defAxes;
+        public string[] Axes = {  };
         public bool ShouldSerializeAxes()
         {
-            // axes
-            return (Axes != defAxes);
+            // Axes (reference type patched)
+            return JsonConvert.SerializeObject(Axes) != defAxesString;
         }
 
         private static float defStiffness = 1f;
@@ -78,24 +78,24 @@ namespace ArenaUnity.Schemas
             return (UseAcceleration != defUseAcceleration);
         }
 
-        private static ArenaVector3Json defLinearVelocity = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
+        private static readonly string defLinearVelocityString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}"));
         [JsonProperty(PropertyName = "linearVelocity", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Target linear velocity relative to the joint.")]
-        public ArenaVector3Json LinearVelocity = defLinearVelocity;
+        public ArenaVector3Json LinearVelocity = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         public bool ShouldSerializeLinearVelocity()
         {
-            // linearVelocity
-            return (LinearVelocity != defLinearVelocity);
+            // LinearVelocity (reference type patched)
+            return JsonConvert.SerializeObject(LinearVelocity) != defLinearVelocityString;
         }
 
-        private static ArenaVector3Json defAngularVelocity = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
+        private static readonly string defAngularVelocityString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}"));
         [JsonProperty(PropertyName = "angularVelocity", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Target angular velocity relative to the joint.")]
-        public ArenaVector3Json AngularVelocity = defAngularVelocity;
+        public ArenaVector3Json AngularVelocity = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         public bool ShouldSerializeAngularVelocity()
         {
-            // angularVelocity
-            return (AngularVelocity != defAngularVelocity);
+            // AngularVelocity (reference type patched)
+            return JsonConvert.SerializeObject(AngularVelocity) != defAngularVelocityString;
         }
 
         private static bool defLockOtherAxes = false;

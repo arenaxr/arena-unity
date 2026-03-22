@@ -155,17 +155,7 @@ namespace ArenaUnity
 
         public override void UpdateObject()
         {
-            var newJson = JsonConvert.SerializeObject(json);
-            if (updatedJson != newJson)
-            {
-                var aobj = GetComponent<ArenaObject>();
-                if (aobj != null)
-                {
-                    aobj.PublishUpdate($"{newJson}");
-                    apply = true;
-                }
-            }
-            updatedJson = newJson;
+            PublishIfChanged(JsonConvert.SerializeObject(json));
         }
     }
 }

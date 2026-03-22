@@ -28,74 +28,74 @@ namespace ArenaUnity.Schemas
 
         // physx-joint-constraint member-fields
 
-        private static string[] defLockedAxes = {  };
+        private static readonly string defLockedAxesString = JsonConvert.SerializeObject(new string[] {  });
         [JsonProperty(PropertyName = "lockedAxes")]
         [Tooltip("[D6] Which axes are explicitly locked by this constraint and can't be moved at all. Should be some combination of x, y, z, twist, swing.")]
-        public string[] LockedAxes = defLockedAxes;
+        public string[] LockedAxes = {  };
         public bool ShouldSerializeLockedAxes()
         {
-            // lockedAxes
-            return (LockedAxes != defLockedAxes);
+            // LockedAxes (reference type patched)
+            return JsonConvert.SerializeObject(LockedAxes) != defLockedAxesString;
         }
 
-        private static string[] defConstrainedAxes = {  };
+        private static readonly string defConstrainedAxesString = JsonConvert.SerializeObject(new string[] {  });
         [JsonProperty(PropertyName = "constrainedAxes")]
         [Tooltip("[D6] Which axes are constrained by this constraint. These axes can be moved within the set limits. Should be some combination of x, y, z, twist, swing.")]
-        public string[] ConstrainedAxes = defConstrainedAxes;
+        public string[] ConstrainedAxes = {  };
         public bool ShouldSerializeConstrainedAxes()
         {
-            // constrainedAxes
-            return (ConstrainedAxes != defConstrainedAxes);
+            // ConstrainedAxes (reference type patched)
+            return JsonConvert.SerializeObject(ConstrainedAxes) != defConstrainedAxesString;
         }
 
-        private static string[] defFreeAxes = {  };
+        private static readonly string defFreeAxesString = JsonConvert.SerializeObject(new string[] {  });
         [JsonProperty(PropertyName = "freeAxes")]
         [Tooltip("[D6] Which axes are explicitly freed by this constraint. These axes will not obey any limits set here. Should be some combination of x, y, z, twist, swing.")]
-        public string[] FreeAxes = defFreeAxes;
+        public string[] FreeAxes = {  };
         public bool ShouldSerializeFreeAxes()
         {
-            // freeAxes
-            return (FreeAxes != defFreeAxes);
+            // FreeAxes (reference type patched)
+            return JsonConvert.SerializeObject(FreeAxes) != defFreeAxesString;
         }
 
-        private static ArenaVector2Json defLinearLimit = null;
+        private static readonly string defLinearLimitString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "linearLimit", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("[D6, Prismatic] Limit on linear movement. Only affects x, y, and z axes. First component is the minimum allowed position.")]
-        public ArenaVector2Json LinearLimit = defLinearLimit;
+        public ArenaVector2Json LinearLimit = null;
         public bool ShouldSerializeLinearLimit()
         {
-            // linearLimit
-            return (LinearLimit != defLinearLimit);
+            // LinearLimit (reference type patched)
+            return JsonConvert.SerializeObject(LinearLimit) != defLinearLimitString;
         }
 
-        private static ArenaVector2Json defAngularLimit = null;
+        private static readonly string defAngularLimitString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "angularLimit", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("[Revolute] Limit on angular movement in degrees. First component is the minimum allowed angle, second is the maximum.")]
-        public ArenaVector2Json AngularLimit = defAngularLimit;
+        public ArenaVector2Json AngularLimit = null;
         public bool ShouldSerializeAngularLimit()
         {
-            // angularLimit
-            return (AngularLimit != defAngularLimit);
+            // AngularLimit (reference type patched)
+            return JsonConvert.SerializeObject(AngularLimit) != defAngularLimitString;
         }
 
-        private static ArenaVector2Json defLimitCone = null;
+        private static readonly string defLimitConeString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "limitCone", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("[D6] Two angles in degrees specifying a cone in which the joint is allowed to swing, like a pendulum.")]
-        public ArenaVector2Json LimitCone = defLimitCone;
+        public ArenaVector2Json LimitCone = null;
         public bool ShouldSerializeLimitCone()
         {
-            // limitCone
-            return (LimitCone != defLimitCone);
+            // LimitCone (reference type patched)
+            return JsonConvert.SerializeObject(LimitCone) != defLimitConeString;
         }
 
-        private static ArenaVector2Json defTwistLimit = null;
+        private static readonly string defTwistLimitString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "twistLimit", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("[D6] Minimum and maximum angles in degrees that the joint is allowed to twist.")]
-        public ArenaVector2Json TwistLimit = defTwistLimit;
+        public ArenaVector2Json TwistLimit = null;
         public bool ShouldSerializeTwistLimit()
         {
-            // twistLimit
-            return (TwistLimit != defTwistLimit);
+            // TwistLimit (reference type patched)
+            return JsonConvert.SerializeObject(TwistLimit) != defTwistLimitString;
         }
 
         private static float defDamping = 0f;

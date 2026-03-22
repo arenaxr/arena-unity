@@ -629,10 +629,11 @@ namespace ArenaUnity
                 aobj.jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
             }
         }
+        private static readonly JsonSerializerSettings JsonIgnoreNulls = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
 
         private void UpdateSceneOptionsMessage(object indata, ArenaObject aobj, GameObject gobj, JObject jData)
         {
-            ArenaDataSceneOptionsJson data = JsonConvert.DeserializeObject<ArenaDataSceneOptionsJson>(indata.ToString());
+            ArenaDataSceneOptionsJson data = JsonConvert.DeserializeObject<ArenaDataSceneOptionsJson>(indata.ToString(), JsonIgnoreNulls);
 
             // handle scene options attributes
             foreach (var result in jData)
@@ -661,7 +662,7 @@ namespace ArenaUnity
 
         private void UpdateObjectMessage(ArenaMessageJson msg, object indata, ArenaObject aobj, GameObject gobj, JObject jData)
         {
-            ArenaDataObjectJson data = JsonConvert.DeserializeObject<ArenaDataObjectJson>(indata.ToString());
+            ArenaDataObjectJson data = JsonConvert.DeserializeObject<ArenaDataObjectJson>(indata.ToString(), JsonIgnoreNulls);
 
             // modify Unity attributes
             bool worldPositionStays = false; // default: most children need relative position

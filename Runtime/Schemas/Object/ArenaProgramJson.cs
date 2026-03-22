@@ -131,14 +131,14 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
-        private static string[] defArgs = null;
+        private static readonly string defArgsString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "args")]
         [Tooltip("Command-line arguments (passed in argv). Supports variables: ${scene}, ${mqtth}, ${userid}, ${username}, ${runtimeid}, ${moduleid}, ${query-string-key}.")]
-        public string[] Args = defArgs;
+        public string[] Args = null;
         public bool ShouldSerializeArgs()
         {
-            // args
-            return (Args != defArgs);
+            // Args (reference type patched)
+            return JsonConvert.SerializeObject(Args) != defArgsString;
         }
 
         private static string[] defEnv = { "MID=${moduleid}", "SCENE=${scene}", "NAMESPACE=${namespace}", "MQTTH=${mqtth}", "REALM=realm" };
@@ -150,24 +150,24 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
-        private static object[] defChannels = { JsonConvert.DeserializeObject("{'path': '/ch/${scene}', 'type': 'pubsub', 'mode': 'rw', 'params': {'topic': 'realm/s/${scene}/${namespace}'}}") };
+        private static readonly string defChannelsString = JsonConvert.SerializeObject(new object[] { JsonConvert.DeserializeObject("{'path': '/ch/${scene}', 'type': 'pubsub', 'mode': 'rw', 'params': {'topic': 'realm/s/${scene}/${namespace}'}}") });
         [JsonProperty(PropertyName = "channels")]
         [Tooltip("Channels describe files representing access to IO from pubsub and client sockets (possibly more in the future; currently only supported for WASM programs).")]
-        public object[] Channels = defChannels;
+        public object[] Channels = { JsonConvert.DeserializeObject("{'path': '/ch/${scene}', 'type': 'pubsub', 'mode': 'rw', 'params': {'topic': 'realm/s/${scene}/${namespace}'}}") };
         public bool ShouldSerializeChannels()
         {
-            // channels
-            return (Channels != defChannels);
+            // Channels (reference type patched)
+            return JsonConvert.SerializeObject(Channels) != defChannelsString;
         }
 
-        private static ArenaRunInfoJson defRunInfo = null;
+        private static readonly string defRunInfoString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "run_info")]
         [Tooltip("run_info")]
-        public ArenaRunInfoJson RunInfo = defRunInfo;
+        public ArenaRunInfoJson RunInfo = null;
         public bool ShouldSerializeRunInfo()
         {
-            // run_info
-            return (RunInfo != defRunInfo);
+            // RunInfo (reference type patched)
+            return JsonConvert.SerializeObject(RunInfo) != defRunInfoString;
         }
 
         // General json object management

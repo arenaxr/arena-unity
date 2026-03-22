@@ -27,24 +27,24 @@ namespace ArenaUnity.Schemas
 
         // entity member-fields
 
-        private static object defGeometry = JsonConvert.DeserializeObject("");
+        private static readonly string defGeometryString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(""));
         [JsonProperty(PropertyName = "geometry")]
         [Tooltip("The primitive mesh geometry.")]
-        public object Geometry = defGeometry;
+        public object Geometry = JsonConvert.DeserializeObject("");
         public bool ShouldSerializeGeometry()
         {
-            // geometry
-            return (Geometry != defGeometry);
+            // Geometry (reference type patched)
+            return JsonConvert.SerializeObject(Geometry) != defGeometryString;
         }
 
-        private static object defPanel = JsonConvert.DeserializeObject("");
+        private static readonly string defPanelString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(""));
         [JsonProperty(PropertyName = "panel")]
         [Tooltip("The rounded UI panel primitive.")]
-        public object Panel = defPanel;
+        public object Panel = JsonConvert.DeserializeObject("");
         public bool ShouldSerializePanel()
         {
-            // panel
-            return (Panel != defPanel);
+            // Panel (reference type patched)
+            return JsonConvert.SerializeObject(Panel) != defPanelString;
         }
 
         // General json object management

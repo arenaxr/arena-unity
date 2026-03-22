@@ -29,15 +29,15 @@ namespace ArenaUnity.Schemas
 
         // spe-particles member-fields
 
-        private static ArenaVector3Json defAcceleration = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
+        private static readonly string defAccelerationString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}"));
         [JsonProperty(PropertyName = "acceleration", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("For sphere and disc distributions, only the x axis is used.")]
-        public ArenaVector3Json Acceleration = defAcceleration;
+        public ArenaVector3Json Acceleration = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         public bool ShouldSerializeAcceleration()
         {
-            // acceleration
-            return (Acceleration != defAcceleration);
+            // Acceleration (reference type patched)
+            return JsonConvert.SerializeObject(Acceleration) != defAccelerationString;
         }
 
         public enum AccelerationDistributionType
@@ -62,15 +62,15 @@ namespace ArenaUnity.Schemas
             return (AccelerationDistribution != defAccelerationDistribution);
         }
 
-        private static ArenaVector3Json defAccelerationSpread = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
+        private static readonly string defAccelerationSpreadString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}"));
         [JsonProperty(PropertyName = "accelerationSpread", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Spread of the particle's acceleration. for sphere and disc distributions, only the x axis is used.")]
-        public ArenaVector3Json AccelerationSpread = defAccelerationSpread;
+        public ArenaVector3Json AccelerationSpread = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         public bool ShouldSerializeAccelerationSpread()
         {
-            // accelerationSpread
-            return (AccelerationSpread != defAccelerationSpread);
+            // AccelerationSpread (reference type patched)
+            return JsonConvert.SerializeObject(AccelerationSpread) != defAccelerationSpreadString;
         }
 
         private static float defActiveMultiplier = 1f;
@@ -149,25 +149,25 @@ namespace ArenaUnity.Schemas
             return (Blending != defBlending);
         }
 
-        private static string[] defColor = { "#fff" };
+        private static readonly string defColorString = JsonConvert.SerializeObject(new string[] { "#fff" });
         [JsonProperty(PropertyName = "color")]
         [JsonConverter(typeof(ArenaColorArrayJsonConverter))]
         [Tooltip("Array of colors over the particle's lifetime, max 4 elements.")]
-        public string[] Color = defColor;
+        public string[] Color = { "#fff" };
         public bool ShouldSerializeColor()
         {
-            // color
-            return (Color != defColor);
+            // Color (reference type patched)
+            return JsonConvert.SerializeObject(Color) != defColorString;
         }
 
-        private static ArenaVector3Json[] defColorSpread = {  };
+        private static readonly string defColorSpreadString = JsonConvert.SerializeObject(new ArenaVector3Json[] {  });
         [JsonProperty(PropertyName = "colorSpread")]
         [Tooltip("Spread to apply to colors, spread an array of vec3 (r g b) with 0 for no spread. note the spread will be re-applied through-out the lifetime of the particle.")]
-        public ArenaVector3Json[] ColorSpread = defColorSpread;
+        public ArenaVector3Json[] ColorSpread = {  };
         public bool ShouldSerializeColorSpread()
         {
-            // colorSpread
-            return (ColorSpread != defColorSpread);
+            // ColorSpread (reference type patched)
+            return JsonConvert.SerializeObject(ColorSpread) != defColorSpreadString;
         }
 
         private static bool defDepthTest = true;
@@ -380,26 +380,26 @@ namespace ArenaUnity.Schemas
             return (PositionDistribution != defPositionDistribution);
         }
 
-        private static ArenaVector3Json defPositionOffset = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
+        private static readonly string defPositionOffsetString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}"));
         [JsonProperty(PropertyName = "positionOffset", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Fixed offset to the apply to the emitter relative to its parent entity.")]
-        public ArenaVector3Json PositionOffset = defPositionOffset;
+        public ArenaVector3Json PositionOffset = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         public bool ShouldSerializePositionOffset()
         {
-            // positionOffset
-            return (PositionOffset != defPositionOffset);
+            // PositionOffset (reference type patched)
+            return JsonConvert.SerializeObject(PositionOffset) != defPositionOffsetString;
         }
 
-        private static ArenaVector3Json defPositionSpread = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
+        private static readonly string defPositionSpreadString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}"));
         [JsonProperty(PropertyName = "positionSpread", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Particles are positioned within +- of these local bounds. for sphere and disc distributions only the x axis is used.")]
-        public ArenaVector3Json PositionSpread = defPositionSpread;
+        public ArenaVector3Json PositionSpread = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         public bool ShouldSerializePositionSpread()
         {
-            // positionSpread
-            return (PositionSpread != defPositionSpread);
+            // PositionSpread (reference type patched)
+            return JsonConvert.SerializeObject(PositionSpread) != defPositionSpreadString;
         }
 
         private static float defRadius = 1f;
@@ -412,15 +412,15 @@ namespace ArenaUnity.Schemas
             return (Radius != defRadius);
         }
 
-        private static ArenaVector3Json defRadiusScale = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}");
+        private static readonly string defRadiusScaleString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}"));
         [JsonProperty(PropertyName = "radiusScale", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Scales the emitter for sphere and disc shapes to form oblongs and ellipses.")]
-        public ArenaVector3Json RadiusScale = defRadiusScale;
+        public ArenaVector3Json RadiusScale = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 1, 'y': 1, 'z': 1}");
         public bool ShouldSerializeRadiusScale()
         {
-            // radiusScale
-            return (RadiusScale != defRadiusScale);
+            // RadiusScale (reference type patched)
+            return JsonConvert.SerializeObject(RadiusScale) != defRadiusScaleString;
         }
 
         private static bool defRandomizeAcceleration = false;
@@ -541,26 +541,26 @@ namespace ArenaUnity.Schemas
             return (Rotation != defRotation);
         }
 
-        private static ArenaVector3Json defRotationAxis = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
+        private static readonly string defRotationAxisString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}"));
         [JsonProperty(PropertyName = "rotationAxis", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Local axis when using rotation.")]
-        public ArenaVector3Json RotationAxis = defRotationAxis;
+        public ArenaVector3Json RotationAxis = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         public bool ShouldSerializeRotationAxis()
         {
-            // rotationAxis
-            return (RotationAxis != defRotationAxis);
+            // RotationAxis (reference type patched)
+            return JsonConvert.SerializeObject(RotationAxis) != defRotationAxisString;
         }
 
-        private static ArenaVector3Json defRotationAxisSpread = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
+        private static readonly string defRotationAxisSpreadString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}"));
         [JsonProperty(PropertyName = "rotationAxisSpread", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Variance in the axis of rotation.")]
-        public ArenaVector3Json RotationAxisSpread = defRotationAxisSpread;
+        public ArenaVector3Json RotationAxisSpread = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         public bool ShouldSerializeRotationAxisSpread()
         {
-            // rotationAxisSpread
-            return (RotationAxisSpread != defRotationAxisSpread);
+            // RotationAxisSpread (reference type patched)
+            return JsonConvert.SerializeObject(RotationAxisSpread) != defRotationAxisSpreadString;
         }
 
         private static float defRotationSpread = 0f;
@@ -633,15 +633,15 @@ namespace ArenaUnity.Schemas
             return (TextureFrameLoop != defTextureFrameLoop);
         }
 
-        private static ArenaVector2Json defTextureFrames = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
+        private static readonly string defTextureFramesString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}"));
         [JsonProperty(PropertyName = "textureFrames", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [JsonConverter(typeof(ArenaVector2JsonConverter))]
         [Tooltip("X and Y frames for a spritesheet. each particle will transition through every frame of the spritesheet over its lifetime (see textureFramesLoop).")]
-        public ArenaVector2Json TextureFrames = defTextureFrames;
+        public ArenaVector2Json TextureFrames = JsonConvert.DeserializeObject<ArenaVector2Json>("{'x': 1, 'y': 1}");
         public bool ShouldSerializeTextureFrames()
         {
-            // textureFrames
-            return (TextureFrames != defTextureFrames);
+            // TextureFrames (reference type patched)
+            return JsonConvert.SerializeObject(TextureFrames) != defTextureFramesString;
         }
 
         private static bool defUseTransparency = true;
@@ -654,15 +654,15 @@ namespace ArenaUnity.Schemas
             return (UseTransparency != defUseTransparency);
         }
 
-        private static ArenaVector3Json defVelocity = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
+        private static readonly string defVelocityString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}"));
         [JsonProperty(PropertyName = "velocity", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("For sphere and disc distributions, only the x axis is used.")]
-        public ArenaVector3Json Velocity = defVelocity;
+        public ArenaVector3Json Velocity = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         public bool ShouldSerializeVelocity()
         {
-            // velocity
-            return (Velocity != defVelocity);
+            // Velocity (reference type patched)
+            return JsonConvert.SerializeObject(Velocity) != defVelocityString;
         }
 
         public enum VelocityDistributionType
@@ -687,15 +687,15 @@ namespace ArenaUnity.Schemas
             return (VelocityDistribution != defVelocityDistribution);
         }
 
-        private static ArenaVector3Json defVelocitySpread = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
+        private static readonly string defVelocitySpreadString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}"));
         [JsonProperty(PropertyName = "velocitySpread", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [JsonConverter(typeof(ArenaVector3JsonConverter))]
         [Tooltip("Variance for the velocity.")]
-        public ArenaVector3Json VelocitySpread = defVelocitySpread;
+        public ArenaVector3Json VelocitySpread = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 0, 'z': 0}");
         public bool ShouldSerializeVelocitySpread()
         {
-            // velocitySpread
-            return (VelocitySpread != defVelocitySpread);
+            // VelocitySpread (reference type patched)
+            return JsonConvert.SerializeObject(VelocitySpread) != defVelocitySpreadString;
         }
 
         private static float defWiggle = 0f;

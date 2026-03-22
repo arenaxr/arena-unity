@@ -46,14 +46,14 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
-        private static ArenaVector3Json defOffsetPosition = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1.6, 'z': 0}");
+        private static readonly string defOffsetPositionString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1.6, 'z': 0}"));
         [JsonProperty(PropertyName = "offsetPosition", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Use as a static teleport x,y,z offset.")]
-        public ArenaVector3Json OffsetPosition = defOffsetPosition;
+        public ArenaVector3Json OffsetPosition = JsonConvert.DeserializeObject<ArenaVector3Json>("{'x': 0, 'y': 1.6, 'z': 0}");
         public bool ShouldSerializeOffsetPosition()
         {
-            // offsetPosition
-            return (OffsetPosition != defOffsetPosition);
+            // OffsetPosition (reference type patched)
+            return JsonConvert.SerializeObject(OffsetPosition) != defOffsetPositionString;
         }
 
         public enum ConstrainToNavMeshType

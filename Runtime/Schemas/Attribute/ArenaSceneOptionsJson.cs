@@ -67,14 +67,14 @@ namespace ArenaUnity.Schemas
             return (DistanceModel != defDistanceModel);
         }
 
-        private static object[] defSceneHeadModels = {  };
+        private static readonly string defSceneHeadModelsString = JsonConvert.SerializeObject(new object[] {  });
         [JsonProperty(PropertyName = "sceneHeadModels")]
         [Tooltip("Define the default head model(s) for the scene in a list. Users may still choose from the ARENA default list of head models as well.")]
-        public object[] SceneHeadModels = defSceneHeadModels;
+        public object[] SceneHeadModels = {  };
         public bool ShouldSerializeSceneHeadModels()
         {
-            // sceneHeadModels
-            return (SceneHeadModels != defSceneHeadModels);
+            // SceneHeadModels (reference type patched)
+            return JsonConvert.SerializeObject(SceneHeadModels) != defSceneHeadModelsString;
         }
 
         private static string defJitsiHost = "jitsi0.andrew.cmu.edu:8443";
@@ -204,24 +204,24 @@ namespace ArenaUnity.Schemas
             return true; // required in json schema
         }
 
-        private static object defArHitTest = null;
+        private static readonly string defArHitTestString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "ar-hit-test")]
         [Tooltip("A-Frame AR Hit Test Settings. More properties at <a href='https://aframe.io/docs/1.5.0/components/ar-hit-test.html'>AR Hit Test</a> component.")]
-        public object ArHitTest = defArHitTest;
+        public object ArHitTest = null;
         public bool ShouldSerializeArHitTest()
         {
-            // ar-hit-test
-            return (ArHitTest != defArHitTest);
+            // ArHitTest (reference type patched)
+            return JsonConvert.SerializeObject(ArHitTest) != defArHitTestString;
         }
 
-        private static object defOpenvps = null;
+        private static readonly string defOpenvpsString = JsonConvert.SerializeObject(null);
         [JsonProperty(PropertyName = "openvps")]
         [Tooltip("Set an OpenVPS server to localize by camera image on mobile devices")]
-        public object Openvps = defOpenvps;
+        public object Openvps = null;
         public bool ShouldSerializeOpenvps()
         {
-            // openvps
-            return (Openvps != defOpenvps);
+            // Openvps (reference type patched)
+            return JsonConvert.SerializeObject(Openvps) != defOpenvpsString;
         }
 
         // General json object management
