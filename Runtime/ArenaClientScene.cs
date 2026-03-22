@@ -71,6 +71,7 @@ namespace ArenaUnity
         internal List<string> pendingDelete = new List<string>();
         internal List<string> downloadQueue = new List<string>();
         internal List<string> parentalQueue = new List<string>();
+        internal Dictionary<string, Action> pendingAssetCallbacks = new Dictionary<string, Action>();
         internal List<string> localCameraIds = new List<string>();
         internal ArenaDefaultsJson arenaDefaults { get; private set; }
         public ArenaSceneOptionsJson sceneOptions { get; internal set; }
@@ -367,8 +368,7 @@ namespace ArenaUnity
                     {
                         if (!string.IsNullOrWhiteSpace(uri))
                         {
-                            cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
-                            yield return cd.coroutine;
+                            StartCoroutine(DownloadAssets(msg_type, uri));
                         }
                     }
                     CreateUpdateObject(msg, msg.data);
@@ -386,6 +386,17 @@ namespace ArenaUnity
             return uris;
         }
 
+        internal void RegisterAssetCallback(string msgUrl, Action callback)
+        {
+            Uri uri = ConstructRemoteUrl(msgUrl);
+            if (uri == null) return;
+            string absoluteUri = uri.AbsoluteUri;
+
+            if (!pendingAssetCallbacks.ContainsKey(absoluteUri))
+                pendingAssetCallbacks[absoluteUri] = null;
+                
+            pendingAssetCallbacks[absoluteUri] += callback;
+        }
 
         internal string checkLocalAsset(string msgUrl)
         {
@@ -503,6 +514,12 @@ namespace ArenaUnity
                 if (!allPathsValid) yield break;
                 // import master-file to link to the rest
                 ImportAsset(localPath);
+            }
+
+            if (pendingAssetCallbacks.TryGetValue(remoteUri.AbsoluteUri, out Action callbacks))
+            {
+                callbacks?.Invoke();
+                pendingAssetCallbacks.Remove(remoteUri.AbsoluteUri);
             }
 
             yield return localPath;
@@ -1303,7 +1320,6 @@ namespace ArenaUnity
 
         private IEnumerator ProcessArenaMessage(ArenaMessageJson msg, object menuCommand = null)
         {
-            CoroutineWithData cd;
             // consume object updates
             string object_id;
             switch ((string)msg.action)
@@ -1320,8 +1336,7 @@ namespace ArenaUnity
                     {
                         if (!string.IsNullOrWhiteSpace(uri))
                         {
-                            cd = new CoroutineWithData(this, DownloadAssets(msg_type, uri));
-                            yield return cd.coroutine;
+                            StartCoroutine(DownloadAssets(msg_type, uri));
                         }
                     }
                     CreateUpdateObject(msg, msg.data, menuCommand);

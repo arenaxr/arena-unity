@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -127,7 +127,8 @@ namespace ArenaUnity
             if (json.headModelPath != null)
             {
                 string localpath = ArenaClientScene.Instance.checkLocalAsset(json.headModelPath);
-                if (localpath != null)
+                if (localpath == null) ArenaClientScene.Instance.RegisterAssetCallback(json.headModelPath, () => { AttachAvatar(object_id, json, gobj); });
+                else
                 {
                     string headModelId = $"head-model-{object_id}";
                     Transform foundHeadModel = gobj.transform.Find(headModelId);

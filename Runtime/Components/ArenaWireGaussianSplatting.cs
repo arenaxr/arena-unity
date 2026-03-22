@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -118,7 +118,13 @@ namespace ArenaUnity
 
         private IEnumerator HandleSplatAssetConversion(string msgUrl)
         {
+            if (ArenaClientScene.Instance == null) yield break;
             string assetPath = ArenaClientScene.Instance.checkLocalAsset(msgUrl);
+            if (assetPath == null)
+            {
+                ArenaClientScene.Instance.RegisterAssetCallback(msgUrl, () => { apply = true; });
+                yield break;
+            }
 #if UNITY_EDITOR
             // wait for asset creation from import post processing...
             var mainAssetPath = $"{assetPath}.asset";

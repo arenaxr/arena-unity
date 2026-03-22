@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -26,7 +26,24 @@ namespace ArenaUnity
         protected override void ApplyRender()
         {
 #if UNITY_EDITOR
+            if (ArenaClientScene.Instance == null) return;
             var objpath = ArenaClientScene.Instance.checkLocalAsset(json.Obj);
+            if (objpath == null)
+            {
+                ArenaClientScene.Instance.RegisterAssetCallback(json.Obj, () => { apply = true; });
+                return;
+            }
+            
+            if (!string.IsNullOrEmpty(json.Mtl))
+            {
+                var mtlpath = ArenaClientScene.Instance.checkLocalAsset(json.Mtl);
+                if (mtlpath == null)
+                {
+                    ArenaClientScene.Instance.RegisterAssetCallback(json.Mtl, () => { apply = true; });
+                    return;
+                }
+            }
+
             if (objpath != null)
             {
                 GameObject objpre = (GameObject)AssetDatabase.LoadAssetAtPath(objpath, typeof(GameObject));
@@ -35,14 +52,7 @@ namespace ArenaUnity
                     GameObject sobj = Instantiate(objpre);
                     sobj.transform.SetParent(transform, false);
                     sobj.transform.localRotation = ArenaUnity.GltfToUnityRotationQuat(sobj.transform.localRotation);
-                    if (!string.IsNullOrEmpty(json.Mtl))
-                    {
-                        var mtlpath = ArenaClientScene.Instance.checkLocalAsset(json.Mtl);
-                        if (mtlpath == null)
-                        {
-                            Debug.LogError($"Unable to load '{mtlpath}'");
-                        }
-                    }
+                    // mtl is already downloaded if we reach here
                 }
                 else
                 {

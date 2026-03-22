@@ -662,6 +662,20 @@ namespace ArenaUnity.Components
                         mat.SetTexture("_BaseMap", mat.mainTexture);
                     }
                 }
+                else
+                {
+                    ArenaClientScene.Instance.RegisterAssetCallback((string)json.Texture, () => { apply = true; });
+                    // Provide fallback while loading
+                    if (mat.mainTexture == null)
+                    {
+                        var defaultTex = new Texture2D(1, 1);
+                        defaultTex.SetPixel(0, 0, Color.white);
+                        defaultTex.Apply();
+                        mat.mainTexture = defaultTex;
+                        if (mat.HasProperty("_BaseMap"))
+                            mat.SetTexture("_BaseMap", defaultTex);
+                    }
+                }
             }
             else
             {

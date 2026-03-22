@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -46,6 +46,10 @@ namespace ArenaUnity
                     {
                         aobj.gltfUrl = url;
                         AttachGltf(assetPath, gameObject, aobj);
+                    }
+                    else
+                    {
+                        ArenaClientScene.Instance.RegisterAssetCallback(url, () => { apply = true; });
                     }
                 }
             }

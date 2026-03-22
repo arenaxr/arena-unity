@@ -179,7 +179,8 @@ namespace ArenaUnity.Components
                     if (!string.IsNullOrEmpty(json.NormalMap) && ArenaClientScene.Instance != null)
                     {
                         string normalMapPath = ArenaClientScene.Instance.checkLocalAsset(json.NormalMap);
-                        AttachTextureMap(normalMapPath, material, "_BumpMap", "_NORMALMAP",
+                        if (normalMapPath == null) ArenaClientScene.Instance.RegisterAssetCallback(json.NormalMap, () => { apply = true; });
+                        else AttachTextureMap(normalMapPath, material, "_BumpMap", "_NORMALMAP",
                             json.NormalScale, "_BumpScale",
                             json.NormalTextureOffset, json.NormalTextureRepeat, linear: true);
                     }
@@ -188,18 +189,23 @@ namespace ArenaUnity.Components
                     if (!string.IsNullOrEmpty(json.AmbientOcclusionMap) && ArenaClientScene.Instance != null)
                     {
                         string aoMapPath = ArenaClientScene.Instance.checkLocalAsset(json.AmbientOcclusionMap);
-                        AttachTextureMap(aoMapPath, material, "_OcclusionMap", null,
-                            null, null,
-                            json.AmbientOcclusionTextureOffset, json.AmbientOcclusionTextureRepeat);
-                        if (material.HasProperty("_OcclusionStrength"))
-                            material.SetFloat("_OcclusionStrength", json.AmbientOcclusionMapIntensity);
+                        if (aoMapPath == null) ArenaClientScene.Instance.RegisterAssetCallback(json.AmbientOcclusionMap, () => { apply = true; });
+                        else
+                        {
+                            AttachTextureMap(aoMapPath, material, "_OcclusionMap", null,
+                                null, null,
+                                json.AmbientOcclusionTextureOffset, json.AmbientOcclusionTextureRepeat);
+                            if (material.HasProperty("_OcclusionStrength"))
+                                material.SetFloat("_OcclusionStrength", json.AmbientOcclusionMapIntensity);
+                        }
                     }
 
                     // Metalness map
                     if (!string.IsNullOrEmpty(json.MetalnessMap) && ArenaClientScene.Instance != null)
                     {
                         string metMapPath = ArenaClientScene.Instance.checkLocalAsset(json.MetalnessMap);
-                        AttachTextureMap(metMapPath, material, "_MetallicGlossMap", "_METALLICGLOSSMAP",
+                        if (metMapPath == null) ArenaClientScene.Instance.RegisterAssetCallback(json.MetalnessMap, () => { apply = true; });
+                        else AttachTextureMap(metMapPath, material, "_MetallicGlossMap", "_METALLICGLOSSMAP",
                             null, null,
                             json.MetalnessTextureOffset, json.MetalnessTextureRepeat);
                     }
@@ -208,19 +214,24 @@ namespace ArenaUnity.Components
                     if (!string.IsNullOrEmpty(json.RoughnessMap) && ArenaClientScene.Instance != null)
                     {
                         string roughMapPath = ArenaClientScene.Instance.checkLocalAsset(json.RoughnessMap);
-                        AttachTextureMap(roughMapPath, material, "_MetallicGlossMap", "_METALLICGLOSSMAP",
-                            null, null,
-                            json.RoughnessTextureOffset, json.RoughnessTextureRepeat);
-                        // Roughness maps need smoothness source set to albedo alpha
-                        if (material.HasProperty("_SmoothnessTextureChannel"))
-                            material.SetFloat("_SmoothnessTextureChannel", 1); // 1 = albedo alpha
+                        if (roughMapPath == null) ArenaClientScene.Instance.RegisterAssetCallback(json.RoughnessMap, () => { apply = true; });
+                        else
+                        {
+                            AttachTextureMap(roughMapPath, material, "_MetallicGlossMap", "_METALLICGLOSSMAP",
+                                null, null,
+                                json.RoughnessTextureOffset, json.RoughnessTextureRepeat);
+                            // Roughness maps need smoothness source set to albedo alpha
+                            if (material.HasProperty("_SmoothnessTextureChannel"))
+                                material.SetFloat("_SmoothnessTextureChannel", 1); // 1 = albedo alpha
+                        }
                     }
 
                     // Bump map (phong — uses same Unity property as normalMap)
                     if (!string.IsNullOrEmpty(json.BumpMap) && ArenaClientScene.Instance != null)
                     {
                         string bumpMapPath = ArenaClientScene.Instance.checkLocalAsset(json.BumpMap);
-                        AttachTextureMap(bumpMapPath, material, "_BumpMap", "_NORMALMAP",
+                        if (bumpMapPath == null) ArenaClientScene.Instance.RegisterAssetCallback(json.BumpMap, () => { apply = true; });
+                        else AttachTextureMap(bumpMapPath, material, "_BumpMap", "_NORMALMAP",
                             new ArenaVector2Json { X = json.BumpMapScale, Y = json.BumpMapScale }, "_BumpScale",
                             json.BumpTextureOffset, json.BumpTextureRepeat, linear: true);
                     }
@@ -229,7 +240,8 @@ namespace ArenaUnity.Components
                     if (!string.IsNullOrEmpty(json.Src) && ArenaClientScene.Instance != null)
                     {
                         string srcPath = ArenaClientScene.Instance.checkLocalAsset(json.Src);
-                        AttachMaterialTexture(srcPath, gameObject);
+                        if (srcPath == null) ArenaClientScene.Instance.RegisterAssetCallback(json.Src, () => { apply = true; });
+                        else AttachMaterialTexture(srcPath, gameObject);
                     }
 
                     if (json.Emissive != null && json.Emissive != "#000000" && material.HasProperty("_EmissionColor"))
@@ -395,7 +407,8 @@ namespace ArenaUnity.Components
                         if (isHDRP && ArenaClientScene.Instance != null)
                         {
                             string dispMapPath = ArenaClientScene.Instance.checkLocalAsset(json.DisplacementMap);
-                            if (material.HasProperty("_HeightMap"))
+                            if (dispMapPath == null) ArenaClientScene.Instance.RegisterAssetCallback(json.DisplacementMap, () => { apply = true; });
+                            else if (material.HasProperty("_HeightMap"))
                             {
                                 AttachTextureMap(dispMapPath, material, "_HeightMap", null,
                                     null, null,
@@ -417,7 +430,8 @@ namespace ArenaUnity.Components
                     if (!string.IsNullOrEmpty(json.EnvMap) && ArenaClientScene.Instance != null)
                     {
                         string envMapPath = ArenaClientScene.Instance.checkLocalAsset(json.EnvMap);
-                        if (isHDRP && material.HasProperty("_ReflectionCubemap"))
+                        if (envMapPath == null) ArenaClientScene.Instance.RegisterAssetCallback(json.EnvMap, () => { apply = true; });
+                        else if (isHDRP && material.HasProperty("_ReflectionCubemap"))
                             AttachTextureMap(envMapPath, material, "_ReflectionCubemap", null, null, null, null, null);
                         else if (material.HasProperty("_Cube"))
                             AttachTextureMap(envMapPath, material, "_Cube", null, null, null, null, null);
@@ -431,7 +445,8 @@ namespace ArenaUnity.Components
                         // Spherical env maps (equirectangular) need conversion to cubemap;
                         // for now, attempt direct texture assignment with a warning
                         string sphereEnvPath = ArenaClientScene.Instance.checkLocalAsset(json.SphericalEnvMap);
-                        if (isHDRP && material.HasProperty("_ReflectionCubemap"))
+                        if (sphereEnvPath == null) ArenaClientScene.Instance.RegisterAssetCallback(json.SphericalEnvMap, () => { apply = true; });
+                        else if (isHDRP && material.HasProperty("_ReflectionCubemap"))
                             AttachTextureMap(sphereEnvPath, material, "_ReflectionCubemap", null, null, null, null, null);
                         else if (material.HasProperty("_Cube"))
                             AttachTextureMap(sphereEnvPath, material, "_Cube", null, null, null, null, null);

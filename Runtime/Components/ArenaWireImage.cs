@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -29,6 +29,11 @@ namespace ArenaUnity
             if (url != null && ArenaClientScene.Instance != null)
             {
                 assetPath = ArenaClientScene.Instance.checkLocalAsset(url);
+                if (assetPath == null)
+                {
+                    ArenaClientScene.Instance.RegisterAssetCallback(url, () => { apply = true; });
+                    return;
+                }
             }
             AttachImage(assetPath, gameObject, json);
         }
