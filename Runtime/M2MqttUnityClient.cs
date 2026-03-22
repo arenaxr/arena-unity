@@ -1,4 +1,4 @@
-﻿/*
+/*
 The MIT License (MIT)
 
 Copyright (c) 2018 Giovanni Paolo Vigano'
@@ -79,6 +79,7 @@ namespace M2MqttUnity
         private List<MqttMsgPublishEventArgs> messageQueue2 = new List<MqttMsgPublishEventArgs>();
         private List<MqttMsgPublishEventArgs> frontMessageQueue = null;
         private List<MqttMsgPublishEventArgs> backMessageQueue = null;
+        private readonly object messageQueueLock = new object();
         private bool mqttClientConnectionClosed = false;
         public bool mqttClientConnected { get; private set; } = false;
 
@@ -261,13 +262,19 @@ namespace M2MqttUnity
         /// </summary>
         private void SwapMqttMessageQueues()
         {
-            frontMessageQueue = frontMessageQueue == messageQueue1 ? messageQueue2 : messageQueue1;
-            backMessageQueue = backMessageQueue == messageQueue1 ? messageQueue2 : messageQueue1;
+            lock (messageQueueLock)
+            {
+                frontMessageQueue = frontMessageQueue == messageQueue1 ? messageQueue2 : messageQueue1;
+                backMessageQueue = backMessageQueue == messageQueue1 ? messageQueue2 : messageQueue1;
+            }
         }
 
         private void OnMqttMessageReceived(object sender, MqttMsgPublishEventArgs msg)
         {
-            frontMessageQueue.Add(msg);
+            lock (messageQueueLock)
+            {
+                frontMessageQueue.Add(msg);
+            }
         }
 
         private void OnMqttConnectionClosed(object sender, EventArgs e)
@@ -371,7 +378,6 @@ namespace M2MqttUnity
             catch (Exception ex)
             {
                 Debug.LogWarning($"Excepting server certificate without verification for MQTT! Read cert host: {ex.Message}");
-                Console.WriteLine();
             }
             return true;
         }
