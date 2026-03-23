@@ -65,7 +65,6 @@ namespace ArenaUnity
         internal bool externalDelete = false;
         public bool isJsonValidated { get; private set; } = false;
         internal string gltfUrl = null;
-        internal List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
 
         void Start()
         {

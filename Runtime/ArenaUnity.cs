@@ -25,6 +25,12 @@ namespace ArenaUnity
         public const float LineSinglePixelInMeters = 0.005f;
         public static float ArenaFloat(float n) { return (float)Math.Round(n, 3); }
 
+        /// <summary>Returns true if the object_type represents a GLTF-loaded model.</summary>
+        public static bool IsGltfType(string objectType)
+        {
+            return objectType == "gltf-model" || objectType == "handLeft" || objectType == "handRight";
+        }
+
         public static readonly string[] primitives = {
             "box",
             "capsule",

@@ -83,7 +83,7 @@ namespace ArenaUnity
         static string importPath = null;
         const string prefixHandL = "handLeft_";
         const string prefixHandR = "handRight_";
-        static readonly List<string> gltfTypeList = new List<string> { "gltf-model", "handLeft", "handRight" };
+
         static readonly string[] msgUriTags = { "url", "src", "obj", "mtl", "overrideSrc", "detailedUrl", "headModelPath", "texture", "navMesh", "normalMap", "ambientOcclusionMap", "displacementMap", "metalnessMap", "roughnessMap", "bumpMap", "sphericalEnvMap" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] skipMimeClasses = { "audio" };
