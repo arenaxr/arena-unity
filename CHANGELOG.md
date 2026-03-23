@@ -2,6 +2,39 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.6.0](https://github.com/arenaxr/arena-unity/compare/v1.5.0...v1.6.0) (2026-03-23)
+
+
+### Features
+
+* **animation:** support autoplay, deplay, dir, dur, easing, elasticity, from, to, loop, property, round, type ([8cdfac2](https://github.com/arenaxr/arena-unity/commit/8cdfac20236596a7b534862a2c15b4e3fe6cef0d))
+* **material:** support all maps intensity/offset/repeat ([a6a17bc](https://github.com/arenaxr/arena-unity/commit/a6a17bc177e9e24494833cd97be70a67d2df4f1e))
+* **material:** support depthTest, normalMap, side ([8b12aff](https://github.com/arenaxr/arena-unity/commit/8b12aff23ab59b7e351b90a968e9824d34d9dc25))
+* **material:** support flatShading, fog, and vertexColorsEnabled ([42c15ff](https://github.com/arenaxr/arena-unity/commit/42c15ffa4bc74c2074dd5e13445f5f4e7c48b25d))
+* **material:** support loading and autoplay video file ([037f1d6](https://github.com/arenaxr/arena-unity/commit/037f1d68b6c282eecf0a4caa894d1dea84a3c079))
+* **material:** support phong shader ([6e3da56](https://github.com/arenaxr/arena-unity/commit/6e3da5698cdda4fdfbc58bc0b5f0f8a497d4137b))
+* **material:** support urp/hdrp anisotropy, displacement, dithering, envMap, toneMapped ([a9c3da2](https://github.com/arenaxr/arena-unity/commit/a9c3da2f805a2c02e1a80ab61b62ded1bda3b40e))
+* **material:** support wireframe, blending, depthWrite ([c45ebf8](https://github.com/arenaxr/arena-unity/commit/c45ebf81dd02795c1a436e52871003c7ad045143))
+* **mqtt:** add auto-reconnection with exponential backoff ([2b6f8f3](https://github.com/arenaxr/arena-unity/commit/2b6f8f312d936276e6ce7b313a94199200fcc929))
+* **physics:** support physx components, ground plane, scene options flag ([e3546c3](https://github.com/arenaxr/arena-unity/commit/e3546c35e0f694b0157ceb586793e4627ff09521))
+
+
+### Bug Fixes
+
+* **animation:** fixed nested json to/from parsing error ([50082df](https://github.com/arenaxr/arena-unity/commit/50082dfa79f803d163f64419e1ce34b8fc253f07))
+* **auth:** fix refresh token grant_type and cookie overwrite ([b865dd5](https://github.com/arenaxr/arena-unity/commit/b865dd5f671181248b943a3b51b8546325752567))
+* dispose UnityWebRequest and remove dead code ([e61b4cf](https://github.com/arenaxr/arena-unity/commit/e61b4cffdc1fea7954e2e36898991c6689581e67))
+* **json:** convert msg attributes to data property for consistency ([ce23d1d](https://github.com/arenaxr/arena-unity/commit/ce23d1dac5e172bf1dbf59c6a012a8e8c129ba94))
+* **json:** handle reset to defaults with json null injection ([aa5f4ad](https://github.com/arenaxr/arena-unity/commit/aa5f4add7078fcef286596e75531bc36f07cb3fb))
+* **mqtt:** add thread-safe message queue and remove stray Console.WriteLine ([10dfbf4](https://github.com/arenaxr/arena-unity/commit/10dfbf4b96f54e3f0cc8a5e4455f0bf300e240d2))
+* **object:** finalized child publish issues during transform updates ([baacdda](https://github.com/arenaxr/arena-unity/commit/baacdda5a398c48ce288be8c4ef9b445b754492e))
+* **particles:** corrected recalcuation of perspective for HasPerspective property ([7ff3da3](https://github.com/arenaxr/arena-unity/commit/7ff3da3e9bab0b745fdffb9bea7a523455eb6bdf))
+* **physics:** support unity 6 physicsapi changes ([ca2f088](https://github.com/arenaxr/arena-unity/commit/ca2f088152a17b44c8ba0fe7aa60567468b4b361))
+* reorganize/rename json schemas for usage ([7ddae62](https://github.com/arenaxr/arena-unity/commit/7ddae622a77f3dfa8366a797f44077f78d744081))
+* **scene:** handle duplicate object messages awaiting parent assignment ([5b244f9](https://github.com/arenaxr/arena-unity/commit/5b244f962b05754fdb2ba5eb8f339749cec2b004))
+* **scene:** singleton cleanup, perf, and code quality improvements ([d38a862](https://github.com/arenaxr/arena-unity/commit/d38a862f7047c6bcc737e3bd57baf23942a7cfa4))
+* **web:** async download all models, non-blocking, closes [#26](https://github.com/arenaxr/arena-unity/issues/26) ([3fcb7c8](https://github.com/arenaxr/arena-unity/commit/3fcb7c889784bc04dbdbb26c833d21844246f5d8))
+
 ## [1.5.0](https://github.com/arenaxr/arena-unity/compare/v1.4.4...v1.5.0) (2026-02-25)
 
 
