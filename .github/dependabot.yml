@@ -5,11 +5,6 @@
 
 version: 2
 
-registries:
-  unity-packages:
-    type: npm-registry
-    url: https://packages.unity.com
-
 updates:
   - package-ecosystem: "nuget" # See documentation for possible values
     directory: "/Runtime/Packages" # Location of package manifests
@@ -20,5 +15,3 @@ updates:
     directory: "/" # Location of your Unity package.json
     schedule:
       interval: "monthly"
-    registries:
-      - unity-packages
