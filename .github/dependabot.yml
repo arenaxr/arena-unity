@@ -4,8 +4,21 @@
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
+
+registries:
+  unity-packages:
+    type: npm-registry
+    url: https://packages.unity.com
+
 updates:
   - package-ecosystem: "nuget" # See documentation for possible values
     directory: "/Runtime/Packages" # Location of package manifests
     schedule:
       interval: "monthly"
+
+  - package-ecosystem: "npm"
+    directory: "/" # Location of your Unity package.json
+    schedule:
+      interval: "monthly"
+    registries:
+      - unity-packages
