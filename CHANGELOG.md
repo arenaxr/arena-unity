@@ -2,6 +2,13 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.6.1](https://github.com/arenaxr/arena-unity/compare/v1.6.0...v1.6.1) (2026-05-02)
+
+
+### Bug Fixes
+
+* use .npmrc for public unity registry in dependabot ([0ce43db](https://github.com/arenaxr/arena-unity/commit/0ce43dba81899b28afbb06a312c129b0ea6ac5bb))
+
 ## [1.6.0](https://github.com/arenaxr/arena-unity/compare/v1.5.0...v1.6.0) (2026-03-23)
 
 
