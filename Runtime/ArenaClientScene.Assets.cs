@@ -8,7 +8,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MimeMapping;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -87,9 +86,6 @@ namespace ArenaUnity
             downloadQueue.Add(remoteUri.AbsoluteUri);
             // check asset type
             if (!Path.HasExtension(remoteUri.AbsoluteUri)) yield break;
-            string mimeType = MimeUtility.GetMimeMapping(remoteUri.GetLeftPart(UriPartial.Path));
-            if (mimeType == null) yield break;
-            if (skipMimeClasses.ToList().Contains(mimeType.Split('/')[0])) yield break;
             // load remote assets
             string localPath = ConstructLocalPath(remoteUri);
             if (localPath == null) yield break;
