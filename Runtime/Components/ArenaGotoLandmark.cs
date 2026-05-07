@@ -14,14 +14,43 @@ namespace ArenaUnity.Components
     public class ArenaGotoLandmark : ArenaComponent
     {
         // ARENA goto-landmark component unity conversion status:
-        // TODO: on
-        // TODO: landmark
+        // DONE: on
+        // DONE: landmark
 
         public ArenaGotoLandmarkJson json = new ArenaGotoLandmarkJson();
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            Collider c = gameObject.GetComponent<Collider>();
+            if (c == null)
+            {
+                c = gameObject.AddComponent<BoxCollider>();
+            }
+        }
+
+        internal void OnMouseDown() { TriggerEvent(ArenaGotoLandmarkJson.OnType.Mousedown); }
+        internal void OnMouseUp() { TriggerEvent(ArenaGotoLandmarkJson.OnType.Mouseup); }
+
+        private void TriggerEvent(ArenaGotoLandmarkJson.OnType eventType)
+        {
+            if (json.On == eventType && !string.IsNullOrEmpty(json.Landmark))
+            {
+                GameObject landmarkObj = GameObject.Find(json.Landmark);
+                if (landmarkObj != null && Camera.main != null)
+                {
+                    Transform rig = Camera.main.transform.parent;
+                    if (rig != null)
+                    {
+                        rig.position = landmarkObj.transform.position;
+                        rig.rotation = landmarkObj.transform.rotation;
+                    }
+                    else
+                    {
+                        Camera.main.transform.position = landmarkObj.transform.position;
+                        Camera.main.transform.rotation = landmarkObj.transform.rotation;
+                    }
+                }
+            }
         }
 
         public override void UpdateObject()
