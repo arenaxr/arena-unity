@@ -5,6 +5,10 @@ namespace ArenaUnity.Components
 {
     public static class ArenaSceneEnvPresetsDefaults
     {
+        // Source attribution:
+        // These preset default values are directly derived from the 'aframe-environment-component'
+        // created by Supermedium (https://github.com/supermedium/aframe-environment-component).
+        // They are used to ensure 1:1 parity with the A-Frame web client's default environment values.
         public static readonly Dictionary<string, string> Presets = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
             { "none", "{}" },
             { "default", "{\"active\": true, \"seed\": 1, \"skyType\": \"atmosphere\", \"skyColor\": \"#88c\", \"horizonColor\": \"#ddd\", \"lighting\": \"distant\", \"lightPosition\": {\"x\": -0.11, \"y\": 1, \"z\": 0.33}, \"fog\": 0.78, \"flatShading\": false, \"playArea\": 1, \"ground\": \"hills\", \"groundYScale\": 3, \"groundTexture\": \"checkerboard\", \"groundColor\": \"#454545\", \"groundColor2\": \"#5d5d5d\", \"dressing\": \"none\", \"dressingAmount\": 10, \"dressingColor\": \"#795449\", \"dressingScale\": 1, \"dressingVariance\": {\"x\": 0, \"y\": 0, \"z\": 0}, \"dressingUniformScale\": true, \"dressingOnPlayArea\": 0, \"grid\": \"none\", \"gridColor\": \"#ccc\", \"shadow\": false}" },
