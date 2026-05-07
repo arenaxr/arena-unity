@@ -14,14 +14,23 @@ namespace ArenaUnity.Components
     public class ArenaShadow : ArenaComponent
     {
         // ARENA shadow component unity conversion status:
-        // TODO: cast
-        // TODO: receive
+        // DONE: cast
+        // DONE: receive
 
         public ArenaShadowJson json = new ArenaShadowJson();
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            foreach (MeshRenderer mr in GetComponentsInChildren<MeshRenderer>(true))
+            {
+                mr.shadowCastingMode = json.Cast ? UnityEngine.Rendering.ShadowCastingMode.On : UnityEngine.Rendering.ShadowCastingMode.Off;
+                mr.receiveShadows = json.Receive;
+            }
+            foreach (SkinnedMeshRenderer smr in GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                smr.shadowCastingMode = json.Cast ? UnityEngine.Rendering.ShadowCastingMode.On : UnityEngine.Rendering.ShadowCastingMode.Off;
+                smr.receiveShadows = json.Receive;
+            }
         }
 
         public override void UpdateObject()
