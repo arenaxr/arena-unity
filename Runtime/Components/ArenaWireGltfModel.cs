@@ -33,6 +33,7 @@ namespace ArenaUnity
 
         public ArenaGltfModelJson json = new ArenaGltfModelJson();
         public List<string> animations { get; internal set; } = null;
+        public bool isLoaded { get; internal set; } = false;
 
         /// <summary>Event fired when the GLTF model is fully loaded and instantiated.</summary>
         public UnityEngine.Events.UnityEvent OnGltfLoaded = new UnityEngine.Events.UnityEvent();
@@ -100,6 +101,7 @@ namespace ArenaUnity
                     
                     if (gltfModel != null)
                     {
+                        gltfModel.isLoaded = true;
                         gltfModel.OnGltfLoaded?.Invoke();
                     }
                 }

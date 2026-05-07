@@ -191,8 +191,8 @@ graph TD
 | `collision-listener` | - | - | Listen for collisions, callback on event |
 | `geometry` | ✅ 0.10.0 | - | Primitive mesh geometry support |
 | `gesture-detector` | - | - | Detect multi-finger touch gestures |
-| `gltf-model-lod` | - | - | GLTF LOD switching based on distance |
-| `gltf-morph` | - | - | GLTF 3D morphable model controls |
+| `gltf-model-lod` | ✅ 1.6.0 | - | GLTF LOD switching based on distance |
+| `gltf-morph` | ✅ 1.6.0 | - | GLTF 3D morphable model controls |
 | `goto-landmark` | ✅ 1.6.0 | - | Teleports user to landmark |
 | `goto-url` | ✅ 1.6.0 | - | Navigate to given URL |
 | `hide-on-enter-ar` | - | - | Hide object when entering AR |
@@ -201,7 +201,7 @@ graph TD
 | `landmark` | ❌ | - | Define entities as landmarks for navigation |
 | `look-at` | - | - | Dynamically rotate to face another entity or position |
 | `material` | ✅ 0.0.10 | ✅ | Material properties of the object's surface |
-| `material-extras` | - | - | Extra material properties: encoding, render order |
+| `material-extras` | ✅ 1.6.0 | - | Extra material properties: encoding, render order |
 | `model-container` | - | - | Override absolute size for a 3D model |
 | `modelUpdate` | - | - | Manually manipulate GLTF child components |
 | `multisrc` | - | - | Define multiple visual sources for an object |

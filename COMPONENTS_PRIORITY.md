@@ -7,7 +7,7 @@ These components map almost 1:1 to built-in Unity components and require very li
 
 * **`ArenaSound` (DONE)**: Maps directly to Unity's `AudioSource`. Properties like `volume`, `loop`, `autoplay`, and `positional` (`spatialBlend`) are trivial to assign. The only minor work is loading an AudioClip from a URL.
 * **`ArenaShadow` (DONE)**: Maps natively to Unity's `MeshRenderer.shadowCastingMode` and `receiveShadows`. This is extremely easy to toggle.
-* **`ArenaGltfModelLod`**: Unity has a native `LODGroup` component built exactly for this purpose. You just need to instantiate the models and assign them to the LOD threshold array.
+* **`ArenaGltfModelLod` (DONE)**: Unity has a native `LODGroup` component built exactly for this purpose. You just need to instantiate the models and assign them to the LOD threshold array.
 * **`ArenaGotoUrl` & `ArenaGotoLandmark` (DONE)**: `GotoUrl` is a one-liner: `Application.OpenURL(url)`. `GotoLandmark` is a simple `Transform.SetPositionAndRotation` for the main camera rig.
 * **Physics (`ArenaStaticBody`, `ArenaDynamicBody`, `ArenaImpulse`) (DONE)**:
   * *Note: `static-body`, `dynamic-body`, and `impulse` have been deprecated in favor of `physx-*` style properties (e.g., `physx-body`, `physx-material`, `physx-joint`).*
@@ -16,12 +16,12 @@ These components map almost 1:1 to built-in Unity components and require very li
   * `DynamicBody` / `physx-body (dynamic)` = `Rigidbody` (handling mass, drag, etc.).
   * `Impulse` = `Rigidbody.AddForce(..., ForceMode.Impulse)`.
 * **`ArenaBoxCollisionListener` (DONE)**: Very simple to hook up using Unity's `MonoBehaviour.OnCollisionEnter`.
-* **`ArenaGltfMorph`**: Maps natively to `SkinnedMeshRenderer.SetBlendShapeWeight`.
+* **`ArenaGltfMorph` (DONE)**: Maps natively to `SkinnedMeshRenderer.SetBlendShapeWeight`.
 
 ## Priority 2: Material & Scene Rendering (Medium)
 These use native Unity features but require more specific property mapping or Unity package configurations.
 
-* **`ArenaMaterialExtras`**: Adding normal maps, metallic/roughness tweaks, and texture offsets. These map perfectly to properties on Unity's Standard or URP shaders (e.g., `_Metallic`, `_BumpMap`).
+* **`ArenaMaterialExtras` (DONE)**: Adding normal maps, metallic/roughness tweaks, and texture offsets. These map perfectly to properties on Unity's Standard or URP shaders (e.g., `_Metallic`, `_BumpMap`).
 * **`ArenaSceneRendererSettings` / `ArenaScenePostProcessing`**: Unity has a robust Post-Processing logic (or URP Volume Profiles) that handles Bloom, SSAO, etc. It requires instantiating a Volume Profile at runtime and toggling its overrides.
 * **`ArenaSceneEnvPresets`**: Can be mapped to assigning predefined Unity Skybox materials and tweaking the `RenderSettings.ambientLight` or Directional Light angles.
 

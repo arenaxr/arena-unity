@@ -380,6 +380,30 @@ namespace ArenaUnity
             c.apply = true;
         }
 
+        public static void ApplyGltfMorph(GameObject gobj, ArenaDataObjectJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaGltfMorph>(out var c))
+                c = gobj.AddComponent<ArenaGltfMorph>();
+            c.json = JsonConvert.DeserializeObject<ArenaGltfMorphJson>(MergeRawJson(c.json, data.GltfMorph));
+            c.apply = true;
+        }
+
+        public static void ApplyGltfModelLod(GameObject gobj, ArenaDataObjectJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaGltfModelLod>(out var c))
+                c = gobj.AddComponent<ArenaGltfModelLod>();
+            c.json = JsonConvert.DeserializeObject<ArenaGltfModelLodJson>(MergeRawJson(c.json, data.GltfModelLod));
+            c.apply = true;
+        }
+
+        public static void ApplyMaterialExtras(GameObject gobj, ArenaDataObjectJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaMaterialExtras>(out var c))
+                c = gobj.AddComponent<ArenaMaterialExtras>();
+            c.json = JsonConvert.DeserializeObject<ArenaMaterialExtrasJson>(MergeRawJson(c.json, data.MaterialExtras));
+            c.apply = true;
+        }
+
         // wire objects
 
         public static void ApplyGeometry(string primitive, object data, GameObject gobj)
