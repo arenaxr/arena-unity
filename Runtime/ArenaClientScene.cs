@@ -267,6 +267,16 @@ namespace ArenaUnity
                 localCameraIds.Add(cam.camid);
             }
 
+            // apply default environment
+            ArenaMessageJson defaultEnvMsg = new ArenaMessageJson
+            {
+                object_id = "scene-options",
+                action = "create",
+                type = "scene-options",
+                data = JObject.Parse("{\"env-presets\": {\"preset\": \"default\", \"active\": true}}")
+            };
+            CreateUpdateObject(defaultEnvMsg, defaultEnvMsg.data);
+
             // get persistence objects
             if (loadPersistedObjects)
             {

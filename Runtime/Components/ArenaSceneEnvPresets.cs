@@ -14,7 +14,7 @@ namespace ArenaUnity.Components
     public class ArenaSceneEnvPresets : ArenaComponent
     {
         // ARENA env-presets component unity conversion status:
-        // TODO: active
+        // DONE: active
         // TODO: dressing
         // TODO: dressingAmount
         // TODO: dressingColor
@@ -23,32 +23,217 @@ namespace ArenaUnity.Components
         // TODO: dressingUniformScale
         // TODO: dressingVariance
         // TODO: flatShading
-        // TODO: fog
+        // DONE: fog
         // TODO: grid
         // TODO: gridColor
         // TODO: ground
-        // TODO: groundColor
+        // DONE: groundColor
         // TODO: groundColor2
-        // TODO: groundScale
+        // DONE: groundScale
         // TODO: groundTexture
         // TODO: groundYScale
         // TODO: hideInAR
-        // TODO: horizonColor
-        // TODO: lighting
-        // TODO: lightPosition
+        // DONE: horizonColor
+        // DONE: lighting
+        // DONE: lightPosition
         // TODO: playArea
         // TODO: preset
         // TODO: seed
-        // TODO: shadow
-        // TODO: shadowSize
-        // TODO: skyColor
-        // TODO: skyType
-
+        // DONE: shadow
+        // DONE: shadowSize
+        // DONE: skyColor
+        // DONE: skyType
         public ArenaEnvPresetsJson json = new ArenaEnvPresetsJson();
+
+        private GameObject envRoot;
+        private GameObject groundPlane;
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            if (!json.Active)
+                return;
+
+            if (envRoot == null)
+            {
+                Transform existingEnv = transform.Find("env");
+                if (existingEnv != null)
+                {
+                    envRoot = existingEnv.gameObject;
+                }
+                else
+                {
+                    envRoot = new GameObject("env");
+                    envRoot.transform.SetParent(this.transform);
+                    envRoot.transform.localPosition = Vector3.zero;
+                    envRoot.transform.localRotation = Quaternion.identity;
+                    envRoot.transform.localScale = Vector3.one;
+                }
+            }
+
+            if (Camera.main != null)
+            {
+                // Sky
+                if (json.SkyType == ArenaEnvPresetsJson.SkyTypeType.Color || json.SkyType == ArenaEnvPresetsJson.SkyTypeType.Gradient)
+                {
+                    RenderSettings.skybox = null;
+                    Camera.main.clearFlags = CameraClearFlags.SolidColor;
+                    if (ColorUtility.TryParseHtmlString(json.SkyColor, out Color sColor))
+                        Camera.main.backgroundColor = sColor;
+                }
+                else if (json.SkyType == ArenaEnvPresetsJson.SkyTypeType.Atmosphere)
+                {
+                    Camera.main.clearFlags = CameraClearFlags.Skybox;
+                    // Attempt to load default skybox material if null
+                    if (RenderSettings.skybox == null)
+                    {
+                        Material defaultSky = Resources.GetBuiltinResource<Material>("Default-Skybox.mat");
+                        if (defaultSky != null) RenderSettings.skybox = defaultSky;
+                    }
+                }
+                else if (json.SkyType == ArenaEnvPresetsJson.SkyTypeType.None)
+                {
+                    RenderSettings.skybox = null;
+                    Camera.main.clearFlags = CameraClearFlags.SolidColor;
+                    Camera.main.backgroundColor = Color.black;
+                }
+            }
+
+            // Lighting
+            Light mainLight = null;
+            if (RenderSettings.sun != null)
+            {
+                mainLight = RenderSettings.sun;
+            }
+            else
+            {
+                // Find existing directional light or create one
+                var lights = FindObjectsOfType<Light>();
+                foreach (var l in lights)
+                    if (l.type == LightType.Directional && l.transform.parent == envRoot.transform) { mainLight = l; break; }
+
+                if (mainLight == null)
+                {
+                    var lightObj = new GameObject("Environment Directional Light");
+                    lightObj.transform.SetParent(envRoot.transform);
+                    mainLight = lightObj.AddComponent<Light>();
+                    mainLight.type = LightType.Directional;
+                    RenderSettings.sun = mainLight;
+                }
+            }
+
+            if (json.Lighting == ArenaEnvPresetsJson.LightingType.None)
+            {
+                if (mainLight != null) mainLight.enabled = false;
+            }
+            else if (mainLight != null)
+            {
+                mainLight.enabled = true;
+                if (json.Lighting == ArenaEnvPresetsJson.LightingType.Point)
+                    mainLight.type = LightType.Point;
+                else
+                    mainLight.type = LightType.Directional;
+
+                mainLight.transform.position = ArenaUnity.ToUnityPosition(json.LightPosition);
+                if (mainLight.type == LightType.Directional)
+                {
+                    mainLight.transform.LookAt(Vector3.zero); // Aim directional light at origin
+                    RenderSettings.sun = mainLight; // Link to skybox sun
+                }
+
+                mainLight.shadows = json.Shadow ? LightShadows.Soft : LightShadows.None;
+
+                // Replicate A-Frame hemilight + sunlight intensity
+                Vector3 sunPos = mainLight.transform.position.normalized;
+                float intensity = 1.884f;
+                Color hemiSkyCol = Color.white;
+
+                if (json.SkyType != ArenaEnvPresetsJson.SkyTypeType.Atmosphere)
+                {
+                    if (ColorUtility.TryParseHtmlString(json.SkyColor, out Color skyC))
+                    {
+                        hemiSkyCol = new Color(
+                            (skyC.r + 1.0f) / 2.0f,
+                            (skyC.g + 1.0f) / 2.0f,
+                            (skyC.b + 1.0f) / 2.0f
+                        );
+                    }
+                }
+                else
+                {
+                    ColorUtility.TryParseHtmlString("#CEE4F0", out hemiSkyCol);
+                    // Dim light for night/sunset based on height
+                    intensity = 0.314f + (sunPos.y * 1.57f);
+                    intensity = Mathf.Max(0.01f, intensity); // clamp to prevent negative
+                }
+
+                mainLight.intensity = intensity;
+
+                // Map A-Frame hemilight to Unity ambient trilight
+                RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+                RenderSettings.ambientIntensity = intensity;
+                RenderSettings.ambientSkyColor = hemiSkyCol;
+
+                if (ColorUtility.TryParseHtmlString(json.GroundColor, out Color gColor))
+                    RenderSettings.ambientGroundColor = gColor;
+
+                if (ColorUtility.TryParseHtmlString(json.HorizonColor, out Color hColor))
+                    RenderSettings.ambientEquatorColor = hColor;
+            }
+
+            // Fog
+            if (json.Fog > 0f)
+            {
+                RenderSettings.fog = true;
+                RenderSettings.fogMode = FogMode.Linear;
+                RenderSettings.fogStartDistance = 1f;
+                // A-Frame environment-component uses STAGE_SIZE = 200, far = (1.01 - fog) * STAGE_SIZE * 2
+                RenderSettings.fogEndDistance = (1.01f - json.Fog) * 400f;
+
+                if (ColorUtility.TryParseHtmlString(json.HorizonColor, out Color fColor))
+                    RenderSettings.fogColor = fColor;
+            }
+            else
+            {
+                RenderSettings.fog = false;
+            }
+
+            // Basic Ground Plane
+            if (json.Ground != ArenaEnvPresetsJson.GroundType.None)
+            {
+                if (groundPlane == null)
+                {
+                    groundPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+                    groundPlane.name = "Environment Ground Plane";
+                    groundPlane.transform.SetParent(envRoot.transform);
+                }
+                groundPlane.SetActive(true);
+
+                float scaleX = json.GroundScale.X == 1f ? 200f : (float)json.GroundScale.X;
+                float scaleZ = json.GroundScale.Z == 1f ? 200f : (float)json.GroundScale.Z;
+                groundPlane.transform.localScale = new Vector3(scaleX / 10f, 1f, scaleZ / 10f); // Unity plane is 10x10 by default
+                groundPlane.transform.localPosition = new Vector3(0, 0, 0); // Use origin to match A-Frame default
+
+                var renderer = groundPlane.GetComponent<MeshRenderer>();
+                if (renderer != null)
+                {
+                    renderer.sharedMaterial = new Material(ArenaUnity.GetLitShader());
+                    // A-Frame environment ground doesn't have gloss/smoothness by default
+                    if (renderer.sharedMaterial.HasProperty("_Glossiness"))
+                        renderer.sharedMaterial.SetFloat("_Glossiness", 0f);
+                    if (renderer.sharedMaterial.HasProperty("_Smoothness"))
+                        renderer.sharedMaterial.SetFloat("_Smoothness", 0f);
+
+                    if (ColorUtility.TryParseHtmlString(json.GroundColor, out Color gColor))
+                    {
+                        if (renderer.sharedMaterial.HasProperty(ArenaUnity.ColorPropertyName))
+                            renderer.sharedMaterial.SetColor(ArenaUnity.ColorPropertyName, gColor);
+                    }
+                }
+            }
+            else if (groundPlane != null)
+            {
+                groundPlane.SetActive(false);
+            }
         }
 
         public override void UpdateObject()

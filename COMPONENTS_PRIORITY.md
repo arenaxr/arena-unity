@@ -22,8 +22,8 @@ These components map almost 1:1 to built-in Unity components and require very li
 These use native Unity features but require more specific property mapping or Unity package configurations.
 
 * **`ArenaMaterialExtras` (DONE)**: Adding normal maps, metallic/roughness tweaks, and texture offsets. These map perfectly to properties on Unity's Standard or URP shaders (e.g., `_Metallic`, `_BumpMap`).
-* **`ArenaSceneRendererSettings` / `ArenaScenePostProcessing`**: Unity has a robust Post-Processing logic (or URP Volume Profiles) that handles Bloom, SSAO, etc. It requires instantiating a Volume Profile at runtime and toggling its overrides.
-* **`ArenaSceneEnvPresets`**: Can be mapped to assigning predefined Unity Skybox materials and tweaking the `RenderSettings.ambientLight` or Directional Light angles.
+* **`ArenaSceneRendererSettings` / `ArenaScenePostProcessing` (DONE)**: Unity has a robust Post-Processing logic (or URP Volume Profiles) that handles Bloom, SSAO, etc. It requires instantiating a Volume Profile at runtime and toggling its overrides.
+* **`ArenaSceneEnvPresets` (DONE)**: Can be mapped to assigning predefined Unity Skybox materials and tweaking the `RenderSettings.ambientLight` or Directional Light angles.
 
 ## Priority 3: UI & Complex Integrations (Harder)
 These require building custom layout engines or integrating external 3rd-party packages.

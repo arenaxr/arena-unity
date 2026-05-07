@@ -726,11 +726,34 @@ namespace ArenaUnity
 
         // scene options components
 
-        public static void ApplyEnvironmentPresets(GameObject gobj, ArenaDataSceneOptionsJson data)
+        public static void ApplyEnvironmentPresets(GameObject gobj, JToken incomingEnvPresets)
         {
             if (!gobj.TryGetComponent<ArenaSceneEnvPresets>(out var c))
                 c = gobj.AddComponent<ArenaSceneEnvPresets>();
-            c.json = JsonConvert.DeserializeObject<ArenaEnvPresetsJson>(MergeRawJson(c.json, data.EnvPresets));
+
+            JObject incoming = incomingEnvPresets as JObject ?? new JObject();
+            
+            // If the preset is changing, do not inherit the previous preset's defaults
+            string incomingPreset = (string)incoming["preset"];
+            string currentPreset = c.json.Preset.ToString().ToLower();
+            
+            JObject baseJson;
+            if (incomingPreset != null && incomingPreset != currentPreset)
+                baseJson = new JObject(); // Preset changed, wipe previous state
+            else
+                baseJson = JObject.FromObject(c.json); // Preset unchanged, keep state
+                
+            baseJson.Merge(incoming);
+            string targetJsonString = baseJson.ToString();
+            
+            JObject targetJson = JObject.Parse(targetJsonString);
+            string presetName = (string)targetJson["preset"] ?? "default";
+
+            c.json = new ArenaEnvPresetsJson();
+            if (Components.ArenaSceneEnvPresetsDefaults.Presets.TryGetValue(presetName, out string presetDefaults))
+                JsonConvert.PopulateObject(presetDefaults, c.json);
+
+            JsonConvert.PopulateObject(targetJsonString, c.json);
             c.apply = true;
         }
 
@@ -772,10 +795,23 @@ namespace ArenaUnity
                 ArenaCamera.AttachAvatar(object_id, json.ArenaUser, gobj);
         }
 
+        public static Shader GetLitShader()
+        {
+            string litShader = "Standard";
+            if (DefaultRenderPipeline != null)
+            {
+                if (DefaultRenderPipeline.GetType().ToString().Contains("HDRenderPipelineAsset"))
+                    litShader = "HDRP/Lit";
+                else
+                    litShader = "Universal Render Pipeline/Lit";
+            }
+            return Shader.Find(litShader);
+        }
+
         public static Shader GetUnlitShader()
         {
             string unlitShader = "Unlit/Color";
-            if (DefaultRenderPipeline)
+            if (DefaultRenderPipeline != null)
             {
                 if (DefaultRenderPipeline.GetType().ToString().Contains("HDRenderPipelineAsset"))
                     unlitShader = "HDRP/Unlit";

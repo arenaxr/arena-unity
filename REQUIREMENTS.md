@@ -142,7 +142,7 @@ graph TD
 | `cylinder` | ✅ 0.0.1 | ✅ | Cylinder geometry |
 | `dodecahedron` | ✅ 0.0.12 | ✅ | Dodecahedron geometry |
 | `entity` | ✅ 0.0.1 | ✅ | Entities are the base of all objects in the scene |
-| `env-presets` | - | - | A-Frame Environment and presets |
+| `env-presets` | ✅ 1.7.0 | - | A-Frame Environment and presets |
 | `gaussian_splatting` | ✅ 1.3.0 | - | Load a Gaussian Splat model |
 | `gltf-model` | ✅ 0.0.2 | ✅ manual export | Load a GLTF model |
 | `icosahedron` | ✅ 0.0.11 | ✅ | Icosahedron geometry |
@@ -154,9 +154,9 @@ graph TD
 | `octahedron` | ✅ 0.0.11 | ✅ | Octahedron geometry |
 | `pcd-model` | - | - | Load a PCD model |
 | `plane` | ✅ 0.0.1 | ✅ | Plane geometry |
-| `post-processing` | - | - | Visual effects enabled in desktop and XR views |
+| `post-processing` | ✅ 1.7.0 | - | Visual effects enabled in desktop and XR views |
 | `program` | ❌ | - | ARENA program data |
-| `renderer-settings` | - | - | THREE.js WebGLRenderer properties |
+| `renderer-settings` | ✅ 1.7.0 | - | THREE.js WebGLRenderer properties |
 | `ring` | ✅ 0.0.11 | ✅ | Ring geometry |
 | `roundedbox` | - | ✅ | Rounded Box geometry |
 | `scene-options` | - | - | ARENA Scene Options |
@@ -191,17 +191,17 @@ graph TD
 | `collision-listener` | - | - | Listen for collisions, callback on event |
 | `geometry` | ✅ 0.10.0 | - | Primitive mesh geometry support |
 | `gesture-detector` | - | - | Detect multi-finger touch gestures |
-| `gltf-model-lod` | ✅ 1.6.0 | - | GLTF LOD switching based on distance |
-| `gltf-morph` | ✅ 1.6.0 | - | GLTF 3D morphable model controls |
-| `goto-landmark` | ✅ 1.6.0 | - | Teleports user to landmark |
-| `goto-url` | ✅ 1.6.0 | - | Navigate to given URL |
+| `gltf-model-lod` | ✅ 1.7.0 | - | GLTF LOD switching based on distance |
+| `gltf-morph` | ✅ 1.7.0 | - | GLTF 3D morphable model controls |
+| `goto-landmark` | ✅ 1.7.0 | - | Teleports user to landmark |
+| `goto-url` | ✅ 1.7.0 | - | Navigate to given URL |
 | `hide-on-enter-ar` | - | - | Hide object when entering AR |
 | `hide-on-enter-vr` | - | - | Hide object when entering VR |
 | `jitsi-video` | ❌ | - | Apply Jitsi video source to geometry |
 | `landmark` | ❌ | - | Define entities as landmarks for navigation |
 | `look-at` | - | - | Dynamically rotate to face another entity or position |
 | `material` | ✅ 0.0.10 | ✅ | Material properties of the object's surface |
-| `material-extras` | ✅ 1.6.0 | - | Extra material properties: encoding, render order |
+| `material-extras` | ✅ 1.7.0 | - | Extra material properties: encoding, render order |
 | `model-container` | - | - | Override absolute size for a 3D model |
 | `modelUpdate` | - | - | Manually manipulate GLTF child components |
 | `multisrc` | - | - | Define multiple visual sources for an object |
@@ -222,7 +222,7 @@ graph TD
 | `show-on-enter-ar` | - | - | Show object when entering AR |
 | `show-on-enter-vr` | - | - | Show object when entering VR |
 | `skipCache` | - | - | Disable retrieving shared geometry from cache |
-| `sound` | ✅ 1.6.0 | - | Defines entity as a source of sound or audio |
+| `sound` | ✅ 1.7.0 | - | Defines entity as a source of sound or audio |
 | `spe-particles` | ✅ 1.5.0 | - | GPU based particle systems |
 | `submodel-parent` | - | - | Attach to submodel components of model |
 | `textinput` | - | - | Opens HTML prompt when clicked, sends text input as MQTT event |

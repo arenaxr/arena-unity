@@ -102,7 +102,7 @@ namespace ArenaUnity
             {
                 switch (result.Key)
                 {
-                    case "env-presets": ArenaUnity.ApplyEnvironmentPresets(gobj, data); break;
+                    case "env-presets": ArenaUnity.ApplyEnvironmentPresets(gobj, jData["env-presets"]); break;
                     case "scene-options":
                         if (!string.IsNullOrWhiteSpace(data.SceneOptions?.NavMesh))
                         {

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -71,7 +71,8 @@ namespace ArenaUnity
                 {
                     case ArenaLightJson.TypeType.Directional:
                         light.type = LightType.Directional;
-                        gameObject.transform.LookAt(new Vector3(0,0,0));
+                        // Don't force rotation; user will position the GameObject as needed.
+                        // gameObject.transform.LookAt(new Vector3(0,0,0));
                         break;
                     case ArenaLightJson.TypeType.Point:
                         light.type = LightType.Point;
