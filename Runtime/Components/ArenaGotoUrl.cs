@@ -14,15 +14,30 @@ namespace ArenaUnity.Components
     public class ArenaGotoUrl : ArenaComponent
     {
         // ARENA goto-url component unity conversion status:
-        // TODO: dest
-        // TODO: on
-        // TODO: url
+        // DONE: dest
+        // DONE: on
+        // DONE: url
 
         public ArenaGotoUrlJson json = new ArenaGotoUrlJson();
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            Collider c = gameObject.GetComponent<Collider>();
+            if (c == null)
+            {
+                c = gameObject.AddComponent<BoxCollider>();
+            }
+        }
+
+        internal void OnMouseDown() { TriggerEvent(ArenaGotoUrlJson.OnType.Mousedown); }
+        internal void OnMouseUp() { TriggerEvent(ArenaGotoUrlJson.OnType.Mouseup); }
+
+        private void TriggerEvent(ArenaGotoUrlJson.OnType eventType)
+        {
+            if (json.On == eventType && !string.IsNullOrEmpty(json.Url))
+            {
+                Application.OpenURL(json.Url);
+            }
         }
 
         public override void UpdateObject()
