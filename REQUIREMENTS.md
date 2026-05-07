@@ -193,8 +193,8 @@ graph TD
 | `gesture-detector` | - | - | Detect multi-finger touch gestures |
 | `gltf-model-lod` | - | - | GLTF LOD switching based on distance |
 | `gltf-morph` | - | - | GLTF 3D morphable model controls |
-| `goto-landmark` | - | - | Teleports user to landmark |
-| `goto-url` | - | - | Navigate to given URL |
+| `goto-landmark` | ✅ 1.6.0 | - | Teleports user to landmark |
+| `goto-url` | ✅ 1.6.0 | - | Navigate to given URL |
 | `hide-on-enter-ar` | - | - | Hide object when entering AR |
 | `hide-on-enter-vr` | - | - | Hide object when entering VR |
 | `jitsi-video` | ❌ | - | Apply Jitsi video source to geometry |
@@ -222,7 +222,7 @@ graph TD
 | `show-on-enter-ar` | - | - | Show object when entering AR |
 | `show-on-enter-vr` | - | - | Show object when entering VR |
 | `skipCache` | - | - | Disable retrieving shared geometry from cache |
-| `sound` | - | - | Defines entity as a source of sound or audio |
+| `sound` | ✅ 1.6.0 | - | Defines entity as a source of sound or audio |
 | `spe-particles` | ✅ 1.5.0 | - | GPU based particle systems |
 | `submodel-parent` | - | - | Attach to submodel components of model |
 | `textinput` | - | - | Opens HTML prompt when clicked, sends text input as MQTT event |

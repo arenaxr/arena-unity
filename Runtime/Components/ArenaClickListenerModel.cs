@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -22,21 +22,34 @@ namespace ArenaUnity.Components
         {
         }
 
+        private void ForwardEvent(string methodName)
+        {
+            if (_arenaCL == null || _arenaCL.gameObject == null) return;
+            foreach (var comp in _arenaCL.gameObject.GetComponents<ArenaComponent>())
+            {
+                var method = comp.GetType().GetMethod(methodName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
+                if (method != null)
+                {
+                    method.Invoke(comp, null);
+                }
+            }
+        }
+
         internal void OnMouseDown()
         {
-            _arenaCL.PublishMouseEvent("mousedown");
+            ForwardEvent("OnMouseDown");
         }
         internal void OnMouseUp()
         {
-            _arenaCL.PublishMouseEvent("mouseup");
+            ForwardEvent("OnMouseUp");
         }
         internal void OnMouseEnter()
         {
-            _arenaCL.PublishMouseEvent("mouseenter");
+            ForwardEvent("OnMouseEnter");
         }
         internal void OnMouseExit()
         {
-            _arenaCL.PublishMouseEvent("mouseleave");
+            ForwardEvent("OnMouseExit");
         }
     }
 }

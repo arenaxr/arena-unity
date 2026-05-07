@@ -5,17 +5,17 @@ Based on a review of the unimplemented components (`// TODO: Implement this comp
 ## Priority 1: The "Low-Hanging Fruit" (Native Unity Equivalents)
 These components map almost 1:1 to built-in Unity components and require very little custom logic.
 
-* **`ArenaSound`**: Maps directly to Unity's `AudioSource`. Properties like `volume`, `loop`, `autoplay`, and `positional` (`spatialBlend`) are trivial to assign. The only minor work is loading an AudioClip from a URL.
-* **`ArenaShadow`**: Maps natively to Unity's `MeshRenderer.shadowCastingMode` and `receiveShadows`. This is extremely easy to toggle.
+* **`ArenaSound` (DONE)**: Maps directly to Unity's `AudioSource`. Properties like `volume`, `loop`, `autoplay`, and `positional` (`spatialBlend`) are trivial to assign. The only minor work is loading an AudioClip from a URL.
+* **`ArenaShadow` (DONE)**: Maps natively to Unity's `MeshRenderer.shadowCastingMode` and `receiveShadows`. This is extremely easy to toggle.
 * **`ArenaGltfModelLod`**: Unity has a native `LODGroup` component built exactly for this purpose. You just need to instantiate the models and assign them to the LOD threshold array.
-* **`ArenaGotoUrl` & `ArenaGotoLandmark`**: `GotoUrl` is a one-liner: `Application.OpenURL(url)`. `GotoLandmark` is a simple `Transform.SetPositionAndRotation` for the main camera rig.
-* **Physics (`ArenaStaticBody`, `ArenaDynamicBody`, `ArenaImpulse`)**:
+* **`ArenaGotoUrl` & `ArenaGotoLandmark` (DONE)**: `GotoUrl` is a one-liner: `Application.OpenURL(url)`. `GotoLandmark` is a simple `Transform.SetPositionAndRotation` for the main camera rig.
+* **Physics (`ArenaStaticBody`, `ArenaDynamicBody`, `ArenaImpulse`) (DONE)**:
   * *Note: `static-body`, `dynamic-body`, and `impulse` have been deprecated in favor of `physx-*` style properties (e.g., `physx-body`, `physx-material`, `physx-joint`).*
   * However, mapping them to Unity remains identical to Unity's Physics system (`Rigidbody` and `Collider`).
   * `StaticBody` / `physx-body (static)` = `Collider` with no Rigidbody.
   * `DynamicBody` / `physx-body (dynamic)` = `Rigidbody` (handling mass, drag, etc.).
   * `Impulse` = `Rigidbody.AddForce(..., ForceMode.Impulse)`.
-* **`ArenaBoxCollisionListener`**: Very simple to hook up using Unity's `MonoBehaviour.OnCollisionEnter`.
+* **`ArenaBoxCollisionListener` (DONE)**: Very simple to hook up using Unity's `MonoBehaviour.OnCollisionEnter`.
 * **`ArenaGltfMorph`**: Maps natively to `SkinnedMeshRenderer.SetBlendShapeWeight`.
 
 ## Priority 2: Material & Scene Rendering (Medium)

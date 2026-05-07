@@ -14,6 +14,19 @@ This document covers **development rules and conventions** specific to this repo
 
 **All dependencies must use exact, pegged versions** (no `^`, `~`, or `*` ranges). This prevents version drift across environments and ensures reproducible builds for security.
 
+### 3. Component Instantiation Pattern
+
+When implementing `ApplyRender()` in an `ArenaComponent`, always use the `GetComponent` / `AddComponent` pattern to ensure Unity components are not duplicated on the `GameObject`:
+
+```csharp
+Component c = gameObject.GetComponent<Component>();
+if (c == null)
+{
+    c = gameObject.AddComponent<Component>();
+}
+```
+Never blindly use `gameObject.AddComponent<T>()` without first checking if the component already exists.
+
 ## Local Development
 
 To develop the `arena-unity` locally:

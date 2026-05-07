@@ -348,6 +348,38 @@ namespace ArenaUnity
             particles.apply = true;
         }
 
+        public static void ApplyGotoLandmark(GameObject gobj, ArenaDataObjectJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaGotoLandmark>(out var c))
+                c = gobj.AddComponent<ArenaGotoLandmark>();
+            c.json = JsonConvert.DeserializeObject<ArenaGotoLandmarkJson>(MergeRawJson(c.json, data.GotoLandmark));
+            c.apply = true;
+        }
+
+        public static void ApplyGotoUrl(GameObject gobj, ArenaDataObjectJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaGotoUrl>(out var c))
+                c = gobj.AddComponent<ArenaGotoUrl>();
+            c.json = JsonConvert.DeserializeObject<ArenaGotoUrlJson>(MergeRawJson(c.json, data.GotoUrl));
+            c.apply = true;
+        }
+
+        public static void ApplyShadow(GameObject gobj, ArenaDataObjectJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaShadow>(out var c))
+                c = gobj.AddComponent<ArenaShadow>();
+            c.json = JsonConvert.DeserializeObject<ArenaShadowJson>(MergeRawJson(c.json, data.Shadow));
+            c.apply = true;
+        }
+
+        public static void ApplySound(GameObject gobj, ArenaDataObjectJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaSound>(out var c))
+                c = gobj.AddComponent<ArenaSound>();
+            c.json = JsonConvert.DeserializeObject<ArenaSoundJson>(MergeRawJson(c.json, data.Sound));
+            c.apply = true;
+        }
+
         // wire objects
 
         public static void ApplyGeometry(string primitive, object data, GameObject gobj)

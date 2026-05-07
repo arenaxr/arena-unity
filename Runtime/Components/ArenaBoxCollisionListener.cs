@@ -15,7 +15,7 @@ namespace ArenaUnity.Components
     {
         // ARENA box-collision-listener component unity conversion status:
         // DONE: enabled
-        // TODO: dynamic
+        // DONE: dynamic (Unity BoxCollider automatically updates with Transform)
 
         public ArenaBoxCollisionListenerJson json = new ArenaBoxCollisionListenerJson();
 

@@ -312,16 +312,16 @@ namespace ArenaUnity
                     case "geometry":
                         if (object_type == "entity")
                             ArenaUnity.ApplyGeometry(null, data.Geometry, gobj); break;
-                    // TODO: case "goto-landmark": ArenaUnity.ApplyGotoLandmark(gobj, data); break;
-                    // TODO: case "goto-url": ArenaUnity.ApplyGotoUrl(gobj, data); break;
+                    case "goto-landmark": ArenaUnity.ApplyGotoLandmark(gobj, data); break;
+                    case "goto-url": ArenaUnity.ApplyGotoUrl(gobj, data); break;
                     // TODO: case "hide-on-enter-ar": ArenaUnity.ApplyHideOnEnterAr(gobj, data); break;
                     // TODO: case "hide-on-enter-vr": ArenaUnity.ApplyHideOnEnterVr(gobj, data); break;
                     // TODO: case "show-on-enter-ar": ArenaUnity.ApplyShowOnEnterAr(gobj, data); break;
                     // TODO: case "show-on-enter-vr": ArenaUnity.ApplyShowOnEnterVr(gobj, data); break;
                     // TODO: case "landmark": ArenaUnity.ApplyLandmark(gobj, data); break;
                     // TODO: case "material-extras": ArenaUnity.ApplyMaterialExtras(gobj, data); break;
-                    // TODO: case "shadow": ArenaUnity.ApplyShadow(gobj, data); break;
-                    // TODO: case "sound": ArenaUnity.ApplySound(gobj, data); break;
+                    case "shadow": ArenaUnity.ApplyShadow(gobj, data); break;
+                    case "sound": ArenaUnity.ApplySound(gobj, data); break;
                     // TODO: case "textinput": ArenaUnity.ApplyTextInput(gobj, data); break;
                     // TODO: case "screenshareable": ArenaUnity.ApplyScreensharable(gobj, data); break;
                     // TODO: case "video-control": ArenaUnity.ApplyVideoControl(gobj, data); break;

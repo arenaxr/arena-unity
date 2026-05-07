@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Open source software under the terms in /LICENSE
  * Copyright (c) 2021-2023, Carnegie Mellon University. All rights reserved.
  */
@@ -40,25 +40,44 @@ namespace ArenaUnity.Components
             // update colliders
             if (!meshAvailable)
             {
-                MeshFilter mf = GetComponent<MeshFilter>();
-                if (mf != null)
-                {   // primitive geometry
-                    MeshCollider mc = gameObject.AddComponent<MeshCollider>();
-                    mc.sharedMesh = mf.mesh;
-                    if (mf.mesh.triangles.Length / 3 <= 256)
-                    {
-                        mc.convex = true; // simplify collision mesh when possible
-                    }
+                if (GetComponent<Collider>() != null)
+                {
                     meshAvailable = true;
                 }
                 else
-                {   // gltf-model
-                    // TODO (mwfarb): test for "this arena object only"
-                    foreach (MeshRenderer mr in GetComponentsInChildren<MeshRenderer>())
-                        AssignColliderMesh(mr);
-                    foreach (SkinnedMeshRenderer smr in GetComponentsInChildren<SkinnedMeshRenderer>())
-                        AssignColliderSkinnedMesh(smr);
-                    meshAvailable = true;
+                {
+                    MeshFilter mf = GetComponent<MeshFilter>();
+                    if (mf != null)
+                    {   // primitive geometry
+                        if (mf.sharedMesh != null)
+                        {
+                            MeshCollider mc = gameObject.AddComponent<MeshCollider>();
+                            mc.sharedMesh = mf.sharedMesh;
+                            if (mf.sharedMesh.triangles.Length / 3 <= 256)
+                            {
+                                mc.convex = true; // simplify collision mesh when possible
+                            }
+                            meshAvailable = true;
+                        }
+                    }
+                    else
+                    {   // gltf-model
+                        bool foundMeshes = false;
+                        foreach (MeshRenderer mr in GetComponentsInChildren<MeshRenderer>())
+                        {
+                            AssignColliderMesh(mr);
+                            foundMeshes = true;
+                        }
+                        foreach (SkinnedMeshRenderer smr in GetComponentsInChildren<SkinnedMeshRenderer>())
+                        {
+                            AssignColliderSkinnedMesh(smr);
+                            foundMeshes = true;
+                        }
+                        if (foundMeshes)
+                        {
+                            meshAvailable = true;
+                        }
+                    }
                 }
             }
         }
