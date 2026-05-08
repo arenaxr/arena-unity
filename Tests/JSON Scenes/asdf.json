@@ -1,0 +1,778 @@
+[
+  {
+    "object_id": "scene-options",
+    "type": "scene-options",
+    "data": {
+      "env-presets": {
+        "active": true,
+        "preset": "default"
+      },
+      "scene-options": {
+        "maxAVDist": 20,
+        "privateScene": false,
+        "physics": {
+          "enabled": false
+        },
+        "originMarker": true
+      }
+    }
+  },
+  {
+    "object_id": "box",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 1,
+      "height": 1,
+      "width": 1,
+      "position": {
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#ca1212",
+        "src": "/store/users/azp/transparency%20texture.png"
+      },
+      "click-listener": {
+        "enabled": true,
+        "bubble": true
+      },
+      "parent": "box_parent",
+      "shadow": {
+        "cast": true,
+        "receive": true
+      },
+      "landmark": {
+        "label": "box",
+        "randomRadiusMin": 2,
+        "randomRadiusMax": 4,
+        "lookAtLandmark": true
+      },
+      "sound": {
+        "volume": 0.4,
+        "src": "/store/users/etc/DemoStuff/Sounds/bark.wav",
+        "positional": true,
+        "on": "mousedown"
+      }
+    }
+  },
+  {
+    "object_id": "box_child",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 1,
+      "height": 1,
+      "width": 1,
+      "material": {
+        "color": "#7c3131"
+      },
+      "position": {
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "parent": "box"
+    }
+  },
+  {
+    "object_id": "box_grandchild",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 1,
+      "height": 1,
+      "width": 1,
+      "material": {
+        "color": "#223dc3"
+      },
+      "position": {
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "parent": "box_child"
+    }
+  },
+  {
+    "object_id": "box_grandparent",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 1,
+      "height": 1,
+      "width": 1,
+      "position": {
+        "x": 2,
+        "y": 2,
+        "z": 2
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#7f7f7f"
+      }
+    }
+  },
+  {
+    "object_id": "box_parent",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 1,
+      "height": 1,
+      "width": 1,
+      "position": {
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#991414"
+      },
+      "parent": "box_grandparent"
+    }
+  },
+  {
+    "object_id": "cube1",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 1,
+      "height": 1,
+      "width": 3,
+      "position": {
+        "x": -3,
+        "y": 1,
+        "z": -2
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#b8ea2e"
+      },
+      "box-collision-listener": {
+        "dynamic": false
+      },
+      "click-listener": {
+        "enabled": true,
+        "bubble": true
+      },
+      "shadow": {
+        "cast": true,
+        "receive": true
+      },
+      "sound": {
+        "volume": 0.4,
+        "src": "/store/users/etc/DemoStuff/Sounds/bark.wav",
+        "positional": true,
+        "on": "mousedown"
+      }
+    }
+  },
+  {
+    "object_id": "draco_robot",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/models/robot-draco.glb",
+      "position": {
+        "x": -2,
+        "y": 2,
+        "z": -2
+      },
+      "rotation": {
+        "w": 0.9763,
+        "x": 0.21644,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "modelUpdate": {
+        "mixamorigRightUpLeg": {
+          "rotation": {
+            "w": 0.7071068,
+            "x": 0.7071068,
+            "y": 0,
+            "z": 0
+          }
+        }
+      },
+      "shadow": {
+        "cast": true,
+        "receive": true
+      },
+      "blip": {
+        "blipin": true,
+        "blipout": true,
+        "geometry": "disk",
+        "planes": "top",
+        "duration": 500
+      },
+      "material-extras": {
+        "colorSpace": "SRGBColorSpace",
+        "gltfOpacity": 0.5,
+        "encoding": "sRGBEncoding"
+      },
+      "animation": {
+        "autoplay": true,
+        "loop": "true",
+        "property": "rotation",
+        "to": "0 360 0",
+        "dur": 5000,
+        "easing": "linear",
+        "from": "0 0 0"
+      },
+      "click-listener": {
+        "enabled": true,
+        "bubble": true
+      }
+    }
+  },
+  {
+    "object_id": "draco_robot2",
+    "type": "object",
+    "data": {
+      "object_type": "gltf-model",
+      "url": "/store/models/robot-draco.glb",
+      "position": {
+        "x": -3,
+        "y": 2,
+        "z": 3
+      },
+      "rotation": {
+        "w": 0.70711,
+        "x": 0.70711,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 3,
+        "y": 3,
+        "z": 3
+      },
+      "modelUpdate": {
+        "mixamorigRightUpLeg": {
+          "rotation": {
+            "w": 0.7071068,
+            "x": 0.7071068,
+            "y": 0,
+            "z": 0
+          }
+        }
+      },
+      "shadow": {
+        "cast": true,
+        "receive": true
+      },
+      "blip": {
+        "blipin": true,
+        "blipout": true,
+        "geometry": "disk",
+        "planes": "top",
+        "duration": 500
+      },
+      "material-extras": {
+        "colorSpace": "SRGBColorSpace",
+        "gltfOpacity": 0.5,
+        "encoding": "sRGBEncoding"
+      },
+      "animation": {},
+      "click-listener": {
+        "enabled": true,
+        "bubble": true
+      }
+    }
+  },
+  {
+    "object_id": "fallBox",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 1,
+      "height": 1,
+      "width": 1,
+      "position": {
+        "x": 0.346,
+        "y": 2,
+        "z": -4.395
+      },
+      "rotation": {
+        "w": 0.271,
+        "x": -0.271,
+        "y": -0.653,
+        "z": -0.653
+      },
+      "material": {
+        "color": "#000000"
+      },
+      "dynamic-body": {
+        "type": "dynamic"
+      },
+      "impulse": {
+        "on": "mousedown",
+        "force": "-1 40 -1",
+        "position": "1 1 1"
+      },
+      "sound": {
+        "positional": true,
+        "poolSize": 8,
+        "src": "store/audio/glass.ogg",
+        "on": "mousedown"
+      },
+      "click-listener": {
+        "enabled": true,
+        "bubble": true
+      },
+      "color": "yellow",
+      "scale": {
+        "x": 0.5,
+        "y": 0.5,
+        "z": 0.5
+      }
+    }
+  },
+  {
+    "object_id": "graph_test",
+    "type": "object",
+    "data": {
+      "object_type": "entity",
+      "position": {
+        "x": 0,
+        "y": 1,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    }
+  },
+  {
+    "object_id": "hide-on-ar-box",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 1,
+      "height": 1,
+      "width": 1,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": -6
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#13ecec"
+      },
+      "hide-on-enter-ar": true
+    }
+  },
+  {
+    "object_id": "hide-on-vr-box",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 1,
+      "height": 1,
+      "width": 1,
+      "position": {
+        "x": 3,
+        "y": 0,
+        "z": -6
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#80ed12"
+      },
+      "hide-on-enter-vr": true
+    }
+  },
+  {
+    "object_id": "originbox",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 0.03,
+      "height": 0.15,
+      "width": 0.15,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "w": 0.70711,
+        "x": -0.70711,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#ff0000",
+        "opacity": 0.01
+      },
+      "armarker": {
+        "buildable": false,
+        "dynamic": false,
+        "markerid": "0",
+        "markertype": "apriltag_36h11",
+        "size": 150
+      }
+    }
+  },
+  {
+    "object_id": "show-on-ar-box",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 1,
+      "height": 1,
+      "width": 1,
+      "position": {
+        "x": 1,
+        "y": 0,
+        "z": -6
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#0c4ec7"
+      },
+      "show-on-enter-ar": true
+    }
+  },
+  {
+    "object_id": "show-on-vr-box",
+    "type": "object",
+    "data": {
+      "object_type": "box",
+      "depth": 1,
+      "height": 1,
+      "width": 1,
+      "position": {
+        "x": 4,
+        "y": 0,
+        "z": -6
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#347120"
+      },
+      "show-on-enter-vr": true
+    }
+  },
+  {
+    "object_id": "splat",
+    "type": "object",
+    "data": {
+      "object_type": "gaussian_splatting",
+      "src": "/store/splats/luma-seal.splat",
+      "position": {
+        "x": 1.13845,
+        "y": 0,
+        "z": 10.53588
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      }
+    }
+  },
+  {
+    "object_id": "textabc",
+    "type": "object",
+    "data": {
+      "object_type": "text",
+      "color": "#000000",
+      "font": "roboto",
+      "side": "double",
+      "value": "asdfdsadf",
+      "position": {
+        "x": 0,
+        "y": 3,
+        "z": 0
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    }
+  },
+  {
+    "object_id": "toe_cone",
+    "type": "object",
+    "data": {
+      "object_type": "cone",
+      "height": 0.2,
+      "radiusBottom": 0.2,
+      "radiusTop": 0.01,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "material": {
+        "color": "#7f7f7f"
+      },
+      "parent": "draco_robot"
+    }
+  },
+  {
+    "object_id": "ui1",
+    "type": "object",
+    "data": {
+      "object_type": "arenaui-button-panel",
+      "buttons": [
+        {
+          "name": "Button Option 1"
+        },
+        {
+          "name": "Button Option 2"
+        },
+        {
+          "name": "Button Option 3"
+        },
+        {
+          "name": "paste",
+          "img": "/store/paste-icon.png",
+          "size": 0.25,
+          "borderRadius": 0.05
+        }
+      ],
+      "title": "My buttons",
+      "vertical": true,
+      "position": {
+        "x": 1,
+        "y": 1,
+        "z": -1
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "font": "Roboto-Mono",
+      "theme": "dark"
+    }
+  },
+  {
+    "object_id": "ui2",
+    "type": "object",
+    "data": {
+      "object_type": "arenaui-prompt",
+      "title": "Prompt",
+      "buttons": [
+        "Confirm",
+        "Cancel"
+      ],
+      "width": 1.5,
+      "position": {
+        "x": 3,
+        "y": 1,
+        "z": -1
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "description": "This is a prompt. Please confirm or cancel.",
+      "theme": "dark"
+    }
+  },
+  {
+    "object_id": "ui3",
+    "type": "object",
+    "data": {
+      "object_type": "arenaui-card",
+      "title": "CardPanel",
+      "body": "This is the text body of the card. There is useful information here about ARENA stuff because that's where text should be, in 3D in the ARENA. In the future all text will be in 3D, even though this is actually 2D text, the placement is in 3D so that makes it good enough. Look just read this ok and think about how clear the text is, you can't get that kind of clarity even in real life, so don't go out there looking for it.",
+      "img": "/static/landing/images/showcase/lobby.jpg",
+      "position": {
+        "x": 5,
+        "y": 1,
+        "z": -1
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "bodyAlign": "left",
+      "imgCaption": "Caption for image",
+      "closeButton": true,
+      "theme": "dark",
+      "scale": {
+        "x": 0.001,
+        "y": 0.001,
+        "z": 0.001
+      }
+    }
+  },
+  {
+    "object_id": "ui4",
+    "type": "object",
+    "data": {
+      "object_type": "arenaui-button-panel",
+      "buttons": [
+        {
+          "name": "Button Option 1"
+        },
+        {
+          "name": "Button Option 2"
+        },
+        {
+          "name": "Button Option 3"
+        },
+        {
+          "name": "paste",
+          "img": "/store/paste-icon.png",
+          "size": 0.25,
+          "borderRadius": 0.05
+        }
+      ],
+      "title": "My buttons",
+      "vertical": true,
+      "position": {
+        "x": 1,
+        "y": 2.5,
+        "z": -1
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "font": "Roboto-Mono",
+      "theme": "light"
+    }
+  },
+  {
+    "object_id": "ui5",
+    "type": "object",
+    "data": {
+      "object_type": "arenaui-prompt",
+      "title": "Prompt",
+      "buttons": [
+        "Confirm",
+        "Cancel"
+      ],
+      "width": 1.5,
+      "position": {
+        "x": 3,
+        "y": 2.5,
+        "z": -1
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "description": "This is a prompt. Please confirm or cancel.",
+      "theme": "light"
+    }
+  },
+  {
+    "object_id": "ui6",
+    "type": "object",
+    "data": {
+      "object_type": "arenaui-card",
+      "title": "CardPanel",
+      "body": "This is the text body of the card. There is useful information here about ARENA stuff because that's where text should be, in 3D in the ARENA. In the future all text will be in 3D, even though this is actually 2D text, the placement is in 3D so that makes it good enough. Look just read this ok and think about how clear the text is, you can't get that kind of clarity even in real life, so don't go out there looking for it.",
+      "img": "/static/landing/images/showcase/lobby.jpg",
+      "position": {
+        "x": 5,
+        "y": 2.5,
+        "z": -1
+      },
+      "rotation": {
+        "w": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "bodyAlign": "left",
+      "imgCaption": "Caption for image",
+      "closeButton": true,
+      "theme": "light",
+      "scale": {
+        "x": 0.001,
+        "y": 0.001,
+        "z": 0.001
+      }
+    }
+  }
+]
