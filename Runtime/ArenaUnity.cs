@@ -407,6 +407,14 @@ namespace ArenaUnity
             c.apply = true;
         }
 
+        public static void ApplyModelUpdate(GameObject gobj, ArenaDataObjectJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaModelUpdate>(out var c))
+                c = gobj.AddComponent<ArenaModelUpdate>();
+            c.json = JsonConvert.DeserializeObject<ArenaModelUpdateJson>(MergeRawJson(c.json, data.ModelUpdate));
+            c.apply = true;
+        }
+
         // wire objects
 
         public static void ApplyGeometry(string primitive, object data, GameObject gobj)

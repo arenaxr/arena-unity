@@ -323,7 +323,7 @@ namespace ArenaUnity
                     case "animation-mixer": ArenaUnity.ApplyAnimationMixer(gobj, data); break;
                     case "gltf-model-lod": ArenaUnity.ApplyGltfModelLod(gobj, data); break;
                     case "gltf-morph": ArenaUnity.ApplyGltfMorph(gobj, data); break;
-                    // TODO: case "modelUpdate": ArenaUnity.ApplyModelUpdate(gobj, data); break;
+                    case "modelUpdate": ArenaUnity.ApplyModelUpdate(gobj, data); break;
                     case "material": ArenaUnity.ApplyMaterial(gobj, data); break;
                 }
             }
