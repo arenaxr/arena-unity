@@ -15,11 +15,12 @@ namespace ArenaUnity.Components
     {
         // ARENA material-extras component unity conversion status:
         // DONE: overrideSrc
-        // DONE: colorSpace
+        // TODO: colorSpace
         // DONE: colorWrite
         // DONE: renderOrder
         // DONE: transparentOccluder
         // DONE: gltfOpacity
+        // TODO: encoding
 
         public ArenaMaterialExtrasJson json = new ArenaMaterialExtrasJson();
 
@@ -48,18 +49,43 @@ namespace ArenaUnity.Components
                         foreach (var material in renderer.materials)
                         {
                             // gltfOpacity
-                            if (json.GltfOpacity < 1f && material.HasProperty(ArenaUnity.ColorPropertyName))
+                            if (json.GltfOpacity < 1f)
                             {
-                                Color c = material.GetColor(ArenaUnity.ColorPropertyName);
-                                material.SetColor(ArenaUnity.ColorPropertyName, new Color(c.r, c.g, c.b, json.GltfOpacity));
+                                string oldColorProp = null;
+                                string[] colorProps = { "_BaseColor", "_Color", "baseColorFactor" };
+                                foreach (var p in colorProps) { if (material.HasProperty(p)) { oldColorProp = p; break; } }
                                 
-                                material.SetFloat("_Mode", 3); // Transparent mode
-                                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                                string oldTexProp = null;
+                                string[] texProps = { "_BaseMap", "_MainTex", "baseColorTexture" };
+                                foreach (var p in texProps) { if (material.HasProperty(p)) { oldTexProp = p; break; } }
+
+                                Color c = oldColorProp != null ? material.GetColor(oldColorProp) : Color.white;
+                                Texture tex = oldTexProp != null ? material.GetTexture(oldTexProp) : null;
+
+                                // Force standard shader to allow transparency keyword overrides
+                                Shader litShader = ArenaUnity.GetLitShader();
+                                if (material.shader != litShader)
+                                    material.shader = litShader;
+
+                                material.SetColor(ArenaUnity.ColorPropertyName, new Color(c.r, c.g, c.b, json.GltfOpacity));
+                                if (tex != null)
+                                {
+                                    if (material.HasProperty("_BaseMap")) material.SetTexture("_BaseMap", tex);
+                                    else if (material.HasProperty("_MainTex")) material.SetTexture("_MainTex", tex);
+                                }
+                                
+                                if (material.HasProperty("_Mode")) material.SetFloat("_Mode", 2); // Standard Fade mode
+                                if (material.HasProperty("_Surface")) material.SetFloat("_Surface", 1); // URP Transparent mode
+                                if (material.HasProperty("_Blend")) material.SetFloat("_Blend", 0); // URP Alpha Blend
+                                
+                                material.SetOverrideTag("RenderType", "Transparent");
+                                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
                                 material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                                 material.SetInt("_ZWrite", 0);
-                                material.EnableKeyword("_ALPHATEST_ON");
+                                material.DisableKeyword("_ALPHATEST_ON");
                                 material.EnableKeyword("_ALPHABLEND_ON");
-                                material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                                material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
                                 material.renderQueue = 3000;
                             }
 
