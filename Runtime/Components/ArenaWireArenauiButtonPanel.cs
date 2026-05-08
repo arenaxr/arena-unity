@@ -184,6 +184,13 @@ namespace ArenaUnity
             // 4. Buttons
             int targetButtonCount = json.Buttons != null ? json.Buttons.Length : 0;
             
+            // Sync list with actual hierarchy to survive hot-reloads
+            _buttonInstances.Clear();
+            foreach (Transform child in _buttonsContainer)
+            {
+                _buttonInstances.Add(child.gameObject);
+            }
+
             // Create or destroy buttons to match count
             while (_buttonInstances.Count < targetButtonCount)
             {
