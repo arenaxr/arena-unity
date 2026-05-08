@@ -69,7 +69,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static float?[] defCollisionLayers = { 1f };
-        [JsonProperty(PropertyName = "collisionLayers")]
+        [JsonProperty(PropertyName = "collisionLayers", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Which collision layers this shape is present on.")]
         public float?[] CollisionLayers = defCollisionLayers;
         public bool ShouldSerializeCollisionLayers()
@@ -79,7 +79,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static float?[] defCollidesWithLayers = { 1f, 2f, 3f, 4f };
-        [JsonProperty(PropertyName = "collidesWithLayers")]
+        [JsonProperty(PropertyName = "collidesWithLayers", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Array containing all layers that this shape should collide with.")]
         public float?[] CollidesWithLayers = defCollidesWithLayers;
         public bool ShouldSerializeCollidesWithLayers()

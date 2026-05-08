@@ -28,7 +28,7 @@ namespace ArenaUnity.Schemas
         // arenaui-button-panel member-fields
 
         private static object[] defButtons = { JsonConvert.DeserializeObject("{'name': 'Option 1'}"), JsonConvert.DeserializeObject("{'name': 'Option 2'}") };
-        [JsonProperty(PropertyName = "buttons")]
+        [JsonProperty(PropertyName = "buttons", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Buttons")]
         public object[] Buttons = defButtons;
         public bool ShouldSerializeButtons()

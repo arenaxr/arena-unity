@@ -202,7 +202,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static readonly string defPauseEventsString = JsonConvert.SerializeObject(new string[] {  });
-        [JsonProperty(PropertyName = "pauseEvents")]
+        [JsonProperty(PropertyName = "pauseEvents", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Comma-separated list of events to listen to trigger pause. Can be resumed with resumeEvents.")]
         public string[] PauseEvents = {  };
         public bool ShouldSerializePauseEvents()
@@ -222,7 +222,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static readonly string defResumeEventsString = JsonConvert.SerializeObject(new string[] {  });
-        [JsonProperty(PropertyName = "resumeEvents")]
+        [JsonProperty(PropertyName = "resumeEvents", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Comma-separated list of events to listen to trigger resume after pausing.")]
         public string[] ResumeEvents = {  };
         public bool ShouldSerializeResumeEvents()
@@ -242,7 +242,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static readonly string defStartEventsString = JsonConvert.SerializeObject(new string[] {  });
-        [JsonProperty(PropertyName = "startEvents")]
+        [JsonProperty(PropertyName = "startEvents", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Comma-separated list of events to listen to trigger a restart and play. Animation will not autoplay if specified. startEvents will restart the animation, use pauseEvents to resume it. If there are other animation components on the entity animating the same property, those animations will be automatically paused to not conflict.")]
         public string[] StartEvents = {  };
         public bool ShouldSerializeStartEvents()

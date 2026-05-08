@@ -29,7 +29,7 @@ namespace ArenaUnity.Schemas
         // physx-joint-driver member-fields
 
         private static readonly string defAxesString = JsonConvert.SerializeObject(new string[] {  });
-        [JsonProperty(PropertyName = "axes")]
+        [JsonProperty(PropertyName = "axes", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Which axes the joint should operate on. Should be some combination of x, y, z, twist, swing.")]
         public string[] Axes = {  };
         public bool ShouldSerializeAxes()

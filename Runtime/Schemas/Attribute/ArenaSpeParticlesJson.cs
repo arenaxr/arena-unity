@@ -104,7 +104,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static float?[] defAngle = { 0f };
-        [JsonProperty(PropertyName = "angle")]
+        [JsonProperty(PropertyName = "angle", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("2D rotation of the particle over the particle's lifetime, max 4 elements.")]
         public float?[] Angle = defAngle;
         public bool ShouldSerializeAngle()
@@ -114,7 +114,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static float?[] defAngleSpread = { 0f };
-        [JsonProperty(PropertyName = "angleSpread")]
+        [JsonProperty(PropertyName = "angleSpread", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Spread in angle over the particle's lifetime, max 4 elements.")]
         public float?[] AngleSpread = defAngleSpread;
         public bool ShouldSerializeAngleSpread()
@@ -150,7 +150,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static readonly string defColorString = JsonConvert.SerializeObject(new string[] { "#fff" });
-        [JsonProperty(PropertyName = "color")]
+        [JsonProperty(PropertyName = "color", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [JsonConverter(typeof(ArenaColorArrayJsonConverter))]
         [Tooltip("Array of colors over the particle's lifetime, max 4 elements.")]
         public string[] Color = { "#fff" };
@@ -161,7 +161,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static readonly string defColorSpreadString = JsonConvert.SerializeObject(new ArenaVector3Json[] {  });
-        [JsonProperty(PropertyName = "colorSpread")]
+        [JsonProperty(PropertyName = "colorSpread", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Spread to apply to colors, spread an array of vec3 (r g b) with 0 for no spread. note the spread will be re-applied through-out the lifetime of the particle.")]
         public ArenaVector3Json[] ColorSpread = {  };
         public bool ShouldSerializeColorSpread()
@@ -329,7 +329,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static float?[] defOpacity = { 1f };
-        [JsonProperty(PropertyName = "opacity")]
+        [JsonProperty(PropertyName = "opacity", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Opacity over the particle's lifetime, max 4 elements.")]
         public float?[] Opacity = defOpacity;
         public bool ShouldSerializeOpacity()
@@ -339,7 +339,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static float?[] defOpacitySpread = { 0f };
-        [JsonProperty(PropertyName = "opacitySpread")]
+        [JsonProperty(PropertyName = "opacitySpread", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Spread in opacity over the particle's lifetime, max 4 elements.")]
         public float?[] OpacitySpread = defOpacitySpread;
         public bool ShouldSerializeOpacitySpread()
@@ -584,7 +584,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static float?[] defSize = { 1f };
-        [JsonProperty(PropertyName = "size")]
+        [JsonProperty(PropertyName = "size", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Array of sizes over the particle's lifetime, max 4 elements.")]
         public float?[] Size = defSize;
         public bool ShouldSerializeSize()
@@ -594,7 +594,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static float?[] defSizeSpread = { 0f };
-        [JsonProperty(PropertyName = "sizeSpread")]
+        [JsonProperty(PropertyName = "sizeSpread", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Spread in size over the particle's lifetime, max 4 elements.")]
         public float?[] SizeSpread = defSizeSpread;
         public bool ShouldSerializeSizeSpread()

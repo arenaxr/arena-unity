@@ -68,7 +68,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static readonly string defSceneHeadModelsString = JsonConvert.SerializeObject(new object[] {  });
-        [JsonProperty(PropertyName = "sceneHeadModels")]
+        [JsonProperty(PropertyName = "sceneHeadModels", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Define the default head model(s) for the scene in a list. Users may still choose from the ARENA default list of head models as well.")]
         public object[] SceneHeadModels = {  };
         public bool ShouldSerializeSceneHeadModels()

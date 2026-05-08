@@ -155,7 +155,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static readonly string defInputOptionsString = JsonConvert.SerializeObject(new string[] {  });
-        [JsonProperty(PropertyName = "inputOptions")]
+        [JsonProperty(PropertyName = "inputOptions", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Array of options for select or radio input types")]
         public string[] InputOptions = {  };
         public bool ShouldSerializeInputOptions()

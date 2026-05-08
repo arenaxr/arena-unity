@@ -47,7 +47,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string[] defButtons = { "Confirm", "Cancel" };
-        [JsonProperty(PropertyName = "buttons")]
+        [JsonProperty(PropertyName = "buttons", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Buttons")]
         public string[] Buttons = defButtons;
         public bool ShouldSerializeButtons()

@@ -29,7 +29,7 @@ namespace ArenaUnity.Schemas
         // physx-joint-constraint member-fields
 
         private static readonly string defLockedAxesString = JsonConvert.SerializeObject(new string[] {  });
-        [JsonProperty(PropertyName = "lockedAxes")]
+        [JsonProperty(PropertyName = "lockedAxes", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("[D6] Which axes are explicitly locked by this constraint and can't be moved at all. Should be some combination of x, y, z, twist, swing.")]
         public string[] LockedAxes = {  };
         public bool ShouldSerializeLockedAxes()
@@ -39,7 +39,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static readonly string defConstrainedAxesString = JsonConvert.SerializeObject(new string[] {  });
-        [JsonProperty(PropertyName = "constrainedAxes")]
+        [JsonProperty(PropertyName = "constrainedAxes", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("[D6] Which axes are constrained by this constraint. These axes can be moved within the set limits. Should be some combination of x, y, z, twist, swing.")]
         public string[] ConstrainedAxes = {  };
         public bool ShouldSerializeConstrainedAxes()
@@ -49,7 +49,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static readonly string defFreeAxesString = JsonConvert.SerializeObject(new string[] {  });
-        [JsonProperty(PropertyName = "freeAxes")]
+        [JsonProperty(PropertyName = "freeAxes", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("[D6] Which axes are explicitly freed by this constraint. These axes will not obey any limits set here. Should be some combination of x, y, z, twist, swing.")]
         public string[] FreeAxes = {  };
         public bool ShouldSerializeFreeAxes()

@@ -258,7 +258,10 @@ namespace ArenaUnity
             {
                 JObject o1 = JObject.FromObject(primary);
                 JObject o2 = JObject.FromObject(secondary);
-                o1.Merge(o2);
+                o1.Merge(o2, new JsonMergeSettings
+                {
+                    MergeArrayHandling = MergeArrayHandling.Replace
+                });
                 json = o1.ToString();
             }
             return json;

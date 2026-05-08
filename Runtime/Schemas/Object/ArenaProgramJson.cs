@@ -132,7 +132,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static readonly string defArgsString = JsonConvert.SerializeObject(null);
-        [JsonProperty(PropertyName = "args")]
+        [JsonProperty(PropertyName = "args", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Command-line arguments (passed in argv). Supports variables: ${scene}, ${mqtth}, ${userid}, ${username}, ${runtimeid}, ${moduleid}, ${query-string-key}.")]
         public string[] Args = null;
         public bool ShouldSerializeArgs()
@@ -142,7 +142,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static string[] defEnv = { "MID=${moduleid}", "SCENE=${scene}", "NAMESPACE=${namespace}", "MQTTH=${mqtth}", "REALM=realm" };
-        [JsonProperty(PropertyName = "env")]
+        [JsonProperty(PropertyName = "env", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Environment variables. Supports variables: ${scene}, ${namespace}, ${mqtth}, ${userid}, ${username}, ${runtimeid}, ${moduleid}, ${query-string-key}.")]
         public string[] Env = defEnv;
         public bool ShouldSerializeEnv()
@@ -151,7 +151,7 @@ namespace ArenaUnity.Schemas
         }
 
         private static readonly string defChannelsString = JsonConvert.SerializeObject(new object[] { JsonConvert.DeserializeObject("{'path': '/ch/${scene}', 'type': 'pubsub', 'mode': 'rw', 'params': {'topic': 'realm/s/${scene}/${namespace}'}}") });
-        [JsonProperty(PropertyName = "channels")]
+        [JsonProperty(PropertyName = "channels", ObjectCreationHandling = ObjectCreationHandling.Replace)]
         [Tooltip("Channels describe files representing access to IO from pubsub and client sockets (possibly more in the future; currently only supported for WASM programs).")]
         public object[] Channels = { JsonConvert.DeserializeObject("{'path': '/ch/${scene}', 'type': 'pubsub', 'mode': 'rw', 'params': {'topic': 'realm/s/${scene}/${namespace}'}}") };
         public bool ShouldSerializeChannels()
