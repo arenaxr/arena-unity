@@ -55,21 +55,44 @@ namespace ArenaUnity.Components
 
             if (envRoot == null)
             {
-                Transform existingEnv = transform.Find("env");
+                if (gameObject.name == "env")
+                {
+                    envRoot = gameObject;
+                }
+                else
+                {
+                    Transform existingEnv = transform.Find("env");
                 if (existingEnv != null)
                 {
                     envRoot = existingEnv.gameObject;
                 }
                 else
                 {
-                    envRoot = new GameObject("env");
-                    envRoot.transform.SetParent(this.transform);
-                    envRoot.transform.localPosition = Vector3.zero;
-                    envRoot.transform.localRotation = Quaternion.identity;
-                    envRoot.transform.localScale = Vector3.one;
+                    GameObject rootEnv = GameObject.Find("/env");
+                    if (rootEnv != null && rootEnv != this.gameObject)
+                    {
+                        envRoot = rootEnv;
+                        envRoot.transform.SetParent(this.transform, false);
+                        
+                        // Clean up the initial default preset component to avoid duplicate render loops
+                        var rootPresets = envRoot.GetComponent<ArenaSceneEnvPresets>();
+                        if (rootPresets != null)
+                            Destroy(rootPresets);
+                    }
+                    else
+                    {
+                        envRoot = new GameObject("env");
+                        envRoot.transform.SetParent(this.transform, false);
+                    }
+                }
                 }
             }
 
+            GenerateEnvironment(envRoot, ref groundPlane, json);
+        }
+
+        public static void GenerateEnvironment(GameObject envRoot, ref GameObject groundPlane, ArenaEnvPresetsJson json)
+        {
             if (Camera.main != null)
             {
                 // Sky
@@ -198,13 +221,22 @@ namespace ArenaUnity.Components
             }
 
             // Basic Ground Plane
+            if (groundPlane == null)
+            {
+                var existingGround = envRoot.transform.Find("Environment Ground Plane");
+                if (existingGround != null)
+                {
+                    groundPlane = existingGround.gameObject;
+                }
+            }
+
             if (json.Ground != ArenaEnvPresetsJson.GroundType.None)
             {
                 if (groundPlane == null)
                 {
                     groundPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
                     groundPlane.name = "Environment Ground Plane";
-                    groundPlane.transform.SetParent(envRoot.transform);
+                    groundPlane.transform.SetParent(envRoot.transform, false);
                 }
                 groundPlane.SetActive(true);
 

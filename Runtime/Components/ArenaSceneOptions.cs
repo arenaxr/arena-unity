@@ -21,7 +21,7 @@ namespace ArenaUnity.Components
         // TODO: sceneHeadModels
         // TODO: jitsiHost
         // TODO: maxAVDist
-        // TODO: navMesh
+        // DONE: navMesh
         // TODO: networkedLocationSolver
         // TODO: privateScene
         // TODO: refDistance
@@ -67,6 +67,26 @@ namespace ArenaUnity.Components
         {
             if (ArenaClientScene.Instance != null)
                 ArenaClientScene.Instance.sceneOptions = json;
+
+            // Handle navMesh integration
+            if (!string.IsNullOrWhiteSpace(json.NavMesh) && ArenaClientScene.Instance != null)
+            {
+                var url = json.NavMesh;
+                string assetPath = ArenaClientScene.Instance.checkLocalAsset(url);
+                if (assetPath != null)
+                {
+                    var aobj = GetComponent<ArenaObject>();
+                    if (aobj != null)
+                    {
+                        aobj.gltfUrl = url;
+                        // TODO: Currently this only loads the visual/collider geometry of the NavMesh.
+                        // Future work needed for full NavMesh parity:
+                        // 1. Dynamically bake a Unity NavMeshSurface component onto this generated geometry at runtime.
+                        // 2. Configure the local player's XR Teleportation/FPS controller to restrict movement to the baked NavMesh layer.
+                        ArenaWireGltfModel.AttachGltf(assetPath, gameObject, aobj);
+                    }
+                }
+            }
 
             // Handle default physx ground plane integration
             if (PhysicsEnabled)

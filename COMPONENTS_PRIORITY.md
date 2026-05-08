@@ -28,7 +28,7 @@ These use native Unity features but require more specific property mapping or Un
 ## Priority 3: UI & Complex Integrations (Harder)
 These require building custom layout engines or integrating external 3rd-party packages.
 
-* **ARENA UI (`ArenaWireArenauiCard`, `ArenaWireArenauiButtonPanel`, `ArenaWireArenauiPrompt`, `ArenaTextinput`)**: Unity's Canvas and `TextMeshPro` are powerful, but dynamically generating 3D UI panels that perfectly match A-Frame HTML/CSS sizing/flexbox logic is challenging and requires a lot of layout prefab work.
+* **ARENA UI (`ArenaWireArenauiCard`, `ArenaWireArenauiButtonPanel`, `ArenaWireArenauiPrompt`) (DONE)**: Unity's Canvas and layout groups dynamically match A-Frame HTML/CSS sizing/flexbox logic in 3D. (`ArenaTextinput` remains unimplemented).
 * **`ArenaVideoControl` / `ArenaJitsiVideo`**: While Unity has a `VideoPlayer`, streaming and syncing WebRTC (like Jitsi) natively inside Unity is historically tricky and usually requires heavy external plugins (like Unity Render Streaming or WebRTC packages).
 * **`ArenaWirePcdModel` & `ArenaWireGaussianSplatting`**: Unity has no native support for point clouds or splatting. You would need to pull in external repositories (like Keijiro Takahashi's PLY or Splatting repos) and wire up custom shaders.
 * **`ArenaWireUrdfModel`**: Requires integrating a heavy external URDF parser (like the Unity Robotics Hub URDF Importer).

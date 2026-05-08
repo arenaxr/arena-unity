@@ -268,14 +268,13 @@ namespace ArenaUnity
             }
 
             // apply default environment
-            ArenaMessageJson defaultEnvMsg = new ArenaMessageJson
-            {
-                object_id = "scene-options",
-                action = "create",
-                type = "scene-options",
-                data = JObject.Parse("{\"env-presets\": {\"preset\": \"default\", \"active\": true}}")
-            };
-            CreateUpdateObject(defaultEnvMsg, defaultEnvMsg.data);
+            GameObject envObj = GameObject.Find("env");
+            if (envObj == null) envObj = new GameObject("env");
+            ArenaEnvPresetsJson defaultJson = new ArenaEnvPresetsJson();
+            if (Components.ArenaSceneEnvPresetsDefaults.Presets.TryGetValue("default", out string presetDefaults))
+                JsonConvert.PopulateObject(presetDefaults, defaultJson);
+            GameObject groundPlane = null;
+            Components.ArenaSceneEnvPresets.GenerateEnvironment(envObj, ref groundPlane, defaultJson);
 
             // get persistence objects
             if (loadPersistedObjects)

@@ -132,9 +132,9 @@ graph TD
 
 | Entity | Arena ➡ Unity | Unity ➡ Arena | Description |
 |---|---|---|---|
-| `arenaui-button-panel` | - | - | Flat UI displays a vertical or horizontal panel of buttons |
-| `arenaui-card` | - | - | Flat UI displays text and optionally an image |
-| `arenaui-prompt` | - | - | Flat UI displays prompt with button actions |
+| `arenaui-button-panel` | ✅ 1.7.0 | - | Flat UI displays a vertical or horizontal panel of buttons |
+| `arenaui-card` | ✅ 1.7.0 | - | Flat UI displays text and optionally an image |
+| `arenaui-prompt` | ✅ 1.7.0 | - | Flat UI displays prompt with button actions |
 | `box` | ✅ 0.0.1 | ✅ | Box geometry |
 | `capsule` | ✅ 0.0.12 | ✅ | Capsule geometry |
 | `circle` | ✅ 0.0.11 | ✅ | Circle geometry |

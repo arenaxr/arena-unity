@@ -104,17 +104,6 @@ namespace ArenaUnity
                 {
                     case "env-presets": ArenaUnity.ApplyEnvironmentPresets(gobj, jData["env-presets"]); break;
                     case "scene-options":
-                        if (!string.IsNullOrWhiteSpace(data.SceneOptions?.NavMesh))
-                        {
-                            // Attach navMesh model, to scene-options object
-                            var url = data.SceneOptions.NavMesh;
-                            string assetPath = checkLocalAsset(url);
-                            if (assetPath != null)
-                            {
-                                aobj.gltfUrl = url;
-                                ArenaWireGltfModel.AttachGltf(assetPath, gobj, aobj);
-                            }
-                        }
                         ArenaUnity.ApplySceneOptions(gobj, data); break;
                     case "renderer-settings": ArenaUnity.ApplyRendererSettings(gobj, data); break;
                     case "post-processing": ArenaUnity.ApplyPostProcessing(gobj, data); break;
