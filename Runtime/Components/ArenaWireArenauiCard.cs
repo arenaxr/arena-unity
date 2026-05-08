@@ -52,17 +52,7 @@ namespace ArenaUnity
         private Image _closeBgImage;
         private TextMeshProUGUI _closeText;
 
-        // ARENA UI Constants
-        private const float PIXELS_PER_METER = 1000f; // 1 unit in A-Frame = 1000 pixels in Canvas
-        private readonly Color LIGHT_BG = new Color(0.95f, 0.95f, 0.95f, 0.8f);
-        private readonly Color LIGHT_TEXT_BG = new Color(0f, 0f, 0f, 0.25f);
-        private readonly Color LIGHT_TEXT = new Color(0.23f, 0.23f, 0.23f, 1f);
-        
-        private readonly Color DARK_BG = new Color(0.24f, 0.24f, 0.24f, 1f);
-        private readonly Color DARK_TEXT_BG = new Color(0.24f, 0.24f, 0.24f, 0.25f);
-        private readonly Color DARK_TEXT = new Color(0.94f, 0.94f, 0.94f, 1f);
-        
-        private readonly Color CAPTION_BG = new Color(1f, 1f, 1f, 0.75f);
+
 
         protected override void ApplyRender()
         {
@@ -87,7 +77,7 @@ namespace ArenaUnity
             _canvasGroup = canvasObj.AddComponent<CanvasGroup>();
 
             _canvasRect = canvasObj.GetComponent<RectTransform>();
-            _canvasRect.localScale = new Vector3(1f / PIXELS_PER_METER, 1f / PIXELS_PER_METER, 1f / PIXELS_PER_METER);
+            _canvasRect.localScale = new Vector3(1f / ArenaUIUtils.PIXELS_PER_METER, 1f / ArenaUIUtils.PIXELS_PER_METER, 1f / ArenaUIUtils.PIXELS_PER_METER);
             _canvasRect.pivot = new Vector2(0.5f, 0.5f);
 
             // Root Container (Stacks Card and Close Button vertically)
@@ -233,7 +223,9 @@ namespace ArenaUnity
             closeObj.AddComponent<BoxCollider>();
             var clickHandler = closeObj.AddComponent<ArenaUI_ButtonClickHandler>();
             clickHandler.ButtonName = "Close";
-            clickHandler.Card = this;
+            clickHandler.TargetObjectId = gameObject.name;
+            clickHandler.TargetObjectToDestroy = gameObject;
+            clickHandler.DestroyOnSelect = true;
 
             // Assign default fonts if possible
             if (TMP_Settings.defaultFontAsset != null)
@@ -249,20 +241,21 @@ namespace ArenaUnity
         {
             // 1. Theme and Colors
             bool isDark = json.Theme == ArenaArenauiCardJson.ThemeType.Dark;
-            Color bgColor = isDark ? DARK_BG : LIGHT_BG;
-            Color textBgColor = isDark ? DARK_TEXT_BG : LIGHT_TEXT_BG;
-            Color textColor = isDark ? DARK_TEXT : LIGHT_TEXT;
-            Color hoverColor = isDark ? new Color(0.21f, 0.21f, 0.21f, 0.8f) : new Color(0.82f, 0.82f, 0.82f, 0.8f);
+            Color bgColor = isDark ? ArenaUIUtils.DARK_BG : ArenaUIUtils.LIGHT_BG;
+            Color textBgColor = isDark ? ArenaUIUtils.DARK_TEXT_BG : ArenaUIUtils.LIGHT_TEXT_BG;
+            Color buttonBgColor = isDark ? ArenaUIUtils.DARK_BUTTON_BG : ArenaUIUtils.LIGHT_BUTTON_BG;
+            Color textColor = isDark ? ArenaUIUtils.DARK_TEXT : ArenaUIUtils.LIGHT_TEXT;
+            Color hoverColor = isDark ? ArenaUIUtils.DARK_BUTTON_HOVER : ArenaUIUtils.LIGHT_BUTTON_HOVER;
 
             _bgImage.color = textBgColor;
             _textBgImage.color = bgColor;
             _imgBgImage.color = bgColor;
-            _captionBgImage.color = CAPTION_BG;
-            _closeBgImage.color = textBgColor;
+            _captionBgImage.color = ArenaUIUtils.CAPTION_BG;
+            _closeBgImage.color = buttonBgColor;
             
             _titleText.color = textColor;
             _bodyText.color = textColor;
-            _captionText.color = LIGHT_TEXT; // Captions usually have light text against white bg
+            _captionText.color = ArenaUIUtils.CAPTION_TEXT; // Captions usually have light text against white bg
             _closeText.color = textColor;
 
             // 2. Text Content
@@ -281,7 +274,7 @@ namespace ArenaUnity
             }
 
             // 3. Fonts
-            float baseSize = json.FontSize * PIXELS_PER_METER;
+            float baseSize = json.FontSize * ArenaUIUtils.PIXELS_PER_METER;
             _bodyText.fontSize = baseSize;
             _captionText.fontSize = baseSize * 0.8f;
             _titleText.fontSize = baseSize * 1.4f;
@@ -297,7 +290,7 @@ namespace ArenaUnity
                 var clickHandler = _closeButtonContainer.GetComponent<ArenaUI_ButtonClickHandler>();
                 if (clickHandler != null)
                 {
-                    clickHandler.DefaultColor = textBgColor;
+                    clickHandler.DefaultColor = buttonBgColor;
                     clickHandler.HoverColor = hoverColor;
                     clickHandler.ButtonImage = _closeBgImage;
                 }
@@ -317,7 +310,7 @@ namespace ArenaUnity
             }
 
             // 5. Layout and Dimensions
-            float widthScale = json.WidthScale * PIXELS_PER_METER;
+            float widthScale = json.WidthScale * ArenaUIUtils.PIXELS_PER_METER;
             float ratio = json.TextImageRatio;
 
             if (json.ImgDirection == ArenaArenauiCardJson.ImgDirectionType.Left)
@@ -363,10 +356,20 @@ namespace ArenaUnity
 
         private IEnumerator LoadImage(string url)
         {
-            var uri = ArenaClientScene.Instance.ConstructRemoteUrl(url);
-            if (uri == null) yield break;
+            if (string.IsNullOrEmpty(url)) yield break;
 
-            using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(uri.AbsoluteUri))
+            string assetPath = ArenaClientScene.Instance != null ? ArenaClientScene.Instance.checkLocalAsset(url) : null;
+            if (assetPath == null && ArenaClientScene.Instance != null)
+            {
+                bool loaded = false;
+                ArenaClientScene.Instance.RegisterAssetCallback(url, () => { loaded = true; });
+                yield return new WaitUntil(() => loaded);
+                assetPath = ArenaClientScene.Instance.checkLocalAsset(url);
+            }
+            
+            string loadUrl = assetPath != null ? "file://" + System.IO.Path.GetFullPath(assetPath) : url;
+
+            using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(loadUrl))
             {
                 yield return uwr.SendWebRequest();
 
@@ -423,72 +426,6 @@ namespace ArenaUnity
         {
             PublishIfChanged(JsonConvert.SerializeObject(json));
         }
-        
-        public class ArenaUI_ButtonClickHandler : MonoBehaviour
-        {
-            public string ButtonName;
-            public ArenaWireArenauiCard Card;
-            public Color DefaultColor;
-            public Color HoverColor;
-            public Image ButtonImage;
 
-            private void OnMouseEnter()
-            {
-                if (ButtonImage != null) ButtonImage.color = HoverColor;
-            }
-
-            private void OnMouseExit()
-            {
-                if (ButtonImage != null) ButtonImage.color = DefaultColor;
-            }
-
-            private void OnMouseDown()
-            {
-                Debug.Log($"[ArenaUI] OnMouseDown triggered on {ButtonName}");
-                if (Card == null || ArenaClientScene.Instance == null)
-                {
-                    Debug.LogWarning("[ArenaUI] Card or ArenaClientScene is null");
-                    return;
-                }
-
-                var cam = Camera.main;
-                if (cam == null)
-                {
-                    Debug.LogWarning("[ArenaUI] Camera.main is null");
-                    return;
-                }
-                
-                var arenaCam = cam.GetComponent<ArenaCamera>();
-                if (arenaCam == null)
-                {
-                    Debug.LogWarning("[ArenaUI] arenaCam is null");
-                    return;
-                }
-
-                var data = new Newtonsoft.Json.Linq.JObject
-                {
-                    ["target"] = Card.gameObject.name,
-                    ["targetPosition"] = Newtonsoft.Json.Linq.JToken.FromObject(ArenaUnity.ToArenaPosition(transform.position)),
-                    ["originPosition"] = Newtonsoft.Json.Linq.JToken.FromObject(ArenaUnity.ToArenaPosition(cam.transform.position)),
-                    ["buttonName"] = ButtonName
-                };
-
-                Debug.Log($"[ArenaUI] Publishing buttonClick: {data.ToString(Newtonsoft.Json.Formatting.None)}");
-                ArenaClientScene.Instance.PublishEvent("buttonClick", arenaCam.camid, data.ToString(Newtonsoft.Json.Formatting.None));
-                
-                // Immediately remove locally, matching A-Frame's this.el.remove()
-                // Bypass local delete prompt by flagging as external
-                var arenaObj = Card.GetComponent<ArenaObject>();
-                if (arenaObj != null)
-                {
-                    arenaObj.externalDelete = true;
-                }
-                
-                // Clean up dictionary reference to prevent missing reference exceptions
-                ArenaClientScene.Instance.arenaObjs.Remove(Card.gameObject.name);
-                
-                Destroy(Card.gameObject);
-            }
-        }
     }
 }

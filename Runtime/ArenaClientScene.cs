@@ -84,7 +84,7 @@ namespace ArenaUnity
         const string prefixHandL = "handLeft_";
         const string prefixHandR = "handRight_";
 
-        static readonly string[] msgUriTags = { "url", "src", "obj", "mtl", "overrideSrc", "detailedUrl", "headModelPath", "texture", "navMesh", "normalMap", "ambientOcclusionMap", "displacementMap", "metalnessMap", "roughnessMap", "bumpMap", "sphericalEnvMap" };
+        static readonly string[] msgUriTags = { "url", "src", "obj", "mtl", "overrideSrc", "detailedUrl", "headModelPath", "texture", "navMesh", "normalMap", "ambientOcclusionMap", "displacementMap", "metalnessMap", "roughnessMap", "bumpMap", "sphericalEnvMap", "img" };
         static readonly string[] gltfUriTags = { "uri" };
         static readonly string[] requiredShadersStandardRP = {
             "Standard",
