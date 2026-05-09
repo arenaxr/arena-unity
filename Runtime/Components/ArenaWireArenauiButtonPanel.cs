@@ -207,10 +207,24 @@ namespace ArenaUnity
             for (int i = 0; i < targetButtonCount; i++)
             {
                 var btnObj = _buttonInstances[i];
-                var jObj = json.Buttons[i] as JObject;
-                string btnName = jObj != null && jObj.TryGetValue("name", out var nameToken) ? nameToken.ToString() : $"Button {i}";
-                string btnImg = jObj != null && jObj.TryGetValue("img", out var imgToken) ? imgToken.ToString() : null;
-                float imgSize = jObj != null && jObj.TryGetValue("size", out var sizeToken) ? sizeToken.Value<float>() : 0.3f; // ARENALayout.buttonImgDefaultSize
+                string btnName = $"Button {i}";
+                string btnImg = null;
+                float imgSize = 0.3f; // ARENALayout.buttonImgDefaultSize
+                
+                if (json.Buttons[i] is string strBtn)
+                {
+                    btnName = strBtn;
+                }
+                else if (json.Buttons[i] is JValue jVal && jVal.Type == JTokenType.String)
+                {
+                    btnName = jVal.ToString();
+                }
+                else if (json.Buttons[i] is JObject jObj)
+                {
+                    btnName = jObj.TryGetValue("name", out var nameToken) ? nameToken.ToString() : btnName;
+                    btnImg = jObj.TryGetValue("img", out var imgToken) ? imgToken.ToString() : null;
+                    imgSize = jObj.TryGetValue("size", out var sizeToken) ? sizeToken.Value<float>() : 0.3f;
+                }
                 
                 var btnText = btnObj.GetComponentInChildren<TextMeshProUGUI>(true);
                 var rawImages = btnObj.GetComponentsInChildren<RawImage>(true);
