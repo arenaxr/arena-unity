@@ -50,9 +50,6 @@ namespace ArenaUnity.Components
 
         protected override void ApplyRender()
         {
-            if (!json.Active)
-                return;
-
             if (envRoot == null)
             {
                 if (gameObject.name == "env")
@@ -62,30 +59,52 @@ namespace ArenaUnity.Components
                 else
                 {
                     Transform existingEnv = transform.Find("env");
-                if (existingEnv != null)
-                {
-                    envRoot = existingEnv.gameObject;
-                }
-                else
-                {
-                    GameObject rootEnv = GameObject.Find("/env");
-                    if (rootEnv != null && rootEnv != this.gameObject)
+                    if (existingEnv != null)
                     {
-                        envRoot = rootEnv;
-                        envRoot.transform.SetParent(this.transform, false);
-                        
-                        // Clean up the initial default preset component to avoid duplicate render loops
-                        var rootPresets = envRoot.GetComponent<ArenaSceneEnvPresets>();
-                        if (rootPresets != null)
-                            Destroy(rootPresets);
+                        envRoot = existingEnv.gameObject;
                     }
                     else
                     {
-                        envRoot = new GameObject("env");
-                        envRoot.transform.SetParent(this.transform, false);
+                        GameObject rootEnv = GameObject.Find("/env");
+                        if (rootEnv != null && rootEnv != this.gameObject)
+                        {
+                            envRoot = rootEnv;
+                            envRoot.transform.SetParent(this.transform, false);
+                            
+                            // Clean up the initial default preset component to avoid duplicate render loops
+                            var rootPresets = envRoot.GetComponent<ArenaSceneEnvPresets>();
+                            if (rootPresets != null)
+                                Destroy(rootPresets);
+                        }
+                        else
+                        {
+                            envRoot = new GameObject("env");
+                            envRoot.transform.SetParent(this.transform, false);
+                        }
                     }
                 }
+            }
+
+            if (!json.Active)
+            {
+                if (groundPlane == null && envRoot != null)
+                {
+                    var existingGround = envRoot.transform.Find("Environment Ground Plane");
+                    if (existingGround != null)
+                        groundPlane = existingGround.gameObject;
                 }
+
+                if (groundPlane != null) groundPlane.SetActive(false);
+                RenderSettings.fog = false;
+                if (RenderSettings.sun != null && envRoot != null && RenderSettings.sun.transform.parent == envRoot.transform) 
+                    RenderSettings.sun.enabled = false;
+                if (Camera.main != null)
+                {
+                    RenderSettings.skybox = null;
+                    Camera.main.clearFlags = CameraClearFlags.SolidColor;
+                    Camera.main.backgroundColor = Color.black;
+                }
+                return;
             }
 
             GenerateEnvironment(envRoot, ref groundPlane, json);
