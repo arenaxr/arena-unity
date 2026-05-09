@@ -2,6 +2,38 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.7.0](https://github.com/arenaxr/arena-unity/compare/v1.6.0...v1.7.0) (2026-05-09)
+
+
+### Features
+
+* **arenaui-button-panel:** support arena ui interactive button panels ([dcc45e2](https://github.com/arenaxr/arena-unity/commit/dcc45e2d15a3963bc72f13bbb85c656592dbed7a))
+* **arenaui-card:** support arenaui-card interactive panels ([a0bf6c4](https://github.com/arenaxr/arena-unity/commit/a0bf6c46f6737d8ab6fd528be32dc5527990fd96))
+* **arenaui-prompt:** support interactive prompts panels ([179ce3f](https://github.com/arenaxr/arena-unity/commit/179ce3f32b07dc8a33144f1fb49b2f6e4599b738))
+* **env-presets:** support limited presets for sky/ground/fog ([0ff49d8](https://github.com/arenaxr/arena-unity/commit/0ff49d84da89c1582d1451c138a411049e99bcbe))
+* **gltf-model-lod:** support model load on demand ([7dc952a](https://github.com/arenaxr/arena-unity/commit/7dc952a96d59a2240c7d7277549a0741f1c268b8))
+* **gltf-morph:** support gtlf features morph blending ([febf978](https://github.com/arenaxr/arena-unity/commit/febf978c63c9eec1ec0102888e97491b30ec8be6))
+* **goto-landmark:** support click teleport to landmarks ([a6f074b](https://github.com/arenaxr/arena-unity/commit/a6f074b1c247f83c17c634b7fff0984ad2a52cff))
+* **goto-url:** support opening urls on click ([cb3490a](https://github.com/arenaxr/arena-unity/commit/cb3490a3706a445a665b5eb88fa80673443a2d27))
+* **material-extras:** support material overrides in gltf models ([d3f8262](https://github.com/arenaxr/arena-unity/commit/d3f82621c514d07d403193ddec3b42740e51278b))
+* **modelUpdate:** support gltf submodel joint moves ([5a37f79](https://github.com/arenaxr/arena-unity/commit/5a37f79ac51f8e17d638361c96e2833eea1759cf))
+* **post-processing:** support post processing effects, depends on RP ([1ac9137](https://github.com/arenaxr/arena-unity/commit/1ac91373aeb00fb346a79729c50848a7f2c0953b))
+* **renderer-settings:** support renderer conditions where possible ([7b3db07](https://github.com/arenaxr/arena-unity/commit/7b3db0795f5abd6294c008aac388206f1fc18b24))
+* **shadow:** support dynamic shadows ([30b18cd](https://github.com/arenaxr/arena-unity/commit/30b18cd51229a65ca1665f0f1c659041e83fc5ab))
+* **sound:** support click activated sound ([3833c18](https://github.com/arenaxr/arena-unity/commit/3833c18da76914fc0b5be530c94096b772b88952))
+
+
+### Bug Fixes
+
+* arenaui-button-panel now supports string arrays for buttons ([b7bf10c](https://github.com/arenaxr/arena-unity/commit/b7bf10c5a75acdf491a8757bc78b64bf4eb25ca0))
+* ensure all levels of models have colliders for clicks ([40178d4](https://github.com/arenaxr/arena-unity/commit/40178d494774c5951e330e983ed4e41be84ccd36))
+* env-presets active=false properly clears default ground and fog ([03260cc](https://github.com/arenaxr/arena-unity/commit/03260ccc05535a2ba55573e9c2eb798402b20cc5))
+* **gltf:** add support for gltf specific components ([ae593e5](https://github.com/arenaxr/arena-unity/commit/ae593e53bd1aa08d3a2f286d5ca0ece37bd47aed))
+* handle scene-options/env-presets setup issues ([8dd9fd0](https://github.com/arenaxr/arena-unity/commit/8dd9fd0ab478733f3f5b7a5403bb93617d7cf91e))
+* **json:** corrected array duplication in serialization ([927ba59](https://github.com/arenaxr/arena-unity/commit/927ba5988ddab6aa4af7d976cd85e5d62133126d))
+* **material-extras:** properly traverse gltfOpacity setting ([a440ef6](https://github.com/arenaxr/arena-unity/commit/a440ef64bffaa6ef3a233c98d28d9690af0ca310))
+* use .npmrc for public unity registry in dependabot ([0ce43db](https://github.com/arenaxr/arena-unity/commit/0ce43dba81899b28afbb06a312c129b0ea6ac5bb))
+
 ## [1.6.0](https://github.com/arenaxr/arena-unity/compare/v1.5.0...v1.6.0) (2026-03-23)
 
 
