@@ -39,3 +39,9 @@ To develop the `arena-unity` locally:
 - Maintain Unity Inspector layout cleanliness for `ArenaObject` components.
 
 The `arena-unity` uses [Release Please](https://github.com/googleapis/release-please) to automate CHANGELOG generation and semantic versioning. Your PR titles *must* follow Conventional Commit standards (e.g., `feat:`, `fix:`, `chore:`).
+
+### 4. Coordinate Systems — Always Use ArenaUnity.cs Translations
+
+**Incoming and outgoing MQTT messages MUST use the A-Frame coordinate system.** Unity rendering uses the Unity coordinate system. 
+- All agents and developers must consult and use the translation utilities in `ArenaUnity.cs` (e.g., `ToUnityPosition`, `ToArenaPosition`, `ToUnityRotationQuat`, `ToArenaRotationQuat`) when passing position, rotation, and scale data between the schema objects and Unity's local transformations.
+- **GLTF models** have their own coordinate system spin (LUF). There is an additional translation step to/from GLTF/Unity included in `ArenaUnity.cs` that must be applied when manipulating bones or nodes inside a GLTF hierarchy. Always refer to existing handling to ensure coordinate parity.

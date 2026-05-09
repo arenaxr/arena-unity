@@ -175,17 +175,25 @@ namespace ArenaUnity.Components
                 else
                     mainLight.type = LightType.Directional;
 
-                mainLight.transform.position = ArenaUnity.ToUnityPosition(json.LightPosition);
+                Vector3 lightDir = ArenaUnity.ToUnityPosition(json.LightPosition);
                 if (mainLight.type == LightType.Directional)
                 {
-                    mainLight.transform.LookAt(Vector3.zero); // Aim directional light at origin
+                    // Directional light position doesn't matter for illumination, only rotation.
+                    // The A-Frame lightPosition is a vector pointing from the sun to the origin.
+                    if (lightDir != Vector3.zero)
+                        mainLight.transform.rotation = Quaternion.LookRotation(-lightDir);
                     RenderSettings.sun = mainLight; // Link to skybox sun
+                }
+                else
+                {
+                    mainLight.transform.position = lightDir;
                 }
 
                 mainLight.shadows = json.Shadow ? LightShadows.Soft : LightShadows.None;
-
+                
                 // Replicate A-Frame hemilight + sunlight intensity
-                Vector3 sunPos = mainLight.transform.position.normalized;
+                // The sun's position in the sky is the opposite of the directional light's forward vector.
+                Vector3 sunPos = mainLight.type == LightType.Directional ? -mainLight.transform.forward : mainLight.transform.position.normalized;
                 float intensity = 1.884f;
                 Color hemiSkyCol = Color.white;
 

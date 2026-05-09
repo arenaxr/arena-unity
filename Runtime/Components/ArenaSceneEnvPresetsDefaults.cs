@@ -5,6 +5,8 @@ namespace ArenaUnity.Components
 {
     public static class ArenaSceneEnvPresetsDefaults
     {
+        // NOTE: use of these defaults are in A-Frame's coordinate system; for Unity, they must be translated to Unity's coordinate system: see ArenaUnity.cs.
+
         // Source attribution:
         // These preset default values are directly derived from the 'aframe-environment-component'
         // created by Supermedium (https://github.com/supermedium/aframe-environment-component).
