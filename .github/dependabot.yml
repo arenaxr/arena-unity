@@ -8,10 +8,14 @@ version: 2
 updates:
   - package-ecosystem: "nuget" # See documentation for possible values
     directory: "/Runtime/Packages" # Location of package manifests
+    cooldown:
+      default-days: 7
     schedule:
       interval: "monthly"
 
   - package-ecosystem: "npm"
     directory: "/" # Location of your Unity package.json
+    cooldown:
+      default-days: 7
     schedule:
       interval: "monthly"
