@@ -38,6 +38,7 @@ namespace ArenaUnity
         [HideInInspector]
         public object data = null; // original message data for object, if any
         [HideInInspector]
+        [SerializeField]
         public string object_type = null; // original message data for object, if any
         [HideInInspector]
         public string parentId = null;
@@ -82,6 +83,14 @@ namespace ArenaUnity
             }
 
             isJsonValidated = jsonData != null;
+
+            // Restore data from serialized jsonData if lost (e.g., after play mode re-entry
+            // where non-serialized fields like 'data' are cleared by domain reload)
+            if (data == null && jsonData != null)
+            {
+                try { data = JObject.Parse(jsonData); }
+                catch { }  // jsonData may be invalid; leave data null
+            }
             // Scene-loaded objects (created=true) already have their transform set from
             // ARENA data. Snapshot it so HasLocalTransformChanged() returns false on the
             // first tick — preventing spurious re-publishes caused by async GLTF loading,
