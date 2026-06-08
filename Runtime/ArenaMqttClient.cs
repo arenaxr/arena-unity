@@ -20,8 +20,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.PackageManager;
-using UnityEditor.PackageManager.Requests;
+
 #endif
 using UnityEngine;
 using UnityEngine.Networking;
@@ -103,7 +102,7 @@ namespace ArenaUnity
         const string mqttTokenFile = ".arena_mqtt_auth";
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
-        private const string packageNameRenderFusion = "io.conix.arena.renderfusion";
+
 
         public string appFilesPath { get; private set; }
         public string username { get; private set; }
@@ -128,9 +127,7 @@ namespace ArenaUnity
 
         private List<byte[]> eventMessages = new List<byte[]>();
         protected Dictionary<ushort, string> subscriptions = new Dictionary<ushort, string>();
-#if UNITY_EDITOR
-        private ListRequest packageListRequest;
-#endif
+
 
         // MQTT methods
 
@@ -145,9 +142,7 @@ namespace ArenaUnity
             {
                 verifyCertificate = false;
             }
-#if UNITY_EDITOR
-            packageListRequest = Client.List(true); // request offline packages installed
-#endif
+
             StartCoroutine(PublishTickLatency());
         }
 
@@ -644,25 +639,7 @@ namespace ArenaUnity
                 {
                     form.AddField("environmentid", "true");
                 }
-#if UNITY_EDITOR
-                // auto-test for render fusion, request permissions if so
-                yield return new WaitUntil(() => packageListRequest.IsCompleted);
-                if (packageListRequest.Status == StatusCode.Success)
-                {
-                    foreach (var package in packageListRequest.Result)
-                        if (package.name == packageNameRenderFusion)
-                        {
-                            form.AddField("renderfusionid", "true");
-                            requestRemoteRenderRights = true; // for display purposes
-                        }
-                        else if (packageListRequest.Status >= StatusCode.Failure)
-                            Debug.LogWarning(packageListRequest.Error.message);
-                }
-                else
-                {
-                    Debug.LogWarning($"Package Manager unable to query for render-fusion package! {packageListRequest.Error.message}");
-                }
-#endif
+
                 // request token endpoint
                 cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/user/v2/mqtt_auth", csrfToken, form));
                 yield return cd.coroutine;
