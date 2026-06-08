@@ -266,11 +266,16 @@ namespace ArenaUnity
                     updatedData.Merge(ArenaMaterial.ToArenaMaterial(gameObject));
             }
 
-            // merge unity data with original message data
+            // merge: jsonData (user edits / unknown props) → original data → Unity-derived data
+            // jsonData is the base so user-added properties survive the typed merge
+            if (jsonData != null)
+            {
+                try { updatedData.Merge(JObject.Parse(jsonData)); }
+                catch { }
+            }
             if (data != null)
                 updatedData.Merge(JObject.FromObject(data));
             updatedData.Merge(JObject.FromObject(dataUnity));
-            // TODO (mwfarb): check for deletions and pollution
             jsonData = JsonConvert.SerializeObject(updatedData, Formatting.Indented);
 
             // publish
