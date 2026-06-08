@@ -956,17 +956,30 @@ namespace ArenaUnity
 
         public static bool MqttTopicMatch(string allowTopic, string attemptTopic)
         {
-            var allowedRegex = allowTopic.Replace(@"/", @"\/").Replace("+", @"[a-zA-Z0-9 _+.-]*").Replace("#", @"[a-zA-Z0-9 \/_#+.-]*");
-            var re = new Regex(allowedRegex);
-            var matches = re.Matches(attemptTopic);
-            foreach (Match match in matches)
+            var filterParts = allowTopic.Split('/');
+            var topicParts = attemptTopic.Split('/');
+
+            for (int i = 0; i < filterParts.Length; i++)
             {
-                if (match.Value == attemptTopic)
-                {
+                // Multi-level wildcard matches everything from here
+                if (filterParts[i] == "#")
                     return true;
-                }
+
+                // Ran out of topic levels
+                if (i >= topicParts.Length)
+                    return false;
+
+                // Single-level wildcard matches any single level
+                if (filterParts[i] == "+")
+                    continue;
+
+                // Exact match required
+                if (filterParts[i] != topicParts[i])
+                    return false;
             }
-            return false;
+
+            // Filter exhausted — match only if topic also exhausted
+            return filterParts.Length == topicParts.Length;
         }
 
     }
