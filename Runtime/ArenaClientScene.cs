@@ -267,14 +267,17 @@ namespace ArenaUnity
                 localCameraIds.Add(cam.camid);
             }
 
-            // apply default environment
-            GameObject envObj = GameObject.Find("env");
-            if (envObj == null) envObj = new GameObject("env");
-            ArenaEnvPresetsJson defaultJson = new ArenaEnvPresetsJson();
-            if (Components.ArenaSceneEnvPresetsDefaults.Presets.TryGetValue("default", out string presetDefaults))
-                JsonConvert.PopulateObject(presetDefaults, defaultJson);
-            GameObject groundPlane = null;
-            Components.ArenaSceneEnvPresets.GenerateEnvironment(envObj, ref groundPlane, defaultJson);
+            // apply default environment (skip for RenderFusion — scene manages its own environment)
+            if (!requestRemoteRenderRights)
+            {
+                GameObject envObj = GameObject.Find("env");
+                if (envObj == null) envObj = new GameObject("env");
+                ArenaEnvPresetsJson defaultJson = new ArenaEnvPresetsJson();
+                if (Components.ArenaSceneEnvPresetsDefaults.Presets.TryGetValue("default", out string presetDefaults))
+                    JsonConvert.PopulateObject(presetDefaults, defaultJson);
+                GameObject groundPlane = null;
+                Components.ArenaSceneEnvPresets.GenerateEnvironment(envObj, ref groundPlane, defaultJson);
+            }
 
             // get persistence objects
             if (loadPersistedObjects)
