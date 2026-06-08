@@ -64,6 +64,19 @@ public class ArenaDemo : MonoBehaviour
 * [Changelog](CHANGELOG.md)
 * [Open Source](Third%20Party%20Notices.md) used and inspired from
 
+## Troubleshooting
+
+### Shader errors (`_WorkflowMode` or pink/magenta materials)
+
+If you see errors about missing shader properties like `_WorkflowMode`, or GLTF models render as pink/magenta, this is typically a **glTFast shader variant stripping issue**. Unity's build pipeline strips shader variants it considers unused, but glTFast needs them at runtime for glTF import.
+
+To fix:
+1. Go to **Edit > Project Settings > Graphics**
+2. Under **Shader Preloading**, add the glTFast shaders (`glTF/PbrMetallicRoughness`, `glTF/PbrSpecularGlossiness`, `glTF/Unlit`) to the **Always Included Shaders** list
+3. Alternatively, create a `ShaderVariantCollection` that includes the required variants
+
+If the error specifically mentions `_WorkflowMode`, your URP version may not match what glTFast expects. Ensure your URP package is compatible with your glTFast version.
+
 ## Alternate Server Usage
 
 In addition to the above, you may deploy your own ARENA webserver if you do not wish to use our test deployment server at [arenaxr.org](https://arenaxr.org). You can follow our setup guidelines in [arenaxr/arena-services-docker](https://github.com/arenaxr/arena-services-docker) to run your own server.
