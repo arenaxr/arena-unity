@@ -2,6 +2,16 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.7.1](https://github.com/arenaxr/arena-unity/compare/v1.7.0...v1.7.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* preserve object_type and data across play mode transitions ([1adb877](https://github.com/arenaxr/arena-unity/commit/1adb877bf42fc3b289e712674b02434184b31d25))
+* preserve unknown/custom properties in jsonData during publish ([2e8005e](https://github.com/arenaxr/arena-unity/commit/2e8005ed091ff0b67d4289626658d6889feadc41))
+* replace regex MqttTopicMatch with MQTT-spec split-and-compare ([64f4b33](https://github.com/arenaxr/arena-unity/commit/64f4b33fb36716f343b06b79f19afd8907c6ce20))
+* skip default env-presets when RenderFusion is active ([a8e9955](https://github.com/arenaxr/arena-unity/commit/a8e9955b0ce46f25ffae715937af915133899c38))
+
 ## [1.7.0](https://github.com/arenaxr/arena-unity/compare/v1.6.0...v1.7.0) (2026-05-09)
 
 
