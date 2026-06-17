@@ -376,6 +376,10 @@ namespace ArenaUnity
             if (!isCrdSuccess(cd.result)) yield break;
             string jsonString = cd.result.ToString();
             List<ArenaMessageJson> persistMessages = JsonConvert.DeserializeObject<List<ArenaMessageJson>>(jsonString);
+            if (persistMessages == null || persistMessages.Count == 0)
+            {
+                Debug.LogWarning($"ARENA: No persisted objects found in scene '{sceneName}'.");
+            }
             // establish objects
             int objects_num = 1;
             if (Directory.Exists(importPath))
