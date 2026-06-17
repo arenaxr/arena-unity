@@ -141,7 +141,7 @@
     "updatedAt": "2022-01-05T16:18:08.824Z",
     "data": {
         "object_type": "gltf-model",
-        "url": "https://arena-cdn.conix.io/store/users/wiselab/models/fortnite_llama/scene.gltf",
+        "url": "https://arenaxr.org/store/users/wiselab/models/fortnite_llama/scene.gltf",
         "position": {
             "x": -15,
             "y": 0,
@@ -181,7 +181,7 @@
             "y": 5,
             "z": 5
         },
-        "src": "https://arena-cdn.conix.io/store/users/wiselab/images/move-controls.png",
+        "src": "https://arenaxr.org/store/users/wiselab/images/move-controls.png",
         "material-extras": {
             "encoding": "sRGBEncoding",
             "needsUpdate": true
@@ -217,7 +217,7 @@
     "updatedAt": "2022-01-05T16:18:08.839Z",
     "data": {
         "object_type": "image",
-        "url": "https://arena-cdn.conix.io/store/users/wiselab/images/move-controls.png",
+        "url": "https://arenaxr.org/store/users/wiselab/images/move-controls.png",
         "position": {
             "x": -16,
             "y": 3,
@@ -298,7 +298,7 @@
     "updatedAt": "2022-01-05T16:18:08.862Z",
     "data": {
         "object_type": "gltf-model",
-        "url": "https://arena-cdn.conix.io/store/users/wiselab/models/harbourwalk_sign/scene.gltf",
+        "url": "https://arenaxr.org/store/users/wiselab/models/harbourwalk_sign/scene.gltf",
         "position": {
             "x": 4,
             "y": 0.5,

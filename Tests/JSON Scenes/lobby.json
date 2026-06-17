@@ -4,7 +4,7 @@
     "updatedAt": "2022-01-06T17:09:57.887Z",
     "data": {
         "object_type": "gltf-model",
-        "url": "https://arena-cdn.conix.io/store/users/wiselab/room_models/lobby/lobby-v2.glb",
+        "url": "https://arenaxr.org/store/users/wiselab/room_models/lobby/lobby-v2.glb",
         "position": {
             "x": 0,
             "y": -2,
@@ -119,7 +119,7 @@
             "y": 4,
             "z": 3
         },
-        "url": "https://arena-cdn.conix.io/store/users/wiselab/images/move-controls.png"
+        "url": "https://arenaxr.org/store/users/wiselab/images/move-controls.png"
     },
     "type": "object"
 }, {
@@ -212,11 +212,11 @@
             "z": 1
         },
         "color": "#ffffff",
-        "url": "https://arena-cdn.conix.io/store/users/conixadmin/review-2020-posters/ppdf.png",
+        "url": "https://arenaxr.org/store/users/conixadmin/review-2020-posters/ppdf.png",
         "goto-url": {
             "dest": "popup",
             "on": "mousedown",
-            "url": "https://arena-cdn.conix.io/store/users/conixadmin/posters/poster_pdfs/P101638.pdf"
+            "url": "https://arenaxr.org/store/users/conixadmin/posters/poster_pdfs/P101638.pdf"
         },
         "click-listener": false
     },
@@ -244,7 +244,7 @@
             "z": 1
         },
         "color": "#ffffff",
-        "url": "https://arena-cdn.conix.io/store/users/wiselab/images/app-demo.png"
+        "url": "https://arenaxr.org/store/users/wiselab/images/app-demo.png"
     },
     "type": "object"
 }, {
@@ -270,7 +270,7 @@
             "z": 1
         },
         "color": "#ffffff",
-        "url": "https://arena-cdn.conix.io/store/users/wiselab/images/directional-sound.png",
+        "url": "https://arenaxr.org/store/users/wiselab/images/directional-sound.png",
         "click-listener": false
     },
     "type": "object"
@@ -673,7 +673,7 @@
             "z": 1
         },
         "color": "#ffffff",
-        "url": "https://arena-cdn.conix.io/store/users/conixadmin/review-2020-posters/ltvideo.png",
+        "url": "https://arenaxr.org/store/users/conixadmin/review-2020-posters/ltvideo.png",
         "goto-url": {
             "dest": "popup",
             "on": "mousedown",
