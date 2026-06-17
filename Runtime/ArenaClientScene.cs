@@ -125,6 +125,23 @@ namespace ArenaUnity
 #endif
         }
 
+        protected override void OnConnectionFailed(string errorMessage)
+        {
+            base.OnConnectionFailed(errorMessage);
+            ConnectionFailedUI(errorMessage);
+        }
+
+        private void ConnectionFailedUI(string errorMessage)
+        {
+            name = $"{originalName} (Connection Failed)";
+            Debug.LogError($"Connection failed to {hostAddress}. Please check for typos in the server name. Error: {errorMessage}");
+#if UNITY_EDITOR
+            EditorUtility.DisplayDialog("ARENA Connection Failed", $"Could not connect to {hostAddress}.\n\nPlease check the 'Host Address' parameter in your ArenaClientScene component for typos.\n\nError: {errorMessage}", "OK");
+            if (Application.isPlaying)
+                EditorApplication.ExitPlaymode();
+#endif
+        }
+
         private static void LogAndExit(string msg)
         {
             Debug.LogError(msg);
@@ -201,7 +218,11 @@ namespace ArenaUnity
             CoroutineWithData cd;
             cd = new CoroutineWithData(this, HttpRequestAuth($"https://{hostAddress}/conf/defaults.json"));
             yield return cd.coroutine;
-            if (!isCrdSuccess(cd.result)) yield break;
+            if (!isCrdSuccess(cd.result))
+            {
+                ConnectionFailedUI("Failed to fetch server configuration. Server may be unreachable.");
+                yield break;
+            }
             string jsonString = cd.result.ToString();
             JObject jsonVal = JObject.Parse(jsonString);
             arenaDefaults = jsonVal.SelectToken("ARENADefaults").ToObject<ArenaDefaultsJson>();
@@ -229,7 +250,7 @@ namespace ArenaUnity
             }
             if (permissions == null)
             {   // fail when permissions not set
-                LogAndExit("Permissions not received.");
+                ConnectionFailedUI("Permissions not received. Server may be unreachable or authentication failed.");
                 yield break;
             }
             sceneObjectRights = HasPerms(sceneTopic.PUB_SCENE_OBJECTS);

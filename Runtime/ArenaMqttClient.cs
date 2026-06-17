@@ -828,6 +828,7 @@ namespace ArenaUnity
                 www = UnityWebRequest.Get(url);
             else
                 www = UnityWebRequest.Post(url, form);
+            www.timeout = 10;
             try
             {
                 yield return www.SendWebRequest();
@@ -838,6 +839,7 @@ namespace ArenaUnity
                 if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
                 {
                     Debug.LogWarning($"{www.error}: {www.url}");
+                    Debug.LogWarning($"Check that your server name '{www.uri.Host}' is typed correctly and reachable.");
                     if (!string.IsNullOrWhiteSpace(www.downloadHandler?.text))
                     {
                         Debug.LogWarning(www.downloadHandler.text);
@@ -862,6 +864,7 @@ namespace ArenaUnity
                 www = UnityWebRequest.Get(url);
             else
                 www = UnityWebRequest.Post(url, form);
+            www.timeout = 10;
             string cookieParts = "";
             if (csrf != null)
             {
@@ -883,6 +886,7 @@ namespace ArenaUnity
                 if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
                 {
                     Debug.LogWarning($"{www.error}: {www.url}");
+                    Debug.LogWarning($"Check that your server name '{www.uri.Host}' is typed correctly and reachable.");
                     if (!string.IsNullOrWhiteSpace(www.downloadHandler?.text))
                     {
                         Debug.LogWarning(www.downloadHandler.text);
