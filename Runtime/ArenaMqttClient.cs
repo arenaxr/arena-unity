@@ -224,7 +224,7 @@ namespace ArenaUnity
 
                 publishedMsgsInWindow++;
                 float elapsed = now - publishWindowStartTime;
-                if (elapsed < publishRateWindowSeconds || elapsed <= 0f)
+                if (elapsed < publishRateWindowSeconds)
                 {
                     return;
                 }
