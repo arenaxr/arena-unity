@@ -217,11 +217,6 @@ namespace ArenaUnity
             lock (publishRateLock)
             {
                 float now = Time.realtimeSinceStartup;
-                if (publishWindowStartTime < 0f)
-                {
-                    publishWindowStartTime = now;
-                }
-
                 publishedMsgsInWindow++;
                 float elapsed = now - publishWindowStartTime;
                 if (elapsed < publishRateWindowSeconds)
@@ -234,7 +229,7 @@ namespace ArenaUnity
                     now - lastPublishRateWarningTime >= publishRateWarningCooldownSeconds)
                 {
                     warningMessage =
-                    $"High MQTT publish rate detected: {msgsPerSecond:F1} msgs/s over {elapsed:F1}s (threshold: {publishRateWarningThresholdMsgsPerSecond:F0} msgs/s). " +
+                    $"High MQTT publish rate detected: {msgsPerSecond:F1} messages/s over {elapsed:F1}s (threshold: {publishRateWarningThresholdMsgsPerSecond:F0} messages/s). " +
                     "Consider reducing update frequency (globalUpdateMs, objectUpdateMs, cameraUpdateMs).";
                     lastPublishRateWarningTime = now;
                 }
