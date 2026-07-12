@@ -115,6 +115,9 @@ namespace ArenaUnity
         public ArenaMqttTokenClaimsJson perms { get; private set; }
         static readonly int networkLatencyIntervalMs = 10000; // run network latency update every 10s
         protected const int msgTypeRenderIdx = (int)ArenaTopicTokens.SCENE_MSGTYPE;
+        protected const float publishRateWindowSeconds = 1f;
+        protected const float publishRateWarningCooldownSeconds = 10f;
+        protected const float publishRateWarningThresholdMsgsPerSecond = 100f;
 
         static readonly string[] Scopes = {
             Oauth2Service.Scope.UserinfoProfile,
@@ -127,6 +130,10 @@ namespace ArenaUnity
 
         private List<byte[]> eventMessages = new List<byte[]>();
         protected Dictionary<ushort, string> subscriptions = new Dictionary<ushort, string>();
+        private int publishedMsgsInWindow = 0;
+        private float publishWindowStartTime = -1f;
+        private float lastPublishRateWarningTime = float.NegativeInfinity;
+        private readonly object publishRateLock = new object();
 
 
         // MQTT methods
@@ -143,6 +150,7 @@ namespace ArenaUnity
                 verifyCertificate = false;
             }
 
+            publishWindowStartTime = Time.realtimeSinceStartup;
             StartCoroutine(PublishTickLatency());
         }
 
@@ -190,12 +198,49 @@ namespace ArenaUnity
 
         public void Publish(string topic, byte[] payload)
         {
-            if (client != null) client.Publish(topic, payload);
+            if (client != null)
+            {
+                client.Publish(topic, payload);
+                TrackPublishRateWarning();
+            }
             var topicSplit = topic.Split('/');
             if (topicSplit.Length > msgTypeRenderIdx)
             {
                 bool hasPermissions = HasPerms(topic);
                 LogMessage("Sending", topicSplit[4], topic, System.Text.Encoding.UTF8.GetString(payload), hasPermissions);
+            }
+        }
+
+        private void TrackPublishRateWarning()
+        {
+            string warningMessage = null;
+            lock (publishRateLock)
+            {
+                float now = Time.realtimeSinceStartup;
+                publishedMsgsInWindow++;
+                float elapsed = now - publishWindowStartTime;
+                if (elapsed < publishRateWindowSeconds)
+                {
+                    return;
+                }
+
+                float msgsPerSecond = publishedMsgsInWindow / elapsed;
+                if (msgsPerSecond >= publishRateWarningThresholdMsgsPerSecond &&
+                    now - lastPublishRateWarningTime >= publishRateWarningCooldownSeconds)
+                {
+                    warningMessage =
+                    $"High MQTT publish rate detected: {msgsPerSecond:F1} messages/s over {elapsed:F1}s (threshold: {publishRateWarningThresholdMsgsPerSecond:F0} messages/s). " +
+                    "Consider reducing update frequency (globalUpdateMs, objectUpdateMs, cameraUpdateMs).";
+                    lastPublishRateWarningTime = now;
+                }
+
+                publishedMsgsInWindow = 0;
+                publishWindowStartTime = now;
+            }
+
+            if (warningMessage != null)
+            {
+                Debug.LogWarning(warningMessage);
             }
         }
 
