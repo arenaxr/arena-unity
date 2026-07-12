@@ -133,6 +133,7 @@ namespace ArenaUnity
         private int publishedMsgsInWindow = 0;
         private float publishWindowStartTime = -1f;
         private float lastPublishRateWarningTime = float.NegativeInfinity;
+        private readonly object publishRateLock = new object();
 
 
         // MQTT methods
@@ -149,6 +150,7 @@ namespace ArenaUnity
                 verifyCertificate = false;
             }
 
+            publishWindowStartTime = Time.realtimeSinceStartup;
             StartCoroutine(PublishTickLatency());
         }
 
@@ -211,32 +213,40 @@ namespace ArenaUnity
 
         private void TrackPublishRateWarning()
         {
-            float now = Time.realtimeSinceStartup;
-            if (publishWindowStartTime < 0f)
+            string warningMessage = null;
+            lock (publishRateLock)
             {
+                float now = Time.realtimeSinceStartup;
+                if (publishWindowStartTime < 0f)
+                {
+                    publishWindowStartTime = now;
+                }
+
+                publishedMsgsInWindow++;
+                float elapsed = now - publishWindowStartTime;
+                if (elapsed < publishRateWindowSeconds || elapsed <= 0f)
+                {
+                    return;
+                }
+
+                float msgsPerSecond = publishedMsgsInWindow / elapsed;
+                if (msgsPerSecond >= publishRateWarningThresholdMsgsPerSecond &&
+                    now - lastPublishRateWarningTime >= publishRateWarningCooldownSeconds)
+                {
+                    warningMessage =
+                    $"High MQTT publish rate detected: {msgsPerSecond:F1} msgs/s over {elapsed:F1}s (threshold: {publishRateWarningThresholdMsgsPerSecond:F0} msgs/s). " +
+                    "Consider reducing update frequency (globalUpdateMs, objectUpdateMs, cameraUpdateMs).";
+                    lastPublishRateWarningTime = now;
+                }
+
+                publishedMsgsInWindow = 0;
                 publishWindowStartTime = now;
             }
 
-            publishedMsgsInWindow++;
-            float elapsed = now - publishWindowStartTime;
-            if (elapsed < publishRateWindowSeconds)
+            if (warningMessage != null)
             {
-                return;
+                Debug.LogWarning(warningMessage);
             }
-
-            float msgsPerSecond = publishedMsgsInWindow / elapsed;
-            if (msgsPerSecond >= publishRateWarningThresholdMsgsPerSecond &&
-                now - lastPublishRateWarningTime >= publishRateWarningCooldownSeconds)
-            {
-                Debug.LogWarning(
-                    $"High MQTT publish rate detected: {msgsPerSecond:F1} msgs/s over {elapsed:F1}s (threshold: {publishRateWarningThresholdMsgsPerSecond:F0} msgs/s). " +
-                    "Consider reducing update frequency (globalUpdateMs, objectUpdateMs, cameraUpdateMs)."
-                );
-                lastPublishRateWarningTime = now;
-            }
-
-            publishedMsgsInWindow = 0;
-            publishWindowStartTime = now;
         }
 
         public void Subscribe(string topic)
