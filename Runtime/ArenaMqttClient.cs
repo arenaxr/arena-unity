@@ -105,6 +105,10 @@ namespace ArenaUnity
         const string mqttTokenFile = ".arena_mqtt_auth";
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
+        const float deviceAuthPromptFontSize = 1.5f;
+        const float deviceAuthPromptWidth = 2.2f;
+        const float deviceAuthPromptHeight = 1.2f;
+        const float deviceAuthPromptDistanceFromCamera = 1.25f;
 
 
         public string appFilesPath { get; private set; }
@@ -170,7 +174,7 @@ namespace ArenaUnity
             {
                 UpdateDeviceAuthPrompt3D();
             }
-            else
+            else if (deviceAuthPrompt3D != null)
             {
                 DestroyDeviceAuthPrompt3D();
             }
@@ -386,17 +390,17 @@ namespace ArenaUnity
                 deviceAuthPrompt3D = new GameObject("ArenaDeviceAuthPrompt3D");
                 deviceAuthPromptText = deviceAuthPrompt3D.AddComponent<TextMeshPro>();
                 deviceAuthPromptText.alignment = TextAlignmentOptions.Center;
-                deviceAuthPromptText.fontSize = 1.5f;
+                deviceAuthPromptText.fontSize = deviceAuthPromptFontSize;
                 deviceAuthPromptText.enableWordWrapping = true;
-                deviceAuthPromptText.rectTransform.sizeDelta = new Vector2(2.2f, 1.2f);
+                deviceAuthPromptText.rectTransform.sizeDelta = new Vector2(deviceAuthPromptWidth, deviceAuthPromptHeight);
             }
             if (deviceAuthPromptText != null)
             {
                 deviceAuthPromptText.text = GetDeviceAuthPromptText();
             }
             var cameraTransform = promptCamera.transform;
-            deviceAuthPrompt3D.transform.position = cameraTransform.position + (cameraTransform.forward * 1.25f);
-            deviceAuthPrompt3D.transform.rotation = Quaternion.LookRotation(cameraTransform.position - deviceAuthPrompt3D.transform.position);
+            deviceAuthPrompt3D.transform.position = cameraTransform.position + (cameraTransform.forward * deviceAuthPromptDistanceFromCamera);
+            deviceAuthPrompt3D.transform.rotation = Quaternion.LookRotation(deviceAuthPrompt3D.transform.position - cameraTransform.position);
         }
 
         private void DestroyDeviceAuthPrompt3D()
