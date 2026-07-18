@@ -49,10 +49,10 @@ namespace ArenaUnity.Schemas
             [EnumMember(Value = "NoColorSpace")]
             NoColorSpace,
         }
-        private static OutputColorSpaceType defOutputColorSpace = OutputColorSpaceType.SrGBColorSpace;
+        private static OutputColorSpaceType defOutputColorSpace = OutputColorSpaceType.LinearSRGBColorSpace;
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(PropertyName = "outputColorSpace")]
-        [Tooltip("Defines the output color space of the renderer (three.js default is SRGBColorSpace).")]
+        [Tooltip("Defines the output color space of the renderer (ARENA web scenes commonly use LinearSRGBColorSpace).")]
         public OutputColorSpaceType OutputColorSpace = defOutputColorSpace;
         public bool ShouldSerializeOutputColorSpace()
         {
