@@ -8,9 +8,9 @@ using UnityEngine;
 namespace ArenaUnity
 {
     /// <summary>
-    /// Temporary manager of drawing remote rays from hand controllers
+    /// Renders remote hand-controller ray visualizations for other users' avatars in the scene.
+    /// For publishing the local XR controller pose, use <see cref="ArenaLocalHand"/> instead.
     /// TODO (mwfarb): resolve oculus-touch controls publishing +43 x-axis rotation orientationOffset from arena-web
-    /// TODO (mwfarb): set a proper arena-hand manager when we integrate with unity vr headsets
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(ArenaObject))]

@@ -17,7 +17,8 @@ graph TD
             arenaObj["ArenaObject<br/>(Per-GameObject Component)"]
             objJson["ArenaObjectJson<br/>(Wire Format Serialization)"]
             arenaCam["ArenaCamera<br/>(User Presence: Camera)"]
-            arenaHand["ArenaHand<br/>(User Presence: Hands)"]
+            arenaHand["ArenaHand<br/>(Remote Hand Avatar Rendering)"]
+            arenaLocalHand["ArenaLocalHand<br/>(Local XR Controller Publishing)"]
             ttl["ArenaTtl<br/>(Time-to-Live)"]
         end
 
@@ -54,6 +55,7 @@ graph TD
     arenaObj --> schemaClasses
     clientScene --> arenaCam
     clientScene --> arenaHand
+    clientScene --> arenaLocalHand
 ```
 
 ## Source File Index
@@ -66,7 +68,8 @@ graph TD
 | [Runtime/ArenaObject.cs](Runtime/ArenaObject.cs) | Per-GameObject component for ARENA sync | `PublishCreateUpdate`, `PublishRemove`, `ApplyCreate`, `ApplyUpdate` |
 | [Runtime/ArenaObjectJson.cs](Runtime/ArenaObjectJson.cs) | Wire format JSON serialization | JSON ↔ C# object mapping |
 | [Runtime/ArenaCamera.cs](Runtime/ArenaCamera.cs) | User camera presence publishing | camera pose updates |
-| [Runtime/ArenaHand.cs](Runtime/ArenaHand.cs) | User hand presence publishing | controller pose updates |
+| [Runtime/ArenaHand.cs](Runtime/ArenaHand.cs) | Remote hand-controller avatar rendering | draws hand rays for other users |
+| [Runtime/ArenaLocalHand.cs](Runtime/ArenaLocalHand.cs) | Local XR hand-controller pose and button publishing | `PublishCreateUpdate`, `PublishButtonEvent` |
 | [Runtime/ArenaTopics.cs](Runtime/ArenaTopics.cs) | MQTT topic construction | scene/object/user topic patterns |
 | [Runtime/ArenaUnity.cs](Runtime/ArenaUnity.cs) | Utilities, type mapping, coordinate conversion | A-Frame ↔ Unity coordinate transforms |
 | [Runtime/ArenaTtl.cs](Runtime/ArenaTtl.cs) | Time-to-live object management | auto-destroy after TTL |
@@ -107,8 +110,8 @@ graph TD
 | ID | Requirement | Source |
 |----|-------------|--------|
 | REQ-UN-020 | Camera pose publishing (position, rotation) | [Runtime/ArenaCamera.cs](Runtime/ArenaCamera.cs) |
-| REQ-UN-021 | Hand/controller pose publishing | [Runtime/ArenaHand.cs](Runtime/ArenaHand.cs) |
-| REQ-UN-022 | Remote user avatar rendering | [Runtime/ArenaClientScene.cs](Runtime/ArenaClientScene.cs) |
+| REQ-UN-021 | Local XR hand/controller pose and button-event publishing | [Runtime/ArenaLocalHand.cs](Runtime/ArenaLocalHand.cs) |
+| REQ-UN-022 | Remote user avatar rendering (cameras and hands) | [Runtime/ArenaClientScene.cs](Runtime/ArenaClientScene.cs) |
 
 ### Mesh & Models
 
@@ -145,6 +148,8 @@ graph TD
 | `env-presets` | ✅ 1.7.0 | - | A-Frame Environment and presets |
 | `gaussian_splatting` | ✅ 1.3.0 | - | Load a Gaussian Splat model |
 | `gltf-model` | ✅ 0.0.2 | ✅ manual export | Load a GLTF model |
+| `handLeft` | ✅ 0.0.1 | ✅ | Left XR hand controller avatar |
+| `handRight` | ✅ 0.0.1 | ✅ | Right XR hand controller avatar |
 | `icosahedron` | ✅ 0.0.11 | ✅ | Icosahedron geometry |
 | `image` | ✅ 0.0.7 | ✅ | Display an image on a plane |
 | `light` | ✅ 0.0.5 | ✅ | A light |
@@ -180,7 +185,7 @@ graph TD
 | `animation` | ✅ 1.6.0 | - | Animate and tween values |
 | `animation-mixer` | ✅ 0.7.0 | - | Play animations in model files |
 | `arena-camera` | ✅ 0.11.0 | ✅ | Tracking camera movement, emits pose updates |
-| `arena-hand` | - | ✅ | Tracking VR controller movement, emits pose updates |
+| `arena-hand` | ✅ 0.0.1 | ✅ | Tracking VR controller movement, emits pose updates and button events |
 | `arena-user` | ✅ 0.11.0 | - | Another user's camera, renders Jitsi/displayName updates |
 | `armarker` | - | - | Location marker for scene anchoring in the real world |
 | `attribution` | - | - | Saves attribution data in any entity |

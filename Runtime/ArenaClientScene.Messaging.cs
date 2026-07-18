@@ -503,7 +503,31 @@ namespace ArenaUnity
                 PublishSceneMessage(camTopic.PUB_SCENE_USER_PRIVATE, msg);
         }
 
-        [Obsolete("PublishEvent message signature has changed. Instreand of object_id, include data.target in msgJsonData.")]
+        /// <summary>
+        /// Hand controller presence changes are published using a ObjectId-only topic, a user might only have permissions for their handid.
+        /// </summary>
+        /// <param name="object_id">The hand object id (handleftid or handrightid).</param>
+        /// <param name="msgJson">The wire-format JSON string payload for the MQTT message.</param>
+        /// <param name="toUserId">The user id to send this message to, if private (optional).</param>
+        public void PublishHand(string object_id, string msgJson, string toUserId = null)
+        {
+            ArenaMessageJson msg = JsonConvert.DeserializeObject<ArenaMessageJson>(msgJson);
+            msg.timestamp = GetTimestamp();
+            var handTopic = new ArenaTopics(
+                realm: sceneTopic.REALM,
+                name_space: sceneTopic.nameSpace,
+                scenename: sceneTopic.sceneName,
+                userclient: userclient,
+                userobj: object_id,
+                touid: toUserId
+            );
+            if (toUserId == null)
+                PublishSceneMessage(handTopic.PUB_SCENE_USER, msg);
+            else
+                PublishSceneMessage(handTopic.PUB_SCENE_USER_PRIVATE, msg);
+        }
+
+        [Obsolete("PublishEvent message signature has changed. Instead of object_id, include data.target in msgJsonData.")]
         public void PublishEvent(string object_id, string eventType, string source, string msgJsonData, bool hasPermissions = true)
         {
             PublishEvent(eventType, source, msgJsonData);
