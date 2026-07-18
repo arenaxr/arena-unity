@@ -389,7 +389,12 @@ namespace ArenaUnity
             {
                 deviceAuthPrompt3D = new GameObject("ArenaDeviceAuthPrompt3D");
                 deviceAuthPromptText = deviceAuthPrompt3D.AddComponent<TextMeshPro>();
-                if (deviceAuthPromptText == null) return;
+                if (deviceAuthPromptText == null)
+                {
+                    Destroy(deviceAuthPrompt3D);
+                    deviceAuthPrompt3D = null;
+                    return;
+                }
                 deviceAuthPromptText.alignment = TextAlignmentOptions.Center;
                 deviceAuthPromptText.fontSize = DeviceAuthPromptFontSize;
                 deviceAuthPromptText.enableWordWrapping = true;
@@ -401,7 +406,7 @@ namespace ArenaUnity
             }
             var cameraTransform = promptCamera.transform;
             deviceAuthPrompt3D.transform.position = cameraTransform.position + (cameraTransform.forward * DeviceAuthPromptDistanceFromCamera);
-            deviceAuthPrompt3D.transform.rotation = Quaternion.LookRotation(cameraTransform.position - deviceAuthPrompt3D.transform.position);
+            deviceAuthPrompt3D.transform.rotation = cameraTransform.rotation * Quaternion.Euler(0f, 180f, 0f);
         }
 
         private void DestroyDeviceAuthPrompt3D()
