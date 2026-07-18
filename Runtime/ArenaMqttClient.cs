@@ -190,7 +190,13 @@ namespace ArenaUnity
 
         public void Publish(string topic, byte[] payload)
         {
-            if (client != null) client.Publish(topic, payload);
+            if (client == null || !mqttClientConnected || !client.IsConnected)
+            {
+                Debug.LogError($"MQTT publish request failed; connection is not open. Topic: {topic}");
+                return;
+            }
+
+            client.Publish(topic, payload);
             var topicSplit = topic.Split('/');
             if (topicSplit.Length > msgTypeRenderIdx)
             {
