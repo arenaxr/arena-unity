@@ -63,10 +63,12 @@ namespace ArenaUnity
         WebCamTexture _webCam;
         TagDetector _detector;
         Color32[] _buffer;
+        Camera _camera;
 
         void Start()
         {
             InitWebCam();
+            CacheCamera();
         }
 
         void OnDestroy()
@@ -122,20 +124,28 @@ namespace ArenaUnity
             }
         }
 
+        void CacheCamera()
+        {
+            _camera = Camera.main
+                ?? GetComponentInChildren<Camera>(true)
+                ?? GetComponentInParent<Camera>();
+            if (_camera == null)
+                Debug.LogWarning("[ArenaAprilTag] No camera found; FOV calculation will be unavailable.");
+        }
+
         void RunDetection()
         {
             if (_detector == null) return;
 
             _webCam.GetPixels32(_buffer);
 
-            var cam = Camera.main ?? GetComponentInChildren<Camera>(true) ?? GetComponentInParent<Camera>();
-            if (cam == null)
+            if (_camera == null)
             {
                 Debug.LogWarning("[ArenaAprilTag] No camera found for FOV calculation.");
                 return;
             }
 
-            var fov = cam.fieldOfView * Mathf.Deg2Rad;
+            var fov = _camera.fieldOfView * Mathf.Deg2Rad;
             _detector.ProcessImage(_buffer, fov, tagSize);
 
             OriginTagDetected = false;
@@ -144,7 +154,7 @@ namespace ArenaUnity
                 if (tag.ID == originTagId)
                 {
                     OriginTagDetected = true;
-                    ApplyRelocalization(cam, tag);
+                    ApplyRelocalization(_camera, tag);
                     break;
                 }
             }
