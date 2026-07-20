@@ -493,10 +493,17 @@ namespace ArenaUnity
                     // Section 3.6: object_type should be present for object creates → warning, processing continues
                     if (msg.action == "create" && msg.type == "object")
                     {
-                        var jData = JObject.Parse(msg.data.ToString());
-                        if (string.IsNullOrWhiteSpace(jData["object_type"]?.ToString()))
+                        try
                         {
-                            Debug.LogWarning($"Missing object_type in MQTT create message for object_id '{msg.object_id}'.");
+                            var jData = JObject.Parse(msg.data.ToString());
+                            if (string.IsNullOrWhiteSpace(jData["object_type"]?.ToString()))
+                            {
+                                Debug.LogWarning($"Missing object_type in MQTT create message for object_id '{msg.object_id}'.");
+                            }
+                        }
+                        catch (JsonException)
+                        {
+                            // data is not valid JSON; object_type check is skipped
                         }
                     }
 
@@ -535,6 +542,9 @@ namespace ArenaUnity
                     RemoveObject($"{prefixHandR}{object_id}");
                     break;
                 case "clientEvent":
+                    // Section 3.4: data must be present for clientEvent → silently dropped
+                    if (msg.data == null)
+                        return;
                     ClientEventOnObject(msg, topicSplit);
                     break;
                 default:
@@ -551,10 +561,16 @@ namespace ArenaUnity
             if (msg_type == "goto-url" || msg_type == "textinput")
                 return;
 
-            if (msg.data == null)
+            ArenaEventJson evt;
+            try
+            {
+                evt = JsonConvert.DeserializeObject<ArenaEventJson>(msg.data.ToString());
+            }
+            catch (JsonException ex)
+            {
+                Debug.LogWarning($"Invalid JSON in clientEvent data for object_id '{object_id}', dropping: {ex.Message}");
                 return;
-
-            ArenaEventJson evt = JsonConvert.DeserializeObject<ArenaEventJson>(msg.data.ToString());
+            }
             if (evt == null)
                 return;
 
