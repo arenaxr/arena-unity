@@ -18,6 +18,7 @@ using Google.Apis.Util.Store;
 using M2MqttUnity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TMPro;
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -96,12 +97,20 @@ namespace ArenaUnity
         private bool showDeviceAuthWindow = false;
         private string dev_verification_url = null;
         private string dev_user_code = null;
+        private GameObject deviceAuthPrompt3D = null;
+        private TextMeshPro deviceAuthPromptText = null;
 
         // local paths
         const string gAuthFile = ".arena_google_auth";
         const string mqttTokenFile = ".arena_mqtt_auth";
         const string userDirArena = ".arena";
         const string userSubDirUnity = "unity";
+        const float DeviceAuthPromptFontSize = 1.5f;
+        const float DeviceAuthPromptWidth = 2.2f;
+        const float DeviceAuthPromptHeight = 1.2f;
+        const float DeviceAuthPromptDistanceFromCamera = 1.25f;
+        const float DeviceAuthPromptBgPadding = 0.15f;
+        static readonly Color DeviceAuthPromptBgColor = new Color(0f, 0f, 0f, 0.85f);
 
 
         public string appFilesPath { get; private set; }
@@ -162,6 +171,15 @@ namespace ArenaUnity
         protected override void Update()
         {
             base.Update(); // call ProcessMqttEvents()
+
+            if (showDeviceAuthWindow)
+            {
+                UpdateDeviceAuthPrompt3D();
+            }
+            else if (deviceAuthPrompt3D != null)
+            {
+                DestroyDeviceAuthPrompt3D();
+            }
 
             if (eventMessages.Count > 0)
             {
@@ -297,6 +315,7 @@ namespace ArenaUnity
 
         protected void OnDestroy()
         {
+            DestroyDeviceAuthPrompt3D();
             Disconnect();
         }
 
@@ -358,6 +377,96 @@ namespace ArenaUnity
                 GUI.skin.label.fontSize = 12 * fontFactor;
 
                 GUI.ModalWindow(0, winRect, ShowDeviceAuthWindow, "ARENA Device Authorization");
+            }
+        }
+
+        private string GetDeviceAuthPromptText()
+        {
+            return $"ARENA Device Authorization\n\nOpen:\n{dev_verification_url ?? ""}\n\nEnter code:\n{dev_user_code ?? ""}";
+        }
+
+        private void UpdateDeviceAuthPrompt3D()
+        {
+            var promptCamera = Camera.main;
+            if (promptCamera == null)
+            {
+                promptCamera = FindObjectOfType<Camera>();
+            }
+            if (promptCamera == null) return;
+            if (deviceAuthPrompt3D == null)
+            {
+                deviceAuthPrompt3D = new GameObject("ArenaDeviceAuthPrompt3D");
+                deviceAuthPromptText = deviceAuthPrompt3D.AddComponent<TextMeshPro>();
+                if (deviceAuthPromptText == null)
+                {
+                    Destroy(deviceAuthPrompt3D);
+                    deviceAuthPrompt3D = null;
+                    return;
+                }
+                deviceAuthPromptText.alignment = TextAlignmentOptions.Center;
+                deviceAuthPromptText.fontSize = DeviceAuthPromptFontSize;
+                deviceAuthPromptText.enableWordWrapping = true;
+                deviceAuthPromptText.rectTransform.sizeDelta = new Vector2(DeviceAuthPromptWidth, DeviceAuthPromptHeight);
+
+                // Semi-transparent background panel for readability in bright scenes
+                var bgQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                bgQuad.name = "AuthPromptBackground";
+                bgQuad.transform.SetParent(deviceAuthPrompt3D.transform, false);
+                bgQuad.transform.localPosition = new Vector3(0f, 0f, 0.01f); // slightly behind text
+                bgQuad.transform.localScale = new Vector3(
+                    DeviceAuthPromptWidth + DeviceAuthPromptBgPadding,
+                    DeviceAuthPromptHeight + DeviceAuthPromptBgPadding,
+                    1f);
+                var bgRenderer = bgQuad.GetComponent<MeshRenderer>();
+                if (bgRenderer != null)
+                {
+                    var bgShader = ArenaUnity.GetLitShader();
+                    var bgMaterial = new Material(bgShader);
+                    // Configure transparency across render pipelines
+                    if (ArenaUnity.DefaultRenderPipeline == null)
+                    {
+                        // Built-in: Standard shader transparent mode
+                        bgMaterial.SetFloat("_Mode", 3f);
+                        bgMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                        bgMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                        bgMaterial.SetInt("_ZWrite", 0);
+                        bgMaterial.DisableKeyword("_ALPHATEST_ON");
+                        bgMaterial.EnableKeyword("_ALPHABLEND_ON");
+                        bgMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                        bgMaterial.renderQueue = 3000;
+                        bgMaterial.color = DeviceAuthPromptBgColor;
+                    }
+                    else
+                    {
+                        // URP/HDRP: surface type + blend mode properties
+                        bgMaterial.SetFloat("_Surface", 1f); // Transparent
+                        bgMaterial.SetFloat("_Blend", 0f);   // Alpha blend
+                        bgMaterial.SetFloat("_ZWrite", 0f);
+                        bgMaterial.renderQueue = 3000;
+                        bgMaterial.SetColor(ArenaUnity.ColorPropertyName, DeviceAuthPromptBgColor);
+                    }
+                    bgRenderer.material = bgMaterial;
+                }
+                // Remove collider — background panel is non-interactive
+                var bgCollider = bgQuad.GetComponent<Collider>();
+                if (bgCollider != null) Destroy(bgCollider);
+            }
+            if (deviceAuthPromptText != null)
+            {
+                deviceAuthPromptText.text = GetDeviceAuthPromptText();
+            }
+            var cameraTransform = promptCamera.transform;
+            deviceAuthPrompt3D.transform.position = cameraTransform.position + (cameraTransform.forward * DeviceAuthPromptDistanceFromCamera);
+            deviceAuthPrompt3D.transform.rotation = cameraTransform.rotation * Quaternion.Euler(0f, 180f, 0f);
+        }
+
+        private void DestroyDeviceAuthPrompt3D()
+        {
+            if (deviceAuthPrompt3D != null)
+            {
+                Destroy(deviceAuthPrompt3D);
+                deviceAuthPrompt3D = null;
+                deviceAuthPromptText = null;
             }
         }
 
