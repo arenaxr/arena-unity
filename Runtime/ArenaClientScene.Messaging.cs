@@ -493,17 +493,12 @@ namespace ArenaUnity
                     // Section 3.6: object_type should be present for object creates → warning, processing continues
                     if (msg.action == "create" && msg.type == "object")
                     {
-                        try
+                        if (msg.data is JObject jData)
                         {
-                            var jData = JObject.Parse(msg.data.ToString());
                             if (string.IsNullOrWhiteSpace(jData["object_type"]?.ToString()))
                             {
                                 Debug.LogWarning($"Missing object_type in MQTT create message for object_id '{msg.object_id}'.");
                             }
-                        }
-                        catch (JsonException)
-                        {
-                            // data is not valid JSON; object_type check is skipped
                         }
                     }
 
