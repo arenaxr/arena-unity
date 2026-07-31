@@ -1,0 +1,240 @@
+name: Build AprilTag Native Plugins
+# Builds the ArenaAprilTag native plugin from upstream AprilRobotics/apriltag
+# source for all supported Unity target platforms.
+#
+# Trigger manually or on changes to the AprilTag plugin directory.
+# Artifacts are committed back to the PR branch.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'copilot/support-apriltags'
+    paths:
+      - 'Runtime/AprilTag/Plugin/**'
+      - '.github/workflows/build-apriltag-plugin.yaml'
+
+jobs:
+  build-android-arm64:
+    name: Android ARM64 (Quest)
+    runs-on: ubuntu-latest
+    env:
+      APRILTAG_VERSION: "v3.4.3"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone AprilTag source
+        run: |
+          git clone --depth 1 --branch ${{ env.APRILTAG_VERSION }} \
+            https://github.com/AprilRobotics/apriltag.git /tmp/apriltag
+
+      - name: Set up Android NDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build for Android ARM64
+        run: |
+          cd /tmp/apriltag
+          mkdir build && cd build
+          cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-26 \
+            -DBUILD_SHARED_LIBS=ON \
+            -DBUILD_EXAMPLES=OFF \
+            -DBUILD_PYTHON_WRAPPER=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            ..
+          cmake --build . --parallel
+          # Rename to ArenaAprilTag convention
+          cp libapriltag.so libArenaAprilTag.so
+
+      - name: Copy binary to plugin directory
+        run: |
+          mkdir -p Runtime/AprilTag/Plugin/Android/arm64-v8a
+          cp /tmp/apriltag/build/libArenaAprilTag.so \
+            Runtime/AprilTag/Plugin/Android/arm64-v8a/libArenaAprilTag.so
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apriltag-android-arm64
+          path: Runtime/AprilTag/Plugin/Android/arm64-v8a/libArenaAprilTag.so
+
+  build-linux-x86_64:
+    name: Linux x86-64
+    runs-on: ubuntu-latest
+    env:
+      APRILTAG_VERSION: "v3.4.3"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone AprilTag source
+        run: |
+          git clone --depth 1 --branch ${{ env.APRILTAG_VERSION }} \
+            https://github.com/AprilRobotics/apriltag.git /tmp/apriltag
+
+      - name: Build for Linux x86-64
+        run: |
+          cd /tmp/apriltag
+          mkdir build && cd build
+          cmake \
+            -DBUILD_SHARED_LIBS=ON \
+            -DBUILD_EXAMPLES=OFF \
+            -DBUILD_PYTHON_WRAPPER=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            ..
+          cmake --build . --parallel
+          cp libapriltag.so libArenaAprilTag.so
+
+      - name: Copy binary to plugin directory
+        run: |
+          mkdir -p Runtime/AprilTag/Plugin/Linux/x86_64
+          cp /tmp/apriltag/build/libArenaAprilTag.so \
+            Runtime/AprilTag/Plugin/Linux/x86_64/libArenaAprilTag.so
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apriltag-linux-x86_64
+          path: Runtime/AprilTag/Plugin/Linux/x86_64/libArenaAprilTag.so
+
+  build-macos-universal:
+    name: macOS Universal (arm64 + x86_64)
+    runs-on: macos-latest
+    env:
+      APRILTAG_VERSION: "v3.4.3"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone AprilTag source
+        run: |
+          git clone --depth 1 --branch ${{ env.APRILTAG_VERSION }} \
+            https://github.com/AprilRobotics/apriltag.git /tmp/apriltag
+
+      - name: Build for macOS (arm64)
+        run: |
+          cd /tmp/apriltag && mkdir build-arm64 && cd build-arm64
+          cmake \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DBUILD_SHARED_LIBS=ON \
+            -DBUILD_EXAMPLES=OFF \
+            -DBUILD_PYTHON_WRAPPER=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            ..
+          cmake --build . --parallel
+
+      - name: Build for macOS (x86_64)
+        run: |
+          cd /tmp/apriltag && mkdir build-x86_64 && cd build-x86_64
+          cmake \
+            -DCMAKE_OSX_ARCHITECTURES=x86_64 \
+            -DBUILD_SHARED_LIBS=ON \
+            -DBUILD_EXAMPLES=OFF \
+            -DBUILD_PYTHON_WRAPPER=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            ..
+          cmake --build . --parallel
+
+      - name: Create universal binary bundle
+        run: |
+          mkdir -p Runtime/AprilTag/Plugin/macOS
+          lipo -create \
+            /tmp/apriltag/build-arm64/libapriltag.dylib \
+            /tmp/apriltag/build-x86_64/libapriltag.dylib \
+            -output Runtime/AprilTag/Plugin/macOS/ArenaAprilTag.bundle
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apriltag-macos-universal
+          path: Runtime/AprilTag/Plugin/macOS/ArenaAprilTag.bundle
+
+  build-windows-x86_64:
+    name: Windows x86-64
+    runs-on: windows-latest
+    env:
+      APRILTAG_VERSION: "v3.4.3"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone AprilTag source
+        run: |
+          git clone --depth 1 --branch ${{ env.APRILTAG_VERSION }} `
+            https://github.com/AprilRobotics/apriltag.git C:\apriltag
+
+      - name: Build for Windows x86-64
+        run: |
+          cd C:\apriltag
+          mkdir build && cd build
+          cmake -A x64 `
+            -DBUILD_SHARED_LIBS=ON `
+            -DBUILD_EXAMPLES=OFF `
+            -DBUILD_PYTHON_WRAPPER=OFF `
+            -DCMAKE_BUILD_TYPE=Release `
+            ..
+          cmake --build . --config Release --parallel
+          Copy-Item Release\apriltag.dll ArenaAprilTag.dll
+
+      - name: Copy binary to plugin directory
+        run: |
+          New-Item -ItemType Directory -Force `
+            -Path Runtime\AprilTag\Plugin\Windows\x86_64
+          Copy-Item C:\apriltag\build\ArenaAprilTag.dll `
+            Runtime\AprilTag\Plugin\Windows\x86_64\ArenaAprilTag.dll
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apriltag-windows-x86_64
+          path: Runtime/AprilTag/Plugin/Windows/x86_64/ArenaAprilTag.dll
+
+  # Collects all platform binaries and commits them to the branch
+  commit-binaries:
+    name: Commit plugin binaries
+    needs: [build-android-arm64, build-linux-x86_64, build-macos-universal, build-windows-x86_64]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/artifacts
+
+      - name: Place binaries in plugin directories
+        run: |
+          # Android ARM64
+          mkdir -p Runtime/AprilTag/Plugin/Android/arm64-v8a
+          cp /tmp/artifacts/apriltag-android-arm64/libArenaAprilTag.so \
+            Runtime/AprilTag/Plugin/Android/arm64-v8a/libArenaAprilTag.so
+
+          # Linux x86-64
+          mkdir -p Runtime/AprilTag/Plugin/Linux/x86_64
+          cp /tmp/artifacts/apriltag-linux-x86_64/libArenaAprilTag.so \
+            Runtime/AprilTag/Plugin/Linux/x86_64/libArenaAprilTag.so
+
+          # macOS universal
+          mkdir -p Runtime/AprilTag/Plugin/macOS
+          cp /tmp/artifacts/apriltag-macos-universal/ArenaAprilTag.bundle \
+            Runtime/AprilTag/Plugin/macOS/ArenaAprilTag.bundle
+
+          # Windows x86-64
+          mkdir -p Runtime/AprilTag/Plugin/Windows/x86_64
+          cp /tmp/artifacts/apriltag-windows-x86_64/ArenaAprilTag.dll \
+            Runtime/AprilTag/Plugin/Windows/x86_64/ArenaAprilTag.dll
+
+      - name: Commit updated binaries
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Runtime/AprilTag/Plugin/
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "build: update AprilTag native plugin binaries [skip ci]"
+            git push
+          fi
