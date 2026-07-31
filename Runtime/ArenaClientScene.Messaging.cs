@@ -357,7 +357,7 @@ namespace ArenaUnity
         }
 
         /// <summary>
-        /// Ingest point for messages to be recieved in the local scene.
+        /// Ingest point for messages to be received in the local scene.
         /// </summary>
         /// <param name="topic">The MQTT topic.</param>
         /// <param name="message">The JSON ARENA wire format string.</param>
@@ -366,9 +366,13 @@ namespace ArenaUnity
             // Call the delegate if a user has defined it
             OnMessageCallback?.Invoke(topic, message);
 
-            // TODO (mwfarb): perform any message validation here based on topic
+            // Section 2.3: Payload must not be empty/null → warned and dropped
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                Debug.LogWarning($"Received empty MQTT payload on topic '{topic}', dropping.");
+                return;
+            }
 
-            // TODO (mwfarb): test that ignore own messages is still viable
             // filter messages based on expected payload format
             var topicSplit = topic.Split('/');
             if (topicSplit.Length > ArenaMqttClient.msgTypeRenderIdx)
@@ -380,11 +384,60 @@ namespace ArenaUnity
                     case "x":
                     case "u":
                     case "o":
-                        // handle scene objects, user objects, user presence
-                        ArenaMessageJson msg = JsonConvert.DeserializeObject<ArenaMessageJson>(message);
+                        // Section 4.1: Messages from own userClient (topic position 5) are ignored → silently skipped
+                        if (!string.IsNullOrEmpty(userclient)
+                            && topicSplit.Length > (int)ArenaTopicTokens.USER_CLIENT
+                            && topicSplit[(int)ArenaTopicTokens.USER_CLIENT] == userclient)
+                            return;
+
+                        // Section 4.2: Object messages for own camera/hands are ignored → silently skipped
+                        if (topicSplit.Length > (int)ArenaTopicTokens.UUID)
+                        {
+                            var topicUuid = topicSplit[(int)ArenaTopicTokens.UUID];
+                            if (localCameraIds.Contains(topicUuid)
+                                || (!string.IsNullOrEmpty(handleftid) && topicUuid == handleftid)
+                                || (!string.IsNullOrEmpty(handrightid) && topicUuid == handrightid))
+                                return;
+                        }
+
+                        // Section 2.1: Payload must be valid JSON → silently dropped
+                        ArenaMessageJson msg;
+                        try
+                        {
+                            msg = JsonConvert.DeserializeObject<ArenaMessageJson>(message);
+                        }
+                        catch (JsonException ex)
+                        {
+                            Debug.LogWarning($"Invalid JSON in MQTT payload on topic '{topic}', dropping: {ex.Message}");
+                            return;
+                        }
+                        if (msg == null)
+                        {
+                            Debug.LogWarning($"Null MQTT payload on topic '{topic}', dropping.");
+                            return;
+                        }
+
+                        // Section 3.1: object_id must be present → warned and dropped
+                        if (string.IsNullOrWhiteSpace(msg.object_id))
+                        {
+                            Debug.LogWarning($"Missing object_id in MQTT message on topic '{topic}', dropping.");
+                            return;
+                        }
+
+                        // Section 2.2: Payload object_id must match topic UUID (position 6) → silently dropped
+                        if (topicSplit.Length > (int)ArenaTopicTokens.UUID)
+                        {
+                            var topicUuid = topicSplit[(int)ArenaTopicTokens.UUID];
+                            if (msg.object_id != topicUuid)
+                            {
+                                Debug.LogWarning($"object_id '{msg.object_id}' does not match topic UUID '{topicUuid}', dropping.");
+                                return;
+                            }
+                        }
+
                         if (loadLiveObjects)
                         {
-                            ProcessArenaMessage(msg);
+                            ProcessArenaMessage(msg, topicSplit);
                         }
                         break;
                     case "r": // remote render handled by arena-renderfusion package currently
@@ -401,14 +454,64 @@ namespace ArenaUnity
             }
         }
 
-        private void ProcessArenaMessage(ArenaMessageJson msg, object menuCommand = null)
+        private void ProcessArenaMessage(ArenaMessageJson msg, string[] topicSplit = null, object menuCommand = null)
         {
+            // Section 3.5: type field should be present → warning, processing continues
+            if (string.IsNullOrWhiteSpace(msg.type))
+            {
+                Debug.LogWarning($"Missing type in MQTT message for object_id '{msg.object_id}'.");
+            }
+
+            // Section 3.2: action must be present → warned and dropped
+            if (string.IsNullOrWhiteSpace(msg.action))
+            {
+                Debug.LogWarning($"Missing action in MQTT message for object_id '{msg.object_id}', dropping.");
+                return;
+            }
+
+            // Section 3.3: action must be one of: create, update, delete, clientEvent → warned and dropped
+            if (msg.action != "create" && msg.action != "update" && msg.action != "delete"
+                && msg.action != "clientEvent" && msg.action != "leave")
+            {
+                Debug.LogWarning($"Invalid action '{msg.action}' in MQTT message for object_id '{msg.object_id}', dropping.");
+                return;
+            }
+
             // consume object updates
             string object_id;
             switch ((string)msg.action)
             {
                 case "create":
                 case "update":
+                    // Section 3.4: data must be present for create/update → warned and dropped
+                    if (msg.data == null)
+                    {
+                        Debug.LogWarning($"Missing data in MQTT {msg.action} message for object_id '{msg.object_id}', dropping.");
+                        return;
+                    }
+
+                    // Section 3.6: object_type should be present for object creates → warning, processing continues
+                    if (msg.action == "create" && msg.type == "object")
+                    {
+                        if (msg.data is JObject jData)
+                        {
+                            if (string.IsNullOrWhiteSpace(jData["object_type"]?.ToString()))
+                            {
+                                Debug.LogWarning($"Missing object_type in MQTT create message for object_id '{msg.object_id}'.");
+                            }
+                        }
+                    }
+
+                    // Section 6.3/6.4: camera-override and rig messages only processed if addressed to own camera → silently ignored
+                    if (msg.type == "camera-override" || msg.type == "rig")
+                    {
+                        bool addressedToOwnCamera = topicSplit != null
+                            && topicSplit.Length > (int)ArenaTopicTokens.TO_UID
+                            && localCameraIds.Contains(topicSplit[(int)ArenaTopicTokens.TO_UID]);
+                        if (!addressedToOwnCamera)
+                            return;
+                    }
+
                     object_id = (string)msg.object_id;
                     string msg_type = (string)msg.type;
 
@@ -434,18 +537,52 @@ namespace ArenaUnity
                     RemoveObject($"{prefixHandR}{object_id}");
                     break;
                 case "clientEvent":
-                    ClientEventOnObject(msg);
+                    // Section 3.4: data must be present for clientEvent → silently dropped
+                    if (msg.data == null)
+                        return;
+                    ClientEventOnObject(msg, topicSplit);
                     break;
                 default:
                     break;
             }
         }
 
-        private void ClientEventOnObject(ArenaMessageJson msg)
+        private void ClientEventOnObject(ArenaMessageJson msg, string[] topicSplit = null)
         {
             var object_id = (string)msg.object_id;
             var msg_type = (string)msg.type;
-            ArenaEventJson evt = JsonConvert.DeserializeObject<ArenaEventJson>(msg.data.ToString());
+
+            // Section 6.2: goto-url and textinput events from remote clients are blocked → silently ignored
+            if (msg_type == "goto-url" || msg_type == "textinput")
+                return;
+
+            ArenaEventJson evt;
+            try
+            {
+                evt = JsonConvert.DeserializeObject<ArenaEventJson>(msg.data.ToString());
+            }
+            catch (JsonException ex)
+            {
+                Debug.LogWarning($"Invalid JSON in clientEvent data for object_id '{object_id}', dropping: {ex.Message}");
+                return;
+            }
+            if (evt == null)
+                return;
+
+            // Section 6.1: clientEvent source must match topic toUid (position 7) → warned and dropped
+            if (topicSplit != null && topicSplit.Length > (int)ArenaTopicTokens.TO_UID)
+            {
+                string toUid = topicSplit[(int)ArenaTopicTokens.TO_UID];
+#pragma warning disable 0618
+                string source = evt.Source;
+#pragma warning restore 0618
+                if (!string.IsNullOrEmpty(source) && source != toUid)
+                {
+                    Debug.LogWarning($"clientEvent source '{source}' does not match topic toUid '{toUid}' for object_id '{object_id}', dropping.");
+                    return;
+                }
+            }
+
             var target = evt.Target;
             if (arenaObjs.TryGetValue(target, out GameObject gobj))
             {
