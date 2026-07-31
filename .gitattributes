@@ -1,6 +1,12 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
+# Native plugin binaries — treat as binary to prevent line-ending corruption
+*.so binary
+*.dll binary
+*.a binary
+*.bundle binary
+
 # We want our source files to be
 *.cs text eol=lf
 *.json text eol=lf
