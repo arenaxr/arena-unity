@@ -109,6 +109,8 @@ namespace ArenaUnity
         const float DeviceAuthPromptWidth = 2.2f;
         const float DeviceAuthPromptHeight = 1.2f;
         const float DeviceAuthPromptDistanceFromCamera = 1.25f;
+        const float DeviceAuthPromptBgPadding = 0.15f;
+        static readonly Color DeviceAuthPromptBgColor = new Color(0f, 0f, 0f, 0.85f);
 
 
         public string appFilesPath { get; private set; }
@@ -399,6 +401,49 @@ namespace ArenaUnity
                 deviceAuthPromptText.fontSize = DeviceAuthPromptFontSize;
                 deviceAuthPromptText.enableWordWrapping = true;
                 deviceAuthPromptText.rectTransform.sizeDelta = new Vector2(DeviceAuthPromptWidth, DeviceAuthPromptHeight);
+
+                // Semi-transparent background panel for readability in bright scenes
+                var bgQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                bgQuad.name = "AuthPromptBackground";
+                bgQuad.transform.SetParent(deviceAuthPrompt3D.transform, false);
+                bgQuad.transform.localPosition = new Vector3(0f, 0f, 0.01f); // slightly behind text
+                bgQuad.transform.localScale = new Vector3(
+                    DeviceAuthPromptWidth + DeviceAuthPromptBgPadding,
+                    DeviceAuthPromptHeight + DeviceAuthPromptBgPadding,
+                    1f);
+                var bgRenderer = bgQuad.GetComponent<MeshRenderer>();
+                if (bgRenderer != null)
+                {
+                    var bgShader = ArenaUnity.GetLitShader();
+                    var bgMaterial = new Material(bgShader);
+                    // Configure transparency across render pipelines
+                    if (ArenaUnity.DefaultRenderPipeline == null)
+                    {
+                        // Built-in: Standard shader transparent mode
+                        bgMaterial.SetFloat("_Mode", 3f);
+                        bgMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                        bgMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                        bgMaterial.SetInt("_ZWrite", 0);
+                        bgMaterial.DisableKeyword("_ALPHATEST_ON");
+                        bgMaterial.EnableKeyword("_ALPHABLEND_ON");
+                        bgMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                        bgMaterial.renderQueue = 3000;
+                        bgMaterial.color = DeviceAuthPromptBgColor;
+                    }
+                    else
+                    {
+                        // URP/HDRP: surface type + blend mode properties
+                        bgMaterial.SetFloat("_Surface", 1f); // Transparent
+                        bgMaterial.SetFloat("_Blend", 0f);   // Alpha blend
+                        bgMaterial.SetFloat("_ZWrite", 0f);
+                        bgMaterial.renderQueue = 3000;
+                        bgMaterial.SetColor(ArenaUnity.ColorPropertyName, DeviceAuthPromptBgColor);
+                    }
+                    bgRenderer.material = bgMaterial;
+                }
+                // Remove collider — background panel is non-interactive
+                var bgCollider = bgQuad.GetComponent<Collider>();
+                if (bgCollider != null) Destroy(bgCollider);
             }
             if (deviceAuthPromptText != null)
             {
