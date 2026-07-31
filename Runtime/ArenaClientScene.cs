@@ -231,8 +231,10 @@ namespace ArenaUnity
 
             // start auth flow and MQTT connection
             ArenaCamera[] camlist = FindObjectsByType<ArenaCamera>(FindObjectsSortMode.None);
+            ArenaLocalHand[] localHandlist = FindObjectsByType<ArenaLocalHand>(FindObjectsSortMode.None);
+            bool hasUserPresence = camlist.Length > 0 || localHandlist.Length > 0;
             name = $"{originalName} (Authenticating...)";
-            cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, camlist.Length > 0, arenaDefaults.latencyTopic));
+            cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, hasUserPresence, arenaDefaults.latencyTopic));
             yield return cd.coroutine;
             name = $"{originalName} (MQTT Connecting...)";
             if (cd.result != null)
@@ -286,6 +288,28 @@ namespace ArenaUnity
                 );
                 cam.HasPermissions = HasPerms(camTopic.PUB_SCENE_USER);
                 localCameraIds.Add(cam.camid);
+            }
+
+            // publish arena hand controllers where requested
+            foreach (ArenaLocalHand localHand in localHandlist)
+            {
+                string assignedHandId = localHand.hand == ArenaLocalHand.HandType.Left
+                    ? handleftid
+                    : handrightid;
+                if (string.IsNullOrWhiteSpace(assignedHandId))
+                {
+                    Debug.LogWarning($"ArenaLocalHand ({localHand.hand}): no hand id available from auth. Hand controller will not be published.");
+                    continue;
+                }
+                localHand.handid = assignedHandId;
+                var handTopic = new ArenaTopics(
+                    realm: realm,
+                    name_space: namespaceName,
+                    scenename: sceneName,
+                    userclient: userclient,
+                    userobj: assignedHandId
+                );
+                localHand.HasPermissions = HasPerms(handTopic.PUB_SCENE_USER);
             }
 
             // apply default environment (skip for RenderFusion — scene manages its own environment)
