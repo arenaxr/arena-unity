@@ -43,7 +43,7 @@ namespace ArenaUnity.Components
             bool isLinearArena = json.OutputColorSpace == ArenaRendererSettingsJson.OutputColorSpaceType.LinearSRGBColorSpace;
             if (isLinearUnity != isLinearArena && json.OutputColorSpace != ArenaRendererSettingsJson.OutputColorSpaceType.NoColorSpace)
             {
-                Debug.LogWarning($"[ArenaSceneRendererSettings] ARENA requests outputColorSpace '{json.OutputColorSpace}' but Unity project is baked with '{QualitySettings.activeColorSpace}'. Cannot change at runtime.");
+                Debug.LogWarning($"[ArenaSceneRendererSettings] ARENA requests outputColorSpace '{json.OutputColorSpace}' but Unity project is baked with '{QualitySettings.activeColorSpace}'. This can cause darker colors or different light falloff. Update Edit > Project Settings > Player > Rendering > Color Space to match the imported ARENA scene.");
             }
 
             // localClippingEnabled warning
