@@ -1,0 +1,274 @@
+name: Build WebP Native Plugins
+# Builds the webp-unity native plugin from upstream libwebp source
+# for all supported Unity target platforms.
+#
+# Trigger manually or on changes to the WebP plugin directory.
+# Artifacts are committed back to the PR branch.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'feat/webp-texture-support'
+    paths:
+      - 'Runtime/WebP/Plugin/**'
+      - '.github/workflows/build-webp-plugin.yaml'
+
+jobs:
+  build-android-arm64:
+    name: Android ARM64 (Quest)
+    runs-on: ubuntu-latest
+    env:
+      LIBWEBP_VERSION: "v1.5.0"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone libwebp source
+        run: |
+          git clone --depth 1 --branch ${{ env.LIBWEBP_VERSION }} \
+            https://chromium.googlesource.com/webm/libwebp /tmp/libwebp
+
+      - name: Set up Android NDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build for Android ARM64
+        run: |
+          cd /tmp/libwebp
+          mkdir build && cd build
+          cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-26 \
+            -DBUILD_SHARED_LIBS=ON \
+            -DWEBP_BUILD_EXTRAS=OFF \
+            -DWEBP_BUILD_ANIM_UTILS=OFF \
+            -DWEBP_BUILD_CWEBP=OFF \
+            -DWEBP_BUILD_DWEBP=OFF \
+            -DWEBP_BUILD_GIF2WEBP=OFF \
+            -DWEBP_BUILD_IMG2WEBP=OFF \
+            -DWEBP_BUILD_VWEBP=OFF \
+            -DWEBP_BUILD_WEBPINFO=OFF \
+            -DWEBP_BUILD_WEBPMUX=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            ..
+          cmake --build . --parallel
+          cp libwebp.so libwebp-unity.so
+
+      - name: Copy binary to plugin directory
+        run: |
+          mkdir -p Runtime/WebP/Plugin/Android/arm64-v8a
+          cp /tmp/libwebp/build/libwebp-unity.so \
+            Runtime/WebP/Plugin/Android/arm64-v8a/libwebp-unity.so
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: webp-android-arm64
+          path: Runtime/WebP/Plugin/Android/arm64-v8a/libwebp-unity.so
+
+  build-linux-x86_64:
+    name: Linux x86-64
+    runs-on: ubuntu-latest
+    env:
+      LIBWEBP_VERSION: "v1.5.0"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone libwebp source
+        run: |
+          git clone --depth 1 --branch ${{ env.LIBWEBP_VERSION }} \
+            https://chromium.googlesource.com/webm/libwebp /tmp/libwebp
+
+      - name: Build for Linux x86-64
+        run: |
+          cd /tmp/libwebp
+          mkdir build && cd build
+          cmake \
+            -DBUILD_SHARED_LIBS=ON \
+            -DWEBP_BUILD_EXTRAS=OFF \
+            -DWEBP_BUILD_ANIM_UTILS=OFF \
+            -DWEBP_BUILD_CWEBP=OFF \
+            -DWEBP_BUILD_DWEBP=OFF \
+            -DWEBP_BUILD_GIF2WEBP=OFF \
+            -DWEBP_BUILD_IMG2WEBP=OFF \
+            -DWEBP_BUILD_VWEBP=OFF \
+            -DWEBP_BUILD_WEBPINFO=OFF \
+            -DWEBP_BUILD_WEBPMUX=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            ..
+          cmake --build . --parallel
+          cp libwebp.so libwebp-unity.so
+
+      - name: Copy binary to plugin directory
+        run: |
+          mkdir -p Runtime/WebP/Plugin/Linux/x86_64
+          cp /tmp/libwebp/build/libwebp-unity.so \
+            Runtime/WebP/Plugin/Linux/x86_64/libwebp-unity.so
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: webp-linux-x86_64
+          path: Runtime/WebP/Plugin/Linux/x86_64/libwebp-unity.so
+
+  build-macos-universal:
+    name: macOS Universal (arm64 + x86_64)
+    runs-on: macos-latest
+    env:
+      LIBWEBP_VERSION: "v1.5.0"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone libwebp source
+        run: |
+          git clone --depth 1 --branch ${{ env.LIBWEBP_VERSION }} \
+            https://chromium.googlesource.com/webm/libwebp /tmp/libwebp
+
+      - name: Build for macOS (arm64)
+        run: |
+          cd /tmp/libwebp && mkdir build-arm64 && cd build-arm64
+          cmake \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DBUILD_SHARED_LIBS=ON \
+            -DWEBP_BUILD_EXTRAS=OFF \
+            -DWEBP_BUILD_ANIM_UTILS=OFF \
+            -DWEBP_BUILD_CWEBP=OFF \
+            -DWEBP_BUILD_DWEBP=OFF \
+            -DWEBP_BUILD_GIF2WEBP=OFF \
+            -DWEBP_BUILD_IMG2WEBP=OFF \
+            -DWEBP_BUILD_VWEBP=OFF \
+            -DWEBP_BUILD_WEBPINFO=OFF \
+            -DWEBP_BUILD_WEBPMUX=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            ..
+          cmake --build . --parallel
+
+      - name: Build for macOS (x86_64)
+        run: |
+          cd /tmp/libwebp && mkdir build-x86_64 && cd build-x86_64
+          cmake \
+            -DCMAKE_OSX_ARCHITECTURES=x86_64 \
+            -DBUILD_SHARED_LIBS=ON \
+            -DWEBP_BUILD_EXTRAS=OFF \
+            -DWEBP_BUILD_ANIM_UTILS=OFF \
+            -DWEBP_BUILD_CWEBP=OFF \
+            -DWEBP_BUILD_DWEBP=OFF \
+            -DWEBP_BUILD_GIF2WEBP=OFF \
+            -DWEBP_BUILD_IMG2WEBP=OFF \
+            -DWEBP_BUILD_VWEBP=OFF \
+            -DWEBP_BUILD_WEBPINFO=OFF \
+            -DWEBP_BUILD_WEBPMUX=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            ..
+          cmake --build . --parallel
+
+      - name: Create universal binary bundle
+        run: |
+          mkdir -p Runtime/WebP/Plugin/macOS
+          lipo -create \
+            /tmp/libwebp/build-arm64/libwebp.dylib \
+            /tmp/libwebp/build-x86_64/libwebp.dylib \
+            -output Runtime/WebP/Plugin/macOS/webp-unity.bundle
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: webp-macos-universal
+          path: Runtime/WebP/Plugin/macOS/webp-unity.bundle
+
+  build-windows-x86_64:
+    name: Windows x86-64
+    runs-on: windows-latest
+    env:
+      LIBWEBP_VERSION: "v1.5.0"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone libwebp source
+        run: |
+          git clone --depth 1 --branch ${{ env.LIBWEBP_VERSION }} `
+            https://chromium.googlesource.com/webm/libwebp C:\libwebp
+
+      - name: Build for Windows x86-64
+        run: |
+          cd C:\libwebp
+          mkdir build && cd build
+          cmake -A x64 `
+            -DBUILD_SHARED_LIBS=ON `
+            -DWEBP_BUILD_EXTRAS=OFF `
+            -DWEBP_BUILD_ANIM_UTILS=OFF `
+            -DWEBP_BUILD_CWEBP=OFF `
+            -DWEBP_BUILD_DWEBP=OFF `
+            -DWEBP_BUILD_GIF2WEBP=OFF `
+            -DWEBP_BUILD_IMG2WEBP=OFF `
+            -DWEBP_BUILD_VWEBP=OFF `
+            -DWEBP_BUILD_WEBPINFO=OFF `
+            -DWEBP_BUILD_WEBPMUX=OFF `
+            -DCMAKE_BUILD_TYPE=Release `
+            ..
+          cmake --build . --config Release --parallel
+          Copy-Item Release\webp.dll webp-unity.dll
+
+      - name: Copy binary to plugin directory
+        run: |
+          New-Item -ItemType Directory -Force `
+            -Path Runtime\WebP\Plugin\Windows\x86_64
+          Copy-Item C:\libwebp\build\webp-unity.dll `
+            Runtime\WebP\Plugin\Windows\x86_64\webp-unity.dll
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: webp-windows-x86_64
+          path: Runtime/WebP/Plugin/Windows/x86_64/webp-unity.dll
+
+  # Collects all platform binaries and commits them to the branch
+  commit-binaries:
+    name: Commit plugin binaries
+    needs: [build-android-arm64, build-linux-x86_64, build-macos-universal, build-windows-x86_64]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/artifacts
+
+      - name: Place binaries in plugin directories
+        run: |
+          # Android ARM64
+          mkdir -p Runtime/WebP/Plugin/Android/arm64-v8a
+          cp /tmp/artifacts/webp-android-arm64/libwebp-unity.so \
+            Runtime/WebP/Plugin/Android/arm64-v8a/libwebp-unity.so
+
+          # Linux x86-64
+          mkdir -p Runtime/WebP/Plugin/Linux/x86_64
+          cp /tmp/artifacts/webp-linux-x86_64/libwebp-unity.so \
+            Runtime/WebP/Plugin/Linux/x86_64/libwebp-unity.so
+
+          # macOS universal
+          mkdir -p Runtime/WebP/Plugin/macOS
+          cp /tmp/artifacts/webp-macos-universal/webp-unity.bundle \
+            Runtime/WebP/Plugin/macOS/webp-unity.bundle
+
+          # Windows x86-64
+          mkdir -p Runtime/WebP/Plugin/Windows/x86_64
+          cp /tmp/artifacts/webp-windows-x86_64/webp-unity.dll \
+            Runtime/WebP/Plugin/Windows/x86_64/webp-unity.dll
+
+      - name: Commit updated binaries
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Runtime/WebP/Plugin/
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "build: update WebP native plugin binaries [skip ci]"
+            git push
+          fi
