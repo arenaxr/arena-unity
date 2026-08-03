@@ -207,7 +207,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release `
             ..
           cmake --build . --config Release --parallel
-          Copy-Item Release\webp.dll webp-unity.dll
+          Copy-Item Release\libwebp.dll webp-unity.dll
 
       - name: Copy binary to plugin directory
         run: |

@@ -4,6 +4,7 @@ arena-unity uses some third-party libraries in its package. Some have been modif
 ## GitHub
 - https://github.com/AprilRobotics/apriltag
 - https://github.com/keijiro/jp.keijiro.apriltag
+- https://chromium.googlesource.com/webm/libwebp
 - https://github.com/OliviaLynn/Unity-UDP-ARENA-Demo
 - https://github.com/gpvigano/M2MqttUnity
 - https://github.com/Siccity/GLTFUtility

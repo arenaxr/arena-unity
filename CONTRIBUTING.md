@@ -45,3 +45,12 @@ The `arena-unity` uses [Release Please](https://github.com/googleapis/release-pl
 **Incoming and outgoing MQTT messages MUST use the A-Frame coordinate system.** Unity rendering uses the Unity coordinate system. 
 - All agents and developers must consult and use the translation utilities in `ArenaUnity.cs` (e.g., `ToUnityPosition`, `ToArenaPosition`, `ToUnityRotationQuat`, `ToArenaRotationQuat`) when passing position, rotation, and scale data between the schema objects and Unity's local transformations.
 - **GLTF models** have their own coordinate system spin (LUF). There is an additional translation step to/from GLTF/Unity included in `ArenaUnity.cs` that must be applied when manipulating bones or nodes inside a GLTF hierarchy. Always refer to existing handling to ensure coordinate parity.
+
+### 5. Dependencies — Prefer Bundled Over External
+
+**All dependencies must be freely available** to any user. When integrating an open-source library:
+- **Prefer bundling** the compiled library as a native plugin within this package (e.g., `Runtime/AprilTag/Plugin/`, `Runtime/WebP/Plugin/`) over adding an external UPM or NuGet dependency.
+- **Use CI cross-compilation** (GitHub Actions) to build native plugins for all target platforms from pinned upstream source tags.
+- **Avoid external package registries** (OpenUPM, third-party scoped registries) when possible — these add setup friction and availability risk for users.
+- External UPM dependencies are acceptable only when the package is published on the **Unity Package Manager** official registry (e.g., `com.unity.cloud.gltfast`, `com.unity.nuget.newtonsoft-json`).
+
