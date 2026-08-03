@@ -42,6 +42,7 @@ namespace ArenaUnity
         static void Register()
         {
             ImportAddonRegistry.RegisterImportAddon(new ArenaWebpTextureAddon());
+            Debug.Log("[ArenaWebP] Add-on registered globally.");
         }
     }
 
@@ -60,6 +61,7 @@ namespace ArenaUnity
         /// <inheritdoc />
         public override void Inject(GltfImportBase gltfImport)
         {
+            Debug.Log($"[ArenaWebP] Inject called on {gltfImport.GetType().FullName}");
             gltfImport.AddImportAddonInstance(this);
         }
 
@@ -74,16 +76,19 @@ namespace ArenaUnity
         /// </summary>
         public bool IsAbleToLoad(TextureBase texture, out int imageIndex)
         {
+            Debug.Log($"[ArenaWebP] IsAbleToLoad(TextureBase) called, type={texture?.GetType().FullName}");
 #if NEWTONSOFT_JSON
             if (texture is GLTFast.Newtonsoft.Schema.Texture { extensions: not null } t
                 && t.extensions.TryGetValue<TextureWebpExtension>(
                     "EXT_texture_webp", out var ext))
             {
                 imageIndex = ext.source;
+                Debug.Log($"[ArenaWebP] IsAbleToLoad -> true, imageIndex={imageIndex}");
                 return true;
             }
 #endif
             imageIndex = -1;
+            Debug.Log("[ArenaWebP] IsAbleToLoad -> false (no EXT_texture_webp extension found)");
             return false;
         }
 
@@ -92,7 +97,9 @@ namespace ArenaUnity
         /// </summary>
         public bool IsAbleToLoad(ReadOnlySpan<byte> data)
         {
-            return ImageFormatDetection.IsWebP(data);
+            var result = ImageFormatDetection.IsWebP(data);
+            Debug.Log($"[ArenaWebP] IsAbleToLoad(bytes) magic-byte check -> {result}, dataLen={data.Length}");
+            return result;
         }
 
         /// <summary>
