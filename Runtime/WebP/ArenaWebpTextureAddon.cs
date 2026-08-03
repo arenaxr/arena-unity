@@ -56,14 +56,7 @@ namespace ArenaUnity
         /// <inheritdoc />
         public override void Inject(GltfImportBase gltfImport)
         {
-#if NEWTONSOFT_JSON
-            if (gltfImport is not GLTFast.Newtonsoft.GltfImport)
-                return;
-
             gltfImport.AddImportAddonInstance(this);
-#else
-            Debug.LogError("[ArenaWebP] WebP texture addon requires the Newtonsoft.Json package.");
-#endif
         }
 
         /// <inheritdoc />
