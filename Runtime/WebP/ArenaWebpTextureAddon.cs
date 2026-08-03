@@ -20,6 +20,28 @@ using UnityEngine;
 namespace ArenaUnity
 {
     /// <summary>
+    /// Globally registers the WebP texture add-on with glTFast's ImportAddonRegistry
+    /// so that all GltfImport instances (both editor ScriptedImporter and runtime)
+    /// automatically get WebP decoding support.
+    /// </summary>
+    static class ArenaWebpAddonRegistration
+    {
+        static bool s_Registered;
+
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+#endif
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void Register()
+        {
+            if (s_Registered) return;
+            s_Registered = true;
+            ImportAddonRegistry.RegisterImportAddon(new ArenaWebpTextureAddon());
+            Debug.Log("[ArenaWebP] WebP texture add-on registered globally.");
+        }
+    }
+
+    /// <summary>
     /// glTFast ImportAddon that registers WebP texture decoding for glTF models
     /// using the EXT_texture_webp extension.
     /// </summary>
