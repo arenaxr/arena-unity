@@ -69,7 +69,7 @@ namespace ArenaUnity.Components
             var aobj = GetComponent<ArenaObject>();
             if (aobj != null)
             {
-                aobj.PublishUpdate();
+                aobj.PublishCreateUpdate(true);
             }
         }
     }
