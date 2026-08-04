@@ -11,7 +11,8 @@
         "Unity.Mathematics",
         "Unity.TextMeshPro",
         "Unity.XR.ARFoundation",
-        "Unity.XR.CoreUtils"
+        "Unity.XR.CoreUtils",
+        "conix.arena.unity.apriltag"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

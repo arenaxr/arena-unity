@@ -13,28 +13,63 @@ namespace ArenaUnity.Components
 {
     public class ArenaArmarker : ArenaComponent
     {
+        /// <summary>Registry of active ARMarkers in the scene, keyed by markerid.</summary>
+        public static readonly Dictionary<string, ArenaArmarker> ActiveMarkers = new Dictionary<string, ArenaArmarker>();
+
         // ARENA armarker component unity conversion status:
-        // TODO: publish
+        // DONE: publish
         // TODO: buildable
-        // TODO: dynamic
+        // DONE: dynamic
         // TODO: ele
         // TODO: lat
         // TODO: long
-        // TODO: markerid
+        // DONE: markerid
         // TODO: markertype
         // TODO: size
         // TODO: url
 
         public ArenaArmarkerJson json = new ArenaArmarkerJson();
+        private string _lastMarkerId;
 
         protected override void ApplyRender()
         {
-            // TODO: Implement this component if needed, or note our reasons for not rendering or controlling here.
+            // Update the registry when markerid changes
+            if (_lastMarkerId != null && _lastMarkerId != json.Markerid)
+            {
+                if (ActiveMarkers.TryGetValue(_lastMarkerId, out var old) && old == this)
+                    ActiveMarkers.Remove(_lastMarkerId);
+            }
+            
+            if (!string.IsNullOrEmpty(json.Markerid))
+            {
+                ActiveMarkers[json.Markerid] = this;
+                _lastMarkerId = json.Markerid;
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (_lastMarkerId != null && ActiveMarkers.TryGetValue(_lastMarkerId, out var marker) && marker == this)
+            {
+                ActiveMarkers.Remove(_lastMarkerId);
+            }
         }
 
         public override void UpdateObject()
         {
             PublishIfChanged(json.attributeName, JsonConvert.SerializeObject(json));
+        }
+
+        /// <summary>
+        /// Manually triggers an MQTT update of the GameObject's transform.
+        /// Called by ArenaAprilTag when a dynamic armarker's position is updated by vision.
+        /// </summary>
+        public void PublishTransformUpdate()
+        {
+            if (arenaObject != null)
+            {
+                arenaObject.PublishUpdate();
+            }
         }
     }
 }

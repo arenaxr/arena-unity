@@ -5,6 +5,7 @@
 
 using ArenaUnity.AprilTag;
 using UnityEngine;
+using ArenaUnity.Components;
 #if HAS_AR_FOUNDATION
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -13,12 +14,8 @@ using UnityEngine.XR.ARSubsystems;
 namespace ArenaUnity
 {
     /// <summary>
-    /// Detects ARENA-standard AprilTag 36h11 markers via a device camera and uses
-    /// tag #0 as the physical scene-origin anchor to relocalize the ARENA scene root
-    /// in XR. Attach this component to the XR rig or main camera GameObject.
-    ///
-    /// Supported platforms: Linux x86-64 (native plugin included).
-    /// For Windows, macOS, iOS, and Android builds see Runtime/AprilTag/Plugin/README.md.
+    /// Detects ARENA-standard AprilTag 36h11 markers via ARFoundation and uses them 
+    /// for scene relocalization (originTagId or static armarkers) and dynamic object tracking.
     /// </summary>
     [DisallowMultipleComponent]
     [HelpURL("https://docs.arenaxr.org")]
@@ -26,9 +23,8 @@ namespace ArenaUnity
     {
 #if HAS_AR_FOUNDATION
         [Header("AR Foundation")]
-        [Tooltip("Optional ARCameraManager for AR passthrough frame capture on mobile/headsets.")]
+        [Tooltip("Optional ARCameraManager for AR passthrough frame capture. Will find one if empty.")]
         public ARCameraManager arCameraManager;
-#endif
 
         [Header("Detection")]
         [Tooltip("Physical size of the printed AprilTag in meters.")]
@@ -43,17 +39,8 @@ namespace ArenaUnity
         [Range(1, 4)]
         public int decimation = 2;
 
-        [Tooltip("Index of the WebCamTexture device to use for detection. -1 uses the first available camera.")]
-        public int webCamIndex = -1;
-
-        [Tooltip("Desired webcam resolution width (0 = device default).")]
-        public int webCamWidth = 1280;
-
-        [Tooltip("Desired webcam resolution height (0 = device default).")]
-        public int webCamHeight = 720;
-
         [Header("Relocalization")]
-        [Tooltip("Transform to reposition when the origin tag is detected. Leave empty to use ArenaClientScene root.")]
+        [Tooltip("Transform to reposition when a static tag is detected. Leave empty to use ArenaClientScene root.")]
         public Transform sceneRoot;
 
         [Tooltip("Smooth relocalization over multiple detections using exponential moving average.")]
@@ -70,14 +57,12 @@ namespace ArenaUnity
         /// <summary>Whether the origin tag was detected in the last frame.</summary>
         public bool OriginTagDetected { get; private set; }
 
-        WebCamTexture _webCam;
         TagDetector _detector;
         Color32[] _buffer;
         Camera _camera;
 
         void Start()
         {
-#if HAS_AR_FOUNDATION
             if (arCameraManager == null)
             {
 #if UNITY_2023_1_OR_NEWER
@@ -86,83 +71,28 @@ namespace ArenaUnity
                 arCameraManager = FindObjectOfType<ARCameraManager>();
 #endif
             }
+
             if (arCameraManager != null)
             {
                 arCameraManager.frameReceived += OnARCameraFrameReceived;
             }
             else
             {
-                InitWebCam();
+                Debug.LogWarning("[ArenaAprilTag] No ARCameraManager found. AprilTag detection is disabled.");
             }
-#else
-            InitWebCam();
-#endif
+
             CacheCamera();
         }
 
         void OnDestroy()
         {
-#if HAS_AR_FOUNDATION
             if (arCameraManager != null)
             {
                 arCameraManager.frameReceived -= OnARCameraFrameReceived;
             }
-#endif
 
             _detector?.Dispose();
             _detector = null;
-
-            if (_webCam != null)
-            {
-                _webCam.Stop();
-                Destroy(_webCam);
-                _webCam = null;
-            }
-        }
-
-        void LateUpdate()
-        {
-#if HAS_AR_FOUNDATION
-            if (arCameraManager != null)
-                return; // ARCameraManager handles frame events natively
-#endif
-
-            if (_webCam == null || !_webCam.didUpdateThisFrame)
-                return;
-
-            EnsureDetector();
-            RunDetection();
-        }
-
-        void InitWebCam()
-        {
-            WebCamDevice[] devices = WebCamTexture.devices;
-            if (devices.Length == 0)
-            {
-                Debug.LogWarning("[ArenaAprilTag] No webcam devices found.");
-                return;
-            }
-
-            int idx = (webCamIndex >= 0 && webCamIndex < devices.Length)
-                ? webCamIndex : 0;
-
-            _webCam = new WebCamTexture(devices[idx].name, webCamWidth, webCamHeight);
-            _webCam.Play();
-            Debug.Log($"[ArenaAprilTag] Using webcam: {devices[idx].name}");
-        }
-
-        void EnsureDetector()
-        {
-            int w = _webCam.width;
-            int h = _webCam.height;
-            if (w <= 0 || h <= 0) return;
-
-            if (_detector == null)
-            {
-                _detector = new TagDetector(w, h, decimation);
-                _buffer = new Color32[w * h];
-                Debug.Log($"[ArenaAprilTag] Detector initialized ({w}x{h}, decimation={decimation}).");
-            }
         }
 
         void CacheCamera()
@@ -174,34 +104,6 @@ namespace ArenaUnity
                 Debug.LogWarning("[ArenaAprilTag] No camera found; FOV calculation will be unavailable.");
         }
 
-        void RunDetection()
-        {
-            if (_detector == null) return;
-
-            _webCam.GetPixels32(_buffer);
-
-            if (_camera == null)
-            {
-                Debug.LogWarning("[ArenaAprilTag] No camera found for FOV calculation.");
-                return;
-            }
-
-            var fov = _camera.fieldOfView * Mathf.Deg2Rad;
-            _detector.ProcessImage(_buffer, fov, tagSize);
-
-            OriginTagDetected = false;
-            foreach (var tag in _detector.DetectedTags)
-            {
-                if (tag.ID == originTagId)
-                {
-                    OriginTagDetected = true;
-                    ApplyRelocalization(_camera, tag);
-                    break;
-                }
-            }
-        }
-
-#if HAS_AR_FOUNDATION
         void OnARCameraFrameReceived(ARCameraFrameEventArgs eventArgs)
         {
             if (!arCameraManager.TryAcquireLatestCpuImage(out XRCpuImage image))
@@ -254,43 +156,84 @@ namespace ArenaUnity
                 OriginTagDetected = false;
                 foreach (var tag in _detector.DetectedTags)
                 {
-                    if (tag.ID == originTagId)
+                    ProcessTagDetection(tag);
+                }
+            }
+        }
+
+        void ProcessTagDetection(TagPose tag)
+        {
+            string tagStr = tag.ID.ToString();
+
+            // 1. Primary relocalization (Origin Tag)
+            if (tag.ID == originTagId)
+            {
+                OriginTagDetected = true;
+                ApplyRelocalization(_camera, tag, Vector3.zero, Quaternion.identity);
+            }
+
+            // 2. Secondary Support (armarker components)
+            if (ArenaArmarker.ActiveMarkers.TryGetValue(tagStr, out var armarker))
+            {
+                if (armarker.json.Publish)
+                {
+                    // Publishing raw detections directly to MQTT is reserved for future implementation
+                    // matching arena-web-core's pubDetList
+                }
+
+                if (!armarker.json.Dynamic)
+                {
+                    // STATIC tag: use it to reorient the XR rig so the physical tag aligns with the virtual object
+                    ApplyRelocalization(_camera, tag, armarker.transform.position, armarker.transform.rotation);
+                }
+                else
+                {
+                    // DYNAMIC tag: move the virtual object to match the physical tag
+                    Vector3 tagWorldPos = _camera.transform.position + _camera.transform.rotation * tag.Position;
+                    Quaternion tagWorldRot = _camera.transform.rotation * tag.Rotation;
+
+                    if (smoothing)
                     {
-                        OriginTagDetected = true;
-                        ApplyRelocalization(_camera, tag);
-                        break;
+                        armarker.transform.position = Vector3.Lerp(armarker.transform.position, tagWorldPos, smoothingFactor);
+                        armarker.transform.rotation = Quaternion.Slerp(armarker.transform.rotation, tagWorldRot, smoothingFactor);
+                    }
+                    else
+                    {
+                        armarker.transform.position = tagWorldPos;
+                        armarker.transform.rotation = tagWorldRot;
+                    }
+
+                    if (!armarker.json.Publish)
+                    {
+                        // Publish the updated GameObject transform over MQTT to the scene
+                        armarker.PublishTransformUpdate();
                     }
                 }
             }
         }
-#endif
 
         /// <summary>
-        /// Relocalize the ARENA scene root so that the detected origin tag maps to (0, 0, 0)
-        /// with identity rotation in Unity world space.
-        ///
-        /// Coordinate notes:
-        ///   - <c>tag.Position</c> is the tag-center position in Unity camera space (right-handed,
-        ///     Y-up after the keijiro coordinate fixup applied in PoseEstimationJob).
-        ///   - <c>tag.Rotation</c> is the tag-frame orientation in Unity camera space.
-        ///   - The scene root transform is set so the tag appears at the world origin.
+        /// Relocalize the scene root (usually the XR Rig) so that the detected physical tag maps to the expected target pose.
         /// </summary>
-        void ApplyRelocalization(Camera cam, TagPose tag)
+        void ApplyRelocalization(Camera cam, TagPose tag, Vector3 targetWorldPos, Quaternion targetWorldRot)
         {
             Transform root = ResolveSceneRoot();
             if (root == null) return;
 
-            // Build the tag's world-space pose from the camera's current world transform.
+            // Physical tag's current pose in world space
             Vector3 tagWorldPos = cam.transform.position + cam.transform.rotation * tag.Position;
             Quaternion tagWorldRot = cam.transform.rotation * tag.Rotation;
 
-            // We want the tag to sit at the world origin with identity rotation.
-            // Find the transform that maps tagWorldPos/tagWorldRot → (0, 0, 0) / identity:
-            //   newRootRot * tagWorldRot = Identity  =>  newRootRot = Inverse(tagWorldRot)
-            //   newRootRot * tagWorldPos + newRootPos = 0  =>  newRootPos = -Inverse(tagWorldRot) * tagWorldPos
-            Quaternion invTagRot = Quaternion.Inverse(tagWorldRot);
-            Vector3 targetPos = -(invTagRot * tagWorldPos);
-            Quaternion targetRot = invTagRot;
+            // We want to find a transformation T that maps the physical tag's current world pose to the target world pose.
+            // T_rot * tagWorldRot = targetWorldRot => T_rot = targetWorldRot * Inverse(tagWorldRot)
+            // T_rot * tagWorldPos + T_pos = targetWorldPos => T_pos = targetWorldPos - T_rot * tagWorldPos
+            
+            Quaternion tRot = targetWorldRot * Quaternion.Inverse(tagWorldRot);
+            Vector3 tPos = targetWorldPos - (tRot * tagWorldPos);
+
+            // Apply T to the root (XR Rig or Scene Root)
+            Quaternion targetRot = tRot * root.rotation;
+            Vector3 targetPos = tRot * root.position + tPos;
 
             if (smoothing)
             {
@@ -311,5 +254,11 @@ namespace ArenaUnity
             Debug.LogWarning("[ArenaAprilTag] No sceneRoot assigned and ArenaClientScene not found.");
             return null;
         }
+#else
+        void Start()
+        {
+            Debug.LogWarning("[ArenaAprilTag] AR Foundation is required for AprilTag support. Component disabled.");
+        }
+#endif
     }
 }
