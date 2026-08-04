@@ -3,10 +3,10 @@
  * Copyright (c) 2021-2024, Carnegie Mellon University. All rights reserved.
  */
 
-using ArenaUnity.AprilTag;
 using UnityEngine;
 using ArenaUnity.Components;
 #if HAS_AR_FOUNDATION
+using ArenaUnity.AprilTag;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 #endif
