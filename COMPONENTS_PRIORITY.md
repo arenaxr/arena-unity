@@ -17,6 +17,7 @@ These components map almost 1:1 to built-in Unity components and require very li
   * `Impulse` = `Rigidbody.AddForce(..., ForceMode.Impulse)`.
 * **`ArenaBoxCollisionListener` (DONE)**: Very simple to hook up using Unity's `MonoBehaviour.OnCollisionEnter`.
 * **`ArenaGltfMorph` (DONE)**: Maps natively to `SkinnedMeshRenderer.SetBlendShapeWeight`.
+* **`ArenaArmarker` (DONE)**: Fully implemented utilizing AR Foundation and AprilTag detection to relocalize the scene or dynamically position objects based on physical markers.
 
 ## Priority 2: Material & Scene Rendering (Medium)
 These use native Unity features but require more specific property mapping or Unity package configurations.
