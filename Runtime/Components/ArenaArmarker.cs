@@ -66,9 +66,10 @@ namespace ArenaUnity.Components
         /// </summary>
         public void PublishTransformUpdate()
         {
-            if (arenaObject != null)
+            var aobj = GetComponent<ArenaObject>();
+            if (aobj != null)
             {
-                arenaObject.PublishUpdate();
+                aobj.PublishUpdate();
             }
         }
     }
