@@ -10,6 +10,7 @@ on:
   push:
     branches:
       - 'feat/webp-texture-support'
+      - 'fix/webp-global-addon-registration'
     paths:
       - 'Runtime/WebP/Plugin/**'
       - '.github/workflows/build-webp-plugin.yaml'
@@ -31,6 +32,9 @@ jobs:
       - name: Set up Android NDK
         uses: android-actions/setup-android@v3
 
+      # Build static libs, then link a single self-contained shared library.
+      # A shared libwebp build depends on a separate libsharpyuv.so that Unity
+      # never ships, causing DllNotFoundException at runtime.
       - name: Build for Android ARM64
         run: |
           cd /tmp/libwebp
@@ -39,7 +43,8 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
             -DANDROID_ABI=arm64-v8a \
             -DANDROID_PLATFORM=android-26 \
-            -DBUILD_SHARED_LIBS=ON \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DWEBP_BUILD_EXTRAS=OFF \
             -DWEBP_BUILD_ANIM_UTILS=OFF \
             -DWEBP_BUILD_CWEBP=OFF \
@@ -52,7 +57,14 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             ..
           cmake --build . --parallel
-          cp libwebp.so libwebp-unity.so
+          $ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang \
+            -shared -o libwebp-unity.so \
+            -Wl,-soname,libwebp-unity.so \
+            -Wl,--whole-archive libwebp.a -Wl,--no-whole-archive libsharpyuv.a \
+            -lm
+          # verify: no non-system dynamic dependencies
+          $ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf -d libwebp-unity.so | grep NEEDED
+          ! $ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf -d libwebp-unity.so | grep NEEDED | grep -E 'libwebp\.so|libsharpyuv'
 
       - name: Copy binary to plugin directory
         run: |
@@ -79,12 +91,15 @@ jobs:
           git clone --depth 1 --branch ${{ env.LIBWEBP_VERSION }} \
             https://chromium.googlesource.com/webm/libwebp /tmp/libwebp
 
+      # Build static libs, then link a single self-contained shared library
+      # (a shared libwebp depends on a separate libsharpyuv.so that never ships).
       - name: Build for Linux x86-64
         run: |
           cd /tmp/libwebp
           mkdir build && cd build
           cmake \
-            -DBUILD_SHARED_LIBS=ON \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DWEBP_BUILD_EXTRAS=OFF \
             -DWEBP_BUILD_ANIM_UTILS=OFF \
             -DWEBP_BUILD_CWEBP=OFF \
@@ -97,7 +112,13 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             ..
           cmake --build . --parallel
-          cp libwebp.so libwebp-unity.so
+          cc -shared -o libwebp-unity.so \
+            -Wl,-soname,libwebp-unity.so \
+            -Wl,--whole-archive libwebp.a -Wl,--no-whole-archive libsharpyuv.a \
+            -lm
+          # verify: no non-system dynamic dependencies
+          readelf -d libwebp-unity.so | grep NEEDED
+          ! readelf -d libwebp-unity.so | grep NEEDED | grep -E 'libwebp\.so|libsharpyuv'
 
       - name: Copy binary to plugin directory
         run: |
@@ -124,51 +145,45 @@ jobs:
           git clone --depth 1 --branch ${{ env.LIBWEBP_VERSION }} \
             https://chromium.googlesource.com/webm/libwebp /tmp/libwebp
 
-      - name: Build for macOS (arm64)
+      # Build static libs per-arch (a fat static build breaks libwebp's SIMD flag
+      # detection), then link self-contained per-arch dylibs and lipo them together.
+      # A shared libwebp build depends on a separate libsharpyuv dylib that never
+      # ships, causing DllNotFoundException at runtime.
+      - name: Build for macOS (arm64 + x86_64)
         run: |
-          cd /tmp/libwebp && mkdir build-arm64 && cd build-arm64
-          cmake \
-            -DCMAKE_OSX_ARCHITECTURES=arm64 \
-            -DBUILD_SHARED_LIBS=ON \
-            -DWEBP_BUILD_EXTRAS=OFF \
-            -DWEBP_BUILD_ANIM_UTILS=OFF \
-            -DWEBP_BUILD_CWEBP=OFF \
-            -DWEBP_BUILD_DWEBP=OFF \
-            -DWEBP_BUILD_GIF2WEBP=OFF \
-            -DWEBP_BUILD_IMG2WEBP=OFF \
-            -DWEBP_BUILD_VWEBP=OFF \
-            -DWEBP_BUILD_WEBPINFO=OFF \
-            -DWEBP_BUILD_WEBPMUX=OFF \
-            -DCMAKE_BUILD_TYPE=Release \
-            ..
-          cmake --build . --parallel
-
-      - name: Build for macOS (x86_64)
-        run: |
-          cd /tmp/libwebp && mkdir build-x86_64 && cd build-x86_64
-          cmake \
-            -DCMAKE_OSX_ARCHITECTURES=x86_64 \
-            -DBUILD_SHARED_LIBS=ON \
-            -DWEBP_BUILD_EXTRAS=OFF \
-            -DWEBP_BUILD_ANIM_UTILS=OFF \
-            -DWEBP_BUILD_CWEBP=OFF \
-            -DWEBP_BUILD_DWEBP=OFF \
-            -DWEBP_BUILD_GIF2WEBP=OFF \
-            -DWEBP_BUILD_IMG2WEBP=OFF \
-            -DWEBP_BUILD_VWEBP=OFF \
-            -DWEBP_BUILD_WEBPINFO=OFF \
-            -DWEBP_BUILD_WEBPMUX=OFF \
-            -DCMAKE_BUILD_TYPE=Release \
-            ..
-          cmake --build . --parallel
+          cd /tmp/libwebp
+          for arch in arm64 x86_64; do
+            cmake -B build-$arch \
+              -DCMAKE_OSX_ARCHITECTURES=$arch \
+              -DBUILD_SHARED_LIBS=OFF \
+              -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+              -DWEBP_BUILD_EXTRAS=OFF \
+              -DWEBP_BUILD_ANIM_UTILS=OFF \
+              -DWEBP_BUILD_CWEBP=OFF \
+              -DWEBP_BUILD_DWEBP=OFF \
+              -DWEBP_BUILD_GIF2WEBP=OFF \
+              -DWEBP_BUILD_IMG2WEBP=OFF \
+              -DWEBP_BUILD_VWEBP=OFF \
+              -DWEBP_BUILD_WEBPINFO=OFF \
+              -DWEBP_BUILD_WEBPMUX=OFF \
+              -DCMAKE_BUILD_TYPE=Release
+            cmake --build build-$arch --parallel
+            cc -dynamiclib -arch $arch -o webp-unity-$arch.dylib \
+              -Wl,-force_load,build-$arch/libwebp.a build-$arch/libsharpyuv.a \
+              -install_name @rpath/webp-unity.bundle
+          done
 
       - name: Create universal binary bundle
         run: |
           mkdir -p Runtime/WebP/Plugin/macOS
           lipo -create \
-            /tmp/libwebp/build-arm64/libwebp.dylib \
-            /tmp/libwebp/build-x86_64/libwebp.dylib \
+            /tmp/libwebp/webp-unity-arm64.dylib \
+            /tmp/libwebp/webp-unity-x86_64.dylib \
             -output Runtime/WebP/Plugin/macOS/webp-unity.bundle
+          # verify: self-contained (only libSystem) and exports present
+          otool -L Runtime/WebP/Plugin/macOS/webp-unity.bundle
+          ! otool -L Runtime/WebP/Plugin/macOS/webp-unity.bundle | grep -E 'libsharpyuv|libwebp\.'
+          nm -gU Runtime/WebP/Plugin/macOS/webp-unity.bundle | grep -q _WebPGetInfo
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -189,12 +204,20 @@ jobs:
           git clone --depth 1 --branch ${{ env.LIBWEBP_VERSION }} `
             https://chromium.googlesource.com/webm/libwebp C:\libwebp
 
+      - name: Set up MSVC developer environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      # Build static libs, then link a single self-contained DLL exporting the
+      # two functions the C# side P/Invokes (a shared libwebp build depends on
+      # a separate libsharpyuv.dll that never ships).
       - name: Build for Windows x86-64
         run: |
           cd C:\libwebp
           mkdir build && cd build
           cmake -A x64 `
-            -DBUILD_SHARED_LIBS=ON `
+            -DBUILD_SHARED_LIBS=OFF `
             -DWEBP_BUILD_EXTRAS=OFF `
             -DWEBP_BUILD_ANIM_UTILS=OFF `
             -DWEBP_BUILD_CWEBP=OFF `
@@ -207,7 +230,14 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release `
             ..
           cmake --build . --config Release --parallel
-          Copy-Item Release\libwebp.dll webp-unity.dll
+          link /DLL /OUT:webp-unity.dll `
+            Release\libwebp.lib Release\libsharpyuv.lib `
+            /EXPORT:WebPGetInfo /EXPORT:WebPDecodeRGBAInto
+          if (-not $?) { exit 1 }
+          # verify: no libwebp/libsharpyuv dynamic dependency remains
+          dumpbin /dependents webp-unity.dll
+          $deps = dumpbin /dependents webp-unity.dll | Out-String
+          if ($deps -match 'libwebp\.dll|libsharpyuv\.dll') { exit 1 }
 
       - name: Copy binary to plugin directory
         run: |

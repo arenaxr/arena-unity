@@ -27,17 +27,43 @@ Trigger the workflow manually via
 
 ## Building manually
 
+**Important:** the plugin must be a single *self-contained* shared library.
+Since libwebp v1.3, a shared (`BUILD_SHARED_LIBS=ON`) build produces a
+`libwebp` that dynamically depends on a separate `libsharpyuv` library.
+Renaming that output and shipping it alone causes `DllNotFoundException`
+at runtime (dlopen fails to resolve `libsharpyuv`). Instead, build the
+static libraries and link them into one shared library:
+
 ```bash
-git clone https://chromium.googlesource.com/webm/libwebp
-cd libwebp && mkdir build && cd build
-cmake -DBUILD_SHARED_LIBS=ON -DWEBP_BUILD_EXTRAS=OFF \
+git clone --branch v1.5.0 https://chromium.googlesource.com/webm/libwebp
+cd libwebp
+cmake -B build -DBUILD_SHARED_LIBS=OFF \
+      -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+      -DWEBP_BUILD_EXTRAS=OFF \
       -DWEBP_BUILD_ANIM_UTILS=OFF -DWEBP_BUILD_CWEBP=OFF \
       -DWEBP_BUILD_DWEBP=OFF -DWEBP_BUILD_GIF2WEBP=OFF \
       -DWEBP_BUILD_IMG2WEBP=OFF -DWEBP_BUILD_VWEBP=OFF \
       -DWEBP_BUILD_WEBPINFO=OFF -DWEBP_BUILD_WEBPMUX=OFF \
-      -DCMAKE_BUILD_TYPE=Release ..
-cmake --build .
+      -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
+
+# Linux / Android (use the NDK clang for Android):
+cc -shared -o libwebp-unity.so -Wl,-soname,libwebp-unity.so \
+   -Wl,--whole-archive build/libwebp.a -Wl,--no-whole-archive build/libsharpyuv.a -lm
+
+# macOS (build arm64 and x86_64 separately — a fat static build breaks
+# libwebp's SIMD flag detection — then lipo the two dylibs together):
+cc -dynamiclib -arch arm64 -o webp-unity-arm64.dylib \
+   -Wl,-force_load,build-arm64/libwebp.a build-arm64/libsharpyuv.a \
+   -install_name @rpath/webp-unity.bundle
+lipo -create webp-unity-arm64.dylib webp-unity-x86_64.dylib -output webp-unity.bundle
+
+# Windows (from an MSVC developer prompt):
+link /DLL /OUT:webp-unity.dll Release\libwebp.lib Release\libsharpyuv.lib ^
+   /EXPORT:WebPGetInfo /EXPORT:WebPDecodeRGBAInto
 ```
 
-Rename the output to `webp-unity` (e.g. `libwebp-unity.so` on Linux)
-and place it in the correct platform sub-directory.
+Verify before shipping — the binary must have **no** dynamic dependency on
+`libwebp` or `libsharpyuv` (`otool -L` on macOS, `readelf -d` on Linux/Android,
+`dumpbin /dependents` on Windows) and must export `WebPGetInfo` and
+`WebPDecodeRGBAInto`. Place the result in the correct platform sub-directory.

@@ -74,8 +74,11 @@ namespace ArenaUnity
             {
                 AnimationMethod = AnimationMethod.Legacy
             };
+#if NEWTONSOFT_JSON
+            var gltf = new GLTFast.Newtonsoft.GltfImport();
+#else
             var gltf = new GltfImport();
-            gltf.AddImportAddonInstance(new ArenaWebpTextureAddonInstance());
+#endif
             Uri uri = new Uri(Path.GetFullPath(assetPath));
             if (await gltf.LoadFile(assetPath, uri, imSet))
             {
