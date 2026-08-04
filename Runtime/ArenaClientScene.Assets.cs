@@ -169,7 +169,17 @@ namespace ArenaUnity
 #if UNITY_EDITOR
             try
             {
-                UnityEditor.AssetDatabase.ImportAsset(localPath);
+                if (UsesWebpTextures(localPath))
+                {
+                    // glTFast's editor ScriptedImporter parses with JsonUtility, which drops the
+                    // EXT_texture_webp extension, so AssetDatabase imports of these models always
+                    // fail. The model still renders in-scene via the Newtonsoft runtime import.
+                    Debug.Log($"Skipping editor asset import for WebP-textured glTF: {localPath}");
+                }
+                else
+                {
+                    UnityEditor.AssetDatabase.ImportAsset(localPath);
+                }
             }
             catch (Exception e)
             {
@@ -177,6 +187,29 @@ namespace ArenaUnity
             }
             ClearProgressBar();
 #endif
+        }
+
+        private static bool UsesWebpTextures(string localPath)
+        {
+            string ext = Path.GetExtension(localPath).ToLowerInvariant();
+            switch (ext)
+            {
+                case ".gltf":
+                    return File.ReadAllText(localPath).Contains("EXT_texture_webp");
+                case ".glb":
+                    using (var reader = new BinaryReader(File.OpenRead(localPath)))
+                    {
+                        if (reader.BaseStream.Length < 20) return false;
+                        reader.BaseStream.Seek(12, SeekOrigin.Begin);
+                        int chunkLength = reader.ReadInt32();
+                        uint chunkType = reader.ReadUInt32();
+                        if (chunkType != 0x4E4F534A) return false; // "JSON"
+                        var json = System.Text.Encoding.UTF8.GetString(reader.ReadBytes(chunkLength));
+                        return json.Contains("EXT_texture_webp");
+                    }
+                default:
+                    return false;
+            }
         }
 
         private void SaveAsset(byte[] data, string path)
