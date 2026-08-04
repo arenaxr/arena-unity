@@ -5,6 +5,10 @@
 
 using ArenaUnity.AprilTag;
 using UnityEngine;
+#if HAS_AR_FOUNDATION
+using UnityEngine.XR.ARFoundation;
+using UnityEngine.XR.ARSubsystems;
+#endif
 
 namespace ArenaUnity
 {
@@ -20,6 +24,12 @@ namespace ArenaUnity
     [HelpURL("https://docs.arenaxr.org")]
     public class ArenaAprilTag : MonoBehaviour
     {
+#if HAS_AR_FOUNDATION
+        [Header("AR Foundation")]
+        [Tooltip("Optional ARCameraManager for AR passthrough frame capture on mobile/headsets.")]
+        public ARCameraManager arCameraManager;
+#endif
+
         [Header("Detection")]
         [Tooltip("Physical size of the printed AprilTag in meters.")]
         [Min(0.001f)]
@@ -67,12 +77,38 @@ namespace ArenaUnity
 
         void Start()
         {
+#if HAS_AR_FOUNDATION
+            if (arCameraManager == null)
+            {
+#if UNITY_2023_1_OR_NEWER
+                arCameraManager = FindFirstObjectByType<ARCameraManager>();
+#else
+                arCameraManager = FindObjectOfType<ARCameraManager>();
+#endif
+            }
+            if (arCameraManager != null)
+            {
+                arCameraManager.frameReceived += OnARCameraFrameReceived;
+            }
+            else
+            {
+                InitWebCam();
+            }
+#else
             InitWebCam();
+#endif
             CacheCamera();
         }
 
         void OnDestroy()
         {
+#if HAS_AR_FOUNDATION
+            if (arCameraManager != null)
+            {
+                arCameraManager.frameReceived -= OnARCameraFrameReceived;
+            }
+#endif
+
             _detector?.Dispose();
             _detector = null;
 
@@ -86,6 +122,11 @@ namespace ArenaUnity
 
         void LateUpdate()
         {
+#if HAS_AR_FOUNDATION
+            if (arCameraManager != null)
+                return; // ARCameraManager handles frame events natively
+#endif
+
             if (_webCam == null || !_webCam.didUpdateThisFrame)
                 return;
 
@@ -159,6 +200,70 @@ namespace ArenaUnity
                 }
             }
         }
+
+#if HAS_AR_FOUNDATION
+        void OnARCameraFrameReceived(ARCameraFrameEventArgs eventArgs)
+        {
+            if (!arCameraManager.TryAcquireLatestCpuImage(out XRCpuImage image))
+                return;
+
+            using (image)
+            {
+                int w = image.width;
+                int h = image.height;
+                if (w <= 0 || h <= 0) return;
+
+                if (_detector == null)
+                {
+                    _detector = new TagDetector(w, h, decimation);
+                    Debug.Log($"[ArenaAprilTag] AR Detector initialized ({w}x{h}, decimation={decimation}).");
+                }
+
+                if (_camera == null)
+                {
+                    Debug.LogWarning("[ArenaAprilTag] No camera found for FOV calculation.");
+                    return;
+                }
+
+                var conversionParams = new XRCpuImage.ConversionParams
+                {
+                    inputRect = new RectInt(0, 0, w, h),
+                    outputDimensions = new Vector2Int(w, h),
+                    outputFormat = TextureFormat.RGBA32,
+                    transformation = XRCpuImage.Transformation.None
+                };
+
+                if (_buffer == null || _buffer.Length != w * h)
+                {
+                    _buffer = new Color32[w * h];
+                }
+
+                var handle = System.Runtime.InteropServices.GCHandle.Alloc(_buffer, System.Runtime.InteropServices.GCHandleType.Pinned);
+                try
+                {
+                    image.Convert(conversionParams, handle.AddrOfPinnedObject(), _buffer.Length * 4);
+                }
+                finally
+                {
+                    handle.Free();
+                }
+
+                var fov = _camera.fieldOfView * Mathf.Deg2Rad;
+                _detector.ProcessImage(_buffer, fov, tagSize);
+
+                OriginTagDetected = false;
+                foreach (var tag in _detector.DetectedTags)
+                {
+                    if (tag.ID == originTagId)
+                    {
+                        OriginTagDetected = true;
+                        ApplyRelocalization(_camera, tag);
+                        break;
+                    }
+                }
+            }
+        }
+#endif
 
         /// <summary>
         /// Relocalize the ARENA scene root so that the detected origin tag maps to (0, 0, 0)
