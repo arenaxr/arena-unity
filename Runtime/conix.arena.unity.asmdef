@@ -9,7 +9,9 @@
         "Unity.Burst",
         "Unity.Collections",
         "Unity.Mathematics",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Unity.XR.ARFoundation",
+        "Unity.XR.CoreUtils"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -43,6 +45,16 @@
             "name": "com.unity.nuget.newtonsoft-json",
             "expression": "3",
             "define": "NEWTONSOFT_JSON"
+        },
+        {
+            "name": "com.unity.xr.arfoundation",
+            "expression": "",
+            "define": "HAS_AR_FOUNDATION"
+        },
+        {
+            "name": "com.unity.xr.core-utils",
+            "expression": "",
+            "define": "HAS_XR_CORE_UTILS"
         }
     ],
     "noEngineReferences": false
