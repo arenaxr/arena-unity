@@ -231,9 +231,13 @@ jobs:
             ..
           cmake --build . --config Release --parallel
           link /DLL /OUT:webp-unity.dll `
-            Release\webp.lib Release\sharpyuv.lib `
+            Release\libwebp.lib Release\libsharpyuv.lib `
             /EXPORT:WebPGetInfo /EXPORT:WebPDecodeRGBAInto
           if (-not $?) { exit 1 }
+          # verify: no libwebp/libsharpyuv dynamic dependency remains
+          dumpbin /dependents webp-unity.dll
+          $deps = dumpbin /dependents webp-unity.dll | Out-String
+          if ($deps -match 'libwebp\.dll|libsharpyuv\.dll') { exit 1 }
 
       - name: Copy binary to plugin directory
         run: |

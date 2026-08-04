@@ -59,7 +59,7 @@ cc -dynamiclib -arch arm64 -o webp-unity-arm64.dylib \
 lipo -create webp-unity-arm64.dylib webp-unity-x86_64.dylib -output webp-unity.bundle
 
 # Windows (from an MSVC developer prompt):
-link /DLL /OUT:webp-unity.dll Release\webp.lib Release\sharpyuv.lib ^
+link /DLL /OUT:webp-unity.dll Release\libwebp.lib Release\libsharpyuv.lib ^
    /EXPORT:WebPGetInfo /EXPORT:WebPDecodeRGBAInto
 ```
 
