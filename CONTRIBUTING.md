@@ -27,6 +27,26 @@ if (c == null)
 ```
 Never blindly use `gameObject.AddComponent<T>()` without first checking if the component already exists.
 
+### 4. Component Schema Conversion Tracking
+
+When implementing a feature in a component that has a list of attributes/properties in the comments:
+- **Always make sure the list of properties stays up to date** with the list in the JSON schemas for that component.
+- **Update the state** of each property as `TODO` or `DONE`. Do not delete the property from the list when completed, just change its prefix to `DONE`.
+
+### 5. Coordinate Systems — Always Use ArenaUnity.cs Translations
+
+**Incoming and outgoing MQTT messages MUST use the A-Frame coordinate system.** Unity rendering uses the Unity coordinate system. 
+- All agents and developers must consult and use the translation utilities in `ArenaUnity.cs` (e.g., `ToUnityPosition`, `ToArenaPosition`, `ToUnityRotationQuat`, `ToArenaRotationQuat`) when passing position, rotation, and scale data between the schema objects and Unity's local transformations.
+- **GLTF models** have their own coordinate system spin (LUF). There is an additional translation step to/from GLTF/Unity included in `ArenaUnity.cs` that must be applied when manipulating bones or nodes inside a GLTF hierarchy. Always refer to existing handling to ensure coordinate parity.
+
+### 6. External Libraries — Prefer Bundled Over External
+
+**All dependencies must be freely available** to any user. When integrating an open-source library:
+- **Prefer bundling** the compiled library as a native plugin within this package (e.g., `Runtime/AprilTag/Plugin/`, `Runtime/WebP/Plugin/`) over adding an external UPM or NuGet dependency.
+- **Use CI cross-compilation** (GitHub Actions) to build native plugins for all target platforms from pinned upstream source tags.
+- **Avoid external package registries** (OpenUPM, third-party scoped registries) when possible — these add setup friction and availability risk for users.
+- External UPM dependencies are acceptable only when the package is published on the **Unity Package Manager** official registry (e.g., `com.unity.cloud.gltfast`, `com.unity.nuget.newtonsoft-json`).
+
 ## Local Development
 
 To develop the `arena-unity` locally:
@@ -39,18 +59,3 @@ To develop the `arena-unity` locally:
 - Maintain Unity Inspector layout cleanliness for `ArenaObject` components.
 
 The `arena-unity` uses [Release Please](https://github.com/googleapis/release-please) to automate CHANGELOG generation and semantic versioning. Your PR titles *must* follow Conventional Commit standards (e.g., `feat:`, `fix:`, `chore:`).
-
-### 4. Coordinate Systems — Always Use ArenaUnity.cs Translations
-
-**Incoming and outgoing MQTT messages MUST use the A-Frame coordinate system.** Unity rendering uses the Unity coordinate system. 
-- All agents and developers must consult and use the translation utilities in `ArenaUnity.cs` (e.g., `ToUnityPosition`, `ToArenaPosition`, `ToUnityRotationQuat`, `ToArenaRotationQuat`) when passing position, rotation, and scale data between the schema objects and Unity's local transformations.
-- **GLTF models** have their own coordinate system spin (LUF). There is an additional translation step to/from GLTF/Unity included in `ArenaUnity.cs` that must be applied when manipulating bones or nodes inside a GLTF hierarchy. Always refer to existing handling to ensure coordinate parity.
-
-### 5. Dependencies — Prefer Bundled Over External
-
-**All dependencies must be freely available** to any user. When integrating an open-source library:
-- **Prefer bundling** the compiled library as a native plugin within this package (e.g., `Runtime/AprilTag/Plugin/`, `Runtime/WebP/Plugin/`) over adding an external UPM or NuGet dependency.
-- **Use CI cross-compilation** (GitHub Actions) to build native plugins for all target platforms from pinned upstream source tags.
-- **Avoid external package registries** (OpenUPM, third-party scoped registries) when possible — these add setup friction and availability risk for users.
-- External UPM dependencies are acceptable only when the package is published on the **Unity Package Manager** official registry (e.g., `com.unity.cloud.gltfast`, `com.unity.nuget.newtonsoft-json`).
-
