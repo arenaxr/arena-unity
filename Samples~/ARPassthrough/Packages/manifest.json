@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "com.unity.xr.arfoundation": "5.1.5",
+    "com.unity.xr.arkit": "5.1.5",
+    "com.unity.xr.openxr": "1.10.0",
+    "io.conix.arena.unity": "file:../../"
+  }
+}
