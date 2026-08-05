@@ -1,6 +1,8 @@
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEditor.XR.Management;
+using UnityEditor.XR.Management.Metadata;
 using UnityEngine;
 
 namespace ArenaUnity.Samples
@@ -66,7 +68,23 @@ namespace ArenaUnity.Samples
                 renderer.sharedMaterial = mat;
             }
 
-            Debug.Log("AR Passthrough Sample Scene generated successfully! You can now save it and build.");
+            // 8. Auto-configure iOS Player Settings for AR
+            PlayerSettings.iOS.cameraUsageDescription = "Required for Augmented Reality and AprilTag tracking.";
+
+            // 9. Auto-configure XR Plug-in Management for iOS (ARKit) and Android (ARCore)
+            var iosXrSettings = XRGeneralSettingsPerBuildTarget.XRGeneralSettingsForBuildTarget(BuildTargetGroup.iOS);
+            if (iosXrSettings != null && iosXrSettings.Manager != null)
+            {
+                XRPackageMetadataStore.AssignLoader(iosXrSettings.Manager, "Unity.XR.ARKit.ARKitLoader", BuildTargetGroup.iOS);
+            }
+
+            var androidXrSettings = XRGeneralSettingsPerBuildTarget.XRGeneralSettingsForBuildTarget(BuildTargetGroup.Android);
+            if (androidXrSettings != null && androidXrSettings.Manager != null)
+            {
+                XRPackageMetadataStore.AssignLoader(androidXrSettings.Manager, "Unity.XR.ARCore.ARCoreLoader", BuildTargetGroup.Android);
+            }
+
+            Debug.Log("AR Passthrough Sample Scene generated successfully! iOS Camera Usage and ARKit/ARCore XR loaders auto-configured.");
         }
     }
 }
