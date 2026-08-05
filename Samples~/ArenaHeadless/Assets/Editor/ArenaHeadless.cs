@@ -13,9 +13,8 @@ public static class ArenaHeadless
         EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity");
 
         ArenaClientScene scene = ArenaClientScene.Instance;
-        scene.authType = ArenaMqttClient.Auth.Anonymous;
+        scene.authType = ArenaMqttClient.Auth.Google;
         scene.hostAddress = "arenaxr.org";
-        scene.namespaceName = "public";
         scene.sceneName = "example";
         scene.ConnectArena();
 

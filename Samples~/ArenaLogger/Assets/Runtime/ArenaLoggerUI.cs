@@ -24,7 +24,7 @@ namespace ArenaLogger.Example
         {
             if (addressInputField && !updateUI)
             {
-                ArenaClientScene.Instance.brokerAddress = brokerAddress;
+                ArenaClientScene.Instance.hostAddress = brokerAddress;
             }
         }
 
@@ -38,7 +38,7 @@ namespace ArenaLogger.Example
 
         public void SetObjectLogs(bool isObjectLogs)
         {
-            ArenaClientScene.Instance.logMqttObjects = isObjectLogs;
+            ArenaClientScene.Instance.logMqttSceneObjects = isObjectLogs;
         }
 
         public void SetUiMessage(string msg)
@@ -88,7 +88,7 @@ namespace ArenaLogger.Example
             if (addressInputField != null && connectButton != null)
             {
                 addressInputField.interactable = connectButton.interactable;
-                addressInputField.text = ArenaClientScene.Instance.brokerAddress;
+                addressInputField.text = ArenaClientScene.Instance.hostAddress;
             }
             if (sceneInputField != null && connectButton != null)
             {
@@ -98,7 +98,7 @@ namespace ArenaLogger.Example
             if (objectLogsToggle != null && connectButton != null)
             {
                 objectLogsToggle.interactable = connectButton.interactable;
-                objectLogsToggle.isOn = ArenaClientScene.Instance.logMqttObjects;
+                objectLogsToggle.isOn = ArenaClientScene.Instance.logMqttSceneObjects;
             }
             if (clearButton != null && connectButton != null)
             {

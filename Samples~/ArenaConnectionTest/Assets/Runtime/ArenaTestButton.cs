@@ -49,7 +49,7 @@ namespace ArenaUnity.Samples
                 if (scene.mqttClientConnected != lastConnectState)
                 {
                     Debug.Log($"mqttClientConnected changed = {scene.mqttClientConnected}");
-                    
+
                     if (statusText != null)
                     {
                         statusText.text = scene.mqttClientConnected ? "Status: Connected" : "Status: Disconnected";
@@ -89,9 +89,8 @@ namespace ArenaUnity.Samples
                 scene = sceneObj.AddComponent<ArenaClientScene>();
             }
 
-            scene.authType = ArenaMqttClient.Auth.Anonymous;
+            scene.authType = ArenaMqttClient.Auth.Google;
             scene.hostAddress = "arenaxr.org";
-            scene.namespaceName = "public";
             scene.sceneName = "example";
 
             if (button == toggle)
@@ -128,14 +127,14 @@ namespace ArenaUnity.Samples
         {
             // Only one singleton connection instance allowed per application.
             ArenaClientScene scene = ArenaClientScene.Instance;
-            scene.authType = ArenaMqttClient.Auth.Anonymous;
+            scene.authType = ArenaMqttClient.Auth.Google;
 
             // Set the ARENA webserver main host address, default: "arenaxr.org".
             scene.hostAddress = "arenaxr.org";
 
             // Set the namespace name for the scene, default: [your ARENA username].
             // For google authentication, this is set automatically on login and unnecessary when using your own username.
-            scene.namespaceName = "public";
+            //scene.namespaceName = "public";
 
             // Set the scene name for the scene, default: "example".
             scene.sceneName = "example";
@@ -178,13 +177,13 @@ namespace ArenaUnity.Samples
             }
 
             // Publish a private object update message for first user found in scene
-            ArenaObjectJson msgpriv = new ArenaObjectJson
+            ArenaMessageJson msgpriv = new ArenaMessageJson
             {
                 object_id = "cone-private",
                 action = "create",
                 type = "object",
                 persist = false,
-                data = new ArenaDataJson
+                data = new ArenaDataObjectJson
                 {
                     object_type = "cone"
                 }
@@ -193,13 +192,13 @@ namespace ArenaUnity.Samples
             scene.PublishObject(msgpriv.object_id, payloadpriv, firstUserId);
 
             // Publish a public object update message
-            ArenaObjectJson msgpub = new ArenaObjectJson
+            ArenaMessageJson msgpub = new ArenaMessageJson
             {
                 object_id = "box-public",
                 action = "create",
                 type = "object",
                 persist = true,
-                data = new ArenaDataJson
+                data = new ArenaDataObjectJson
                 {
                     object_type = "box",
                     // make the box interact with mouse-equivalent events
@@ -218,7 +217,7 @@ namespace ArenaUnity.Samples
         /// </summary>
         public static void MessageCallback(string topic, string message)
         {
-            ArenaObjectJson m = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
+            ArenaMessageJson m = JsonConvert.DeserializeObject<ArenaMessageJson>(message);
             if (m.action == "clientEvent")
             {
                 // parse some event data and log it
@@ -244,7 +243,7 @@ namespace ArenaUnity.Samples
 
             // Setup a connection using a custom namespace and anonymous authentication.
             client.hostAddress = "arenaxr.org";
-            client.authType = ArenaMqttClient.Auth.Anonymous;
+            client.authType = ArenaMqttClient.Auth.Google;
 
             // Alternate, Manual auth: Store any local jwt tokens here, before auth starts.
             // Derive the local path from the next line.
@@ -328,12 +327,12 @@ namespace ArenaUnity.Samples
         {
             GameObject btnObj = new GameObject(title + " Button");
             btnObj.transform.SetParent(parent, false);
-            
+
             Image img = btnObj.AddComponent<Image>();
             img.color = Color.white;
 
             Button btn = btnObj.AddComponent<Button>();
-            
+
             RectTransform rect = btnObj.GetComponent<RectTransform>();
             rect.anchoredPosition = anchoredPos;
             rect.sizeDelta = new Vector2(200, 40);
@@ -345,7 +344,7 @@ namespace ArenaUnity.Samples
             txt.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
             txt.color = Color.black;
             txt.alignment = TextAnchor.MiddleCenter;
-            
+
             RectTransform txtRect = textObj.GetComponent<RectTransform>();
             txtRect.anchorMin = Vector2.zero;
             txtRect.anchorMax = Vector2.one;
