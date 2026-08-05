@@ -8,7 +8,7 @@ Unity C# library for editing scenes and creating applications for the ARENA.
 1. Open a new or existing Unity project. **Unity 2022.3+ supported.**
 2. `Edit > Project Settings > Player > PC, Mac & Linux Standalone > Resolution and Presentation > Resolution`:
     * `Run In Background` set to `true`.
-3. Open `Window > Package Manager` and click `+ > Add package from git URL...`. 
+3. Open `Window > Package Manager` and click `+ > Add package from git URL...`.
 4. Enter `https://github.com/arenaxr/arena-unity.git` and click **Add**.
 
 ## User Quick Start
@@ -37,9 +37,8 @@ public class ArenaDemo : MonoBehaviour
     {
         scene = ArenaClientScene.Instance;
         scene.hostAddress = "arenaxr.org";
-        scene.namespaceName = "public";
         scene.sceneName = "example";
-        
+
         StartCoroutine(scene.ConnectArena());
     }
 
