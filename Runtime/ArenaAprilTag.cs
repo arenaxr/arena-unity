@@ -132,7 +132,9 @@ namespace ArenaUnity
                     inputRect = new RectInt(0, 0, w, h),
                     outputDimensions = new Vector2Int(w, h),
                     outputFormat = TextureFormat.RGBA32,
-                    transformation = XRCpuImage.Transformation.None
+                    // XRCpuImage is Top-Left. ImageConverter flips Y (for WebCamTexture compat).
+                    // We must MirrorY here so the final image passed to AprilTag C library remains Top-Left.
+                    transformation = XRCpuImage.Transformation.MirrorY
                 };
 
                 if (_buffer == null || _buffer.Length != w * h)
@@ -164,6 +166,7 @@ namespace ArenaUnity
         void ProcessTagDetection(TagPose tag)
         {
             string tagStr = tag.ID.ToString();
+            Debug.Log($"[ArenaAprilTag] Detected Tag ID: {tagStr}");
 
             // 1. Primary relocalization (Origin Tag)
             if (tag.ID == originTagId)
