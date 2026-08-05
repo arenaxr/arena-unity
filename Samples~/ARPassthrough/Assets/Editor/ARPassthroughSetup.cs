@@ -32,16 +32,9 @@ namespace ArenaUnity.Samples
                 return;
             }
 
-            // 5. Instantiate ArenaClientScene from the package
-            var prefabPath = "Packages/io.conix.arena.unity/Runtime/Prefabs/ArenaClientScene.prefab";
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-            if (prefab == null)
-            {
-                Debug.LogError("Could not find ArenaClientScene prefab at " + prefabPath);
-                return;
-            }
-            var arenaScene = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-            arenaScene.name = "ArenaClientScene";
+            // 5. Create ArenaClientScene GameObject
+            var arenaScene = new GameObject("ArenaClientScene");
+            arenaScene.AddComponent<ArenaClientScene>();
 
             // 6. Setup ArenaAprilTag for relocalization
             var aprilTag = xrOrigin.AddComponent<ArenaAprilTag>();

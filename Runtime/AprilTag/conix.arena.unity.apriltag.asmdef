@@ -4,7 +4,10 @@
     "references": [
         "Unity.Collections",
         "Unity.Mathematics",
-        "Unity.Burst"
+        "Unity.Burst",
+        "Unity.XR.ARFoundation",
+        "Unity.XR.ARSubsystems",
+        "Unity.XR.CoreUtils"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -15,6 +18,12 @@
     "defineConstraints": [
         "HAS_AR_FOUNDATION"
     ],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.xr.arfoundation",
+            "expression": "",
+            "define": "HAS_AR_FOUNDATION"
+        }
+    ],
     "noEngineReferences": false
 }
