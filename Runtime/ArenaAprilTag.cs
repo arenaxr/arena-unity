@@ -35,6 +35,9 @@ namespace ArenaUnity
         [Min(0)]
         public int originTagId = 0;
 
+        [Tooltip("Expected rotation (Euler angles) of the origin tag. ARENA usually expects Origin Tag 0 to be flat on the floor/desk (90,0,0). (0,0,0) = vertical wall poster.")]
+        public Vector3 originTagRotation = new Vector3(90, 0, 0);
+
         [Tooltip("Decimation factor: higher values improve speed at the cost of detection accuracy (1–4).")]
         [Range(1, 4)]
         public int decimation = 2;
@@ -172,7 +175,7 @@ namespace ArenaUnity
             if (tag.ID == originTagId)
             {
                 OriginTagDetected = true;
-                ApplyRelocalization(_camera, tag, Vector3.zero, Quaternion.identity);
+                ApplyRelocalization(_camera, tag, Vector3.zero, Quaternion.Euler(originTagRotation));
             }
 
             // 2. Secondary Support (armarker components)
