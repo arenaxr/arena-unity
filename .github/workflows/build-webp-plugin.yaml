@@ -252,10 +252,58 @@ jobs:
           name: webp-windows-x86_64
           path: Runtime/WebP/Plugin/Windows/x86_64/webp-unity.dll
 
+  build-ios-arm64:
+    name: iOS ARM64
+    runs-on: macos-latest
+    env:
+      LIBWEBP_VERSION: "v1.5.0"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone libwebp source
+        run: |
+          git clone --depth 1 --branch ${{ env.LIBWEBP_VERSION }} \
+            https://chromium.googlesource.com/webm/libwebp /tmp/libwebp
+
+      - name: Build for iOS (arm64)
+        run: |
+          cd /tmp/libwebp
+          mkdir build-ios && cd build-ios
+          cmake \
+            -DCMAKE_SYSTEM_NAME=iOS \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+            -DWEBP_BUILD_EXTRAS=OFF \
+            -DWEBP_BUILD_ANIM_UTILS=OFF \
+            -DWEBP_BUILD_CWEBP=OFF \
+            -DWEBP_BUILD_DWEBP=OFF \
+            -DWEBP_BUILD_GIF2WEBP=OFF \
+            -DWEBP_BUILD_IMG2WEBP=OFF \
+            -DWEBP_BUILD_VWEBP=OFF \
+            -DWEBP_BUILD_WEBPINFO=OFF \
+            -DWEBP_BUILD_WEBPMUX=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            ..
+          cmake --build . --parallel
+          libtool -static -o libwebp-unity.a libwebp.a libsharpyuv.a
+
+      - name: Copy binary to plugin directory
+        run: |
+          mkdir -p Runtime/WebP/Plugin/iOS
+          cp /tmp/libwebp/build-ios/libwebp-unity.a \
+            Runtime/WebP/Plugin/iOS/libwebp-unity.a
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: webp-ios-arm64
+          path: Runtime/WebP/Plugin/iOS/libwebp-unity.a
+
   # Collects all platform binaries and commits them to the branch
   commit-binaries:
     name: Commit plugin binaries
-    needs: [build-android-arm64, build-linux-x86_64, build-macos-universal, build-windows-x86_64]
+    needs: [build-android-arm64, build-ios-arm64, build-linux-x86_64, build-macos-universal, build-windows-x86_64]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -290,6 +338,11 @@ jobs:
           mkdir -p Runtime/WebP/Plugin/Windows/x86_64
           cp /tmp/artifacts/webp-windows-x86_64/webp-unity.dll \
             Runtime/WebP/Plugin/Windows/x86_64/webp-unity.dll
+
+          # iOS ARM64
+          mkdir -p Runtime/WebP/Plugin/iOS
+          cp /tmp/artifacts/webp-ios-arm64/libwebp-unity.a \
+            Runtime/WebP/Plugin/iOS/libwebp-unity.a
 
       - name: Commit updated binaries
         run: |

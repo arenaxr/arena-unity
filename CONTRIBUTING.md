@@ -43,7 +43,7 @@ When implementing a feature in a component that has a list of attributes/propert
 
 **All dependencies must be freely available** to any user. When integrating an open-source library:
 - **Prefer bundling** the compiled library as a native plugin within this package (e.g., `Runtime/AprilTag/Plugin/`, `Runtime/WebP/Plugin/`) over adding an external UPM or NuGet dependency.
-- **Use CI cross-compilation** (GitHub Actions) to build native plugins for all target platforms from pinned upstream source tags.
+- **Use CI cross-compilation** (GitHub Actions) to build native plugins for all target platforms from pinned upstream source tags. This must include an iOS build step (`build-ios-arm64`) that outputs a static library (`.a`), as iOS does not support dynamically loaded external plugins.
 - **Avoid external package registries** (OpenUPM, third-party scoped registries) when possible — these add setup friction and availability risk for users.
 - External UPM dependencies are acceptable only when the package is published on the **Unity Package Manager** official registry (e.g., `com.unity.cloud.gltfast`, `com.unity.nuget.newtonsoft-json`).
 
