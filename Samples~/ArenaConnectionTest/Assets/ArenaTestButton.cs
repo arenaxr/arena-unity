@@ -111,42 +111,175 @@ namespace ArenaUnity.Samples
             }
             else if (button == beginner)
             {
-                // setup example cube
-                GameObject test = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                test.name = "unity-cube-01";
-                test.transform.localPosition = new Vector3(0, 1.5f, -2f);
-                test.transform.localRotation = Quaternion.Euler(0, 45, 0);
-                test.transform.localScale = new Vector3(1, 1, 1);
-
-                ArenaObject aobj = test.AddComponent<ArenaObject>();
-                aobj.persist = true;
-                
-                // publish example cube
-                aobj.PublishCreateUpdate();
-                Debug.Log($"beginner created: {test.name}");
+                Debug.Log("ArenaUnityBeginnerDemo started...");
+                StartCoroutine(ArenaUnityBeginnerDemo());
             }
             else if (button == advanced)
             {
-                // advanced manual JSON payload
-                ArenaMessageJson msg = new ArenaMessageJson
+                Debug.Log("ArenaUnityAdvancedDemo started...");
+                StartCoroutine(ArenaUnityAdvancedDemo());
+            }
+        }
+
+        /// <summary>
+        /// Demonstrate basic usage of the ArenaUnity package.
+        /// </summary>
+        IEnumerator ArenaUnityBeginnerDemo()
+        {
+            // Only one singleton connection instance allowed per application.
+            ArenaClientScene scene = ArenaClientScene.Instance;
+            scene.authType = ArenaMqttClient.Auth.Anonymous;
+
+            // Set the ARENA webserver main host address, default: "arenaxr.org".
+            scene.hostAddress = "arenaxr.org";
+
+            // Set the namespace name for the scene, default: [your ARENA username].
+            // For google authentication, this is set automatically on login and unnecessary when using your own username.
+            scene.namespaceName = "public";
+
+            // Set the scene name for the scene, default: "example".
+            scene.sceneName = "example";
+
+            // Authenticate flow, MQTT connection flow, and Persistence download flow.
+            // This will execute an asynchronous coroutine thread for these flows.
+            scene.ConnectArena();
+            yield return new WaitUntil(() => scene.mqttClientConnected);
+
+            // Display the web browser GUI client URL, set after MQTT connection flow completes.
+            Debug.Log($"Scene URL: {scene.sceneUrl}");
+
+            // Instantiate the callback for all messages.
+            scene.OnMessageCallback = MessageCallback;
+
+            // Create GameObject, and add ArenaObject script to manage updates, it will automatically send an MQTT create message
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            ArenaObject arenaObject = cube.AddComponent(typeof(ArenaObject)) as ArenaObject;
+
+            // Change the parent/name/transform, it will automatically send an MQTT update message
+            cube.transform.rotation = UnityEngine.Random.rotation;
+
+            // Publish a custom event under this client's "camera" object
+            scene.PublishEvent("my-custom-event-type", scene.camid, "{\"my-attribute\": \"my-custom-attribute\"}");
+
+            // Find other arena users in the scene
+            string firstUserId = null;
+            ArenaObject[] objlist = FindObjectsOfType<ArenaObject>();
+            ArenaCamera[] camlist = FindObjectsOfType<ArenaCamera>();
+            string localUserId = null;
+            if (camlist.Length > 0)
+                localUserId = camlist[0].userid;
+            foreach (ArenaObject obj in objlist)
+            {
+                if (obj.object_type == "camera" && obj.name != localUserId)
                 {
-                    object_id = "unity-cube-02",
-                    action = "create",
-                    type = "object",
-                    persist = true,
-                };
-                ArenaObjectJson data = new ArenaObjectJson
+                    firstUserId = obj.name;
+                    break;
+                }
+            }
+
+            // Publish a private object update message for first user found in scene
+            ArenaObjectJson msgpriv = new ArenaObjectJson
+            {
+                object_id = "cone-private",
+                action = "create",
+                type = "object",
+                persist = false,
+                data = new ArenaDataJson
                 {
-                    object_type = "cube",
-                    Position = new ArenaPositionJson { x = 0f, y = 1.5f, z = 2f },
-                    Rotation = new ArenaRotationJson { x = 0f, y = 0.38f, z = 0f, w = 0.92f },
-                    Scale = new ArenaScaleJson { x = 1f, y = 1f, z = 1f },
-                    Color = "#ff0000"
-                };
-                msg.data = data;
-                string payload = JsonConvert.SerializeObject(msg);
-                scene.PublishObject(msg.object_id, payload);
-                Debug.Log($"advanced created: {msg.object_id}");
+                    object_type = "cone"
+                }
+            };
+            string payloadpriv = JsonConvert.SerializeObject(msgpriv);
+            scene.PublishObject(msgpriv.object_id, payloadpriv, firstUserId);
+
+            // Publish a public object update message
+            ArenaObjectJson msgpub = new ArenaObjectJson
+            {
+                object_id = "box-public",
+                action = "create",
+                type = "object",
+                persist = true,
+                data = new ArenaDataJson
+                {
+                    object_type = "box",
+                    // make the box interact with mouse-equivalent events
+                    ClickListener = new ArenaClickListenerJson { Enabled = true }
+                }
+            };
+            string payloadpub = JsonConvert.SerializeObject(msgpub);
+            scene.PublishObject(msgpub.object_id, payloadpub);
+
+            // Manually ingest a message, not received from MQTT subscriber
+            scene.ProcessMessage($"realm/s/public/example/o/{msgpub.object_id}", payloadpub);
+        }
+
+        /// <summary>
+        /// A delegate method used as a callback to go some special handling on incoming messages.
+        /// </summary>
+        public static void MessageCallback(string topic, string message)
+        {
+            ArenaObjectJson m = JsonConvert.DeserializeObject<ArenaObjectJson>(message);
+            if (m.action == "clientEvent")
+            {
+                // parse some event data and log it
+                ArenaEventJson evt = JsonConvert.DeserializeObject<ArenaEventJson>(m.data.ToString());
+                Debug.LogFormat($"Received event '{m.type}' from {m.object_id}, target={evt.Target}");
+
+                // log any users who use the hand controller to pull the trigger
+                if (m.type != "gripdown")
+                {
+                    Debug.LogFormat($"{m.object_id} pulled the trigger!");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Demonstrate advanced usage of the ArenaUnity package.
+        /// </summary>
+        IEnumerator ArenaUnityAdvancedDemo()
+        {
+            // Create a simple arena mqtt client and send receive messages.
+            GameObject gobj = new GameObject("Arena Mqtt Client Advanced");
+            MyArenaClient client = gobj.AddComponent(typeof(MyArenaClient)) as MyArenaClient;
+
+            // Setup a connection using a custom namespace and anonymous authentication.
+            client.hostAddress = "arenaxr.org";
+            client.authType = ArenaMqttClient.Auth.Anonymous;
+
+            // Alternate, Manual auth: Store any local jwt tokens here, before auth starts.
+            // Derive the local path from the next line.
+            // string localMqttPath = Path.Combine(client.appFilesPath, ".arena_mqtt_auth");
+            // client.authType = ArenaMqttClient.Auth.Manual;
+
+            // Authenticate flow, MQTT connection flow.
+            client.ConnectArena();
+            yield return new WaitUntil(() => client.mqttClientConnected);
+
+            // Display the MQTT JWT permission payload/claims, set after authentication flow completes.
+            Debug.Log($"Permissions: {client.permissions}");
+
+            // Custom MQTT pub/sub
+            client.Subscribe("my/custom/topic/#");
+
+            yield return new WaitForSeconds(2);
+            client.Publish("my/custom/topic/channel/device-888", System.Text.Encoding.UTF8.GetBytes("some payload"));
+
+            // MQTT disconnect
+            client.Disconnect();
+        }
+
+        public class MyArenaClient : ArenaMqttClient
+        {
+            public void ConnectArena()
+            {
+                // start auth flow and MQTT connection
+                StartCoroutine(Signin());
+            }
+
+            // Directly override the incoming message handler.
+            protected override void DecodeMessage(string topic, byte[] message)
+            {
+                Debug.LogFormat("Message received on topic {0}: {1}", topic, System.Text.Encoding.UTF8.GetString(message));
             }
         }
 
