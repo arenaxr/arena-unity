@@ -1,14 +1,15 @@
 {
   "dependencies": {
-    "com.unity.collab-proxy": "1.15.7",
-    "com.unity.ide.rider": "2.0.7",
-    "com.unity.ide.visualstudio": "2.0.12",
-    "com.unity.ide.vscode": "1.2.4",
-    "com.unity.test-framework": "1.1.30",
-    "com.unity.textmeshpro": "3.0.6",
-    "com.unity.timeline": "1.4.8",
+    "com.unity.collab-proxy": "2.7.1",
+    "com.unity.ide.rider": "3.0.36",
+    "com.unity.ide.visualstudio": "2.0.22",
+    "com.unity.ide.vscode": "1.2.5",
+    "com.unity.test-framework": "1.1.33",
+    "com.unity.textmeshpro": "3.0.7",
+    "com.unity.timeline": "1.7.7",
     "com.unity.ugui": "1.0.0",
-    "io.conix.arena.unity": "https://github.com/arenaxr/arena-unity.git#0.0.6",
+    "io.conix.arena.unity": "file:../../../",
+    "org.nesnausk.gaussian-splatting": "1.1.1",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
@@ -40,5 +41,14 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  }
+  },
+  "scopedRegistries": [
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "org.nesnausk.gaussian-splatting"
+      ]
+    }
+  ]
 }
