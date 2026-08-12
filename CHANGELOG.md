@@ -1,5 +1,9 @@
 # Changelog
 
+### Chores
+- Pin GitHub Actions in CI workflows to exact release tag commit SHAs with inline tag comments for Dependabot SemVer support.
+
+
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
 ## [1.7.1](https://github.com/arenaxr/arena-unity/compare/v1.7.0...v1.7.1) (2026-06-08)
