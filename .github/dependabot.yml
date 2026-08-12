@@ -1,21 +1,23 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
+# Dependabot configuration
 version: 2
-
 updates:
-  - package-ecosystem: "nuget" # See documentation for possible values
-    directory: "/Runtime/Packages" # Location of package manifests
-    cooldown:
-      default-days: 7
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "npm"
-    directory: "/" # Location of your Unity package.json
-    cooldown:
-      default-days: 7
+    directory: "/"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: "nuget"
+    directory: "/Runtime/Packages"
+    schedule:
+      interval: "monthly"
+    cooldown:
+      default-days: 7

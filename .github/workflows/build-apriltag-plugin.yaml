@@ -21,7 +21,7 @@ jobs:
     env:
       APRILTAG_VERSION: "v3.4.3"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Clone AprilTag source
         run: |
@@ -29,7 +29,7 @@ jobs:
             https://github.com/AprilRobotics/apriltag.git /tmp/apriltag
 
       - name: Set up Android NDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3.2.2
 
       - name: Build for Android ARM64
         run: |
@@ -55,7 +55,7 @@ jobs:
             Runtime/AprilTag/Plugin/Android/arm64-v8a/libArenaAprilTag.so
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: apriltag-android-arm64
           path: Runtime/AprilTag/Plugin/Android/arm64-v8a/libArenaAprilTag.so
@@ -66,7 +66,7 @@ jobs:
     env:
       APRILTAG_VERSION: "v3.4.3"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Clone AprilTag source
         run: |
@@ -93,7 +93,7 @@ jobs:
             Runtime/AprilTag/Plugin/Linux/x86_64/libArenaAprilTag.so
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: apriltag-linux-x86_64
           path: Runtime/AprilTag/Plugin/Linux/x86_64/libArenaAprilTag.so
@@ -104,7 +104,7 @@ jobs:
     env:
       APRILTAG_VERSION: "v3.4.3"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Clone AprilTag source
         run: |
@@ -144,7 +144,7 @@ jobs:
             -output Runtime/AprilTag/Plugin/macOS/ArenaAprilTag.bundle
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: apriltag-macos-universal
           path: Runtime/AprilTag/Plugin/macOS/ArenaAprilTag.bundle
@@ -155,7 +155,7 @@ jobs:
     env:
       APRILTAG_VERSION: "v3.4.3"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Clone AprilTag source
         run: |
@@ -183,7 +183,7 @@ jobs:
             Runtime\AprilTag\Plugin\Windows\x86_64\ArenaAprilTag.dll
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: apriltag-windows-x86_64
           path: Runtime/AprilTag/Plugin/Windows/x86_64/ArenaAprilTag.dll
@@ -194,7 +194,7 @@ jobs:
     env:
       APRILTAG_VERSION: "v3.4.3"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Clone AprilTag source
         run: |
@@ -223,7 +223,7 @@ jobs:
             Runtime/AprilTag/Plugin/iOS/libArenaAprilTag.a
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: apriltag-ios-arm64
           path: Runtime/AprilTag/Plugin/iOS/libArenaAprilTag.a
@@ -236,12 +236,12 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: ${{ github.ref }}
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           path: /tmp/artifacts
 
