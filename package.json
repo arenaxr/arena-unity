@@ -3,7 +3,7 @@
   "version": "1.7.1",
   "displayName": "ARENA Library for Unity",
   "description": "Enables control of ARENA assets through Unity.",
-  "unity": "2022.3",
+  "unity": "6000.0",
   "documentationUrl": "https://github.com/arenaxr/arena-unity/blob/main/README.md",
   "changelogUrl": "https://github.com/arenaxr/arena-unity/blob/main/CHANGELOG.md",
   "licensesUrl": "https://github.com/arenaxr/arena-unity/blob/main/LICENSE",

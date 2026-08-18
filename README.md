@@ -5,7 +5,7 @@ Unity C# library for editing scenes and creating applications for the ARENA.
 
 ## Installation
 
-1. Open a new or existing Unity project. **Unity 2022.3+ supported.**
+1. Open a new or existing Unity project. **Unity 6 (6000.0)+ supported.**
 2. `Edit > Project Settings > Player > PC, Mac & Linux Standalone > Resolution and Presentation > Resolution`:
     * `Run In Background` set to `true`.
 3. Open `Window > Package Manager` and click `+ > Add package from git URL...`.

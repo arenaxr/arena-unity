@@ -10,7 +10,7 @@ Finalize Code on main → Merge release-please PR → Automated Tag & Release
 
 ## Prerequisites
 
-1. **Test Compilation**: Ensure the project compiles successfully in both Unity 2022.3 and Unity 6 (if supported).
+1. **Test Compilation**: Ensure the project compiles successfully in Unity 6 (6000.0) or newer.
 2. **Test Runtime**: Hit "Play" in the Editor and verify connection, object synchronization, and GLTF export functionality.
 
 ## Release Steps
