@@ -57,8 +57,9 @@ needs a project to host it:
 2. `Window > Package Manager`, then `+ > Add package from disk...` and select this
    repository's `package.json`.
 3. Edit the project's `Packages/manifest.json`. Two entries are needed: the package
-   has to be listed in `testables`, because Unity only discovers tests inside a
-   package when it is named there, and the test project has to depend on
+   has to be listed in `testables`, because Unity neither compiles nor discovers the
+   tests inside a package that is not embedded in the project unless the project
+   names that package there, and the test project has to depend on
    `com.unity.test-framework` itself. `arena-unity` does **not** declare the test
    framework as a package dependency — it is only needed to run the tests, not to use
    the library — so nothing else pulls it in. Pin it to an exact version, with no
@@ -78,6 +79,16 @@ needs a project to host it:
 
    `1.4.6` is the version CI runs; see the harness manifest in
    `.github/workflows/test.yaml`.
+
+   The `testables` entry is also what keeps this suite out of an ordinary consumer's
+   project: a project that adds the package but does not name it there never compiles
+   `Tests/Editor`, so its `UnityEngine.TestRunner` and `nunit.framework.dll`
+   references are never resolved. The `UNITY_INCLUDE_TESTS` define constraint on
+   `Tests/Editor/conix.arena.unity.Tests.Editor.asmdef` is not what does that — the
+   symbol is defined whenever the Editor compiles, so the constraint is satisfied
+   there. What the constraint does is mark the assembly *as* a test assembly, which
+   is both what subjects it to the `testables` check and what drops it from player
+   builds, where the symbol is not defined.
 
 4. `Window > General > Test Runner`, choose the **EditMode** tab, and **Run All**.
 
