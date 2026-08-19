@@ -10,7 +10,7 @@ namespace ArenaUnity.Tests
 {
     /// <summary>
     /// ArenaMqttClient.MqttTopicMatch is the MQTT topic-filter matcher used by
-    /// HasPerms (ArenaMqttClient.cs:239-245) to decide whether the publish
+    /// HasPerms (ArenaMqttClient.cs:240-246) to decide whether the publish
     /// permissions in a signed JWT cover the topic we are about to publish to. It is
     /// therefore a security boundary, not just a string utility, and both its
     /// positive and negative answers are worth pinning.

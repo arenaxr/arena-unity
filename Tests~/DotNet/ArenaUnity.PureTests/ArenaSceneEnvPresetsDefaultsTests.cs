@@ -4,9 +4,11 @@
  */
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using ArenaUnity.Components;
 using ArenaUnity.Schemas.Converter;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
@@ -94,11 +96,28 @@ namespace ArenaUnity.PureTests
         [TestCaseSource(nameof(AllPresets))]
         public void Preset_HasNoDuplicateKeys(string presetName)
         {
-            // JObject.Parse silently keeps only the last of duplicated keys, so compare
-            // the parsed property count against the raw occurrence count instead.
-            JObject parsed = JObject.Parse(ArenaSceneEnvPresetsDefaults.Presets[presetName]);
-            var names = parsed.Properties().Select(p => p.Name).ToArray();
-            Assert.That(names, Is.Unique);
+            // JObject.Parse silently keeps only the last of a duplicated key - verified,
+            // it does not throw - and JObject cannot hold two properties with the same
+            // name, so asserting uniqueness on the *parsed* properties can never fail.
+            // Count the property-name tokens in the raw literal instead.
+            string raw = ArenaSceneEnvPresetsDefaults.Presets[presetName];
+
+            var declared = new List<string>();
+            using (var reader = new JsonTextReader(new StringReader(raw)))
+            {
+                while (reader.Read())
+                {
+                    if (reader.TokenType == JsonToken.PropertyName && reader.Depth == 1)
+                        declared.Add((string)reader.Value);
+                }
+            }
+
+            var duplicated = declared.GroupBy(n => n).Where(g => g.Count() > 1)
+                .Select(g => g.Key).ToArray();
+            Assert.That(duplicated, Is.Empty,
+                $"preset '{presetName}' declares a key twice: " + string.Join(", ", duplicated));
+            Assert.That(declared.Count, Is.EqualTo(JObject.Parse(raw).Properties().Count()),
+                $"preset '{presetName}' lost a key to duplicate-key collapse");
         }
 
         /// <summary>

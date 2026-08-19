@@ -116,7 +116,7 @@ namespace ArenaUnity.Tests
 
         /// <summary>
         /// SphereBuilder allocates (lon+1)*lat+2 vertices: a ring of lon+1 per latitude
-        /// band, plus the two poles (SphereBuilder.cs:21).
+        /// band, plus the two poles (SphereBuilder.cs:20).
         /// </summary>
         [TestCase(24, 16, 402, TestName = "Sphere_DefaultSegments")]
         [TestCase(8, 4, 38, TestName = "Sphere_CoarseSegments")]
@@ -217,7 +217,7 @@ namespace ArenaUnity.Tests
         /// <summary>
         /// At details 0 PolyhedronBuilder takes the flat-normal path: one unique vertex
         /// per index, so vertexCount equals the face-index count and the triangle count is
-        /// a third of it (PolyhedronBuilder.cs:40-49). An icosahedron has 20 faces and an
+        /// a third of it (PolyhedronBuilder.cs:39-51). An icosahedron has 20 faces and an
         /// octahedron 8.
         /// </summary>
         [Test]

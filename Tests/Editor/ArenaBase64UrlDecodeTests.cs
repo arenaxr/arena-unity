@@ -85,7 +85,7 @@ namespace ArenaUnity.Tests
         /// assertions that the URL-safe forms decode to the same value as the standard
         /// forms - the test named
         /// Decode_UrlSafePayload_ShouldEqualStandardPayload_CurrentlyIgnored below is
-        /// already written for that, and only needs its Assert.Ignore removed.
+        /// already written for that, and only needs its [Ignore] attribute removed.
         /// </summary>
         [Test]
         public void Decode_UrlSafePayloadContainingDash_Throws_PinsCurrentBuggyBehaviour()

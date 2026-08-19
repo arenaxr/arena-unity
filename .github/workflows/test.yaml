@@ -108,8 +108,8 @@ jobs:
           lfs: true
 
       - name: Create a throwaway Unity project that consumes the package
-        env:
-          UNITY_VERSION: ${{ env.UNITY_VERSION }}
+        # UNITY_VERSION comes from the workflow-level env; re-declaring it here would
+        # be a self-reference inside its own env block, which is not supported.
         run: |
           set -eu
           mkdir -p harness/Assets harness/Packages harness/ProjectSettings

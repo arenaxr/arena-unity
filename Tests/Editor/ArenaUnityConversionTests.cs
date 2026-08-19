@@ -199,16 +199,27 @@ namespace ArenaUnity.Tests
         }
 
         /// <summary>
-        /// The Unity-to-Unity overload is its own inverse: applying it twice restores the
-        /// original, because negating a component twice is the identity.
+        /// The Unity-to-Unity overload negates X and Y, so a single application has to be
+        /// asserted component by component: the "applying it twice is the identity" check
+        /// below would also pass for an implementation that negated the wrong components,
+        /// or none at all.
         /// </summary>
         [Test]
-        public void ToUnityRotationQuat_QuaternionOverload_IsItsOwnInverse()
+        public void ToUnityRotationQuat_QuaternionOverload_NegatesXAndYThenIsItsOwnInverse()
         {
             var original = new Quaternion(0.1f, -0.2f, 0.3f, 0.9f);
-            Quaternion twice = ArenaUnity.ToUnityRotationQuat(
-                ArenaUnity.ToUnityRotationQuat(original));
 
+            Quaternion once = ArenaUnity.ToUnityRotationQuat(original);
+            Assert.That(once.x, Is.EqualTo(-0.1f).Within(1e-5f), "x is negated");
+            Assert.That(once.y, Is.EqualTo(0.2f).Within(1e-5f), "y is negated by default");
+            Assert.That(once.z, Is.EqualTo(0.3f).Within(1e-5f), "z is unchanged");
+            Assert.That(once.w, Is.EqualTo(0.9f).Within(1e-5f), "w is unchanged");
+
+            Quaternion withoutInvertY = ArenaUnity.ToUnityRotationQuat(original, invertY: false);
+            Assert.That(withoutInvertY.x, Is.EqualTo(-0.1f).Within(1e-5f));
+            Assert.That(withoutInvertY.y, Is.EqualTo(-0.2f).Within(1e-5f), "y is left alone");
+
+            Quaternion twice = ArenaUnity.ToUnityRotationQuat(once);
             Assert.That(twice.x, Is.EqualTo(original.x).Within(1e-5f));
             Assert.That(twice.y, Is.EqualTo(original.y).Within(1e-5f));
             Assert.That(twice.z, Is.EqualTo(original.z).Within(1e-5f));
