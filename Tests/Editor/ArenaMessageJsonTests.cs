@@ -3,6 +3,7 @@
  * Copyright (c) 2021-2024, Carnegie Mellon University. All rights reserved.
  */
 
+using System;
 using System.Linq;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
@@ -119,15 +120,40 @@ namespace ArenaUnity.Tests
         /// <summary>
         /// Unrecognized members are preserved via [JsonExtensionData] rather than
         /// dropped, which is how createdAt / updatedAt survive a persist round trip.
+        ///
+        /// PINS CURRENT BEHAVIOUR (quirk): a value that *looks* like a date does not
+        /// survive verbatim. Newtonsoft's default DateParseHandling.DateTime converts it
+        /// to a DateTime while filling the extension-data JToken, so the milliseconds
+        /// arena-persist sends ("...T00:00:00.000Z") come back out dropped
+        /// ("...T00:00:00Z"). The instant is preserved; the literal is not, and reading
+        /// the re-parsed token back as a string yields a culture-formatted DateTime
+        /// rather than an ISO-8601 one - which is why this asserts the instant and the
+        /// emitted JSON instead.
+        ///
+        /// If the exact literal ever matters on the wire, the fix is
+        /// DateParseHandling.None on the reader; these expectations then become plain
+        /// string equality again.
         /// </summary>
         [Test]
         public void UnknownMembers_SurviveARoundTrip()
         {
             var msg = JsonConvert.DeserializeObject<ArenaMessageJson>(
-                "{\"object_id\":\"box-1\",\"createdAt\":\"2024-01-01T00:00:00.000Z\"}");
+                "{\"object_id\":\"box-1\",\"createdAt\":\"2024-01-01T00:00:00.000Z\"," +
+                "\"nonce\":\"abc-123\"}");
 
-            JObject parsed = JObject.Parse(JsonConvert.SerializeObject(msg));
-            Assert.That(parsed["createdAt"].Value<string>(), Is.EqualTo("2024-01-01T00:00:00.000Z"));
+            string json = JsonConvert.SerializeObject(msg);
+            JObject parsed = JObject.Parse(json);
+
+            // A member that is not date-shaped survives byte for byte.
+            Assert.That(parsed["nonce"].Value<string>(), Is.EqualTo("abc-123"));
+
+            // A date-shaped one keeps its instant...
+            Assert.That(parsed["createdAt"], Is.Not.Null, "createdAt must not be dropped");
+            Assert.That(parsed["createdAt"].Value<DateTime>().ToUniversalTime(),
+                Is.EqualTo(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
+
+            // ...but not its milliseconds.
+            Assert.That(json, Does.Contain("\"createdAt\":\"2024-01-01T00:00:00Z\""));
         }
     }
 }

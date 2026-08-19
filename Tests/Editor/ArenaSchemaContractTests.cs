@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using ArenaUnity.Schemas;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -37,7 +38,7 @@ namespace ArenaUnity.Tests
 
         private static IEnumerable<Type> DtoTypes()
         {
-            return typeof(ArenaUnity.Schemas.ArenaMessageJson).Assembly
+            return typeof(ArenaMessageJson).Assembly
                 .GetTypes()
                 .Where(t => t.IsClass && !t.IsAbstract && !t.IsGenericType)
                 .Where(t => t.Namespace != null && t.Namespace.StartsWith("ArenaUnity.Schemas"))
@@ -52,10 +53,33 @@ namespace ArenaUnity.Tests
                 .Where(f => f.GetCustomAttribute<JsonPropertyAttribute>() != null);
         }
 
-        private static string JsonName(FieldInfo field)
+        /// <summary>
+        /// Everything Newtonsoft will actually put on the wire for these DTOs, which is a
+        /// wider set than the [JsonProperty] fields: the default contract resolver also
+        /// serializes public members that carry no attribute at all. Two conventions in
+        /// this schema set rely on that, so a test that only looked at [JsonProperty]
+        /// fields would call both of them a defect:
+        ///
+        /// - the `object_type` discriminator (e.g. ArenaSphereJson.object_type), a public
+        ///   readonly field with no attribute and no ShouldSerialize, emitted on purpose;
+        /// - the `url` / `dep` auto-properties on ArenaHandLeftJson and ArenaHandRightJson.
+        ///
+        /// [JsonIgnore] members (e.g. the `attributeName` markers) are excluded, matching
+        /// what the resolver does.
+        /// </summary>
+        private static IEnumerable<MemberInfo> SerializedMembers(Type type)
         {
-            JsonPropertyAttribute attr = field.GetCustomAttribute<JsonPropertyAttribute>();
-            return string.IsNullOrEmpty(attr.PropertyName) ? field.Name : attr.PropertyName;
+            return type.GetFields(BindingFlags.Public | BindingFlags.Instance)
+                .Cast<MemberInfo>()
+                .Concat(type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                            .Where(p => p.CanRead && p.GetIndexParameters().Length == 0))
+                .Where(m => m.GetCustomAttribute<JsonIgnoreAttribute>() == null);
+        }
+
+        private static string JsonName(MemberInfo member)
+        {
+            JsonPropertyAttribute attr = member.GetCustomAttribute<JsonPropertyAttribute>();
+            return attr == null || string.IsNullOrEmpty(attr.PropertyName) ? member.Name : attr.PropertyName;
         }
 
         [Test]
@@ -166,12 +190,12 @@ namespace ArenaUnity.Tests
             }
 
             var expected = new SortedSet<string>();
-            foreach (FieldInfo field in JsonPropertyFields(type))
+            foreach (MemberInfo member in SerializedMembers(type))
             {
-                MethodInfo should = type.GetMethod("ShouldSerialize" + field.Name,
+                MethodInfo should = type.GetMethod("ShouldSerialize" + member.Name,
                     BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null);
                 if (should == null || (bool)should.Invoke(instance, null))
-                    expected.Add(JsonName(field));
+                    expected.Add(JsonName(member));
             }
 
             string json = JsonConvert.SerializeObject(instance);
@@ -188,9 +212,10 @@ namespace ArenaUnity.Tests
         }
 
         /// <summary>
-        /// Nothing may be emitted that is not a declared wire member. Catches a public
-        /// field that lost its [JsonProperty] attribute, which would start publishing an
-        /// unexpected key under its C# name.
+        /// Nothing may be emitted that is not a declared wire member - "declared" meaning
+        /// any public non-[JsonIgnore] member, not just the attributed ones, because the
+        /// object_type discriminator carries no attribute. Catches a member that would
+        /// start publishing an unexpected key.
         /// </summary>
         [TestCaseSource(nameof(SchemaTypes))]
         public void Dto_EmitsNoUndeclaredMembers(Type type)
@@ -203,7 +228,7 @@ namespace ArenaUnity.Tests
             if (token.Type != JTokenType.Object)
                 Assert.Ignore($"{type.Name} has a custom converter that does not emit an object");
 
-            var declared = new HashSet<string>(JsonPropertyFields(type).Select(JsonName));
+            var declared = new HashSet<string>(SerializedMembers(type).Select(JsonName));
 
             foreach (JProperty property in ((JObject)token).Properties())
             {
@@ -212,11 +237,42 @@ namespace ArenaUnity.Tests
             }
         }
 
+        /// <summary>
+        /// PINS CURRENT BEHAVIOUR (bug): ArenaHandLeftJson and ArenaHandRightJson declare
+        /// `url` and `dep` as plain auto-properties
+        /// (Runtime/Schemas/Object/ArenaHandLeftJson.cs:21-22) rather than the
+        /// [JsonProperty] + ShouldSerializeX pattern every other DTO in this schema set
+        /// uses. They therefore go on the wire on every publish even when unset, as
+        /// explicit JSON nulls.
+        ///
+        /// That is not cosmetic: ARENA reads a null attribute value as "delete this
+        /// attribute", so a hand update can clear a url the client never set.
+        ///
+        /// CORRECT BEHAVIOUR is to follow the generator convention:
+        ///     [JsonProperty(PropertyName = "url")] public string url = null;
+        ///     public bool ShouldSerializeurl() { return (url != null); }
+        /// When that lands, these two expectations become Is.Null.
+        /// </summary>
+        [TestCase(typeof(ArenaHandLeftJson), "handLeft")]
+        [TestCase(typeof(ArenaHandRightJson), "handRight")]
+        public void HandDtos_EmitUrlAndDepAsExplicitNulls_PinsCurrentBuggyBehaviour(
+            Type type, string objectType)
+        {
+            JObject emitted = JObject.Parse(JsonConvert.SerializeObject(Activator.CreateInstance(type)));
+
+            Assert.That(emitted["object_type"].Value<string>(), Is.EqualTo(objectType),
+                "precondition: the discriminator is emitted");
+            Assert.That(emitted["url"], Is.Not.Null, "url is emitted even though it is unset");
+            Assert.That(emitted["url"].Type, Is.EqualTo(JTokenType.Null));
+            Assert.That(emitted["dep"], Is.Not.Null, "dep is emitted even though it is unset");
+            Assert.That(emitted["dep"].Type, Is.EqualTo(JTokenType.Null));
+        }
+
         // ==================================================== enum wire values
 
         private static IEnumerable<TestCaseData> SchemaEnums()
         {
-            foreach (Type type in typeof(ArenaUnity.Schemas.ArenaMessageJson).Assembly
+            foreach (Type type in typeof(ArenaMessageJson).Assembly
                          .GetTypes()
                          .Where(t => t.IsEnum)
                          .Where(t => t.Namespace != null && t.Namespace.StartsWith("ArenaUnity.Schemas"))
