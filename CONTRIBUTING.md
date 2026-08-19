@@ -54,6 +54,34 @@ To develop the `arena-unity` locally:
 2. Open `Window > Package Manager` and `+ > Add package from disk...`, use your local repo location selecting `package.json`.
 3. Create changes on a development fork or branch and test within a Unity project.
 
+## Testing
+
+There are two suites, split by what they need to run. See
+[Documentation~/Testing.md](Documentation~/Testing.md) for the full guide.
+
+The pull-request gate needs no Unity installation:
+```sh
+dotnet test "Tests~/DotNet/ArenaUnity.PureTests/ArenaUnity.PureTests.csproj"
+```
+It links the real `Runtime/` sources that are free of `UnityEngine` and runs them
+under a plain .NET 8 SDK. Add tests here whenever the code under test allows it —
+never write a stub or fake for a Unity type to make something testable here.
+
+The Unity EditMode suite in `Tests/Editor` covers what genuinely needs `UnityEngine`
+or the Editor. Run it from `Window > General > Test Runner > EditMode` in a project
+that has this package added from disk and `"testables": ["io.conix.arena.unity"]` in
+its `Packages/manifest.json`. In CI this job is **skipped unless the repository has
+Unity licence secrets** (`UNITY_LICENSE`, or `UNITY_EMAIL` / `UNITY_PASSWORD` /
+`UNITY_SERIAL`) configured under Settings > Secrets and variables > Actions.
+
+New test files under `Tests/Editor` are imported by Unity and so need a sibling
+`.meta`; nothing under `Tests~/` does.
+
+Some tests deliberately assert known-wrong behaviour and are marked
+`// PINS CURRENT BEHAVIOUR (bug)`. **If you fix one of those bugs, flip the assertion
+rather than deleting the test** — the comment names the file, line, issue, and the
+correct behaviour.
+
 ## Code Style
 - Follow standard C# styling conventions.
 - Maintain Unity Inspector layout cleanliness for `ArenaObject` components.
