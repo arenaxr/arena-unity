@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ArenaUnity.Components;
+using ArenaUnity.Schemas.Converter;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
@@ -177,8 +178,12 @@ namespace ArenaUnity.PureTests
                 Assert.That(token, Is.Not.Null, $"{presetName}.{member} missing");
                 Assert.That(token.Type, Is.EqualTo(JTokenType.String), $"{presetName}.{member}");
 
-                string normalized = ArenaUnity.Schemas.Converter.ArenaCssColors
-                    .Normalize(token.Value<string>());
+                // Not written as ArenaUnity.Schemas.Converter.ArenaCssColors: `ArenaUnity`
+                // is a static class as well as a namespace (Runtime/ArenaUnity.cs), and
+                // the class wins name resolution from inside a nested namespace. That
+                // spelling compiles here only because ArenaUnity.cs is not one of this
+                // project's linked sources - it would stop compiling the day it is.
+                string normalized = ArenaCssColors.Normalize(token.Value<string>());
 
                 // Unity's ColorUtility.TryParseHtmlString accepts #RGB, #RRGGBB,
                 // #RGBA and #RRGGBBAA. Anything else here is a transcription error.
