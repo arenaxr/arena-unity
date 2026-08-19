@@ -56,19 +56,28 @@ needs a project to host it:
 1. Create a new Unity 6 project (or open an existing one).
 2. `Window > Package Manager`, then `+ > Add package from disk...` and select this
    repository's `package.json`.
-3. Add the package to `testables` in the project's `Packages/manifest.json`. Unity
-   only discovers tests inside a package when it is listed there:
+3. Edit the project's `Packages/manifest.json`. Two entries are needed: the package
+   has to be listed in `testables`, because Unity only discovers tests inside a
+   package when it is named there, and the test project has to depend on
+   `com.unity.test-framework` itself. `arena-unity` does **not** declare the test
+   framework as a package dependency — it is only needed to run the tests, not to use
+   the library — so nothing else pulls it in. Pin it to an exact version, with no
+   `^`, `~` or `*`:
 
    ```json
    {
      "dependencies": {
-       "io.conix.arena.unity": "file:../../arena-unity"
+       "io.conix.arena.unity": "file:../../arena-unity",
+       "com.unity.test-framework": "1.4.6"
      },
      "testables": [
        "io.conix.arena.unity"
      ]
    }
    ```
+
+   `1.4.6` is the version CI runs; see the harness manifest in
+   `.github/workflows/test.yaml`.
 
 4. `Window > General > Test Runner`, choose the **EditMode** tab, and **Run All**.
 
@@ -107,10 +116,10 @@ To enable it, a maintainer adds either of the following under
 - `UNITY_EMAIL`, `UNITY_PASSWORD` and `UNITY_SERIAL` — for a Plus/Pro licence.
 
 The job then creates a throwaway Unity project, adds the checked-out package to it
-from disk, sets `testables`, and runs the EditMode tests through
-`game-ci/unity-test-runner`. Note that secrets are not exposed to workflows triggered
-by a pull request from a fork, so this job stays skipped for fork contributions by
-design.
+from disk, adds a pinned `com.unity.test-framework` and sets `testables`, and runs the
+EditMode tests through `game-ci/unity-test-runner`. Note that secrets are not exposed
+to workflows triggered by a pull request from a fork, so this job stays skipped for
+fork contributions by design.
 
 ## Adding a test
 

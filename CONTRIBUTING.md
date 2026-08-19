@@ -69,10 +69,13 @@ never write a stub or fake for a Unity type to make something testable here.
 
 The Unity EditMode suite in `Tests/Editor` covers what genuinely needs `UnityEngine`
 or the Editor. Run it from `Window > General > Test Runner > EditMode` in a project
-that has this package added from disk and `"testables": ["io.conix.arena.unity"]` in
-its `Packages/manifest.json`. In CI this job is **skipped unless the repository has
-Unity licence secrets** (`UNITY_LICENSE`, or `UNITY_EMAIL` / `UNITY_PASSWORD` /
-`UNITY_SERIAL`) configured under Settings > Secrets and variables > Actions.
+that has this package added from disk. That project's `Packages/manifest.json` needs
+both `"testables": ["io.conix.arena.unity"]` and an exactly pinned
+`com.unity.test-framework` dependency (`"1.4.6"`, the version CI uses): the test
+framework is not a dependency of this package, so the project running the tests adds
+it. In CI this job is **skipped unless the repository has Unity licence secrets**
+(`UNITY_LICENSE`, or `UNITY_EMAIL` / `UNITY_PASSWORD` / `UNITY_SERIAL`) configured
+under Settings > Secrets and variables > Actions.
 
 New test files under `Tests/Editor` are imported by Unity and so need a sibling
 `.meta`; nothing under `Tests~/` does.
