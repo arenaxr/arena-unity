@@ -9,6 +9,9 @@ Orientation for agents (and humans) working in this repo. Detailed docs live in 
 ## Conventions & development rules
 - [CONTRIBUTING.md](CONTRIBUTING.md) — mandatory rules for all contributors, **including agents**: development conventions specific to this repository.
 
+## Testing
+- [Documentation~/Testing.md](Documentation~/Testing.md) — how to run both test suites locally, what CI gates, how to add a test, and the `PINS CURRENT BEHAVIOUR (bug)` convention.
+
 ## Build, lint & release
 - [RELEASE.md](RELEASE.md) — automated release process using release-please and Unity Package Manager (UPM) via Git tags.
 - [CHANGELOG.md](CHANGELOG.md) — generated release history (release-please; Conventional Commits).

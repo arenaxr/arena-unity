@@ -59,6 +59,7 @@ public class ArenaDemo : MonoBehaviour
 * [Requirements & Architecture](REQUIREMENTS.md) (Detailed component mappings and source index)
 * [Components Priority](COMPONENTS_PRIORITY.md)
 * [Contributing](CONTRIBUTING.md)
+* [Testing](Documentation~/Testing.md) (How to run the unit test suites locally)
 * [Release Checklist](RELEASE.md)
 * [Changelog](CHANGELOG.md)
 * [Open Source](Third%20Party%20Notices.md) used and inspired from
