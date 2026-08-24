@@ -57,6 +57,11 @@
             "name": "com.unity.xr.core-utils",
             "expression": "",
             "define": "HAS_XR_CORE_UTILS"
+        },
+        {
+            "name": "com.unity.modules.xr",
+            "expression": "",
+            "define": "HAS_XR_MODULE"
         }
     ],
     "noEngineReferences": false

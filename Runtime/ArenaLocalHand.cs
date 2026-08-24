@@ -3,6 +3,9 @@
  * Copyright (c) 2021-2024, Carnegie Mellon University. All rights reserved.
  */
 
+// Requires the built-in XR module (com.unity.modules.xr); compiled out when a
+// consuming project has it disabled, so non-XR projects need no extra packages.
+#if HAS_XR_MODULE
 using System.Collections;
 using System.Collections.Generic;
 using ArenaUnity.Schemas;
@@ -274,3 +277,4 @@ namespace ArenaUnity
         }
     }
 }
+#endif
