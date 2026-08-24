@@ -94,7 +94,11 @@ namespace ArenaUnity.Editor
 #else
             // add required packages from scoped registries
             UpdatePackages(new string[]{
-                "org.nesnausk.gaussian-splatting@1.1.1"
+                "org.nesnausk.gaussian-splatting@1.1.1",
+                // gaussian-splatting uses UnityEngine.XR.XRSettings but does not
+                // declare the built-in VR module it comes from; projects with a
+                // trimmed manifest (Unity 6 templates) fail with CS0103 without it
+                "com.unity.modules.vr@1.0.0"
             }, new string[] { });
 #endif
         }
