@@ -18,8 +18,23 @@ namespace ArenaUnity.Schemas
     {
         public string object_type = "handLeft";
 
-        public string url { get; set; }
-        public string dep { get; set; }
+        private static string defUrl = null;
+        [JsonProperty(PropertyName = "url")]
+        [Tooltip("Path to the hand controller 3D model.")]
+        public string url = defUrl;
+        public bool ShouldSerializeurl()
+        {
+            return (url != defUrl);
+        }
+
+        private static string defDep = null;
+        [JsonProperty(PropertyName = "dep")]
+        [Tooltip("User id this hand belongs to.")]
+        public string dep = defDep;
+        public bool ShouldSerializedep()
+        {
+            return (dep != defDep);
+        }
 
         [JsonProperty(PropertyName = "parent")]
         [Tooltip("Parent's object_id. Child objects inherit attributes of their parent, for example scale and translation.")]
