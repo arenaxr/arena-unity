@@ -6,6 +6,47 @@
 
 arena-unity notable changes. Started 2021-11-30 (version 0.0.1).
 
+## [1.8.0](https://github.com/arenaxr/arena-unity/compare/v1.7.1...v1.8.0) (2026-08-24)
+
+
+### Features
+
+* add ARFoundation and XR CoreUtils versionDefines and optional assembly references to asmdef ([123cc73](https://github.com/arenaxr/arena-unity/commit/123cc73a6539264d4b2b7c7cfcb36fa6923130c2))
+* add ARPassthrough and ArenaConnectionTest samples ([c8f9fb4](https://github.com/arenaxr/arena-unity/commit/c8f9fb4203164b9b27803c195aff4b95e6854cd2))
+* add MQTT message validation per arena-docs spec ([#171](https://github.com/arenaxr/arena-unity/issues/171)) ([43c0264](https://github.com/arenaxr/arena-unity/commit/43c0264e7fa9f64edadbbd66287a29dec6291279))
+* add WebP texture support for glTF models ([#173](https://github.com/arenaxr/arena-unity/issues/173)) ([017e7b0](https://github.com/arenaxr/arena-unity/commit/017e7b054fbb6981d9e3c3daf2a007c7db29019c))
+* bump minimum Unity version to 6000.0 (Unity 6 LTS) ([d8fc636](https://github.com/arenaxr/arena-unity/commit/d8fc636380ced957d05cf1fcfbf8e29408cd7c4c))
+* **ci:** align action commit SHAs to exact release tags for Dependabot SemVer support ([710831e](https://github.com/arenaxr/arena-unity/commit/710831eec1f439ab12c5666dbf68965d4e7f59b4))
+* **ci:** configure dependabot, pin workflow actions to SHAs, and add agent/contributing docs ([f07bdc2](https://github.com/arenaxr/arena-unity/commit/f07bdc2fc4fd859ec615f15055cc9eaca02a35db))
+* complete AprilTag AR-only overhaul and ArenaArmarker integration ([31cf45c](https://github.com/arenaxr/arena-unity/commit/31cf45c6780f16ba3f6b4b2a96ec6fd8a3c6651d))
+* default origin tag rotation to flat-on-floor (-90,0,0) ([af21f25](https://github.com/arenaxr/arena-unity/commit/af21f25ce36bac3aebd699d5c8182f6c30ebfa9b))
+* enhance ArenaConnectionTest with advanced API demos ([7ddc38e](https://github.com/arenaxr/arena-unity/commit/7ddc38e26f9d8ea0a70cee3ab00f72fa1fc73527))
+* implement conditional ARFoundation integration for AprilTag ([581220d](https://github.com/arenaxr/arena-unity/commit/581220d05b31ae3dd0ebb785d765a81c1151c82d))
+* **persist:** log warning when scene has no persisted objects ([d4f2322](https://github.com/arenaxr/arena-unity/commit/d4f2322ec1303e8798cfbf8a543fd3239ab60275))
+* publish local XR hand controller poses and button events via MQTT ([#168](https://github.com/arenaxr/arena-unity/issues/168)) ([363f016](https://github.com/arenaxr/arena-unity/commit/363f0164a07f2d5f1eebbcee79535b5097b5c0d5))
+* **samples:** auto-configure ARKit/ARCore XR plugins and iOS camera usage ([0ce7c8a](https://github.com/arenaxr/arena-unity/commit/0ce7c8a7eb557a8abba5e80979e7fc745ba356da))
+* support AprilTag 36h11 for ARENA XR scene relocalization ([#167](https://github.com/arenaxr/arena-unity/issues/167)) ([682be0d](https://github.com/arenaxr/arena-unity/commit/682be0d8cb40f29c73de954db046cd1e038d0d06))
+
+
+### Bug Fixes
+
+* accept 'join' presence action in message validation ([2d7991f](https://github.com/arenaxr/arena-unity/commit/2d7991f71c1615d976dccfef8102cedf21bb96c0))
+* add compile-time Unity version check with clear error message ([44a27b8](https://github.com/arenaxr/arena-unity/commit/44a27b814f6c2690250f43ed73a83a7028dfb276))
+* compile ArenaLocalHand only when the built-in XR module is enabled ([3643add](https://github.com/arenaxr/arena-unity/commit/3643addc360757bfb56aa4cdcbabce0cbe7ddbfd))
+* compile ArenaLocalHand only when the built-in XR module is enabled ([b1dd8f6](https://github.com/arenaxr/arena-unity/commit/b1dd8f61bf86cbb2c8e9f9a030eceef9d5e46022))
+* declare built-in engine modules required by core components ([a658887](https://github.com/arenaxr/arena-unity/commit/a658887699912f747fdd8eb9c2a147b6ad89da29))
+* declare built-in VR module as a package dependency ([a5d27bd](https://github.com/arenaxr/arena-unity/commit/a5d27bd4249fa6effc7ce94bf555d6b27fce6da0))
+* declare built-in VR module as a package dependency ([eb7cba7](https://github.com/arenaxr/arena-unity/commit/eb7cba7677ccbc3fce3f5f2adeaa9d690246cfb6))
+* ensure built-in VR module when auto-installing gaussian-splatting ([e3cb5ab](https://github.com/arenaxr/arena-unity/commit/e3cb5ab28592084e6235df070bfaeb5d98fa1cb7))
+* invert XRCpuImage Y-axis to correctly detect AprilTags ([8501fe3](https://github.com/arenaxr/arena-unity/commit/8501fe3f1875911fb9de7ab999798b4e63241e96))
+* reference URP runtime assemblies so LIB_URP code compiles ([dc8d67b](https://github.com/arenaxr/arena-unity/commit/dc8d67b8d61e4e055dde22e8126694b5ca1c727a))
+* register WebP add-on globally via ImportAddonRegistry ([#174](https://github.com/arenaxr/arena-unity/issues/174)) ([2512251](https://github.com/arenaxr/arena-unity/commit/2512251271c486631efd5f6e68ff88c9f142cf45))
+* resolve ARKit compilation and missing prefabs ([9d87be1](https://github.com/arenaxr/arena-unity/commit/9d87be1b65de6d019a3bb1afb53bf1137c81c977))
+* resolve CS0103 in ArenaArmarker by properly retrieving ArenaObject component ([c991748](https://github.com/arenaxr/arena-unity/commit/c9917486d3452ee151fbda484ca28dd97dacc952))
+* resolve CS7036 by using PublishCreateUpdate(true) instead of PublishUpdate() ([1f4687a](https://github.com/arenaxr/arena-unity/commit/1f4687a315387e85ad4fdeff36c6bcf4dbc69d77))
+* surface connection failure on invalid server name ([ef2327e](https://github.com/arenaxr/arena-unity/commit/ef2327e0b9a024c036e5d476e75669f3b1cf743e))
+* wrap AprilTag using statement in HAS_AR_FOUNDATION ([00f81c7](https://github.com/arenaxr/arena-unity/commit/00f81c751089dd47cd32325fe6288e366141d790))
+
 ## [1.7.1](https://github.com/arenaxr/arena-unity/compare/v1.7.0...v1.7.1) (2026-06-08)
 
 
