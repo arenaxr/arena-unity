@@ -231,8 +231,12 @@ namespace ArenaUnity
 
             // start auth flow and MQTT connection
             ArenaCamera[] camlist = FindObjectsByType<ArenaCamera>(FindObjectsSortMode.None);
+#if HAS_XR_MODULE
             ArenaLocalHand[] localHandlist = FindObjectsByType<ArenaLocalHand>(FindObjectsSortMode.None);
             bool hasUserPresence = camlist.Length > 0 || localHandlist.Length > 0;
+#else
+            bool hasUserPresence = camlist.Length > 0;
+#endif
             name = $"{originalName} (Authenticating...)";
             cd = new CoroutineWithData(this, SigninScene(sceneName, namespaceName, realm, hasUserPresence, arenaDefaults.latencyTopic));
             yield return cd.coroutine;
@@ -290,6 +294,7 @@ namespace ArenaUnity
                 localCameraIds.Add(cam.camid);
             }
 
+#if HAS_XR_MODULE
             // publish arena hand controllers where requested
             foreach (ArenaLocalHand localHand in localHandlist)
             {
@@ -311,6 +316,7 @@ namespace ArenaUnity
                 );
                 localHand.HasPermissions = HasPerms(handTopic.PUB_SCENE_USER);
             }
+#endif
 
             // apply default environment (skip for RenderFusion — scene manages its own environment)
             if (!requestRemoteRenderRights)

@@ -13,6 +13,12 @@
     "com.unity.cloud.ktx": "3.7.0",
     "com.unity.editorcoroutines": "1.1.0",
     "com.unity.meshopt.decompress": "0.2.0-exp.1",
+    "com.unity.modules.audio": "1.0.0",
+    "com.unity.modules.imageconversion": "1.0.0",
+    "com.unity.modules.unitywebrequest": "1.0.0",
+    "com.unity.modules.unitywebrequestaudio": "1.0.0",
+    "com.unity.modules.unitywebrequesttexture": "1.0.0",
+    "com.unity.modules.video": "1.0.0",
     "com.unity.nuget.newtonsoft-json": "3.2.2",
     "com.unity.textmeshpro": "3.0.9"
   },

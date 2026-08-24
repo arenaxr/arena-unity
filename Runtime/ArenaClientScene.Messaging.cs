@@ -470,8 +470,11 @@ namespace ArenaUnity
             }
 
             // Section 3.3: action must be one of: create, update, delete, clientEvent → warned and dropped
+            // 'join'/'leave' presence announcements are also valid wire traffic from web
+            // clients (e.g. RenderFusion viewers announce with 'join'); 'leave' is consumed
+            // below, 'join' is not ours to handle — accepted and ignored without warning.
             if (msg.action != "create" && msg.action != "update" && msg.action != "delete"
-                && msg.action != "clientEvent" && msg.action != "leave")
+                && msg.action != "clientEvent" && msg.action != "leave" && msg.action != "join")
             {
                 Debug.LogWarning($"Invalid action '{msg.action}' in MQTT message for object_id '{msg.object_id}', dropping.");
                 return;
@@ -535,6 +538,10 @@ namespace ArenaUnity
                     // camera special case, look for hands to delete
                     RemoveObject($"{prefixHandL}{object_id}");
                     RemoveObject($"{prefixHandR}{object_id}");
+                    break;
+                case "join":
+                    // presence announcement; consumed by signaling layers
+                    // (e.g. arena-renderfusion), nothing to do in the scene graph
                     break;
                 case "clientEvent":
                     // Section 3.4: data must be present for clientEvent → silently dropped
