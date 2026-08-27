@@ -2,7 +2,7 @@
     "name": "conix.arena.unity",
     "references": [
         "GaussianSplatting",
-        "GaussianSplattingEditor",
+        "Gsplat",
         "glTFast",
         "glTFast.Export",
         "glTFast.Newtonsoft",
@@ -44,6 +44,11 @@
             "name": "org.nesnausk.gaussian-splatting",
             "expression": "",
             "define": "LIB_GAUSSIAN_SPLATTING"
+        },
+        {
+            "name": "wu.yize.gsplat",
+            "expression": "",
+            "define": "LIB_GSPLAT"
         },
         {
             "name": "com.unity.nuget.newtonsoft-json",
