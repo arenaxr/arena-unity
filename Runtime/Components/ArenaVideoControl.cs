@@ -26,6 +26,35 @@ namespace ArenaUnity.Components
 
         public ArenaVideoControlJson json = new ArenaVideoControlJson();
 
+        // A video-control message can arrive before the object named by video_object exists, or
+        // before ArenaMaterial has created the VideoPlayer that owns the clip. ApplyRender returns
+        // in both cases, so re-arm apply from Update while the dependency is still missing, and
+        // stop at pendingTimeout so a dependency that never arrives is not re-checked every frame
+        // for the life of the scene.
+        private const float pendingTimeout = 30f;
+        private string pendingDependency = null;
+        private float pendingDeadline = 0f;
+
+        protected override void Update()
+        {
+            if (pendingDependency != null && !apply)
+            {
+                if (Time.realtimeSinceStartup < pendingDeadline) apply = true;
+                else
+                {
+                    Debug.LogWarning($"video-control gave up waiting for {pendingDependency}");
+                    pendingDependency = null;
+                }
+            }
+            base.Update();
+        }
+
+        private void WaitFor(string dependency)
+        {
+            if (pendingDependency == null) pendingDeadline = Time.realtimeSinceStartup + pendingTimeout;
+            pendingDependency = dependency;
+        }
+
         protected override void ApplyRender()
         {
             // video_object names the object holding the video, otherwise this object holds it
@@ -36,7 +65,8 @@ namespace ArenaUnity.Components
                     vobj = namedObj;
                 else
                 {
-                    Debug.LogWarning($"video-control video_object not found: {json.VideoObject}");
+                    // the named object may not have arrived yet, retry until pendingTimeout
+                    WaitFor($"video_object: {json.VideoObject}");
                     return;
                 }
             }
@@ -55,9 +85,23 @@ namespace ArenaUnity.Components
                 }
             }
 
-            // no VideoPlayer yet, material src or video_path will re-apply when the asset arrives
             var videoPlayer = vobj.GetComponent<UnityEngine.Video.VideoPlayer>();
-            if (videoPlayer == null) return;
+            if (videoPlayer == null)
+            {
+                // ArenaMaterial owns the VideoPlayer and only creates it once material.src is a
+                // local file, so hook that asset once for a download slower than pendingTimeout,
+                // and retry meanwhile in case material is applied after us in the same message
+                if (pendingDependency == null)
+                {
+                    var material = vobj.GetComponent<ArenaMaterial>();
+                    if (material != null && !string.IsNullOrEmpty(material.json.Src) && ArenaClientScene.Instance != null
+                        && ArenaClientScene.Instance.checkLocalAsset(material.json.Src) == null)
+                        ArenaClientScene.Instance.RegisterAssetCallback(material.json.Src, () => { apply = true; });
+                }
+                WaitFor($"VideoPlayer on: {vobj.name}");
+                return;
+            }
+            pendingDependency = null;
 
             videoPlayer.isLooping = json.VideoLoop;
             videoPlayer.playOnAwake = json.Autoplay;
