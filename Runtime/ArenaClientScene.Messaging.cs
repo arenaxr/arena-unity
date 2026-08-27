@@ -297,6 +297,8 @@ namespace ArenaUnity
                     case "physx-material": ArenaUnity.ApplyPhysxMaterial(gobj, data); break;
                     case "box-collision-listener": ArenaUnity.ApplyBoxCollisionListener(gobj, data); break;
                     case "physx-joint": ArenaUnity.ApplyPhysxJoint(gobj, data); break;
+                    case "physx-joint-constraint": ArenaUnity.ApplyPhysxJointConstraint(gobj, data); break;
+                    case "physx-joint-driver": ArenaUnity.ApplyPhysxJointDriver(gobj, data); break;
                     case "physx-force-pushable": ArenaUnity.ApplyPhysxForcePushable(gobj, data); break;
                     case "geometry":
                         if (object_type == "entity")
