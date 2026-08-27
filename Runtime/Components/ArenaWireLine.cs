@@ -15,7 +15,7 @@ namespace ArenaUnity
         // ARENA line component unity conversion status:
         // DONE: color
         // DONE: end
-        // DONE: opacity
+        // DONE: opacity (only applied when color is also set)
         // DONE: start
         // DONE: visible
 
