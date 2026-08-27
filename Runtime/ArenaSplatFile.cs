@@ -39,9 +39,10 @@ namespace ArenaUnity
         /// <summary>
         /// Properties per vertex in the PLY this class writes. The standard 3DGS PLY layout
         /// (x y z nx ny nz f_dc_0..2 opacity scale_0..2 rot_0..3) with no SH rest terms.
-        /// Unused normals are written as zero rather than omitted: readers that derive the SH
-        /// band count from the total property count compare it against this same 17, so a
-        /// shorter record would be read as a negative band count.
+        /// Unused normals are written as zero rather than omitted only to keep the record layout
+        /// the same as a standard SH-degree-0 3DGS export. gsplat would parse either form: it
+        /// takes every field offset from the header and derives the SH band count by counting
+        /// f_rest_ properties (GsplatAsset.PlyHeaderInfo), not from the total property count.
         /// </summary>
         public const int PlyPropertyCount = 17;
 

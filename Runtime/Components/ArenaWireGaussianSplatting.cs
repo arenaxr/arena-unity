@@ -72,9 +72,12 @@ namespace ArenaUnity
         /// as a source frame of right-DOWN-front, i.e. SourceCoordinates.RDF, which is also what
         /// the coordinate-system note in ArenaUnity.cs records for PLY.
         ///
-        /// Choosing RDF instead of gsplat's own RUB default is exactly a 180-degree rotation
-        /// about X, which is the correction under discussion; RUB would leave splats upside down
-        /// relative to the web client.
+        /// gsplat's own defaults are RUF on LoadFromPlyBytes/LoadFromSpz and RUB on the Editor
+        /// importer's field (RUB is also what Unspecified falls back to). Either would be wrong
+        /// here: RUF applies no correction at all, and RUB flips Z instead of Y, which differs
+        /// from RDF by exactly the 180-degree rotation about X under discussion and would leave
+        /// splats upside down relative to the web client. RDF is passed explicitly on every
+        /// load, so no library default is relied on.
         ///
         /// Unlike the older path, this must not be combined with any further sign flip.
         /// Editor/SPLATFileReader.cs:65 negates a quaternion as (-x, y, -z, w) "like a-frame
@@ -85,15 +88,26 @@ namespace ArenaUnity
         /// </summary>
         public const SourceCoordinates SourceFrameForWebParity = SourceCoordinates.RDF;
 
+        // names of the child GameObjects this component owns; looked up by name on a direct
+        // child rather than searched through descendants, see ApplyRender
+        const string SplatChildName = "Splat";
+        const string CutoutChildName = "Splat Cutout";
+
         GsplatRenderer gsplatRenderer;
         GsplatCutout gsplatCutout;
         GsplatAsset gsplatAsset;
         string loadedSrc;
         string loadingSrc;
         string failedSrc;
+        string requestedSrc;
         string cutoutSeekId;
+        // the values the currently loaded asset was parsed with; only read while parsing, so a
+        // change to either has to re-read the same src, see OnValidate
+        SourceCoordinates loadedCoordinates = SourceFrameForWebParity;
+        CompressionMode loadedCompression = CompressionMode.Spark;
         bool warnedColorSpace;
         bool warnedSettings;
+        bool warnedPipeline;
 
         protected override void ApplyRender()
         {
@@ -113,17 +127,22 @@ namespace ArenaUnity
                 return;
             }
 
-            // assign splat renderer, on a child so the ARENA entity transform composes on top
-            gsplatRenderer = GetComponentInChildren<GsplatRenderer>();
-            if (gsplatRenderer == null)
+            // assign splat renderer, on a child so the ARENA entity transform composes on top.
+            // Scoped to this component's own direct child: ARENA supports parent/child entities,
+            // so a gaussian_splatting object can be a descendant of another one, and
+            // GetComponentInChildren would happily adopt the descendant's renderer and then
+            // write this object's asset, GammaToLinear and cutout target into it while this
+            // object rendered nothing.
+            Transform splat = transform.Find(SplatChildName);
+            if (splat == null)
             {
-                GameObject sobj = new GameObject("Splat");
+                GameObject sobj = new GameObject(SplatChildName);
                 sobj.transform.SetParent(transform, false);
-                gsplatRenderer = sobj.AddComponent<GsplatRenderer>();
+                splat = sobj.transform;
             }
+            gsplatRenderer = splat.GetComponent<GsplatRenderer>();
+            if (gsplatRenderer == null) gsplatRenderer = splat.gameObject.AddComponent<GsplatRenderer>();
             gsplatRenderer.GammaToLinear = gammaToLinear;
-
-            WarnIfColorSpaceUnsupported();
 
             // assign splat cutout. Start one seek per distinct cutout id: the seek waits on
             // another ARENA object arriving, and ApplyRender runs again for every object
@@ -139,10 +158,67 @@ namespace ArenaUnity
                 }
             }
 
+            // A failed load is remembered only until src changes value, not for the lifetime of
+            // the GameObject: a truncated download or a transient read error should not poison
+            // the object, so re-publishing a src, or switching away and back, gets a fresh
+            // attempt. Repeat messages carrying the same failed src still do not retry.
+            if (json.Src != requestedSrc)
+            {
+                requestedSrc = json.Src;
+                failedSrc = null;
+            }
+
+            // ARENA deletes an attribute by publishing null, so a cleared src has to remove the
+            // splat rather than leave the last one on screen forever.
+            if (string.IsNullOrWhiteSpace(json.Src))
+            {
+                UnloadSplat();
+                return;
+            }
+
             // Loading parses the whole file on the main thread, so only do it when src changes;
             // ApplyRender also runs for position and rotation updates.
             if (json.Src == loadedSrc || json.Src == loadingSrc || json.Src == failedSrc) return;
             LoadSplatAtRuntime(json.Src);
+        }
+
+        /// <summary>
+        /// Local Inspector settings, unlike ARENA attributes, do not change the published json,
+        /// so ArenaComponent.OnValidate -> UpdateObject -> PublishIfChanged sees no change and
+        /// never sets the apply latch. Set the latch here rather than calling ApplyRender
+        /// directly, so the edit is applied by ArenaComponent.Update like every other update --
+        /// the same thing ArenaMesh.OnValidate does for its own Inspector fields -- and drop the
+        /// src latches when a setting that is only read while parsing has moved, so the same src
+        /// is re-read with the new value.
+        /// </summary>
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            if (sourceCoordinates != loadedCoordinates || compression != loadedCompression)
+            {
+                loadedSrc = null;
+                failedSrc = null;
+            }
+            // gammaToLinear needs no reload; ApplyRender re-pushes it to the renderer
+            apply = true;
+        }
+
+        /// <summary>
+        /// Removes the splat currently on screen, for a src that has been cleared. The renderer
+        /// component keeps its GPU buffers until it is disabled or destroyed -- upstream only
+        /// releases them when a different asset is bound -- but it stops drawing as soon as its
+        /// asset is null, because GsplatRenderer.Valid is false without one.
+        /// </summary>
+        private void UnloadSplat()
+        {
+            loadedSrc = null;
+            loadingSrc = null;
+            if (gsplatRenderer != null) gsplatRenderer.GsplatAsset = null;
+            if (gsplatAsset != null)
+            {
+                DestroyGsplatAsset(gsplatAsset);
+                gsplatAsset = null;
+            }
         }
 
         private IEnumerator SeekCutout(string cutout_id)
@@ -156,15 +232,19 @@ namespace ArenaUnity
                 Debug.LogWarning($"GaussianSplatting object '{name}' cutoutEntity '{cutout_id}' is not an ARENA object; no cutout applied.");
                 yield break;
             }
-            gsplatCutout = cobj.GetComponentInChildren<GsplatCutout>();
-            if (gsplatCutout == null)
+            // scoped to a direct child of the cutout entity, for the same reason as the renderer
+            // in ApplyRender: a nested ARENA entity may carry its own cutout for another splat
+            Transform cutout = cobj.transform.Find(CutoutChildName);
+            if (cutout == null)
             {
-                GameObject sobj = new GameObject("Splat Cutout");
+                GameObject sobj = new GameObject(CutoutChildName);
                 sobj.transform.SetParent(cobj.transform, false);
-                gsplatCutout = sobj.AddComponent<GsplatCutout>();
                 // half extents, to match the ARENA a-frame gaussian components
                 sobj.transform.localScale = Vector3.one * 0.5f;
+                cutout = sobj.transform;
             }
+            gsplatCutout = cutout.GetComponent<GsplatCutout>();
+            if (gsplatCutout == null) gsplatCutout = cutout.gameObject.AddComponent<GsplatCutout>();
             gsplatCutout.m_Type = (aobj.object_type == "box" || aobj.object_type == "roundedbox") ? GsplatCutout.Type.Box : GsplatCutout.Type.Ellipsoid;
             gsplatCutout.m_Invert = false; // aframe-gaussian-splatting does not support inverted cutouts yet
             // the cutout is parented to the ARENA cutout entity, not to the renderer, so it has
@@ -252,11 +332,20 @@ namespace ArenaUnity
                 return;
             }
 
+            // Warn about what will look wrong only now that there is something to look at. An
+            // object with no src, an unsupported format, or a src that never downloaded used to
+            // get the full colour-space warning about the rendering of a splat that was not
+            // being rendered.
+            WarnIfColorSpaceUnsupported();
+            WarnIfPipelineHookRequired();
+
             var previous = gsplatAsset;
             gsplatAsset = loaded;
             gsplatRenderer.GsplatAsset = loaded;
             loadedSrc = msgUrl;
             loadingSrc = null;
+            loadedCoordinates = sourceCoordinates;
+            loadedCompression = compression;
             // the renderer rebinds on its next Update and never dereferences the old asset, so
             // the previous copy can go now instead of leaking its CPU-side arrays
             if (previous != null) DestroyGsplatAsset(previous);
@@ -285,11 +374,58 @@ namespace ArenaUnity
             }
         }
 
+        /// <summary>
+        /// Warns once when the render pipeline in use needs a hook that no package can install
+        /// on the consuming project's behalf. gsplat draws by injecting a sorting pass into each
+        /// camera: the Built-in pipeline gets that from the library's own player-loop hook and
+        /// needs no setup, but URP needs a ScriptableRendererFeature added to the Renderer asset
+        /// and HDRP needs a CustomPass added to a Custom Pass Volume, both of which live in the
+        /// project, not in the package. GsplatURPFeature is declared internal upstream, so it
+        /// cannot be registered programmatically even with a reference to the assembly; naming
+        /// exactly what to add and where is all that is left.
+        ///
+        /// Without this, the most likely ARENA configuration -- URP, no renderer feature -- is
+        /// an object that loads with no error and draws nothing, which is the symptom this whole
+        /// path exists to remove. Called after a successful load, so it fires only when a splat
+        /// really should be on screen, and once per object like the other warnings here.
+        /// </summary>
+        private void WarnIfPipelineHookRequired()
+        {
+            if (warnedPipeline) return;
+            var pipeline = ActiveRenderPipeline();
+            if (pipeline == null) return; // Built-in installs its own hook, nothing to do
+            string pipelineType = pipeline.GetType().ToString();
+            if (pipelineType.Contains("HDRenderPipelineAsset"))
+            {
+                warnedPipeline = true;
+                Debug.LogWarning($"[ArenaWireGaussianSplatting] '{name}': splat loaded, but HDRP only draws gaussian splats through a custom pass that this package cannot add for you. If the splat is invisible, add a Custom Pass Volume to the scene, add a 'Gsplat HDRP Pass' entry to it, and set the injection point to 'Before Transparent'.");
+            }
+            else if (pipelineType.Contains("UniversalRenderPipelineAsset"))
+            {
+                warnedPipeline = true;
+                Debug.LogWarning($"[ArenaWireGaussianSplatting] '{name}': splat loaded, but URP only draws gaussian splats through a renderer feature that this package cannot add for you. If the splat is invisible, select the Universal Renderer Data asset your project uses (Assets/Settings/PC_Renderer in a default URP project), press 'Add Renderer Feature' and choose 'Gsplat URP Feature'. On Unity 6 and later, Render Graph 'Compatibility Mode' in the URP settings must also be off.");
+            }
+            // any other scriptable pipeline: there is no advice worth giving, so say nothing
+        }
+
         private static bool IsHdrpActive()
         {
-            // same runtime test ArenaUnity.GetLitShader uses to pick HDRP/Lit
-            var pipeline = ArenaUnity.DefaultRenderPipeline;
+            var pipeline = ActiveRenderPipeline();
             return pipeline != null && pipeline.GetType().ToString().Contains("HDRenderPipelineAsset");
+        }
+
+        /// <summary>
+        /// The render pipeline asset actually in use. ArenaUnity.DefaultRenderPipeline, the house
+        /// idiom, is a static field captured once at static initialisation from
+        /// GraphicsSettings.defaultRenderPipeline, so it reads null in a project that sets its
+        /// pipeline only per quality level. Both callers here choose which of two user-facing
+        /// messages to print -- and on HDRP one of them would be advice HDRP cannot follow -- so
+        /// they read the live value instead. GraphicsSettings.currentRenderPipeline returns the
+        /// quality-level override when there is one and the default otherwise.
+        /// </summary>
+        private static UnityEngine.Rendering.RenderPipelineAsset ActiveRenderPipeline()
+        {
+            return UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline;
         }
 
         private static void DestroyGsplatAsset(GsplatAsset asset)
