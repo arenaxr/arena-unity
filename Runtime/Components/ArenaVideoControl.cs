@@ -4,6 +4,7 @@
  */
 
 using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 using ArenaUnity.Schemas;
 using Newtonsoft.Json;
@@ -45,7 +46,13 @@ namespace ArenaUnity.Components
             {
                 string videoPath = ArenaClientScene.Instance.checkLocalAsset(json.VideoPath);
                 if (videoPath == null) ArenaClientScene.Instance.RegisterAssetCallback(json.VideoPath, () => { apply = true; });
-                else ArenaMaterial.AttachMaterialTexture(videoPath, vobj);
+                else
+                {
+                    // attach only for a new clip, AttachMaterialTexture restarts playback and resets loop/autoplay
+                    var attached = vobj.GetComponent<UnityEngine.Video.VideoPlayer>();
+                    if (attached == null || attached.url != Path.GetFullPath(videoPath))
+                        ArenaMaterial.AttachMaterialTexture(videoPath, vobj);
+                }
             }
 
             // no VideoPlayer yet, material src or video_path will re-apply when the asset arrives
