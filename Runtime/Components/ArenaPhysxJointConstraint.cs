@@ -16,13 +16,13 @@ namespace ArenaUnity.Components
         // ARENA physx-joint-constraint component unity conversion status:
         // DONE: angularLimit
         // DONE: constrainedAxes
-        // DONE: damping
+        // TODO: damping
         // DONE: freeAxes
         // DONE: limitCone
         // DONE: linearLimit
         // DONE: lockedAxes
         // DONE: restitution
-        // DONE: stiffness
+        // TODO: stiffness
         // DONE: twistLimit
 
         public ArenaPhysxJointConstraintJson json = new ArenaPhysxJointConstraintJson();
@@ -87,7 +87,7 @@ namespace ArenaUnity.Components
             }
 
             if (json.Stiffness > 0f)
-            {   // [All] stiffness greater than 0 makes this a soft constraint, spring damped
+            {   // [D6, Prismatic] stiffness greater than 0 makes this a soft constraint, spring damped
                 SoftJointLimitSpring linearSpring = d6.linearLimitSpring;
                 linearSpring.spring = json.Stiffness;
                 linearSpring.damper = json.Damping;
