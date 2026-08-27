@@ -16,7 +16,7 @@ namespace ArenaUnity.Components
         // ARENA material-extras component unity conversion status:
         // DONE: overrideSrc
         // TODO: colorSpace
-        // DONE: colorWrite
+        // TODO: colorWrite
         // DONE: renderOrder
         // DONE: transparentOccluder
         // DONE: gltfOpacity

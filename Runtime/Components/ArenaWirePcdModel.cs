@@ -15,6 +15,7 @@ namespace ArenaUnity
         // TODO: url
         // TODO: pointSize
         // TODO: pointColor
+        // TODO: opacity
 
         public ArenaPcdModelJson json = new ArenaPcdModelJson();
 

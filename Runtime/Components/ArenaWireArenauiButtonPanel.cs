@@ -20,7 +20,7 @@ namespace ArenaUnity
         // DONE: buttons
         // DONE: title
         // DONE: vertical
-        // DONE: font
+        // TODO: font
         // DONE: theme
         // DONE: materialSides
 
