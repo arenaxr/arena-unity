@@ -74,8 +74,11 @@ namespace ArenaUnity.Components
         // DONE: wiggle
         // DONE: wiggleSpread
 
-        // SPE applies each spread whether or not its matching randomize* flag is set, so the gates
-        // default on here; only an inbound 'randomize*: false' turns that spread back off.
+        // The gates default on so that a scene which never sets a randomize* flag renders as before.
+        // The generated DTO types these as non-nullable bools defaulting to false, so
+        // ShouldSerializeRandomize*() drops an authored 'randomize*: false' as indistinguishable from an
+        // absent key: an inbound false cannot reach the gates today, and only the Inspector checkboxes
+        // below actually turn a spread off. See PR #253 for the two candidate fixes.
         public ArenaSpeParticlesJson json = new ArenaSpeParticlesJson()
         {
             RandomizeAcceleration = true,
