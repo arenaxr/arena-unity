@@ -1,14 +1,59 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Line endings: LF in the repo and in every working tree, on every OS (Windows Git defaults
+# to autocrlf=true; without eol=lf Unity YAML and metas would check out CRLF and churn).
+* text=auto eol=lf
 
-# Native plugin binaries — treat as binary to prevent line-ending corruption
+# Source and text
+*.cs text eol=lf diff=csharp
+*.shader text eol=lf
+*.hlsl text eol=lf
+*.cginc text eol=lf
+*.compute text eol=lf
+*.asmdef text eol=lf
+*.asmref text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.uxml text eol=lf
+*.uss text eol=lf
+
+# Unity YAML
+*.meta text eol=lf
+*.unity text eol=lf
+*.prefab text eol=lf
+*.asset text eol=lf
+*.mat text eol=lf
+*.anim text eol=lf
+*.controller text eol=lf
+*.inputactions text eol=lf
+
+# Binary — never touched
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.psd binary
+*.tga binary
+*.exr binary
+*.hdr binary
+*.glb binary
+*.gltf binary
+*.fbx binary
+*.wav binary
+*.mp3 binary
+*.ogg binary
+*.mp4 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
+*.nupkg binary
+*.p7s binary
 *.so binary
 *.dll binary
 *.a binary
 *.bundle binary
-
-# We want our source files to be
-*.cs text eol=lf
-*.json text eol=lf
-*.md text eol=lf
-*.txt text eol=lf
+*.dylib binary
