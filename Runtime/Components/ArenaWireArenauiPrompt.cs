@@ -16,13 +16,13 @@ namespace ArenaUnity
     public class ArenaWireArenauiPrompt : ArenaComponent
     {
         // ARENA arenaui-prompt component unity conversion status:
-        // TODO: title
-        // TODO: description
-        // TODO: buttons
-        // TODO: width
+        // DONE: title
+        // DONE: description
+        // DONE: buttons
+        // DONE: width
         // TODO: font
-        // TODO: theme
-        // TODO: materialSides
+        // DONE: theme
+        // DONE: materialSides
 
         public ArenaArenauiPromptJson json = new ArenaArenauiPromptJson();
 
