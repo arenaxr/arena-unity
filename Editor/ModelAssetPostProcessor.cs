@@ -23,7 +23,14 @@ namespace ArenaUnity.Editor
             // Check if specific assets were imported
             foreach (string asset in importedAssets)
             {
-#if LIB_GAUSSIAN_SPLATTING
+                // The old-format asset is only of use to the legacy Editor-only path, so gate it
+                // on that path being active as well as on the library being installed. Without
+                // the second half of this condition, installing wu.yize.gsplat leaves every
+                // splat arriving over MQTT parsed three times in the Editor: once by the
+                // dependency's own ScriptedImporter, once here into a nesnausk asset that
+                // nothing on the new path reads, and once at runtime by the component. Only the
+                // middle one is ours to drop.
+#if LIB_GAUSSIAN_SPLATTING && (!LIB_GSPLAT || ARENA_SPLAT_LEGACY)
                 switch (Path.GetExtension(asset)?.ToLower())
                 {
                     case ".ply":
