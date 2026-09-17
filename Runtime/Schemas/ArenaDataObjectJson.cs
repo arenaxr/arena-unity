@@ -401,16 +401,6 @@ namespace ArenaUnity.Schemas
             return (VideoControl != defVideoControl);
         }
 
-        private static ArenaAttributionJson defAttribution = null;
-        [JsonProperty(PropertyName = "attribution")]
-        [Tooltip("Attribution Component. Saves attribution data in any entity.")]
-        public ArenaAttributionJson Attribution = defAttribution;
-        public bool ShouldSerializeAttribution()
-        {
-            // attribution
-            return (Attribution != defAttribution);
-        }
-
         private static ArenaSpeParticlesJson defSpeParticles = null;
         [JsonProperty(PropertyName = "spe-particles")]
         [Tooltip("GPU based particle systems in A-Frame. More properties at <a href='https://github.com/harlyq/aframe-spe-particles-component'>A-Frame SPE Particles</a> component.")]

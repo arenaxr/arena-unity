@@ -188,7 +188,7 @@ graph TD
 | `arena-hand` | ✅ 0.0.1 | ✅ | Tracking VR controller movement, emits pose updates and button events |
 | `arena-user` | ✅ 0.11.0 | - | Another user's camera, renders Jitsi/displayName updates |
 | `armarker` | ✅ 1.7.2 | ✅ | Location marker for scene anchoring in the real world |
-| `attribution` | - | - | Saves attribution data in any entity |
+| `attribution` | ❌ | ❌ | Unsupported: arena-web-core-internal A-Frame ECS component, not part of any external-facing arena schema |
 | `blip` | - | - | Objects animate in/out of the scene |
 | `box-collision-listener` | ✅ 1.6.0 | ✅ | AABB collision detection for entities with a mesh |
 | `buffer` | ❌ | - | Transform geometry into a BufferGeometry |
