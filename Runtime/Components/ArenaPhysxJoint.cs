@@ -75,6 +75,12 @@ namespace ArenaUnity.Components
                 }
             }
 
+            // a constraint or driver may have arrived before this joint existed, re-apply them now
+            var constraint = GetComponent<ArenaPhysxJointConstraint>();
+            if (constraint != null) constraint.apply = true;
+            var driver = GetComponent<ArenaPhysxJointDriver>();
+            if (driver != null) driver.apply = true;
+
             SetSuppressTransform(true);
         }
 
