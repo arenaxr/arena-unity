@@ -26,8 +26,10 @@ namespace ArenaUnity.Components
             modelApplied = false;
         }
 
-        private new void Update()
+        protected override void Update()
         {
+            base.Update();
+
             if (!modelApplied)
             {
                 var gltfModel = GetComponent<ArenaWireGltfModel>();
