@@ -327,14 +327,6 @@ namespace ArenaUnity
             c.apply = true;
         }
 
-        public static void ApplyAttribution(GameObject gobj, ArenaDataObjectJson data)
-        {
-            if (!gobj.TryGetComponent<ArenaAttribution>(out var c))
-                c = gobj.AddComponent<ArenaAttribution>();
-            c.json = JsonConvert.DeserializeObject<ArenaAttributionJson>(MergeRawJson(c.json, data.Attribution));
-            c.apply = true;
-        }
-
         public static void ApplyMaterial(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaMaterial>(out var c))
