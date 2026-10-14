@@ -17,7 +17,7 @@ namespace ArenaUnity.Components
         // DONE: detailedUrl
         // DONE: detailedDistance
         // DONE: updateRate
-        // DONE: retainCache
+        // TODO: retainCache
 
         public ArenaGltfModelLodJson json = new ArenaGltfModelLodJson();
 

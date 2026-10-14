@@ -23,7 +23,7 @@ namespace ArenaUnity
         // DONE: fontSize
         // DONE: widthScale
         // DONE: closeButton
-        // DONE: font
+        // TODO: font
         // DONE: theme
         // DONE: materialSides
 
