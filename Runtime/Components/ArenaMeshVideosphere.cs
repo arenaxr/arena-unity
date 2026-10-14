@@ -26,8 +26,8 @@ namespace ArenaUnity
         {
             filter.sharedMesh = SphereBuilder.Build(
                 json.Radius,
-                json.SegmentsHeight,
-                json.SegmentsWidth
+                json.SegmentsWidth,
+                json.SegmentsHeight
             );
         }
 
