@@ -10,8 +10,9 @@ Finalize Code on main → Merge release-please PR → Automated Tag & Release
 
 ## Prerequisites
 
-1. **Test Compilation**: Ensure the project compiles successfully in Unity 6 (6000.0) or newer.
-2. **Test Runtime**: Hit "Play" in the Editor and verify connection, object synchronization, and GLTF export functionality.
+1. **Run the unit tests**: `dotnet test "Tests~/DotNet/ArenaUnity.PureTests/ArenaUnity.PureTests.csproj"`, and the EditMode suite from `Window > General > Test Runner` if you have a Unity project set up for it. The .NET suite also runs automatically on every pull request; see [Documentation~/Testing.md](Documentation~/Testing.md).
+2. **Test Compilation**: Ensure the project compiles successfully in Unity 6 (6000.0) or newer.
+3. **Test Runtime**: Hit "Play" in the Editor and verify connection, object synchronization, and GLTF export functionality.
 
 ## Release Steps
 
