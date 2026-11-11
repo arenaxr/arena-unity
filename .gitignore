@@ -161,3 +161,9 @@ $RECYCLE.BIN/
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+# ARENA .NET unit test project (Tests~/ is excluded from Unity import by the ~ suffix).
+# Unity generates and discards *.csproj at the repo root, hence the blanket ignore
+# above, but this project file is hand-maintained and must be committed.
+!/Tests~/DotNet/**/*.csproj
+/Tests~/DotNet/**/bin/
