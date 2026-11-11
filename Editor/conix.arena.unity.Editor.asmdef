@@ -38,6 +38,11 @@
             "name": "org.nesnausk.gaussian-splatting",
             "expression": "",
             "define": "LIB_GAUSSIAN_SPLATTING"
+        },
+        {
+            "name": "wu.yize.gsplat",
+            "expression": "",
+            "define": "LIB_GSPLAT"
         }
     ],
     "noEngineReferences": false
