@@ -14,7 +14,7 @@ namespace ArenaUnity.Components
     public class ArenaGotoUrl : ArenaComponent
     {
         // ARENA goto-url component unity conversion status:
-        // DONE: dest
+        // TODO: dest
         // DONE: on
         // DONE: url
 

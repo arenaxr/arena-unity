@@ -443,7 +443,8 @@ namespace ArenaUnity.Components
                     if (!string.IsNullOrEmpty(json.SphericalEnvMap) && ArenaClientScene.Instance != null)
                     {
                         // Spherical env maps (equirectangular) need conversion to cubemap;
-                        // for now, attempt direct texture assignment with a warning
+                        // for now, attempt direct texture assignment, warning only if the
+                        // shader exposes no reflection texture property
                         string sphereEnvPath = ArenaClientScene.Instance.checkLocalAsset(json.SphericalEnvMap);
                         if (sphereEnvPath == null) ArenaClientScene.Instance.RegisterAssetCallback(json.SphericalEnvMap, () => { apply = true; });
                         else if (isHDRP && material.HasProperty("_ReflectionCubemap"))
