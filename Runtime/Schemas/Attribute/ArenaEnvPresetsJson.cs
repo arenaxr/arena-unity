@@ -369,6 +369,8 @@ namespace ArenaUnity.Schemas
             Goldmine,
             [EnumMember(Value = "japan")]
             Japan,
+            [EnumMember(Value = "moon")]
+            Moon,
             [EnumMember(Value = "none")]
             None,
             [EnumMember(Value = "osiris")]
