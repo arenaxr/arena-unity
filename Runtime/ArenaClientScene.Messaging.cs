@@ -246,7 +246,8 @@ namespace ArenaUnity
             }
 
             // apply rendering visibility attributes, before other on-wire object attributes
-            if (data.Visible != null && !(bool)data.Visible) // visible, if set is highest priority to enable/disable renderer
+            JToken jVisible = jData.SelectToken("visible");
+            if (jVisible != null && jVisible.Type != JTokenType.Null) // visible, if set is highest priority to enable/disable renderer
             {
                 ArenaUnity.ApplyVisible(gobj, data);
             }
