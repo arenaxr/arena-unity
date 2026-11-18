@@ -695,6 +695,22 @@ namespace ArenaUnity
             c.apply = true;
         }
 
+        public static void ApplyPhysxJointConstraint(GameObject gobj, ArenaDataObjectJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaPhysxJointConstraint>(out var c))
+                c = gobj.AddComponent<ArenaPhysxJointConstraint>();
+            c.json = JsonConvert.DeserializeObject<ArenaPhysxJointConstraintJson>(MergeRawJson(c.json, data.PhysxJointConstraint));
+            c.apply = true;
+        }
+
+        public static void ApplyPhysxJointDriver(GameObject gobj, ArenaDataObjectJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaPhysxJointDriver>(out var c))
+                c = gobj.AddComponent<ArenaPhysxJointDriver>();
+            c.json = JsonConvert.DeserializeObject<ArenaPhysxJointDriverJson>(MergeRawJson(c.json, data.PhysxJointDriver));
+            c.apply = true;
+        }
+
         public static void ApplyPhysxForcePushable(GameObject gobj, ArenaDataObjectJson data)
         {
             if (!gobj.TryGetComponent<ArenaPhysxForcePushable>(out var c))
