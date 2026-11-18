@@ -90,11 +90,18 @@ namespace ArenaUnity.Editor
             // depending on project migration, users may need to manually remove:
             // - Package Manager: org.nesnausk.gaussian-splatting
             // - Project Settings - Player: Scripted Define Symbol: LIB_GAUSSIAN_SPLATTING
-            Debug.LogWarning("Gaussian Splatting in URP requires Unity 6+. Package not included: org.nesnausk.gaussian-splatting");
+            Debug.LogWarning("Gaussian Splatting in URP requires Unity 6+. Packages not included: org.nesnausk.gaussian-splatting, wu.yize.gsplat");
 #else
             // add required packages from scoped registries
             UpdatePackages(new string[]{
                 "org.nesnausk.gaussian-splatting@1.1.1",
+                // wu.yize.gsplat renders gaussian splats loaded at runtime, where
+                // org.nesnausk.gaussian-splatting can only load through the Editor
+                // AssetDatabase. It is not published to any registry, so it is pinned to a
+                // git release tag rather than a version. Both are installed so the two paths
+                // can be compared on a device; see ARENA_SPLAT_LEGACY in
+                // Runtime/Components/ArenaWireGaussianSplatting.cs
+                "https://github.com/wuyize25/gsplat-unity.git#v1.4.0",
                 // gaussian-splatting uses UnityEngine.XR.XRSettings but does not
                 // declare the built-in VR module it comes from; projects with a
                 // trimmed manifest (Unity 6 templates) fail with CS0103 without it
