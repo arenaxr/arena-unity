@@ -1,0 +1,169 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+name: test
+
+# A second push to the same PR supersedes the first; there is no value in
+# finishing a run whose commit is already stale.
+concurrency:
+  group: test-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Minimum supported editor is 6000.0 (package.json "unity"). Pinned to a patch
+  # release that has a published unityci/editor image; bump both together.
+  UNITY_VERSION: "6000.0.82f1"
+
+jobs:
+  # The real gate. Compiles the UnityEngine-free package sources against a plain
+  # .NET SDK and runs the NUnit suite in Tests~/DotNet. Needs no secrets, so it
+  # runs on pull requests from forks exactly as it does on branches.
+  dotnet-tests:
+    name: dotnet tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Cache NuGet packages
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('Tests~/DotNet/**/*.csproj') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore "Tests~/DotNet/ArenaUnity.PureTests/ArenaUnity.PureTests.csproj"
+
+      - name: Test
+        run: >-
+          dotnet test "Tests~/DotNet/ArenaUnity.PureTests/ArenaUnity.PureTests.csproj"
+          --no-restore
+          --logger "trx;LogFileName=dotnet-tests.trx"
+          --results-directory TestResults
+
+      - name: Upload test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dotnet-test-results
+          path: TestResults
+          if-no-files-found: warn
+
+  # `if: ${{ secrets.X != '' }}` is not evaluated at job level, so whether the
+  # Unity licence secrets exist has to be resolved in a step and published as a
+  # job output that the Unity job can gate on.
+  check-unity-license:
+    name: check for Unity license
+    runs-on: ubuntu-latest
+    outputs:
+      available: ${{ steps.probe.outputs.available }}
+    steps:
+      - name: Probe for Unity license secrets
+        id: probe
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        run: |
+          if [ -n "$UNITY_LICENSE" ] || { [ -n "$UNITY_EMAIL" ] && [ -n "$UNITY_PASSWORD" ] && [ -n "$UNITY_SERIAL" ]; }; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+            echo "Unity license secrets found; EditMode tests will run."
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "No Unity license secrets configured; EditMode tests will be skipped."
+            echo "To enable them, add UNITY_LICENSE (personal) or UNITY_EMAIL + UNITY_PASSWORD + UNITY_SERIAL (pro)" >> "$GITHUB_STEP_SUMMARY"
+            echo "under Settings > Secrets and variables > Actions. See Documentation~/Testing.md." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  # arena-unity is a UPM package, not a Unity project: there is no Assets/ and no
+  # ProjectSettings/. The Test Runner needs a project, so one is created here and
+  # the checked-out package is referenced from it by relative path, with
+  # "testables" set so Tests/Editor is discovered.
+  unity-editmode-tests:
+    name: Unity EditMode tests
+    runs-on: ubuntu-latest
+    needs: check-unity-license
+    if: ${{ needs.check-unity-license.outputs.available == 'true' }}
+    permissions:
+      contents: read
+      # unity-test-runner publishes its results as a check run via githubToken.
+      checks: write
+    steps:
+      - name: Check out the package
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: package
+          lfs: true
+
+      - name: Create a throwaway Unity project that consumes the package
+        # UNITY_VERSION comes from the workflow-level env; re-declaring it here would
+        # be a self-reference inside its own env block, which is not supported.
+        run: |
+          set -eu
+          mkdir -p harness/Assets harness/Packages harness/ProjectSettings
+
+          # The package lives beside the project, so "file:../../package" resolves
+          # from harness/Packages/manifest.json.
+          cat > harness/Packages/manifest.json <<'JSON'
+          {
+            "dependencies": {
+              "io.conix.arena.unity": "file:../../package",
+              "com.unity.test-framework": "1.4.6"
+            },
+            "testables": [
+              "io.conix.arena.unity"
+            ]
+          }
+          JSON
+
+          # unity-test-runner reads the editor version from ProjectVersion.txt.
+          cat > harness/ProjectSettings/ProjectVersion.txt <<TXT
+          m_EditorVersion: ${UNITY_VERSION}
+          TXT
+
+          echo "--- manifest.json ---"
+          cat harness/Packages/manifest.json
+          echo "--- ProjectVersion.txt ---"
+          cat harness/ProjectSettings/ProjectVersion.txt
+
+      - name: Cache the Unity Library folder
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: harness/Library
+          key: unity-library-${{ env.UNITY_VERSION }}-${{ hashFiles('package/package.json') }}
+          restore-keys: |
+            unity-library-
+
+      - name: Run EditMode tests
+        uses: game-ci/unity-test-runner@0ff419b913a3630032cbe0de48a0099b5a9f0ed9 # v4.3.1
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          projectPath: harness
+          testMode: EditMode
+          artifactsPath: unity-test-results
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: Unity EditMode test results
+
+      - name: Upload test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: unity-editmode-test-results
+          path: unity-test-results
+          if-no-files-found: warn

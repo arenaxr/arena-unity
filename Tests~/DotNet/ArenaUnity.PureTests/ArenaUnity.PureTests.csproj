@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Plain .NET unit tests for the parts of ARENA for Unity that contain no
+    UnityEngine dependency. This project runs under `dotnet test` with no Unity
+    installation and no Unity license, which makes it usable as a pull-request
+    gate. Tests that need UnityEngine or the Editor live in /Tests/Editor and
+    run under the Unity Test Runner instead.
+
+    Sources are LINKED from the real package, never copied, so these tests
+    always compile the shipping code. Adding a file here that pulls in
+    UnityEngine will not compile - that is intentional.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <AssemblyName>ArenaUnity.PureTests</AssemblyName>
+    <RootNamespace>ArenaUnity.PureTests</RootNamespace>
+    <!-- Linked package sources are generated code we do not own; do not fail on their warnings. -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);CS0414;CS0649</NoWarn>
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../../../'))</RepoRoot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="NUnit" Version="3.14.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <!--
+    Package sources under test. Every file listed here has been verified to
+    contain no `UnityEngine` reference. Keep that true.
+  -->
+  <ItemGroup>
+    <Compile Include="$(RepoRoot)Runtime/ArenaTopics.cs"
+             Link="Linked/Runtime/ArenaTopics.cs" />
+    <Compile Include="$(RepoRoot)Runtime/Components/ArenaSceneEnvPresetsDefaults.cs"
+             Link="Linked/Runtime/Components/ArenaSceneEnvPresetsDefaults.cs" />
+    <Compile Include="$(RepoRoot)Runtime/Schemas/Converter/ArenaColorJsonConverter.cs"
+             Link="Linked/Runtime/Schemas/Converter/ArenaColorJsonConverter.cs" />
+    <Compile Include="$(RepoRoot)Runtime/Schemas/Converter/ArenaBooleanObjectJsonConverter.cs"
+             Link="Linked/Runtime/Schemas/Converter/ArenaBooleanObjectJsonConverter.cs" />
+    <Compile Include="$(RepoRoot)Runtime/Schemas/Converter/ArenaStringObjectJsonConverter.cs"
+             Link="Linked/Runtime/Schemas/Converter/ArenaStringObjectJsonConverter.cs" />
+  </ItemGroup>
+
+</Project>
