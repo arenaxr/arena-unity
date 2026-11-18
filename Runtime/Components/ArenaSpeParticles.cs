@@ -74,7 +74,23 @@ namespace ArenaUnity.Components
         // DONE: wiggle
         // DONE: wiggleSpread
 
-        public ArenaSpeParticlesJson json = new ArenaSpeParticlesJson();
+        // The gates default on so that a scene which never sets a randomize* flag renders as before.
+        // The generated DTO types these as non-nullable bools defaulting to false, so
+        // ShouldSerializeRandomize*() drops an authored 'randomize*: false' as indistinguishable from an
+        // absent key: an inbound false cannot reach the gates today, and only the Inspector checkboxes
+        // below actually turn a spread off. See PR #253 for the two candidate fixes.
+        public ArenaSpeParticlesJson json = new ArenaSpeParticlesJson()
+        {
+            RandomizeAcceleration = true,
+            RandomizeAngle = true,
+            RandomizeColor = true,
+            RandomizeDrag = true,
+            RandomizeOpacity = true,
+            RandomizePosition = true,
+            RandomizeRotation = true,
+            RandomizeSize = true,
+            RandomizeVelocity = true
+        };
         private ParticleSystem ps;
         private ParticleSystemRenderer psr;
 
@@ -121,7 +137,8 @@ namespace ArenaUnity.Components
             {
                 float angle = json.Angle[0].Value;
                 float angleSpread = 0f;
-                if (json.AngleSpread != null && json.AngleSpread.Length > 0 && json.AngleSpread[0].HasValue)
+                // RandomizeAngle gates whether angleSpread varies the initial rotation per particle
+                if (json.RandomizeAngle && json.AngleSpread != null && json.AngleSpread.Length > 0 && json.AngleSpread[0].HasValue)
                     angleSpread = json.AngleSpread[0].Value;
 
                 main.startRotation3D = false;
@@ -149,6 +166,9 @@ namespace ArenaUnity.Components
                 {
                     float startSize = (float)json.Size[0].Value;
 
+                    // RandomizeSize gates whether sizeSpread varies size per particle
+                    bool hasSizeSpread = json.RandomizeSize && json.SizeSpread != null && json.SizeSpread.Length > 0;
+
                     if (json.Size.Length > 1)
                     {
                         // Find the maximum size value across the lifetime to use as the normalization reference.
@@ -165,7 +185,7 @@ namespace ArenaUnity.Components
                         var sizeOverLifetime = ps.sizeOverLifetime;
                         sizeOverLifetime.enabled = true;
 
-                        int len = Mathf.Max(json.Size.Length, json.SizeSpread != null ? json.SizeSpread.Length : 0);
+                        int len = Mathf.Max(json.Size.Length, hasSizeSpread ? json.SizeSpread.Length : 0);
                         var curveMin = new AnimationCurve();
                         var curveMax = new AnimationCurve();
 
@@ -179,7 +199,7 @@ namespace ArenaUnity.Components
                                 sVal = maxSize != 0 ? (float)json.Size[sIdx].Value / maxSize : 0;
 
                             float spreadVal = 0f;
-                            if (json.SizeSpread != null && json.SizeSpread.Length > 0) {
+                            if (hasSizeSpread) {
                                 int spIdx = Mathf.Min(i, json.SizeSpread.Length - 1);
                                 if (json.SizeSpread[spIdx].HasValue)
                                     spreadVal = maxSize != 0 ? (float)json.SizeSpread[spIdx].Value / maxSize : 0;
@@ -196,7 +216,7 @@ namespace ArenaUnity.Components
                         sizeOverLifetime.enabled = false;
 
                         float spreadVal = 0f;
-                        if (json.SizeSpread != null && json.SizeSpread.Length > 0 && json.SizeSpread[0].HasValue) {
+                        if (hasSizeSpread && json.SizeSpread[0].HasValue) {
                             spreadVal = (float)json.SizeSpread[0].Value;
                         }
 
@@ -221,8 +241,9 @@ namespace ArenaUnity.Components
                 if (json.Opacity != null && json.Opacity.Length > 0 && json.Opacity[0].HasValue)
                     startColor.a = json.Opacity[0].Value;
 
-                bool hasColorSpread = json.ColorSpread != null && json.ColorSpread.Length > 0;
-                bool hasOpacitySpread = json.OpacitySpread != null && json.OpacitySpread.Length > 0;
+                // RandomizeColor and RandomizeOpacity gate whether their spreads vary per particle
+                bool hasColorSpread = json.RandomizeColor && json.ColorSpread != null && json.ColorSpread.Length > 0;
+                bool hasOpacitySpread = json.RandomizeOpacity && json.OpacitySpread != null && json.OpacitySpread.Length > 0;
 
                 if (json.Color.Length > 1 || (json.Opacity != null && json.Opacity.Length > 1))
                 {
@@ -359,10 +380,13 @@ namespace ArenaUnity.Components
                           (ArenaSpeParticlesJson.DistributionType)(int)json.PositionDistribution :
                           json.Distribution;
 
+            // RandomizePosition gates whether positionSpread varies the spawn point per particle
+            bool hasPositionSpread = json.RandomizePosition &&
+                                     (json.PositionSpread.X != 0 || json.PositionSpread.Y != 0 || json.PositionSpread.Z != 0);
+
             // In A-Frame SPE, box distribution with positionSpread {0,0,0} emits from a single point.
             // Disable the shape module for point-source emission (particles spawn at the transform origin).
-            bool isPointSource = (posDist == ArenaSpeParticlesJson.DistributionType.Box &&
-                                  json.PositionSpread.X == 0 && json.PositionSpread.Y == 0 && json.PositionSpread.Z == 0) ||
+            bool isPointSource = (posDist == ArenaSpeParticlesJson.DistributionType.Box && !hasPositionSpread) ||
                                  ((posDist == ArenaSpeParticlesJson.DistributionType.Sphere ||
                                    posDist == ArenaSpeParticlesJson.DistributionType.Disc) && json.Radius == 0);
 
@@ -423,9 +447,10 @@ namespace ArenaUnity.Components
                 float vX = (float)json.Velocity.X;
                 float vY = (float)json.Velocity.Y;
                 float vZ = (float)json.Velocity.Z;
-                float sX = (float)json.VelocitySpread.X;
-                float sY = (float)json.VelocitySpread.Y;
-                float sZ = (float)json.VelocitySpread.Z;
+                // RandomizeVelocity gates whether velocitySpread varies velocity per particle
+                float sX = json.RandomizeVelocity ? (float)json.VelocitySpread.X : 0f;
+                float sY = json.RandomizeVelocity ? (float)json.VelocitySpread.Y : 0f;
+                float sZ = json.RandomizeVelocity ? (float)json.VelocitySpread.Z : 0f;
 
                 if (isBackward) { vX = -vX; vY = -vY; vZ = -vZ; }
 
@@ -443,8 +468,10 @@ namespace ArenaUnity.Components
             else
             {
                 // Radial Velocity
-                float speedMin = (float)(json.Velocity.X - json.VelocitySpread.X / 2.0);
-                float speedMax = (float)(json.Velocity.X + json.VelocitySpread.X / 2.0);
+                // RandomizeVelocity gates whether velocitySpread varies radial speed per particle
+                float velocitySpread = json.RandomizeVelocity ? json.VelocitySpread.X : 0f;
+                float speedMin = (float)(json.Velocity.X - velocitySpread / 2.0);
+                float speedMax = (float)(json.Velocity.X + velocitySpread / 2.0);
                 if (isBackward)
                 {
                     main.startSpeed = new ParticleSystem.MinMaxCurve(-speedMax, -speedMin);
@@ -470,9 +497,10 @@ namespace ArenaUnity.Components
                 float aX = (float)json.Acceleration.X;
                 float aY = (float)json.Acceleration.Y;
                 float aZ = (float)json.Acceleration.Z;
-                float sX = (float)json.AccelerationSpread.X;
-                float sY = (float)json.AccelerationSpread.Y;
-                float sZ = (float)json.AccelerationSpread.Z;
+                // RandomizeAcceleration gates whether accelerationSpread varies acceleration per particle
+                float sX = json.RandomizeAcceleration ? (float)json.AccelerationSpread.X : 0f;
+                float sY = json.RandomizeAcceleration ? (float)json.AccelerationSpread.Y : 0f;
+                float sZ = json.RandomizeAcceleration ? (float)json.AccelerationSpread.Z : 0f;
 
                 if (isBackward) { aX = -aX; aY = -aY; aZ = -aZ; }
 
@@ -490,8 +518,10 @@ namespace ArenaUnity.Components
             else
             {
                 // Radial Acceleration (Simulate as a ramped radial velocity)
-                float raMin = (float)(json.Acceleration.X - json.AccelerationSpread.X / 2.0);
-                float raMax = (float)(json.Acceleration.X + json.AccelerationSpread.X / 2.0);
+                // RandomizeAcceleration gates whether accelerationSpread varies radial acceleration per particle
+                float accelerationSpread = json.RandomizeAcceleration ? json.AccelerationSpread.X : 0f;
+                float raMin = (float)(json.Acceleration.X - accelerationSpread / 2.0);
+                float raMax = (float)(json.Acceleration.X + accelerationSpread / 2.0);
 
                 if (isBackward)
                 {
@@ -511,7 +541,9 @@ namespace ArenaUnity.Components
             }
 
             // Drag (Air Resistance)
-            if (json.Drag > 0 || json.DragSpread > 0)
+            // RandomizeDrag gates whether dragSpread varies drag per particle
+            float dragSpread = json.RandomizeDrag ? json.DragSpread : 0f;
+            if (json.Drag > 0 || dragSpread > 0)
             {
                 var limitVelocity = ps.limitVelocityOverLifetime;
                 limitVelocity.enabled = true;
@@ -519,8 +551,8 @@ namespace ArenaUnity.Components
                 limitVelocity.dampen = Mathf.Clamp01(json.Drag);
                 // We leave the limit at a negligible multiplier to allow the dampen to strictly act as drag against existing velocity
                 limitVelocity.limit = new ParticleSystem.MinMaxCurve(
-                    Mathf.Max(0f, json.Drag - json.DragSpread / 2f),
-                    Mathf.Max(0f, json.Drag + json.DragSpread / 2f)
+                    Mathf.Max(0f, json.Drag - dragSpread / 2f),
+                    Mathf.Max(0f, json.Drag + dragSpread / 2f)
                 );
             }
             else
@@ -552,15 +584,21 @@ namespace ArenaUnity.Components
             }
 
             // Rotation (Angular Velocity or Fixed 3D Rotation)
+            // RandomizeRotation gates whether rotationSpread and rotationAxisSpread vary rotation per particle
+            float rotationSpread = json.RandomizeRotation ? json.RotationSpread : 0f;
+            Vector3 rotationAxisSpread = json.RandomizeRotation ?
+                new Vector3((float)json.RotationAxisSpread.X, (float)json.RotationAxisSpread.Y, (float)json.RotationAxisSpread.Z) :
+                Vector3.zero;
+
             var rotOverLifetime = ps.rotationOverLifetime;
             if (json.RotationStatic)
             {
                 rotOverLifetime.enabled = false;
-                if (json.Rotation != 0 || json.RotationSpread != 0)
+                if (json.Rotation != 0 || rotationSpread != 0)
                 {
                     main.startRotation3D = true;
                     float rotRads = json.Rotation * Mathf.Deg2Rad;
-                    float rotSpreadRads = json.RotationSpread * Mathf.Deg2Rad;
+                    float rotSpreadRads = rotationSpread * Mathf.Deg2Rad;
                     float minRot = rotRads - rotSpreadRads / 2f;
                     float maxRot = rotRads + rotSpreadRads / 2f;
 
@@ -568,17 +606,21 @@ namespace ArenaUnity.Components
                     if (axis == Vector3.zero) axis = Vector3.forward;
                     axis.Normalize();
 
-                    main.startRotationX = new ParticleSystem.MinMaxCurve(minRot * axis.x, maxRot * axis.x);
-                    main.startRotationY = new ParticleSystem.MinMaxCurve(minRot * axis.y, maxRot * axis.y);
-                    main.startRotationZ = new ParticleSystem.MinMaxCurve(minRot * axis.z, maxRot * axis.z);
+                    // rotationAxisSpread widens the axis so each particle tilts within the spread
+                    Vector3 axisMin = axis - rotationAxisSpread / 2f;
+                    Vector3 axisMax = axis + rotationAxisSpread / 2f;
+
+                    main.startRotationX = new ParticleSystem.MinMaxCurve(minRot * axisMin.x, maxRot * axisMax.x);
+                    main.startRotationY = new ParticleSystem.MinMaxCurve(minRot * axisMin.y, maxRot * axisMax.y);
+                    main.startRotationZ = new ParticleSystem.MinMaxCurve(minRot * axisMin.z, maxRot * axisMax.z);
                 }
             }
-            else if (json.Rotation != 0 || json.RotationSpread != 0)
+            else if (json.Rotation != 0 || rotationSpread != 0)
             {
                 rotOverLifetime.enabled = true;
                 // Unity rotation over lifetime takes radians per second in script!
                 float angularVel = (json.Rotation * Mathf.Deg2Rad) / json.MaxAge;
-                float angularVelSpread = (json.RotationSpread * Mathf.Deg2Rad) / json.MaxAge;
+                float angularVelSpread = (rotationSpread * Mathf.Deg2Rad) / json.MaxAge;
 
                 float minVel = angularVel - angularVelSpread / 2f;
                 float maxVel = angularVel + angularVelSpread / 2f;
@@ -593,9 +635,14 @@ namespace ArenaUnity.Components
                 {
                     rotOverLifetime.separateAxes = true;
                     axis.Normalize();
-                    rotOverLifetime.x = new ParticleSystem.MinMaxCurve(minVel * axis.x, maxVel * axis.x);
-                    rotOverLifetime.y = new ParticleSystem.MinMaxCurve(minVel * axis.y, maxVel * axis.y);
-                    rotOverLifetime.z = new ParticleSystem.MinMaxCurve(minVel * axis.z, maxVel * axis.z);
+
+                    // rotationAxisSpread widens the axis so each particle tilts within the spread
+                    Vector3 axisMin = axis - rotationAxisSpread / 2f;
+                    Vector3 axisMax = axis + rotationAxisSpread / 2f;
+
+                    rotOverLifetime.x = new ParticleSystem.MinMaxCurve(minVel * axisMin.x, maxVel * axisMax.x);
+                    rotOverLifetime.y = new ParticleSystem.MinMaxCurve(minVel * axisMin.y, maxVel * axisMax.y);
+                    rotOverLifetime.z = new ParticleSystem.MinMaxCurve(minVel * axisMin.z, maxVel * axisMax.z);
                 }
             }
             else
