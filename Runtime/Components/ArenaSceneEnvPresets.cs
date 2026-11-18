@@ -26,7 +26,7 @@ namespace ArenaUnity.Components
         // DONE: fog
         // TODO: grid
         // TODO: gridColor
-        // TODO: ground
+        // DONE: ground
         // DONE: groundColor
         // TODO: groundColor2
         // DONE: groundScale
@@ -37,10 +37,10 @@ namespace ArenaUnity.Components
         // DONE: lighting
         // DONE: lightPosition
         // TODO: playArea
-        // TODO: preset
+        // DONE: preset
         // TODO: seed
         // DONE: shadow
-        // DONE: shadowSize
+        // TODO: shadowSize
         // DONE: skyColor
         // DONE: skyType
         public ArenaEnvPresetsJson json = new ArenaEnvPresetsJson();
