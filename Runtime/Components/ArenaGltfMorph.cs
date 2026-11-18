@@ -26,8 +26,10 @@ namespace ArenaUnity.Components
             morphApplied = false;
         }
 
-        private new void Update()
+        protected override void Update()
         {
+            base.Update();
+
             if (!morphApplied)
             {
                 var gltfModel = GetComponent<ArenaWireGltfModel>();

@@ -13,7 +13,7 @@ namespace ArenaUnity.Components
     public class ArenaClickListener : ArenaComponent
     {
         // ARENA click-listener component unity conversion status:
-        // DONE: enabled
+        // TODO: enabled
         // TODO: bubble
 
         private Camera _camera;
@@ -26,8 +26,10 @@ namespace ArenaUnity.Components
 
         public ArenaClickListenerJson json = new ArenaClickListenerJson();
 
-        private new void Update()
+        protected override void Update()
         {
+            base.Update();
+
             // discover which camera to use for collisions
             _camera = Camera.main;
             if (_camera != null && _arenaCam == null)
@@ -145,7 +147,9 @@ namespace ArenaUnity.Components
 
         protected override void ApplyRender()
         {
-            throw new System.NotImplementedException();
+            // no Unity conversion yet, warn only when the scene asks for non-default behavior
+            if (!json.Enabled || !json.Bubble)
+                Debug.LogWarning($"click-listener 'enabled' and 'bubble' are not implemented in Unity, ignored for '{name}'.");
         }
 
         public override void UpdateObject()
