@@ -415,6 +415,14 @@ namespace ArenaUnity
             c.apply = true;
         }
 
+        public static void ApplyVideoControl(GameObject gobj, ArenaDataObjectJson data)
+        {
+            if (!gobj.TryGetComponent<ArenaVideoControl>(out var c))
+                c = gobj.AddComponent<ArenaVideoControl>();
+            c.json = JsonConvert.DeserializeObject<ArenaVideoControlJson>(MergeRawJson(c.json, data.VideoControl));
+            c.apply = true;
+        }
+
         // wire objects
 
         public static void ApplyGeometry(string primitive, object data, GameObject gobj)

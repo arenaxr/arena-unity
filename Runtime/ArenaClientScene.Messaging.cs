@@ -313,7 +313,7 @@ namespace ArenaUnity
                     case "sound": ArenaUnity.ApplySound(gobj, data); break;
                     // TODO: case "textinput": ArenaUnity.ApplyTextInput(gobj, data); break;
                     // TODO: case "screenshareable": ArenaUnity.ApplyScreensharable(gobj, data); break;
-                    // TODO: case "video-control": ArenaUnity.ApplyVideoControl(gobj, data); break;
+                    case "video-control": ArenaUnity.ApplyVideoControl(gobj, data); break;
                     case "attribution": ArenaUnity.ApplyAttribution(gobj, data); break;
                     case "spe-particles": ArenaUnity.ApplySpeParticles(gobj, data); break;
                     // TODO: case "buffer": ArenaUnity.ApplyBuffer(gobj, data); break;
