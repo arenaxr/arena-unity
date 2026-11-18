@@ -314,7 +314,10 @@ namespace ArenaUnity
                     // TODO: case "textinput": ArenaUnity.ApplyTextInput(gobj, data); break;
                     // TODO: case "screenshareable": ArenaUnity.ApplyScreensharable(gobj, data); break;
                     // TODO: case "video-control": ArenaUnity.ApplyVideoControl(gobj, data); break;
-                    case "attribution": ArenaUnity.ApplyAttribution(gobj, data); break;
+                    // UNSUPPORTED: case "attribution" - arena-web-core-internal A-Frame ECS
+                    // component, not part of any external-facing arena schema. An inbound
+                    // `attribution` key is silently ignored (this switch has no default) and
+                    // is absorbed by ArenaDataObjectJson's [JsonExtensionData] bucket.
                     case "spe-particles": ArenaUnity.ApplySpeParticles(gobj, data); break;
                     // TODO: case "buffer": ArenaUnity.ApplyBuffer(gobj, data); break;
                     // TODO: case "jitsi-video": ArenaUnity.ApplyJitsiVideo(gobj, data); break;
